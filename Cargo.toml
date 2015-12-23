@@ -1,0 +1,7 @@
+[package]
+name = "virt"
+version = "0.1.0"
+authors = ["Sahid Orentino Ferdjaoui"]
+
+[dependencies]
+libc = "*"
