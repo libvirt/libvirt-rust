@@ -85,11 +85,12 @@ extern {
     fn virConnectNumOfInterfaces(c: virConnectPtr) -> libc::c_int;
     fn virConnectNumOfNetworks(c: virConnectPtr) -> libc::c_int;
     fn virConnectNumOfStoragePools(c: virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfNWFilters(c: virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfSecrets(c: virConnectPtr) -> libc::c_int;
     fn virConnectNumOfDefinedDomains(c: virConnectPtr) -> libc::c_int;
     fn virConnectNumOfDefinedInterfaces(c: virConnectPtr) -> libc::c_int;
     fn virConnectNumOfDefinedNetworks(c: virConnectPtr) -> libc::c_int;
     fn virConnectNumOfDefinedStoragePools(c: virConnectPtr) -> libc::c_int;
-
 }
 
 pub struct Connect {
@@ -669,6 +670,27 @@ impl Connect {
             return Ok(num as u32)
         }
     }
+
+    pub fn num_of_nw_filters(&self) -> Result<u32, Error> {
+        unsafe {
+            let num = virConnectNumOfNWFilters(self.c);
+            if num == -1 {
+                return Err(Error::new())
+            }
+            return Ok(num as u32)
+        }
+    }
+
+    pub fn num_of_secrets(&self) -> Result<u32, Error> {
+        unsafe {
+            let num = virConnectNumOfSecrets(self.c);
+            if num == -1 {
+                return Err(Error::new())
+            }
+            return Ok(num as u32)
+        }
+    }
+
 
     /// # Examples
     ///
