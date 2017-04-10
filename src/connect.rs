@@ -72,6 +72,24 @@ extern {
     fn virConnectListSecrets(c: virConnectPtr,
                              names: *const *const libc::c_char,
                              maxnames: libc::c_int) -> libc::c_int;
+    fn virConnectListDefinedInterfaces(c: virConnectPtr,
+                                       names: *const *const libc::c_char,
+                                       maxifaces: libc::c_int) -> libc::c_int;
+    fn virConnectListDefinedNetworks(c: virConnectPtr,
+                                     names: *const *const libc::c_char,
+                                     maxnets: libc::c_int) -> libc::c_int;
+    fn virConnectListDefinedStoragePools(c: virConnectPtr,
+                                         names: *const *const libc::c_char,
+                                         maxpools: libc::c_int) -> libc::c_int;
+    fn virConnectNumOfDomains(c: virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfInterfaces(c: virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfNetworks(c: virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfStoragePools(c: virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfDefinedDomains(c: virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfDefinedInterfaces(c: virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfDefinedNetworks(c: virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfDefinedStoragePools(c: virConnectPtr) -> libc::c_int;
+
 }
 
 pub struct Connect {
@@ -291,39 +309,6 @@ impl Connect {
     ///
     /// match Connect::new("test:///default") {
     ///   Ok(conn) => {
-    ///     match conn.list_defined_domains() {
-    ///       Ok(arr) => assert_eq!(0, arr.len()),
-    ///       Err(e) => panic!(
-    ///         "failed with code {}, message: {}", e.code, e.message)
-    ///     }
-    ///     conn.close();
-    ///   },
-    ///   Err(e) => panic!(
-    ///     "failed with code {}, message: {}", e.code, e.message)
-    ///   }
-    /// ```
-    pub fn list_defined_domains(&self) -> Result<&[&str], Error> {
-        unsafe {
-            let ptr: [*const libc::c_char; 1024] = mem::uninitialized();
-            let size = virConnectListDefinedDomains(self.c, ptr.as_ptr(), 1024);
-            if size == -1 {
-                return Err(Error::new())
-            }
-            let array = slice::from_raw_parts(
-                ptr.as_ptr() as *const &str, size as usize);
-            return Ok(array)
-        }
-    }
-
-    ///
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use virt::connect::Connect;
-    ///
-    /// match Connect::new("test:///default") {
-    ///   Ok(conn) => {
     ///     match conn.list_interfaces() {
     ///       Ok(arr) => assert_eq!(1, arr.len()),
     ///       Err(e) => panic!(
@@ -347,7 +332,7 @@ impl Connect {
             return Ok(array)
         }
     }
-    
+
     ///
     ///
     /// # Examples
@@ -437,6 +422,363 @@ impl Connect {
             let array = slice::from_raw_parts(
                 ptr.as_ptr() as *const &str, size as usize);
             return Ok(array)
+        }
+    }
+
+    ///
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use virt::connect::Connect;
+    ///
+    /// match Connect::new("test:///default") {
+    ///   Ok(conn) => {
+    ///     match conn.list_defined_domains() {
+    ///       Ok(arr) => assert_eq!(0, arr.len()),
+    ///       Err(e) => panic!(
+    ///         "failed with code {}, message: {}", e.code, e.message)
+    ///     }
+    ///     conn.close();
+    ///   },
+    ///   Err(e) => panic!(
+    ///     "failed with code {}, message: {}", e.code, e.message)
+    ///   }
+    /// ```
+    pub fn list_defined_domains(&self) -> Result<&[&str], Error> {
+        unsafe {
+            let ptr: [*const libc::c_char; 1024] = mem::uninitialized();
+            let size = virConnectListDefinedDomains(self.c, ptr.as_ptr(), 1024);
+            if size == -1 {
+                return Err(Error::new())
+            }
+            let array = slice::from_raw_parts(
+                ptr.as_ptr() as *const &str, size as usize);
+            return Ok(array)
+        }
+    }
+
+    ///
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use virt::connect::Connect;
+    ///
+    /// match Connect::new("test:///default") {
+    ///   Ok(conn) => {
+    ///     match conn.list_defined_interfaces() {
+    ///       Ok(arr) => assert_eq!(0, arr.len()),
+    ///       Err(e) => panic!(
+    ///         "failed with code {}, message: {}", e.code, e.message)
+    ///     }
+    ///     conn.close();
+    ///   },
+    ///   Err(e) => panic!(
+    ///     "failed with code {}, message: {}", e.code, e.message)
+    ///   }
+    /// ```
+    pub fn list_defined_interfaces(&self) -> Result<&[&str], Error> {
+        unsafe {
+            let ptr: [*const libc::c_char; 1024] = mem::uninitialized();
+            let size = virConnectListDefinedInterfaces(self.c, ptr.as_ptr(), 1024);
+            if size == -1 {
+                return Err(Error::new())
+            }
+            let array = slice::from_raw_parts(
+                ptr.as_ptr() as *const &str, size as usize);
+            return Ok(array)
+        }
+    }
+
+    ///
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use virt::connect::Connect;
+    ///
+    /// match Connect::new("test:///default") {
+    ///   Ok(conn) => {
+    ///     match conn.list_defined_storage_pools() {
+    ///       Ok(arr) => assert_eq!(0, arr.len()),
+    ///       Err(e) => panic!(
+    ///         "failed with code {}, message: {}", e.code, e.message)
+    ///     }
+    ///     conn.close();
+    ///   },
+    ///   Err(e) => panic!(
+    ///     "failed with code {}, message: {}", e.code, e.message)
+    ///   }
+    /// ```
+    pub fn list_defined_storage_pools(&self) -> Result<&[&str], Error> {
+        unsafe {
+            let ptr: [*const libc::c_char; 1024] = mem::uninitialized();
+            let size = virConnectListDefinedStoragePools(
+                self.c, ptr.as_ptr(), 1024);
+            if size == -1 {
+                return Err(Error::new())
+            }
+            let array = slice::from_raw_parts(
+                ptr.as_ptr() as *const &str, size as usize);
+            return Ok(array)
+        }
+    }
+
+    ///
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use virt::connect::Connect;
+    ///
+    /// match Connect::new("test:///default") {
+    ///   Ok(conn) => {
+    ///     match conn.list_networks() {
+    ///       Ok(arr) => assert_eq!(1, arr.len()),
+    ///       Err(e) => panic!(
+    ///         "failed with code {}, message: {}", e.code, e.message)
+    ///     }
+    ///     conn.close();
+    ///   },
+    ///   Err(e) => panic!(
+    ///     "failed with code {}, message: {}", e.code, e.message)
+    ///   }
+    /// ```
+    pub fn list_defined_networks(&self) -> Result<&[&str], Error> {
+        unsafe {
+            let ptr: [*const libc::c_char; 1024] = mem::uninitialized();
+            let size = virConnectListDefinedNetworks(self.c, ptr.as_ptr(), 1024);
+            if size == -1 {
+                return Err(Error::new())
+            }
+            let array = slice::from_raw_parts(
+                ptr.as_ptr() as *const &str, size as usize);
+            return Ok(array)
+        }
+    }
+
+    /// # Examples
+    ///
+    /// ```
+    /// use virt::connect::Connect;
+    ///
+    /// match Connect::new("test:///default") {
+    ///   Ok(conn) => {
+    ///     match conn.num_of_domains() {
+    ///       Ok(n) => assert_eq!(1, n),
+    ///       Err(e) => panic!(
+    ///         "failed with code {}, message: {}", e.code, e.message)
+    ///     }
+    ///     conn.close();
+    ///   },
+    ///   Err(e) => panic!(
+    ///     "failed with code {}, message: {}", e.code, e.message)
+    ///   }
+    /// ```
+    pub fn num_of_domains(&self) -> Result<u32, Error> {
+        unsafe {
+            let num = virConnectNumOfDomains(self.c);
+            if num == -1 {
+                return Err(Error::new())
+            }
+            return Ok(num as u32)
+        }
+    }
+    
+    /// # Examples
+    ///
+    /// ```
+    /// use virt::connect::Connect;
+    ///
+    /// match Connect::new("test:///default") {
+    ///   Ok(conn) => {
+    ///     match conn.num_of_interfaces() {
+    ///       Ok(n) => assert_eq!(1, n),
+    ///       Err(e) => panic!(
+    ///         "failed with code {}, message: {}", e.code, e.message)
+    ///     }
+    ///     conn.close();
+    ///   },
+    ///   Err(e) => panic!(
+    ///     "failed with code {}, message: {}", e.code, e.message)
+    ///   }
+    /// ```
+    pub fn num_of_interfaces(&self) -> Result<u32, Error> {
+        unsafe {
+            let num = virConnectNumOfInterfaces(self.c);
+            if num == -1 {
+                return Err(Error::new())
+            }
+            return Ok(num as u32)
+        }
+    }
+
+    /// # Examples
+    ///
+    /// ```
+    /// use virt::connect::Connect;
+    ///
+    /// match Connect::new("test:///default") {
+    ///   Ok(conn) => {
+    ///     match conn.num_of_networks() {
+    ///       Ok(n) => assert_eq!(1, n),
+    ///       Err(e) => panic!(
+    ///         "failed with code {}, message: {}", e.code, e.message)
+    ///     }
+    ///     conn.close();
+    ///   },
+    ///   Err(e) => panic!(
+    ///     "failed with code {}, message: {}", e.code, e.message)
+    ///   }
+    /// ```
+    pub fn num_of_networks(&self) -> Result<u32, Error> {
+        unsafe {
+            let num = virConnectNumOfNetworks(self.c);
+            if num == -1 {
+                return Err(Error::new())
+            }
+            return Ok(num as u32)
+        }
+    }
+
+    /// # Examples
+    ///
+    /// ```
+    /// use virt::connect::Connect;
+    ///
+    /// match Connect::new("test:///default") {
+    ///   Ok(conn) => {
+    ///     match conn.num_of_storage_pools() {
+    ///       Ok(n) => assert_eq!(1, n),
+    ///       Err(e) => panic!(
+    ///         "failed with code {}, message: {}", e.code, e.message)
+    ///     }
+    ///     conn.close();
+    ///   },
+    ///   Err(e) => panic!(
+    ///     "failed with code {}, message: {}", e.code, e.message)
+    ///   }
+    /// ```
+    pub fn num_of_storage_pools(&self) -> Result<u32, Error> {
+        unsafe {
+            let num = virConnectNumOfStoragePools(self.c);
+            if num == -1 {
+                return Err(Error::new())
+            }
+            return Ok(num as u32)
+        }
+    }
+
+    /// # Examples
+    ///
+    /// ```
+    /// use virt::connect::Connect;
+    ///
+    /// match Connect::new("test:///default") {
+    ///   Ok(conn) => {
+    ///     match conn.num_of_defined_domains() {
+    ///       Ok(n) => assert_eq!(0, n),
+    ///       Err(e) => panic!(
+    ///         "failed with code {}, message: {}", e.code, e.message)
+    ///     }
+    ///     conn.close();
+    ///   },
+    ///   Err(e) => panic!(
+    ///     "failed with code {}, message: {}", e.code, e.message)
+    ///   }
+    /// ```
+    pub fn num_of_defined_domains(&self) -> Result<u32, Error> {
+        unsafe {
+            let num = virConnectNumOfDefinedDomains(self.c);
+            if num == -1 {
+                return Err(Error::new())
+            }
+            return Ok(num as u32)
+        }
+    }
+    
+    /// # Examples
+    ///
+    /// ```
+    /// use virt::connect::Connect;
+    ///
+    /// match Connect::new("test:///default") {
+    ///   Ok(conn) => {
+    ///     match conn.num_of_defined_interfaces() {
+    ///       Ok(n) => assert_eq!(0, n),
+    ///       Err(e) => panic!(
+    ///         "failed with code {}, message: {}", e.code, e.message)
+    ///     }
+    ///     conn.close();
+    ///   },
+    ///   Err(e) => panic!(
+    ///     "failed with code {}, message: {}", e.code, e.message)
+    ///   }
+    /// ```
+    pub fn num_of_defined_interfaces(&self) -> Result<u32, Error> {
+        unsafe {
+            let num = virConnectNumOfDefinedInterfaces(self.c);
+            if num == -1 {
+                return Err(Error::new())
+            }
+            return Ok(num as u32)
+        }
+    }
+
+    /// # Examples
+    ///
+    /// ```
+    /// use virt::connect::Connect;
+    ///
+    /// match Connect::new("test:///default") {
+    ///   Ok(conn) => {
+    ///     match conn.num_of_defined_networks() {
+    ///       Ok(n) => assert_eq!(0, n),
+    ///       Err(e) => panic!(
+    ///         "failed with code {}, message: {}", e.code, e.message)
+    ///     }
+    ///     conn.close();
+    ///   },
+    ///   Err(e) => panic!(
+    ///     "failed with code {}, message: {}", e.code, e.message)
+    ///   }
+    /// ```
+    pub fn num_of_defined_networks(&self) -> Result<u32, Error> {
+        unsafe {
+            let num = virConnectNumOfDefinedNetworks(self.c);
+            if num == -1 {
+                return Err(Error::new())
+            }
+            return Ok(num as u32)
+        }
+    }
+
+    /// # Examples
+    ///
+    /// ```
+    /// use virt::connect::Connect;
+    ///
+    /// match Connect::new("test:///default") {
+    ///   Ok(conn) => {
+    ///     match conn.num_of_defined_storage_pools() {
+    ///       Ok(n) => assert_eq!(0, n),
+    ///       Err(e) => panic!(
+    ///         "failed with code {}, message: {}", e.code, e.message)
+    ///     }
+    ///     conn.close();
+    ///   },
+    ///   Err(e) => panic!(
+    ///     "failed with code {}, message: {}", e.code, e.message)
+    ///   }
+    /// ```
+    pub fn num_of_defined_storage_pools(&self) -> Result<u32, Error> {
+        unsafe {
+            let num = virConnectNumOfDefinedStoragePools(self.c);
+            if num == -1 {
+                return Err(Error::new())
+            }
+            return Ok(num as u32)
         }
     }
 
