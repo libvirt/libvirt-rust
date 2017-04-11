@@ -2,6 +2,11 @@
 name = "virt"
 version = "0.1.0"
 authors = ["Sahid Orentino Ferdjaoui"]
+license = "GNU Lesser General Public License"
+readme = "README.md"
+description = """
+The libvirt Rust package provides API coverage for libvirt.
+"""
 
 [dependencies]
 libc = "0.2"
