@@ -48,6 +48,7 @@ extern {
     fn virConnectGetVersion(c: virConnectPtr,
                             hyver: *const libc::c_ulong) -> libc::c_int;
     fn virConnectGetHostname(c: virConnectPtr) -> *const libc::c_char;
+    fn virConnectGetCapabilities(c: virConnectPtr) -> *const libc::c_char;
     fn virConnectGetLibVersion(c: virConnectPtr,
                                ver: *const libc::c_ulong) -> libc::c_int;
     fn virConnectGetType(c: virConnectPtr) -> *const libc::c_char;
@@ -66,6 +67,9 @@ extern {
     fn virConnectListNetworks(c: virConnectPtr,
                               names: *const *const libc::c_char,
                               maxnames: libc::c_int) -> libc::c_int;
+    fn virConnectListAllNodeDevices(c: virConnectPtr,
+                                    devices: *const *const libc::c_char,
+                                    flags: libc::c_uint) -> libc::c_int;
     fn virConnectListNWFilters(c: virConnectPtr,
                                names: *const *const libc::c_char,
                                maxnames: libc::c_int) -> libc::c_int;
@@ -95,6 +99,21 @@ extern {
     fn virConnectNumOfDefinedNetworks(c: virConnectPtr) -> libc::c_int;
     fn virConnectNumOfDefinedStoragePools(c: virConnectPtr) -> libc::c_int;
 }
+
+pub type ConnectListAllNodeDeviceFlags = self::libc::c_uint;
+pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_SYSTEM: ConnectListAllNodeDeviceFlags = 1 << 0;
+pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_PCI_DEV: ConnectListAllNodeDeviceFlags = 1 << 1;
+pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_USB_DEV: ConnectListAllNodeDeviceFlags = 1 << 2;
+pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_USB_INTERFACE: ConnectListAllNodeDeviceFlags = 1 << 3;
+pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_NET: ConnectListAllNodeDeviceFlags = 1 << 4;
+pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_SCSI_HOST: ConnectListAllNodeDeviceFlags = 1 << 5;
+pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_SCSI_TARGET: ConnectListAllNodeDeviceFlags = 1 << 6;
+pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_SCSI: ConnectListAllNodeDeviceFlags = 1 << 7;
+pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_STORAGE: ConnectListAllNodeDeviceFlags = 1 << 8;
+pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_FC_HOST: ConnectListAllNodeDeviceFlags = 1 << 9;
+pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_VPORTS: ConnectListAllNodeDeviceFlags = 1 << 10;
+pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_SCSI_GENERIC: ConnectListAllNodeDeviceFlags = 1 << 11;
+pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_DRM: ConnectListAllNodeDeviceFlags = 1 << 12;
 
 pub struct Connect {
     pub c: virConnectPtr
@@ -220,6 +239,17 @@ impl Connect {
         }
     }
 
+    pub fn get_capabilities(&self) -> Result<&str, Error> {
+        unsafe {
+            let n = virConnectGetCapabilities(self.c);
+            if n.is_null() {
+                return Err(Error::new())
+            }
+            return Ok(str::from_utf8(
+                CStr::from_ptr(n).to_bytes()).unwrap())
+        }
+    }
+    
     pub fn get_lib_version(&self) -> Result<u32, Error> {
         unsafe {
             let ver: libc::c_ulong = 0;
@@ -380,6 +410,25 @@ impl Connect {
             return Ok(array)
         }
     }
+
+    pub fn list_all_node_devices(
+        &self, flags: ConnectListAllNodeDeviceFlags) -> Result<Vec<&str>, Error> {
+        unsafe {
+            let names: [*const libc::c_char; 1024] = mem::uninitialized();
+            let size = virConnectListAllNodeDevices(self.c, names.as_ptr(), flags);
+            if size == -1 {
+                return Err(Error::new())
+            }
+
+            let mut array: Vec<&str> = Vec::new();
+            for x in 0..size as usize {
+                array.push(str::from_utf8(
+                    CStr::from_ptr(names[x]).to_bytes()).unwrap());
+            }
+            return Ok(array)
+        }
+    }
+
 
     pub fn list_nw_filters(&self) -> Result<Vec<&str>, Error> {
         unsafe {
