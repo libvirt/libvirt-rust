@@ -26,6 +26,7 @@ use std::{str, ptr, mem};
 use domain::Domain;
 use error::Error;
 use network::Network;
+use interface::Interface;
 
 #[allow(non_camel_case_types)]
 #[repr(C)]
@@ -891,6 +892,13 @@ impl Connect {
         Network::lookup_by_name(self, id)
     }
 
+    pub fn interface_lookup_by_id(&self, id: u32) -> Result<Interface, Error> {
+        Interface::lookup_by_id(self, id)
+    }
+
+    pub fn interface_lookup_by_name(&self, id: &str) -> Result<Interface, Error> {
+        Interface::lookup_by_name(self, id)
+    }
 }
 
 #[test]
@@ -950,5 +958,26 @@ fn list_networks() {
         Err(e) => panic!(
             "failed with code {}, message: {}", e.code, e.message)
     }
+}
+
+#[test]
+fn list_interface() {
+    match Connect::new("test:///default") {
+        Ok(conn) => {
+            let ints = conn.list_interfaces().unwrap_or(vec![]);
+            assert_eq!(1, ints.len());
+            let intid = ints[0];
+            match conn.interface_lookup_by_name(intid) {
+                Ok(interface) => println!("An interface name: {}",
+                                        interface.get_name().unwrap_or("noname")),
+                Err(e) => panic!(
+                    "failed with code {}, message: {}", e.code, e.message)
+            }
+            conn.close();
+        },
+        Err(e) => panic!(
+            "failed with code {}, message: {}", e.code, e.message)
+    }
+
 }
 

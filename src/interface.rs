@@ -28,68 +28,68 @@ use error::Error;
 
 #[allow(non_camel_case_types)]
 #[repr(C)]
-pub struct virNetwork {
+pub struct virInterface {
 }
 
 #[allow(non_camel_case_types)]
-pub type virNetworkPtr = *const virNetwork;
+pub type virInterfacePtr = *const virInterface;
 
 #[link(name = "virt")]
 extern {
-    fn virNetworkLookupByID(c: virConnectPtr, id: libc::c_int) -> virNetworkPtr;
-    fn virNetworkLookupByName(c: virConnectPtr, id: *const libc::c_char) -> virNetworkPtr;
-    fn virNetworkLookupByUUIDString(c: virConnectPtr, uuid: *const libc::c_char) -> virNetworkPtr;
-    fn virNetworkDestroy(d: virNetworkPtr) -> libc::c_int;
-    fn virNetworkIsActive(d: virNetworkPtr) -> libc::c_int;
-    fn virNetworkGetName(d: virNetworkPtr) -> *const libc::c_char;
+    fn virInterfaceLookupByID(c: virConnectPtr, id: libc::c_int) -> virInterfacePtr;
+    fn virInterfaceLookupByName(c: virConnectPtr, id: *const libc::c_char) -> virInterfacePtr;
+    fn virInterfaceLookupByUUIDString(c: virConnectPtr, uuid: *const libc::c_char) -> virInterfacePtr;
+    fn virInterfaceDestroy(d: virInterfacePtr) -> libc::c_int;
+    fn virInterfaceIsActive(d: virInterfacePtr) -> libc::c_int;
+    fn virInterfaceGetName(d: virInterfacePtr) -> *const libc::c_char;
 }
 
 
-pub struct Network {
-    pub d: virNetworkPtr
+pub struct Interface {
+    pub d: virInterfacePtr
 }
 
-impl Network {
+impl Interface {
 
-    pub fn as_ptr(&self) -> virNetworkPtr {
+    pub fn as_ptr(&self) -> virInterfacePtr {
         self.d
     }
 
-    pub fn lookup_by_id(conn: &Connect, id: u32) -> Result<Network, Error> {
+    pub fn lookup_by_id(conn: &Connect, id: u32) -> Result<Interface, Error> {
         unsafe {
-            let ptr = virNetworkLookupByID(conn.as_ptr(), id as libc::c_int);
+            let ptr = virInterfaceLookupByID(conn.as_ptr(), id as libc::c_int);
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Network{d: ptr});
+            return Ok(Interface{d: ptr});
         }
     }
 
-    pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<Network, Error> {
+    pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<Interface, Error> {
         unsafe {
-            let ptr = virNetworkLookupByName(
+            let ptr = virInterfaceLookupByName(
                 conn.as_ptr(), CString::new(id).unwrap().as_ptr());
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Network{d: ptr});
+            return Ok(Interface{d: ptr});
         }
     }
 
-    pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Network, Error> {
+    pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Interface, Error> {
         unsafe {
-            let ptr = virNetworkLookupByUUIDString(
+            let ptr = virInterfaceLookupByUUIDString(
                 conn.as_ptr(), CString::new(uuid).unwrap().as_ptr());
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Network{d: ptr});
+            return Ok(Interface{d: ptr});
         }
     }
 
     pub fn get_name(&self) -> Result<&str, Error> {
         unsafe {
-            let n = virNetworkGetName(self.d);
+            let n = virInterfaceGetName(self.d);
             if n.is_null() {
                 return Err(Error::new())
             }
@@ -101,7 +101,7 @@ impl Network {
 
     pub fn destroy(&self) -> Result<(), Error> {
         unsafe {
-            if virNetworkDestroy(self.d) == -1 {
+            if virInterfaceDestroy(self.d) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -110,7 +110,7 @@ impl Network {
 
     pub fn is_active(&self) -> Result<(), Error> {
         unsafe {
-            if virNetworkIsActive(self.d) == -1 {
+            if virInterfaceIsActive(self.d) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
