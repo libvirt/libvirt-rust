@@ -27,6 +27,7 @@ use domain::Domain;
 use error::Error;
 use network::Network;
 use interface::Interface;
+use storage_pool::StoragePool;
 
 #[allow(non_camel_case_types)]
 #[repr(C)]
@@ -899,6 +900,14 @@ impl Connect {
     pub fn interface_lookup_by_name(&self, id: &str) -> Result<Interface, Error> {
         Interface::lookup_by_name(self, id)
     }
+
+    pub fn storage_pool_lookup_by_id(&self, id: u32) -> Result<StoragePool, Error> {
+        StoragePool::lookup_by_id(self, id)
+    }
+
+    pub fn storage_pool_lookup_by_name(&self, id: &str) -> Result<StoragePool, Error> {
+        StoragePool::lookup_by_name(self, id)
+    }
 }
 
 #[test]
@@ -978,6 +987,25 @@ fn list_interface() {
         Err(e) => panic!(
             "failed with code {}, message: {}", e.code, e.message)
     }
+}
 
+#[test]
+fn list_storage_pool() {
+    match Connect::new("test:///default") {
+        Ok(conn) => {
+            let ints = conn.list_storage_pools().unwrap_or(vec![]);
+            assert_eq!(1, ints.len());
+            let intid = ints[0];
+            match conn.storage_pool_lookup_by_name(intid) {
+                Ok(storage_pool) => println!("A storage pool name: {}",
+                                        storage_pool.get_name().unwrap_or("noname")),
+                Err(e) => panic!(
+                    "failed with code {}, message: {}", e.code, e.message)
+            }
+            conn.close();
+        },
+        Err(e) => panic!(
+            "failed with code {}, message: {}", e.code, e.message)
+    }
 }
 
