@@ -49,7 +49,7 @@ extern {
 }
 
 pub type NetworkXMLFlags = self::libc::c_uint;
-pub const VIR_NETWORK_XML_INACTIVE:NetworkXMLFlags = 1;
+pub const VIR_NETWORK_XML_INACTIVE:NetworkXMLFlags = 1 << 0;
 
 pub struct Network {
     pub d: virNetworkPtr

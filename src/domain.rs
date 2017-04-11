@@ -39,14 +39,31 @@ extern {
     fn virDomainLookupByID(c: virConnectPtr, id: libc::c_int) -> virDomainPtr;
     fn virDomainLookupByName(c: virConnectPtr, id: *const libc::c_char) -> virDomainPtr;
     fn virDomainLookupByUUIDString(c: virConnectPtr, uuid: *const libc::c_char) -> virDomainPtr;
+    fn virDomainCreate(d: virDomainPtr, flags: libc::c_uint) -> libc::c_int;    
     fn virDomainDestroy(d: virDomainPtr) -> libc::c_int;
+    fn virDomainUndefine(d: virDomainPtr) -> libc::c_int;
+    fn virDomainFree(d: virDomainPtr) -> libc::c_int;
     fn virDomainShutdown(d: virDomainPtr) -> libc::c_int;
     fn virDomainReboot(d: virDomainPtr) -> libc::c_int;
     fn virDomainIsActive(d: virDomainPtr) -> libc::c_int;
     fn virDomainIsUpdated(d: virDomainPtr) -> libc::c_int;
     fn virDomainGetName(d: virDomainPtr) -> *const libc::c_char;
+    fn virDomainGetXMLDesc(d: virDomainPtr, flags: libc::c_uint) -> *const libc::c_char;
 }
 
+pub type DomainXMLFlags = self::libc::c_uint;
+pub const VIR_DOMAIN_XML_SECURE: DomainXMLFlags = 1 << 0;
+pub const VIR_DOMAIN_XML_INACTIVE: DomainXMLFlags = 1 << 1;
+pub const VIR_DOMAIN_XML_UPDATE_CPU: DomainXMLFlags = 1 << 2;
+pub const VIR_DOMAIN_XML_MIGRATABLE: DomainXMLFlags = 1 << 3;
+
+pub type DomainCreateFlags = self::libc::c_uint;
+pub const VIR_DOMAIN_NONE: DomainCreateFlags = 0;
+pub const VIR_DOMAIN_START_PAUSED: DomainCreateFlags = 1 << 0;
+pub const VIR_DOMAIN_START_AUTODESTROY: DomainCreateFlags = 1 << 1;
+pub const VIR_DOMAIN_START_BYPASS_CACHE: DomainCreateFlags = 1 << 2;
+pub const VIR_DOMAIN_START_FORCE_BOOT: DomainCreateFlags = 1 << 3;
+pub const VIR_DOMAIN_START_VALIDATE: DomainCreateFlags = 1 << 4;
 
 pub struct Domain {
     pub d: virDomainPtr
@@ -101,6 +118,25 @@ impl Domain {
         }
     }
 
+    pub fn get_xml_desc(&self, flags:DomainCreateFlags) -> Result<&str, Error> {
+        unsafe {
+            let xml = virDomainGetXMLDesc(self.d, flags);
+            if xml.is_null() {
+                return Err(Error::new())
+            }
+            return Ok(str::from_utf8(
+                CStr::from_ptr(xml).to_bytes()).unwrap())
+        }
+    }
+
+    pub fn create(&self, flags: DomainXMLFlags) -> Result<(), Error> {
+        unsafe {
+            if virDomainCreate(self.d, flags) == -1 {
+                return Err(Error::new());
+            }
+            return Ok(());
+        }
+    }
 
     pub fn destroy(&self) -> Result<(), Error> {
         unsafe {
@@ -136,6 +172,24 @@ impl Domain {
                 return Err(Error::new());
             }
             return Ok(ret == 1);
+        }
+    }
+
+    pub fn undefine(&self) -> Result<(), Error> {
+        unsafe {
+            if virDomainUndefine(self.d) == -1 {
+                return Err(Error::new());
+            }
+            return Ok(());
+        }
+    }
+
+    pub fn free(&self) -> Result<(), Error> {
+        unsafe {
+            if virDomainFree(self.d) == -1 {
+                return Err(Error::new());
+            }
+            return Ok(());
         }
     }
 
