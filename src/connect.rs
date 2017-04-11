@@ -21,10 +21,11 @@
 extern crate libc;
 
 use std::ffi::{CString, CStr};
-use std::{str, ptr, slice, mem};
+use std::{str, ptr, mem};
 
 use domain::Domain;
 use error::Error;
+use network::Network;
 
 #[allow(non_camel_case_types)]
 #[repr(C)]
@@ -288,15 +289,18 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
-    pub fn list_domains(&self) -> Result<&[u32], Error> {
+    pub fn list_domains(&self) -> Result<Vec<u32>, Error> {
         unsafe {
-            let ptr: *const libc::c_int = mem::uninitialized();
-            let size = virConnectListDomains(self.c, ptr, 512);
+            let ids: [libc::c_int; 512] = mem::uninitialized();
+            let size = virConnectListDomains(self.c, ids.as_ptr(), 512);
             if size == -1 {
                 return Err(Error::new())
             }
-            let array = slice::from_raw_parts(
-                ptr as *const u32, size as usize);
+
+            let mut array: Vec<u32> = Vec::new();
+            for x in 0..size as usize {
+                array.push(ids[x] as u32);
+            }
             return Ok(array)
         }
     }
@@ -321,15 +325,19 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
-    pub fn list_interfaces(&self) -> Result<&[&str], Error> {
+    pub fn list_interfaces(&self) -> Result<Vec<&str>, Error> {
         unsafe {
-            let ptr: [*const libc::c_char; 1024] = mem::uninitialized();
-            let size = virConnectListInterfaces(self.c, ptr.as_ptr(), 1024);
+            let names: [*const libc::c_char; 1024] = mem::uninitialized();
+            let size = virConnectListInterfaces(self.c, names.as_ptr(), 1024);
             if size == -1 {
                 return Err(Error::new())
             }
-            let array = slice::from_raw_parts(
-                ptr.as_ptr() as *const &str, size as usize);
+
+            let mut array: Vec<&str> = Vec::new();
+            for x in 0..size as usize {
+                array.push(str::from_utf8(
+                    CStr::from_ptr(names[x]).to_bytes()).unwrap());
+            }
             return Ok(array)
         }
     }
@@ -354,41 +362,53 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
-    pub fn list_networks(&self) -> Result<&[&str], Error> {
+    pub fn list_networks(&self) -> Result<Vec<&str>, Error> {
         unsafe {
-            let ptr: [*const libc::c_char; 1024] = mem::uninitialized();
-            let size = virConnectListNetworks(self.c, ptr.as_ptr(), 1024);
+            let names: [*const libc::c_char; 1024] = mem::uninitialized();
+            let size = virConnectListNetworks(self.c, names.as_ptr(), 1024);
             if size == -1 {
                 return Err(Error::new())
             }
-            let array = slice::from_raw_parts(
-                ptr.as_ptr() as *const &str, size as usize);
+
+            let mut array: Vec<&str> = Vec::new();
+            for x in 0..size as usize {
+                array.push(str::from_utf8(
+                    CStr::from_ptr(names[x]).to_bytes()).unwrap());
+            }
             return Ok(array)
         }
     }
 
-    pub fn list_nw_filters(&self) -> Result<&[&str], Error> {
+    pub fn list_nw_filters(&self) -> Result<Vec<&str>, Error> {
         unsafe {
-            let ptr: [*const libc::c_char; 1024] = mem::uninitialized();
-            let size = virConnectListNWFilters(self.c, ptr.as_ptr(), 1024);
+            let names: [*const libc::c_char; 1024] = mem::uninitialized();
+            let size = virConnectListNWFilters(self.c, names.as_ptr(), 1024);
             if size == -1 {
                 return Err(Error::new())
             }
-            let array = slice::from_raw_parts(
-                ptr.as_ptr() as *const &str, size as usize);
+
+            let mut array: Vec<&str> = Vec::new();
+            for x in 0..size as usize {
+                array.push(str::from_utf8(
+                    CStr::from_ptr(names[x]).to_bytes()).unwrap());
+            }
             return Ok(array)
         }
     }
 
-    pub fn list_secrets(&self) -> Result<&[&str], Error> {
+    pub fn list_secrets(&self) -> Result<Vec<&str>, Error> {
         unsafe {
-            let ptr: [*const libc::c_char; 1024] = mem::uninitialized();
-            let size = virConnectListSecrets(self.c, ptr.as_ptr(), 1024);
+            let names: [*const libc::c_char; 1024] = mem::uninitialized();
+            let size = virConnectListSecrets(self.c, names.as_ptr(), 1024);
             if size == -1 {
                 return Err(Error::new())
             }
-            let array = slice::from_raw_parts(
-                ptr.as_ptr() as *const &str, size as usize);
+
+            let mut array: Vec<&str> = Vec::new();
+            for x in 0..size as usize {
+                array.push(str::from_utf8(
+                    CStr::from_ptr(names[x]).to_bytes()).unwrap());
+            }
             return Ok(array)
         }
     }
@@ -413,15 +433,19 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
-    pub fn list_storage_pools(&self) -> Result<&[&str], Error> {
+    pub fn list_storage_pools(&self) -> Result<Vec<&str>, Error> {
         unsafe {
-            let ptr: [*const libc::c_char; 1024] = mem::uninitialized();
-            let size = virConnectListStoragePools(self.c, ptr.as_ptr(), 1024);
+            let names: [*const libc::c_char; 1024] = mem::uninitialized();
+            let size = virConnectListStoragePools(self.c, names.as_ptr(), 1024);
             if size == -1 {
                 return Err(Error::new())
             }
-            let array = slice::from_raw_parts(
-                ptr.as_ptr() as *const &str, size as usize);
+
+            let mut array: Vec<&str> = Vec::new();
+            for x in 0..size as usize {
+                array.push(str::from_utf8(
+                    CStr::from_ptr(names[x]).to_bytes()).unwrap());
+            }
             return Ok(array)
         }
     }
@@ -446,15 +470,19 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
-    pub fn list_defined_domains(&self) -> Result<&[&str], Error> {
+    pub fn list_defined_domains(&self) -> Result<Vec<&str>, Error> {
         unsafe {
-            let ptr: [*const libc::c_char; 1024] = mem::uninitialized();
-            let size = virConnectListDefinedDomains(self.c, ptr.as_ptr(), 1024);
+            let names: [*const libc::c_char; 1024] = mem::uninitialized();
+            let size = virConnectListDefinedDomains(self.c, names.as_ptr(), 1024);
             if size == -1 {
                 return Err(Error::new())
             }
-            let array = slice::from_raw_parts(
-                ptr.as_ptr() as *const &str, size as usize);
+
+            let mut array: Vec<&str> = Vec::new();
+            for x in 0..size as usize {
+                array.push(str::from_utf8(
+                    CStr::from_ptr(names[x]).to_bytes()).unwrap());
+            }
             return Ok(array)
         }
     }
@@ -479,15 +507,19 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
-    pub fn list_defined_interfaces(&self) -> Result<&[&str], Error> {
+    pub fn list_defined_interfaces(&self) -> Result<Vec<&str>, Error> {
         unsafe {
-            let ptr: [*const libc::c_char; 1024] = mem::uninitialized();
-            let size = virConnectListDefinedInterfaces(self.c, ptr.as_ptr(), 1024);
+            let names: [*const libc::c_char; 1024] = mem::uninitialized();
+            let size = virConnectListDefinedInterfaces(self.c, names.as_ptr(), 1024);
             if size == -1 {
                 return Err(Error::new())
             }
-            let array = slice::from_raw_parts(
-                ptr.as_ptr() as *const &str, size as usize);
+
+            let mut array: Vec<&str> = Vec::new();
+            for x in 0..size as usize {
+                array.push(str::from_utf8(
+                    CStr::from_ptr(names[x]).to_bytes()).unwrap());
+            }
             return Ok(array)
         }
     }
@@ -512,16 +544,20 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
-    pub fn list_defined_storage_pools(&self) -> Result<&[&str], Error> {
+    pub fn list_defined_storage_pools(&self) -> Result<Vec<&str>, Error> {
         unsafe {
-            let ptr: [*const libc::c_char; 1024] = mem::uninitialized();
+            let names: [*const libc::c_char; 1024] = mem::uninitialized();
             let size = virConnectListDefinedStoragePools(
-                self.c, ptr.as_ptr(), 1024);
+                self.c, names.as_ptr(), 1024);
             if size == -1 {
                 return Err(Error::new())
             }
-            let array = slice::from_raw_parts(
-                ptr.as_ptr() as *const &str, size as usize);
+
+            let mut array: Vec<&str> = Vec::new();
+            for x in 0..size as usize {
+                array.push(str::from_utf8(
+                    CStr::from_ptr(names[x]).to_bytes()).unwrap());
+            }
             return Ok(array)
         }
     }
@@ -546,15 +582,19 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
-    pub fn list_defined_networks(&self) -> Result<&[&str], Error> {
+    pub fn list_defined_networks(&self) -> Result<Vec<&str>, Error> {
         unsafe {
-            let ptr: [*const libc::c_char; 1024] = mem::uninitialized();
-            let size = virConnectListDefinedNetworks(self.c, ptr.as_ptr(), 1024);
+            let names: [*const libc::c_char; 1024] = mem::uninitialized();
+            let size = virConnectListDefinedNetworks(self.c, names.as_ptr(), 1024);
             if size == -1 {
                 return Err(Error::new())
             }
-            let array = slice::from_raw_parts(
-                ptr.as_ptr() as *const &str, size as usize);
+
+            let mut array: Vec<&str> = Vec::new();
+            for x in 0..size as usize {
+                array.push(str::from_utf8(
+                    CStr::from_ptr(names[x]).to_bytes()).unwrap());
+            }
             return Ok(array)
         }
     }
@@ -842,6 +882,15 @@ impl Connect {
     pub fn domain_lookup_by_name(&self, id: &str) -> Result<Domain, Error> {
         Domain::lookup_by_name(self, id)
     }
+
+    pub fn network_lookup_by_id(&self, id: u32) -> Result<Network, Error> {
+        Network::lookup_by_id(self, id)
+    }
+
+    pub fn network_lookup_by_name(&self, id: &str) -> Result<Network, Error> {
+        Network::lookup_by_name(self, id)
+    }
+
 }
 
 #[test]
@@ -867,7 +916,7 @@ fn exercices() {
 fn list_domains() {
     match Connect::new("test:///default") {
         Ok(conn) => {
-            let doms = conn.list_domains().unwrap_or(&[]);
+            let doms = conn.list_domains().unwrap_or(vec![]);
             assert_eq!(1, doms.len());
             let domid = doms[0];
             match conn.domain_lookup_by_id(domid) {
@@ -882,3 +931,24 @@ fn list_domains() {
             "failed with code {}, message: {}", e.code, e.message)
     }
 }
+
+#[test]
+fn list_networks() {
+    match Connect::new("test:///default") {
+        Ok(conn) => {
+            let nets = conn.list_networks().unwrap_or(vec![]);
+            assert_eq!(1, nets.len());
+            let netid = nets[0];
+            match conn.network_lookup_by_name(netid) {
+                Ok(network) => println!("A network name: {}",
+                                        network.get_name().unwrap_or("noname")),
+                Err(e) => panic!(
+                    "failed with code {}, message: {}", e.code, e.message)
+            }
+            conn.close();
+        },
+        Err(e) => panic!(
+            "failed with code {}, message: {}", e.code, e.message)
+    }
+}
+
