@@ -39,7 +39,8 @@ extern {
     fn virDomainLookupByID(c: virConnectPtr, id: libc::c_int) -> virDomainPtr;
     fn virDomainLookupByName(c: virConnectPtr, id: *const libc::c_char) -> virDomainPtr;
     fn virDomainLookupByUUIDString(c: virConnectPtr, uuid: *const libc::c_char) -> virDomainPtr;
-    fn virDomainCreate(d: virDomainPtr, flags: libc::c_uint) -> libc::c_int;    
+    fn virDomainCreate(d: virDomainPtr) -> libc::c_int;
+    fn virDomainCreateWithFlags(d: virDomainPtr, flags: libc::c_uint) -> libc::c_int;    
     fn virDomainDestroy(d: virDomainPtr) -> libc::c_int;
     fn virDomainUndefine(d: virDomainPtr) -> libc::c_int;
     fn virDomainFree(d: virDomainPtr) -> libc::c_int;
@@ -48,7 +49,11 @@ extern {
     fn virDomainIsActive(d: virDomainPtr) -> libc::c_int;
     fn virDomainIsUpdated(d: virDomainPtr) -> libc::c_int;
     fn virDomainGetName(d: virDomainPtr) -> *const libc::c_char;
+    fn virDomainGetUUIDString(d: virDomainPtr) -> *const libc::c_char;
     fn virDomainGetXMLDesc(d: virDomainPtr, flags: libc::c_uint) -> *const libc::c_char;
+    fn virDomainGetAutostart(d: virDomainPtr) -> libc::c_int;
+    fn virDomainSetAutostart(d: virDomainPtr, autostart: libc::c_uint) -> libc::c_int;
+    fn virDomainGetID(d: virDomainPtr) -> libc::c_int;
 }
 
 pub type DomainXMLFlags = self::libc::c_uint;
@@ -118,6 +123,27 @@ impl Domain {
         }
     }
 
+    pub fn get_uuid_string(&self) -> Result<&str, Error> {
+        unsafe {
+            let n = virDomainGetUUIDString(self.d);
+            if n.is_null() {
+                return Err(Error::new())
+            }
+            return Ok(str::from_utf8(
+                CStr::from_ptr(n).to_bytes()).unwrap())
+        }
+    }
+
+    pub fn get_id(&self) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainGetID(self.d);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
     pub fn get_xml_desc(&self, flags:DomainCreateFlags) -> Result<&str, Error> {
         unsafe {
             let xml = virDomainGetXMLDesc(self.d, flags);
@@ -129,9 +155,18 @@ impl Domain {
         }
     }
 
-    pub fn create(&self, flags: DomainXMLFlags) -> Result<(), Error> {
+    pub fn create(&self) -> Result<(), Error> {
         unsafe {
-            if virDomainCreate(self.d, flags) == -1 {
+            if virDomainCreate(self.d) == -1 {
+                return Err(Error::new());
+            }
+            return Ok(());
+        }
+    }
+
+    pub fn create_with_flags(&self, flags: DomainXMLFlags) -> Result<(), Error> {
+        unsafe {
+            if virDomainCreateWithFlags(self.d, flags) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -196,6 +231,26 @@ impl Domain {
     pub fn is_updated(&self) -> Result<bool, Error> {
         unsafe {
             let ret = virDomainIsUpdated(self.d);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret == 1);
+        }
+    }
+
+    pub fn get_autostart(&self) -> Result<bool, Error> {
+        unsafe {
+            let ret = virDomainGetAutostart(self.d);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret == 1);
+        }
+    }
+
+    pub fn set_autostart(&self, autostart: bool) -> Result<bool, Error> {
+        unsafe {
+            let ret = virDomainSetAutostart(self.d, autostart as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }

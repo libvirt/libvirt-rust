@@ -40,6 +40,7 @@ extern {
     fn virStoragePoolLookupByName(c: virConnectPtr, id: *const libc::c_char) -> virStoragePoolPtr;
     fn virStoragePoolLookupByUUIDString(c: virConnectPtr, uuid: *const libc::c_char) -> virStoragePoolPtr;
     fn virStoragePoolCreate(d: virStoragePoolPtr, flags: libc::c_uint) -> libc::c_int;
+    fn virStoragePoolRefresh(d: virStoragePoolPtr, flags: libc::c_uint) -> libc::c_int;
     fn virStoragePoolDestroy(d: virStoragePoolPtr) -> libc::c_int;
     fn virStoragePoolUndefine(d: virStoragePoolPtr) -> libc::c_int;
     fn virStoragePoolFree(d: virStoragePoolPtr) -> libc::c_int;
@@ -47,6 +48,7 @@ extern {
     fn virStoragePoolIsPersistent(d: virStoragePoolPtr) -> libc::c_int;
     fn virStoragePoolGetName(d: virStoragePoolPtr) -> *const libc::c_char;
     fn virStoragePoolGetXMLDesc(d: virStoragePoolPtr, flags: libc::c_uint) -> *const libc::c_char;
+    fn virStoragePoolGetUUIDString(d: virStoragePoolPtr) -> *const libc::c_char;
 }
 
 pub type StoragePoolXMLFlags = self::libc::c_uint;
@@ -105,6 +107,17 @@ impl StoragePool {
     pub fn get_name(&self) -> Result<&str, Error> {
         unsafe {
             let n = virStoragePoolGetName(self.d);
+            if n.is_null() {
+                return Err(Error::new())
+            }
+            return Ok(str::from_utf8(
+                CStr::from_ptr(n).to_bytes()).unwrap())
+        }
+    }
+    
+    pub fn get_uuid_string(&self) -> Result<&str, Error> {
+        unsafe {
+            let n = virStoragePoolGetUUIDString(self.d);
             if n.is_null() {
                 return Err(Error::new())
             }
@@ -177,6 +190,15 @@ impl StoragePool {
                 return Err(Error::new());
             }
             return Ok(ret == 1);
+        }
+    }
+
+    pub fn refresh(&self, flags: u32) -> Result<(), Error> {
+        unsafe {
+            if virStoragePoolRefresh(self.d, flags as libc::c_uint) == -1 {
+                return Err(Error::new());
+            }
+            return Ok(());
         }
     }
 }

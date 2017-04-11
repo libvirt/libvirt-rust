@@ -45,7 +45,9 @@ extern {
     fn virNetworkFree(d: virNetworkPtr) -> libc::c_int;
     fn virNetworkIsActive(d: virNetworkPtr) -> libc::c_int;
     fn virNetworkGetName(d: virNetworkPtr) -> *const libc::c_char;
+    fn virNetworkGetUUIDString(d: virNetworkPtr) -> *const libc::c_char;
     fn virNetworkGetXMLDesc(d: virNetworkPtr, flags: libc::c_uint) -> *const libc::c_char;
+    fn virNetworkGetBridgeName(d: virNetworkPtr) -> *const libc::c_char;
 }
 
 pub type NetworkXMLFlags = self::libc::c_uint;
@@ -104,6 +106,28 @@ impl Network {
         }
     }
 
+    pub fn get_uuid_string(&self) -> Result<&str, Error> {
+        unsafe {
+            let n = virNetworkGetUUIDString(self.d);
+            if n.is_null() {
+                return Err(Error::new())
+            }
+            return Ok(str::from_utf8(
+                CStr::from_ptr(n).to_bytes()).unwrap())
+        }
+    }
+
+    pub fn get_bridge_name(&self) -> Result<&str, Error> {
+        unsafe {
+            let n = virNetworkGetBridgeName(self.d);
+            if n.is_null() {
+                return Err(Error::new())
+            }
+            return Ok(str::from_utf8(
+                CStr::from_ptr(n).to_bytes()).unwrap())
+        }
+    }
+    
     pub fn get_xml_desc(&self, flags:NetworkXMLFlags) -> Result<&str, Error> {
         unsafe {
             let xml = virNetworkGetXMLDesc(self.d, flags);
