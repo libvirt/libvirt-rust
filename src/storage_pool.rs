@@ -39,7 +39,7 @@ extern {
     fn virStoragePoolLookupByID(c: virConnectPtr, id: libc::c_int) -> virStoragePoolPtr;
     fn virStoragePoolLookupByName(c: virConnectPtr, id: *const libc::c_char) -> virStoragePoolPtr;
     fn virStoragePoolLookupByUUIDString(c: virConnectPtr, uuid: *const libc::c_char) -> virStoragePoolPtr;
-    fn virStoragePoolCreate(d: virStoragePoolPtr, flags: libc::c_uint) -> libc::c_int;
+    fn virStoragePoolCreate(c: virConnectPtr, flags: libc::c_uint) -> virStoragePoolPtr;
     fn virStoragePoolRefresh(d: virStoragePoolPtr, flags: libc::c_uint) -> libc::c_int;
     fn virStoragePoolDestroy(d: virStoragePoolPtr) -> libc::c_int;
     fn virStoragePoolUndefine(d: virStoragePoolPtr) -> libc::c_int;
@@ -137,12 +137,13 @@ impl StoragePool {
         }
     }
 
-    pub fn create(&self, flags: StoragePoolCreateFlags) -> Result<(), Error> {
+    pub fn create(conn: &Connect, flags: StoragePoolCreateFlags) -> Result<StoragePool, Error> {
         unsafe {
-            if virStoragePoolCreate(self.d, flags) == -1 {
+            let ptr = virStoragePoolCreate(conn.as_ptr(), flags);
+            if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(());
+            return Ok(StoragePool{d: ptr});
         }
     }
 

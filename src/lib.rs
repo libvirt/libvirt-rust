@@ -25,5 +25,6 @@ pub mod connect;
 pub mod domain;
 pub mod error;
 pub mod network;
+pub mod nodedev;
 pub mod interface;
 pub mod storage_pool;

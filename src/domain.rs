@@ -39,8 +39,8 @@ extern {
     fn virDomainLookupByID(c: virConnectPtr, id: libc::c_int) -> virDomainPtr;
     fn virDomainLookupByName(c: virConnectPtr, id: *const libc::c_char) -> virDomainPtr;
     fn virDomainLookupByUUIDString(c: virConnectPtr, uuid: *const libc::c_char) -> virDomainPtr;
-    fn virDomainCreate(d: virDomainPtr) -> libc::c_int;
-    fn virDomainCreateWithFlags(d: virDomainPtr, flags: libc::c_uint) -> libc::c_int;    
+    fn virDomainCreate(c: virConnectPtr) -> virDomainPtr;
+    fn virDomainCreateWithFlags(c: virConnectPtr, flags: libc::c_uint) -> virDomainPtr;
     fn virDomainDestroy(d: virDomainPtr) -> libc::c_int;
     fn virDomainUndefine(d: virDomainPtr) -> libc::c_int;
     fn virDomainFree(d: virDomainPtr) -> libc::c_int;
@@ -155,21 +155,23 @@ impl Domain {
         }
     }
 
-    pub fn create(&self) -> Result<(), Error> {
+    pub fn create(conn: &Connect) -> Result<Domain, Error> {
         unsafe {
-            if virDomainCreate(self.d) == -1 {
+            let ptr = virDomainCreate(conn.as_ptr());
+            if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(());
+            return Ok(Domain{d: ptr});
         }
     }
 
-    pub fn create_with_flags(&self, flags: DomainXMLFlags) -> Result<(), Error> {
+    pub fn create_with_flags(conn: &Connect, flags: DomainXMLFlags) -> Result<Domain, Error> {
         unsafe {
-            if virDomainCreateWithFlags(self.d, flags) == -1 {
+            let ptr = virDomainCreateWithFlags(conn.as_ptr(), flags);
+            if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(());
+            return Ok(Domain{d: ptr});
         }
     }
 

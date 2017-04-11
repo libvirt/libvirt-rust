@@ -39,7 +39,7 @@ extern {
     fn virNetworkLookupByID(c: virConnectPtr, id: libc::c_int) -> virNetworkPtr;
     fn virNetworkLookupByName(c: virConnectPtr, id: *const libc::c_char) -> virNetworkPtr;
     fn virNetworkLookupByUUIDString(c: virConnectPtr, uuid: *const libc::c_char) -> virNetworkPtr;
-    fn virNetworkCreate(d: virNetworkPtr, flags: libc::c_uint) -> libc::c_int;
+    fn virNetworkCreate(c: virConnectPtr, flags: libc::c_uint) -> virNetworkPtr;
     fn virNetworkDestroy(d: virNetworkPtr) -> libc::c_int;
     fn virNetworkUndefine(d: virNetworkPtr) -> libc::c_int;
     fn virNetworkFree(d: virNetworkPtr) -> libc::c_int;
@@ -174,12 +174,13 @@ impl Network {
         }
     }
 
-    pub fn create(&self, flags: NetworkXMLFlags) -> Result<(), Error> {
+    pub fn create(conn: &Connect, flags: NetworkXMLFlags) -> Result<Network, Error> {
         unsafe {
-            if virNetworkCreate(self.d, flags) == -1 {
+            let ptr = virNetworkCreate(conn.as_ptr(), flags);
+            if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(());
+            return Ok(Network{d: ptr});
         }
     }
 

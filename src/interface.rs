@@ -40,7 +40,7 @@ extern {
                               id: libc::c_int) -> virInterfacePtr;
     fn virInterfaceLookupByName(c: virConnectPtr,id: *const libc::c_char) -> virInterfacePtr;
     fn virInterfaceLookupByUUIDString(c: virConnectPtr, uuid: *const libc::c_char) -> virInterfacePtr;
-    fn virInterfaceCreate(d: virInterfacePtr, flags: libc::c_uint) -> libc::c_int;
+    fn virInterfaceCreate(c: virConnectPtr, flags: libc::c_uint) -> virInterfacePtr;
     fn virInterfaceDestroy(d: virInterfacePtr) -> libc::c_int;
     fn virInterfaceUndefine(d: virInterfacePtr) -> libc::c_int;
     fn virInterfaceFree(d: virInterfacePtr) -> libc::c_int;
@@ -128,12 +128,13 @@ impl Interface {
         }
     }
 
-    pub fn create(&self, flags: InterfaceXMLFlags) -> Result<(), Error> {
+    pub fn create(conn: &Connect, flags: InterfaceXMLFlags) -> Result<Interface, Error> {
         unsafe {
-            if virInterfaceCreate(self.d, flags) == -1 {
+            let ptr = virInterfaceCreate(conn.as_ptr(), flags);
+            if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(());
+            return Ok(Interface{d: ptr});
         }
     }
 
