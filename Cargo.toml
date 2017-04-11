@@ -4,4 +4,4 @@ version = "0.1.0"
 authors = ["Sahid Orentino Ferdjaoui"]
 
 [dependencies]
-libc = "*"
+libc = "0.2"
