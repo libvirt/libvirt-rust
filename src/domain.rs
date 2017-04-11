@@ -129,21 +129,23 @@ impl Domain {
         }
     }
 
-    pub fn is_active(&self) -> Result<(), Error> {
+    pub fn is_active(&self) -> Result<bool, Error> {
         unsafe {
-            if virDomainIsActive(self.d) == -1 {
+            let ret = virDomainIsActive(self.d);
+            if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            return Ok(ret == 1);
         }
     }
 
-    pub fn is_updated(&self) -> Result<(), Error> {
+    pub fn is_updated(&self) -> Result<bool, Error> {
         unsafe {
-            if virDomainIsUpdated(self.d) == -1 {
+            let ret = virDomainIsUpdated(self.d);
+            if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            return Ok(ret == 1);
         }
     }
 }

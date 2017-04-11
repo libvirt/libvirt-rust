@@ -164,12 +164,13 @@ impl Interface {
         }
     }
 
-    pub fn is_active(&self) -> Result<(), Error> {
+    pub fn is_active(&self) -> Result<bool, Error> {
         unsafe {
-            if virInterfaceIsActive(self.d) == -1 {
+            let ret = virInterfaceIsActive(self.d);
+            if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            return Ok(ret == 1);
         }
     }
 }
