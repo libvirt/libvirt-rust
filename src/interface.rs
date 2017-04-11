@@ -36,14 +36,22 @@ pub type virInterfacePtr = *const virInterface;
 
 #[link(name = "virt")]
 extern {
-    fn virInterfaceLookupByID(c: virConnectPtr, id: libc::c_int) -> virInterfacePtr;
-    fn virInterfaceLookupByName(c: virConnectPtr, id: *const libc::c_char) -> virInterfacePtr;
+    fn virInterfaceLookupByID(c: virConnectPtr,
+                              id: libc::c_int) -> virInterfacePtr;
+    fn virInterfaceLookupByName(c: virConnectPtr,id: *const libc::c_char) -> virInterfacePtr;
     fn virInterfaceLookupByUUIDString(c: virConnectPtr, uuid: *const libc::c_char) -> virInterfacePtr;
+    fn virInterfaceCreate(d: virInterfacePtr, flags: libc::c_uint) -> libc::c_int;
     fn virInterfaceDestroy(d: virInterfacePtr) -> libc::c_int;
+    fn virInterfaceUndefine(d: virInterfacePtr) -> libc::c_int;
+    fn virInterfaceFree(d: virInterfacePtr) -> libc::c_int;
     fn virInterfaceIsActive(d: virInterfacePtr) -> libc::c_int;
     fn virInterfaceGetName(d: virInterfacePtr) -> *const libc::c_char;
+    fn virInterfaceGetMACString(d: virInterfacePtr) -> *const libc::c_char;
+    fn virInterfaceGetXMLDesc(d: virInterfacePtr, flags: libc::c_uint) -> *const libc::c_char;
 }
 
+pub type InterfaceXMLFlags = self::libc::c_uint;
+pub const VIR_INTERFACE_XML_INACTIVE:InterfaceXMLFlags = 1;
 
 pub struct Interface {
     pub d: virInterfacePtr
@@ -98,10 +106,58 @@ impl Interface {
         }
     }
 
+    pub fn get_mac_string(&self) -> Result<&str, Error> {
+        unsafe {
+            let mac = virInterfaceGetMACString(self.d);
+            if mac.is_null() {
+                return Err(Error::new())
+            }
+            return Ok(str::from_utf8(
+                CStr::from_ptr(mac).to_bytes()).unwrap())
+        }
+    }
+
+    pub fn get_xml_desc(&self, flags:InterfaceXMLFlags) -> Result<&str, Error> {
+        unsafe {
+            let xml = virInterfaceGetXMLDesc(self.d, flags);
+            if xml.is_null() {
+                return Err(Error::new())
+            }
+            return Ok(str::from_utf8(
+                CStr::from_ptr(xml).to_bytes()).unwrap())
+        }
+    }
+
+    pub fn create(&self, flags: InterfaceXMLFlags) -> Result<(), Error> {
+        unsafe {
+            if virInterfaceCreate(self.d, flags) == -1 {
+                return Err(Error::new());
+            }
+            return Ok(());
+        }
+    }
 
     pub fn destroy(&self) -> Result<(), Error> {
         unsafe {
             if virInterfaceDestroy(self.d) == -1 {
+                return Err(Error::new());
+            }
+            return Ok(());
+        }
+    }
+
+    pub fn undefine(&self) -> Result<(), Error> {
+        unsafe {
+            if virInterfaceUndefine(self.d) == -1 {
+                return Err(Error::new());
+            }
+            return Ok(());
+        }
+    }
+
+    pub fn free(&self) -> Result<(), Error> {
+        unsafe {
+            if virInterfaceFree(self.d) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
