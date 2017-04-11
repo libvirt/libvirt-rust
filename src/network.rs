@@ -48,10 +48,45 @@ extern {
     fn virNetworkGetUUIDString(d: virNetworkPtr) -> *const libc::c_char;
     fn virNetworkGetXMLDesc(d: virNetworkPtr, flags: libc::c_uint) -> *const libc::c_char;
     fn virNetworkGetBridgeName(d: virNetworkPtr) -> *const libc::c_char;
+    fn virNetworkGetAutostart(d: virNetworkPtr) -> libc::c_int;
+    fn virNetworkSetAutostart(d: virNetworkPtr, autostart: libc::c_uint) -> libc::c_int;
+    fn virNetworkUpdate(d: virNetworkPtr,
+                        cmd: libc::c_uint,
+                        section: libc::c_uint,
+                        index: libc::c_uint,
+                        xml: *const libc::c_char,
+                        flags: libc::c_uint) -> libc::c_int;
 }
 
 pub type NetworkXMLFlags = self::libc::c_uint;
 pub const VIR_NETWORK_XML_INACTIVE:NetworkXMLFlags = 1 << 0;
+
+pub type NetworkUpdateCommand = self::libc::c_uint;
+pub const VIR_NETWORK_UPDATE_COMMAND_NONE: NetworkUpdateCommand = 0;
+pub const VIR_NETWORK_UPDATE_COMMAND_MODIFY: NetworkUpdateCommand = 1;
+pub const VIR_NETWORK_UPDATE_COMMAND_DELETE: NetworkUpdateCommand = 2;
+pub const VIR_NETWORK_UPDATE_COMMAND_ADD_LAST:NetworkUpdateCommand = 3;
+pub const VIR_NETWORK_UPDATE_COMMAND_ADD_FIRST: NetworkUpdateCommand = 4;
+
+pub type NetworkUpdateSection = self::libc::c_uint;
+pub const VIR_NETWORK_SECTION_NONE: NetworkUpdateSection = 0;
+pub const VIR_NETWORK_SECTION_BRIDGE: NetworkUpdateSection = 1;
+pub const VIR_NETWORK_SECTION_DOMAIN: NetworkUpdateSection = 2;
+pub const VIR_NETWORK_SECTION_IP: NetworkUpdateSection = 3;
+pub const VIR_NETWORK_SECTION_IP_DHCP_HOST: NetworkUpdateSection = 4;
+pub const VIR_NETWORK_SECTION_IP_DHCP_RANGE: NetworkUpdateSection = 5;
+pub const VIR_NETWORK_SECTION_FORWARD: NetworkUpdateSection = 6;
+pub const VIR_NETWORK_SECTION_FORWARD_INTERFACE: NetworkUpdateSection = 7;
+pub const VIR_NETWORK_SECTION_FORWARD_PF: NetworkUpdateSection = 8;
+pub const VIR_NETWORK_SECTION_PORTGROUP: NetworkUpdateSection = 9;
+pub const VIR_NETWORK_SECTION_DNS_HOST: NetworkUpdateSection = 10;
+pub const VIR_NETWORK_SECTION_DNS_TXT: NetworkUpdateSection = 11;
+pub const VIR_NETWORK_SECTION_DNS_SRV: NetworkUpdateSection = 12;
+
+pub type NetworkUpdateFlags = self::libc::c_uint;
+pub const VIR_NETWORK_UPDATE_AFFECT_CURRENT: NetworkUpdateFlags = 0;
+pub const VIR_NETWORK_UPDATE_AFFECT_LIVE: NetworkUpdateFlags = 1 << 0;
+pub const VIR_NETWORK_UPDATE_AFFECT_CONFIG: NetworkUpdateFlags = 1 << 1;
 
 pub struct Network {
     pub d: virNetworkPtr
@@ -184,4 +219,46 @@ impl Network {
             return Ok(ret == 1);
         }
     }
+
+    pub fn get_autostart(&self) -> Result<bool, Error> {
+        unsafe {
+            let ret = virNetworkGetAutostart(self.d);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret == 1);
+        }
+    }
+
+    pub fn set_autostart(&self, autostart: bool) -> Result<bool, Error> {
+        unsafe {
+            let ret = virNetworkSetAutostart(self.d, autostart as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret == 1);
+        }
+    }
+
+    pub fn update(&self,
+                  cmd: NetworkUpdateCommand,
+                  section: NetworkUpdateSection,
+                  index: i32,
+                  xml: &str,
+                  flags: NetworkUpdateFlags) -> Result<(), Error> {
+        unsafe {
+            let ret = virNetworkUpdate(
+                self.d,
+                cmd,
+                section,
+                index as libc::c_uint,
+                CString::new(xml).unwrap().as_ptr(),
+                flags);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(());
+        }
+    }
+
 }
