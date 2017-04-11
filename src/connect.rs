@@ -26,6 +26,7 @@ use std::{str, ptr, mem};
 use domain::Domain;
 use error::Error;
 use network::Network;
+use nodedev::NodeDevice;
 use interface::Interface;
 use storage_pool::StoragePool;
 
@@ -957,6 +958,10 @@ impl Connect {
     pub fn storage_pool_lookup_by_name(&self, id: &str) -> Result<StoragePool, Error> {
         StoragePool::lookup_by_name(self, id)
     }
+
+    pub fn nodedev_lookup_by_name(&self, id: &str) -> Result<NodeDevice, Error> {
+        NodeDevice::lookup_by_name(self, id)
+    }
 }
 
 #[test]
@@ -1057,4 +1062,3 @@ fn list_storage_pool() {
             "failed with code {}, message: {}", e.code, e.message)
     }
 }
-
