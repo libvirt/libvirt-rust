@@ -39,8 +39,10 @@ extern {
     fn virInterfaceLookupByID(c: virConnectPtr,
                               id: libc::c_int) -> virInterfacePtr;
     fn virInterfaceLookupByName(c: virConnectPtr,id: *const libc::c_char) -> virInterfacePtr;
+    fn virInterfaceLookupByMACString(c: virConnectPtr,id: *const libc::c_char) -> virInterfacePtr;
     fn virInterfaceLookupByUUIDString(c: virConnectPtr, uuid: *const libc::c_char) -> virInterfacePtr;
-    fn virInterfaceCreate(c: virConnectPtr, flags: libc::c_uint) -> virInterfacePtr;
+    fn virInterfaceDefineXML(c: virConnectPtr, xml: *const libc::c_char, flags: libc::c_uint) -> virInterfacePtr;
+    fn virInterfaceCreate(d: virInterfacePtr, flags: libc::c_uint) -> libc::c_int;
     fn virInterfaceDestroy(d: virInterfacePtr) -> libc::c_int;
     fn virInterfaceUndefine(d: virInterfacePtr) -> libc::c_int;
     fn virInterfaceFree(d: virInterfacePtr) -> libc::c_int;
@@ -76,6 +78,29 @@ impl Interface {
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<Interface, Error> {
         unsafe {
             let ptr = virInterfaceLookupByName(
+                conn.as_ptr(), CString::new(id).unwrap().as_ptr());
+            if ptr.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(Interface{d: ptr});
+        }
+    }
+
+    pub fn new(conn: &Connect, xml: &str, flags: u32) -> Result<Interface, Error> {
+        unsafe {
+            let ptr = virInterfaceDefineXML(
+                conn.as_ptr(), CString::new(xml).unwrap().as_ptr(),
+                flags as libc::c_uint);
+            if ptr.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(Interface{d: ptr});
+        }
+    }
+
+    pub fn lookup_by_mac_string(conn: &Connect, id: &str) -> Result<Interface, Error> {
+        unsafe {
+            let ptr = virInterfaceLookupByMACString(
                 conn.as_ptr(), CString::new(id).unwrap().as_ptr());
             if ptr.is_null() {
                 return Err(Error::new());
@@ -125,13 +150,12 @@ impl Interface {
         }
     }
 
-    pub fn create(conn: &Connect, flags: InterfaceXMLFlags) -> Result<Interface, Error> {
+    pub fn create(&self, flags: InterfaceXMLFlags) -> Result<(), Error> {
         unsafe {
-            let ptr = virInterfaceCreate(conn.as_ptr(), flags);
-            if ptr.is_null() {
+            if virInterfaceCreate(self.d, flags) == -1 {
                 return Err(Error::new());
             }
-            return Ok(Interface{d: ptr});
+            return Ok(());
         }
     }
 

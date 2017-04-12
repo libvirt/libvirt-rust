@@ -986,26 +986,6 @@ fn list_domains() {
 }
 
 #[test]
-fn list_networks() {
-    match Connect::new("test:///default") {
-        Ok(conn) => {
-            let nets = conn.list_networks().unwrap_or(vec![]);
-            assert_eq!(1, nets.len());
-            let netid = nets[0];
-            match conn.network_lookup_by_name(netid) {
-                Ok(network) => println!("A network name: {}",
-                                        network.get_name().unwrap_or("noname".to_string())),
-                Err(e) => panic!(
-                    "failed with code {}, message: {}", e.code, e.message)
-            }
-            conn.close();
-        },
-        Err(e) => panic!(
-            "failed with code {}, message: {}", e.code, e.message)
-    }
-}
-
-#[test]
 fn list_interface() {
     match Connect::new("test:///default") {
         Ok(conn) => {

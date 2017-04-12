@@ -21,7 +21,7 @@
 extern crate libc;
 
 use std::ffi::{CString, CStr};
-use std::str;
+use std::{str};
 
 use connect::{Connect, virConnectPtr};
 use error::Error;
@@ -80,25 +80,23 @@ impl NodeDevice {
         }
     }
 
-    pub fn get_name(&self) -> Result<&str, Error> {
+    pub fn get_name(&self) -> Result<String, Error> {
         unsafe {
             let n = virNodeDeviceGetName(self.d);
             if n.is_null() {
                 return Err(Error::new())
             }
-            return Ok(str::from_utf8(
-                CStr::from_ptr(n).to_bytes()).unwrap())
+            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned())
         }
     }
 
-    pub fn get_xml_desc(&self, flags: u32) -> Result<&str, Error> {
+    pub fn get_xml_desc(&self, flags: u32) -> Result<String, Error> {
         unsafe {
             let xml = virNodeDeviceGetXMLDesc(self.d, flags as libc::c_uint);
             if xml.is_null() {
                 return Err(Error::new())
             }
-            return Ok(str::from_utf8(
-                CStr::from_ptr(xml).to_bytes()).unwrap())
+            return Ok(CStr::from_ptr(xml).to_string_lossy().into_owned())
         }
     }
 
