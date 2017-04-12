@@ -27,6 +27,7 @@ use domain::Domain;
 use error::Error;
 use network::Network;
 use nodedev::NodeDevice;
+use nwfilter::{NWFilter, virNWFilterPtr};
 use interface::Interface;
 use storage_pool::StoragePool;
 use secret::{Secret, virSecretPtr};
@@ -114,6 +115,9 @@ extern {
     fn virConnectListAllSecrets(c: virConnectPtr,
                                 secrets: *const virSecretPtr,
                                 flags: libc::c_uint) -> libc::c_int;
+    fn virConnectListAllNWFilters(c: virConnectPtr,
+                                 nwfilters: *const virNWFilterPtr,
+                                 flags: libc::c_uint) -> libc::c_int;
     fn virConnectListDefinedInterfaces(c: virConnectPtr,
                                        names: *const *const libc::c_char,
                                        maxifaces: libc::c_int) -> libc::c_int;
@@ -631,6 +635,23 @@ impl Connect {
             let mut array: Vec<Secret> = Vec::new();
             for x in 0..size as usize {
                 array.push(Secret{d: secrets[x]});
+            }
+            return Ok(array)
+        }
+    }
+
+    pub fn list_all_nw_filters(&self, flags: u32) -> Result<Vec<NWFilter>, Error> {
+        unsafe {
+            let nwf: [virNWFilterPtr; 256] = mem::uninitialized();
+            let size = virConnectListAllNWFilters(
+                self.c, nwf.as_ptr(), flags as libc::c_uint);
+            if size == -1 {
+                return Err(Error::new())
+            }
+
+            let mut array: Vec<NWFilter> = Vec::new();
+            for x in 0..size as usize {
+                array.push(NWFilter{d: nwf[x]});
             }
             return Ok(array)
         }
