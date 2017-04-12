@@ -95,36 +95,33 @@ impl Interface {
         }
     }
 
-    pub fn get_name(&self) -> Result<&str, Error> {
+    pub fn get_name(&self) -> Result<String, Error> {
         unsafe {
             let n = virInterfaceGetName(self.d);
             if n.is_null() {
                 return Err(Error::new())
             }
-            return Ok(str::from_utf8(
-                CStr::from_ptr(n).to_bytes()).unwrap())
+            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned())
         }
     }
 
-    pub fn get_mac_string(&self) -> Result<&str, Error> {
+    pub fn get_mac_string(&self) -> Result<String, Error> {
         unsafe {
             let mac = virInterfaceGetMACString(self.d);
             if mac.is_null() {
                 return Err(Error::new())
             }
-            return Ok(str::from_utf8(
-                CStr::from_ptr(mac).to_bytes()).unwrap())
+            return Ok(CStr::from_ptr(mac).to_string_lossy().into_owned())
         }
     }
 
-    pub fn get_xml_desc(&self, flags:InterfaceXMLFlags) -> Result<&str, Error> {
+    pub fn get_xml_desc(&self, flags:InterfaceXMLFlags) -> Result<String, Error> {
         unsafe {
             let xml = virInterfaceGetXMLDesc(self.d, flags);
             if xml.is_null() {
                 return Err(Error::new())
             }
-            return Ok(str::from_utf8(
-                CStr::from_ptr(xml).to_bytes()).unwrap())
+            return Ok(CStr::from_ptr(xml).to_string_lossy().into_owned())
         }
     }
 

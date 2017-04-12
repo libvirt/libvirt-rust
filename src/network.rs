@@ -21,7 +21,7 @@
 extern crate libc;
 
 use std::ffi::{CString, CStr};
-use std::str;
+use std::{str, mem};
 
 use connect::{Connect, virConnectPtr};
 use error::Error;
@@ -45,7 +45,7 @@ extern {
     fn virNetworkFree(d: virNetworkPtr) -> libc::c_int;
     fn virNetworkIsActive(d: virNetworkPtr) -> libc::c_int;
     fn virNetworkGetName(d: virNetworkPtr) -> *const libc::c_char;
-    fn virNetworkGetUUIDString(d: virNetworkPtr) -> *const libc::c_char;
+    fn virNetworkGetUUIDString(d: virNetworkPtr, uuid: *const libc::c_char) -> libc::c_int;
     fn virNetworkGetXMLDesc(d: virNetworkPtr, flags: libc::c_uint) -> *const libc::c_char;
     fn virNetworkGetBridgeName(d: virNetworkPtr) -> *const libc::c_char;
     fn virNetworkGetAutostart(d: virNetworkPtr) -> libc::c_int;
@@ -130,47 +130,45 @@ impl Network {
         }
     }
 
-    pub fn get_name(&self) -> Result<&str, Error> {
+    pub fn get_name(&self) -> Result<String, Error> {
         unsafe {
             let n = virNetworkGetName(self.d);
             if n.is_null() {
                 return Err(Error::new())
             }
-            return Ok(str::from_utf8(
-                CStr::from_ptr(n).to_bytes()).unwrap())
+            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned())
         }
     }
 
-    pub fn get_uuid_string(&self) -> Result<&str, Error> {
+    pub fn get_uuid_string(&self) -> Result<String, Error> {
         unsafe {
-            let n = virNetworkGetUUIDString(self.d);
-            if n.is_null() {
+            let uuid: [libc::c_char; 37] = mem::uninitialized();
+            if virNetworkGetUUIDString(self.d, uuid.as_ptr()) == -1 {
                 return Err(Error::new())
             }
-            return Ok(str::from_utf8(
-                CStr::from_ptr(n).to_bytes()).unwrap())
+            return Ok(CStr::from_ptr(
+                uuid.as_ptr()).to_string_lossy().into_owned())
         }
     }
 
-    pub fn get_bridge_name(&self) -> Result<&str, Error> {
+
+    pub fn get_bridge_name(&self) -> Result<String, Error> {
         unsafe {
             let n = virNetworkGetBridgeName(self.d);
             if n.is_null() {
                 return Err(Error::new())
             }
-            return Ok(str::from_utf8(
-                CStr::from_ptr(n).to_bytes()).unwrap())
+            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned())
         }
     }
     
-    pub fn get_xml_desc(&self, flags:NetworkXMLFlags) -> Result<&str, Error> {
+    pub fn get_xml_desc(&self, flags:NetworkXMLFlags) -> Result<String, Error> {
         unsafe {
             let xml = virNetworkGetXMLDesc(self.d, flags);
             if xml.is_null() {
                 return Err(Error::new())
             }
-            return Ok(str::from_utf8(
-                CStr::from_ptr(xml).to_bytes()).unwrap())
+            return Ok(CStr::from_ptr(xml).to_string_lossy().into_owned())
         }
     }
 

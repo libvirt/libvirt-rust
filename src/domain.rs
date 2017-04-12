@@ -21,7 +21,7 @@
 extern crate libc;
 
 use std::ffi::{CString, CStr};
-use std::str;
+use std::{str, mem};
 
 use connect::{Connect, virConnectPtr};
 use error::Error;
@@ -49,7 +49,7 @@ extern {
     fn virDomainIsActive(d: virDomainPtr) -> libc::c_int;
     fn virDomainIsUpdated(d: virDomainPtr) -> libc::c_int;
     fn virDomainGetName(d: virDomainPtr) -> *const libc::c_char;
-    fn virDomainGetUUIDString(d: virDomainPtr) -> *const libc::c_char;
+    fn virDomainGetUUIDString(d: virDomainPtr, uuid: *const libc::c_char) -> libc::c_int;
     fn virDomainGetXMLDesc(d: virDomainPtr, flags: libc::c_uint) -> *const libc::c_char;
     fn virDomainGetAutostart(d: virDomainPtr) -> libc::c_int;
     fn virDomainSetAutostart(d: virDomainPtr, autostart: libc::c_uint) -> libc::c_int;
@@ -112,25 +112,24 @@ impl Domain {
         }
     }
 
-    pub fn get_name(&self) -> Result<&str, Error> {
+    pub fn get_name(&self) -> Result<String, Error> {
         unsafe {
             let n = virDomainGetName(self.d);
             if n.is_null() {
                 return Err(Error::new())
             }
-            return Ok(str::from_utf8(
-                CStr::from_ptr(n).to_bytes()).unwrap())
+            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned())
         }
     }
 
-    pub fn get_uuid_string(&self) -> Result<&str, Error> {
+    pub fn get_uuid_string(&self) -> Result<String, Error> {
         unsafe {
-            let n = virDomainGetUUIDString(self.d);
-            if n.is_null() {
+            let uuid: [libc::c_char; 37] = mem::uninitialized();
+            if virDomainGetUUIDString(self.d, uuid.as_ptr()) == -1 {
                 return Err(Error::new())
             }
-            return Ok(str::from_utf8(
-                CStr::from_ptr(n).to_bytes()).unwrap())
+            return Ok(CStr::from_ptr(
+                uuid.as_ptr()).to_string_lossy().into_owned())
         }
     }
 
@@ -144,14 +143,13 @@ impl Domain {
         }
     }
 
-    pub fn get_xml_desc(&self, flags:DomainCreateFlags) -> Result<&str, Error> {
+    pub fn get_xml_desc(&self, flags:DomainCreateFlags) -> Result<String, Error> {
         unsafe {
             let xml = virDomainGetXMLDesc(self.d, flags);
             if xml.is_null() {
                 return Err(Error::new())
             }
-            return Ok(str::from_utf8(
-                CStr::from_ptr(xml).to_bytes()).unwrap())
+            return Ok(CStr::from_ptr(xml).to_string_lossy().into_owned())
         }
     }
 

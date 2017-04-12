@@ -964,24 +964,6 @@ impl Connect {
     }
 }
 
-#[test]
-fn exercices() {
-    match Connect::new("test:///default") {
-        Ok(conn) => {
-            println!("hostname={}", conn.get_hostname().unwrap_or("unknow"));
-            println!("is alive={}", conn.is_alive().unwrap_or(false)); // default false 
-            println!("is secure={}", conn.is_secure().unwrap_or(false)); // default false
-            println!("is encrypted={}", conn.is_enscrypted().unwrap_or(true)); // default true
-            println!("version={}", Connect::get_version().unwrap_or(0));
-            println!("hyp version={}", conn.get_hyp_version().unwrap_or(0));
-            println!("lib version={}", conn.get_lib_version().unwrap_or(0));
-            println!("type={}", conn.get_type().unwrap_or("unknow"));
-            conn.close();
-        },
-        Err(e) => panic!(
-            "failed with code {}, message: {}", e.code, e.message)
-    }
-}
 
 #[test]
 fn list_domains() {
@@ -992,7 +974,7 @@ fn list_domains() {
             let domid = doms[0];
             match conn.domain_lookup_by_id(domid) {
                 Ok(domain) => println!("A domain name: {}",
-                                       domain.get_name().unwrap_or("noname")),
+                                       domain.get_name().unwrap_or("noname".to_string())),
                 Err(e) => panic!(
                     "failed with code {}, message: {}", e.code, e.message)
             }
@@ -1012,7 +994,7 @@ fn list_networks() {
             let netid = nets[0];
             match conn.network_lookup_by_name(netid) {
                 Ok(network) => println!("A network name: {}",
-                                        network.get_name().unwrap_or("noname")),
+                                        network.get_name().unwrap_or("noname".to_string())),
                 Err(e) => panic!(
                     "failed with code {}, message: {}", e.code, e.message)
             }
@@ -1032,7 +1014,7 @@ fn list_interface() {
             let intid = ints[0];
             match conn.interface_lookup_by_name(intid) {
                 Ok(interface) => println!("An interface name: {}",
-                                        interface.get_name().unwrap_or("noname")),
+                                        interface.get_name().unwrap_or("noname".to_string())),
                 Err(e) => panic!(
                     "failed with code {}, message: {}", e.code, e.message)
             }
@@ -1052,7 +1034,7 @@ fn list_storage_pool() {
             let intid = ints[0];
             match conn.storage_pool_lookup_by_name(intid) {
                 Ok(storage_pool) => println!("A storage pool name: {}",
-                                        storage_pool.get_name().unwrap_or("noname")),
+                                        storage_pool.get_name().unwrap_or("noname".to_string())),
                 Err(e) => panic!(
                     "failed with code {}, message: {}", e.code, e.message)
             }
