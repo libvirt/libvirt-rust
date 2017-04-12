@@ -56,11 +56,13 @@ extern {
     fn virDomainGetAutostart(d: virDomainPtr) -> libc::c_int;
     fn virDomainSetAutostart(d: virDomainPtr, autostart: libc::c_uint) -> libc::c_int;
     fn virDomainGetID(d: virDomainPtr) -> libc::c_int;
-
     fn virDomainSetMaxMemory(d: virDomainPtr, memory: libc::c_ulong) -> libc::c_int;
     fn virDomainSetMemory(d: virDomainPtr, memory: libc::c_ulong) -> libc::c_int;
     fn virDomainSetMemoryFlags(d: virDomainPtr, memory: libc::c_ulong, flags: libc::c_uint) -> libc::c_int;
     fn virDomainSetMemoryStatsPeriod(d: virDomainPtr, period: libc::c_int, flags: libc::c_uint) -> libc::c_int;
+
+    fn virDomainSetVcpus(d: virDomainPtr, vcpus: libc::c_uint) -> libc::c_int;
+    fn virDomainSetVcpusFlags(d: virDomainPtr, vcpus: libc::c_uint, flags: libc::c_uint) -> libc::c_int;
 }
 
 pub type DomainXMLFlags = self::libc::c_uint;
@@ -88,6 +90,13 @@ pub const VIR_DOMAIN_MEM_LIVE: DomainMemoryModFlags = VIR_DOMAIN_AFFECT_LIVE;
 pub const VIR_DOMAIN_MEM_CONFIG: DomainMemoryModFlags = VIR_DOMAIN_AFFECT_CONFIG;
 pub const VIR_DOMAIN_MEM_MAXIMUM: DomainMemoryModFlags = 1 << 2;
 
+pub type DomainVcpuFlags = self::libc::c_uint;
+pub const VIR_DOMAIN_VCPU_CURRENT: DomainVcpuFlags = VIR_DOMAIN_AFFECT_CURRENT;
+pub const VIR_DOMAIN_VCPU_LIVE: DomainVcpuFlags = VIR_DOMAIN_AFFECT_LIVE;
+pub const VIR_DOMAIN_VCPU_CONFIG: DomainVcpuFlags = VIR_DOMAIN_AFFECT_CONFIG;
+pub const VIR_DOMAIN_VCPU_MAXIMUM: DomainVcpuFlags = 1 << 2;
+pub const VIR_DOMAIN_VCPU_GUEST: DomainVcpuFlags = 1 << 3;
+pub const VIR_DOMAIN_VCPU_HOTPLUGGABLE: DomainVcpuFlags = 1 << 4;
 
 pub struct Domain {
     pub d: virDomainPtr
@@ -334,6 +343,29 @@ impl Domain {
             let ret = virDomainSetMemoryStatsPeriod(self.d,
                                                     period as libc::c_int,
                                                     flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret == 1);
+        }
+    }
+
+    pub fn set_vcpus(&self, vcpus: u32) -> Result<bool, Error> {
+        unsafe {
+            let ret = virDomainSetVcpus(self.d, vcpus as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret == 1);
+        }
+    }
+
+    pub fn set_vcpus_with_flags(&self, vcpus: u32,
+                                flags: DomainVcpuFlags) -> Result<bool, Error> {
+        unsafe {
+            let ret = virDomainSetVcpusFlags(self.d,
+                                             vcpus as libc::c_uint,
+                                             flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
