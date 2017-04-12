@@ -40,7 +40,9 @@ extern {
     fn virDomainLookupByName(c: virConnectPtr, id: *const libc::c_char) -> virDomainPtr;
     fn virDomainLookupByUUIDString(c: virConnectPtr, uuid: *const libc::c_char) -> virDomainPtr;
     fn virDomainCreate(c: virConnectPtr) -> virDomainPtr;
-    fn virDomainCreateWithFlags(c: virConnectPtr, flags: libc::c_uint) -> virDomainPtr;
+    fn virDomainCreateXML(c: virConnectPtr, xml: *const libc::c_char, flags: libc::c_uint) -> virDomainPtr;
+    fn virDomainDefineXML(c: virConnectPtr, xml: *const libc::c_char) -> virDomainPtr;
+    fn virDomainDefineXMLFlags(c: virConnectPtr, xml: *const libc::c_char, flags: libc::c_uint) -> virDomainPtr;
     fn virDomainDestroy(d: virDomainPtr) -> libc::c_int;
     fn virDomainUndefine(d: virDomainPtr) -> libc::c_int;
     fn virDomainFree(d: virDomainPtr) -> libc::c_int;
@@ -60,7 +62,6 @@ extern {
     fn virDomainSetMemory(d: virDomainPtr, memory: libc::c_ulong) -> libc::c_int;
     fn virDomainSetMemoryFlags(d: virDomainPtr, memory: libc::c_ulong, flags: libc::c_uint) -> libc::c_int;
     fn virDomainSetMemoryStatsPeriod(d: virDomainPtr, period: libc::c_int, flags: libc::c_uint) -> libc::c_int;
-
     fn virDomainSetVcpus(d: virDomainPtr, vcpus: libc::c_uint) -> libc::c_int;
     fn virDomainSetVcpusFlags(d: virDomainPtr, vcpus: libc::c_uint, flags: libc::c_uint) -> libc::c_int;
 }
@@ -97,6 +98,9 @@ pub const VIR_DOMAIN_VCPU_CONFIG: DomainVcpuFlags = VIR_DOMAIN_AFFECT_CONFIG;
 pub const VIR_DOMAIN_VCPU_MAXIMUM: DomainVcpuFlags = 1 << 2;
 pub const VIR_DOMAIN_VCPU_GUEST: DomainVcpuFlags = 1 << 3;
 pub const VIR_DOMAIN_VCPU_HOTPLUGGABLE: DomainVcpuFlags = 1 << 4;
+
+pub type DomainDefineFlags = self::libc::c_uint;
+pub const VIR_DOMAIN_DEFINE_VALIDATE: DomainDefineFlags = 1 << 0;
 
 pub struct Domain {
     pub d: virDomainPtr
@@ -191,9 +195,35 @@ impl Domain {
         }
     }
 
-    pub fn create_with_flags(conn: &Connect, flags: DomainXMLFlags) -> Result<Domain, Error> {
+    pub fn create_xml(conn: &Connect, xml: &str, flags: DomainCreateFlags) -> Result<Domain, Error> {
         unsafe {
-            let ptr = virDomainCreateWithFlags(conn.as_ptr(), flags);
+            let ptr = virDomainCreateXML(
+                conn.as_ptr(),  CString::new(xml).unwrap().as_ptr(),
+                flags as libc::c_uint);
+            if ptr.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(Domain{d: ptr});
+        }
+    }
+
+
+    pub fn define_xml(conn: &Connect, xml: &str) -> Result<Domain, Error> {
+        unsafe {
+            let ptr = virDomainDefineXML(
+                conn.as_ptr(),  CString::new(xml).unwrap().as_ptr());
+            if ptr.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(Domain{d: ptr});
+        }
+    }
+
+    pub fn define_xml_with_flags(conn: &Connect, xml: &str,
+                      flags: DomainDefineFlags) -> Result<Domain, Error> {
+        unsafe {
+            let ptr = virDomainDefineXMLFlags(
+                conn.as_ptr(), CString::new(xml).unwrap().as_ptr(), flags as libc::c_uint);
             if ptr.is_null() {
                 return Err(Error::new());
             }

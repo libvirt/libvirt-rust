@@ -86,7 +86,7 @@ impl Interface {
         }
     }
 
-    pub fn new(conn: &Connect, xml: &str, flags: u32) -> Result<Interface, Error> {
+    pub fn define_xml(conn: &Connect, xml: &str, flags: u32) -> Result<Interface, Error> {
         unsafe {
             let ptr = virInterfaceDefineXML(
                 conn.as_ptr(), CString::new(xml).unwrap().as_ptr(),

@@ -66,7 +66,7 @@ fn defining() {
   </protocol>
   <mac address='a1:bb:cc:dd:ee:ff'/>
 </interface>";
-            match Interface::new(&conn, xml, 0) {
+            match Interface::define_xml(&conn, xml, 0) {
                 Ok(interface) => {
                     assert_eq!(false, interface.is_active().unwrap_or(false));
                     interface.create(0).unwrap_or(());
