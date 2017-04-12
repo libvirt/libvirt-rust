@@ -935,12 +935,20 @@ impl Connect {
         Domain::lookup_by_name(self, id)
     }
 
+    pub fn domain_lookup_by_uuid_string(&self, id: &str) -> Result<Domain, Error> {
+        Domain::lookup_by_uuid_string(self, id)
+    }
+
     pub fn network_lookup_by_id(&self, id: u32) -> Result<Network, Error> {
         Network::lookup_by_id(self, id)
     }
 
     pub fn network_lookup_by_name(&self, id: &str) -> Result<Network, Error> {
         Network::lookup_by_name(self, id)
+    }
+
+    pub fn network_lookup_by_uuid_string(&self, id: &str) -> Result<Network, Error> {
+        Network::lookup_by_uuid_string(self, id)
     }
 
     pub fn interface_lookup_by_id(&self, id: u32) -> Result<Interface, Error> {
@@ -951,12 +959,24 @@ impl Connect {
         Interface::lookup_by_name(self, id)
     }
 
+    pub fn interface_lookup_by_uuid_string(&self, id: &str) -> Result<Interface, Error> {
+        Interface::lookup_by_uuid_string(self, id)
+    }
+
+    pub fn interface_lookup_by_mac_string(&self, id: &str) -> Result<Interface, Error> {
+        Interface::lookup_by_mac_string(self, id)
+    }
+
     pub fn storage_pool_lookup_by_id(&self, id: u32) -> Result<StoragePool, Error> {
         StoragePool::lookup_by_id(self, id)
     }
 
     pub fn storage_pool_lookup_by_name(&self, id: &str) -> Result<StoragePool, Error> {
         StoragePool::lookup_by_name(self, id)
+    }
+
+    pub fn storage_pool_lookup_by_uuid_string(&self, id: &str) -> Result<StoragePool, Error> {
+        StoragePool::lookup_by_uuid_string(self, id)
     }
 
     pub fn nodedev_lookup_by_name(&self, id: &str) -> Result<NodeDevice, Error> {
