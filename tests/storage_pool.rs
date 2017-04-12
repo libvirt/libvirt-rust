@@ -23,7 +23,7 @@ use virt::connect::Connect;
 
 #[test]
 fn exercices() {
-    match Connect::new("test:///default") {
+    match Connect::open("test:///default") {
         Ok(conn) => {
             let sp = conn.list_storage_pools().unwrap_or(vec![]);
             match conn.storage_pool_lookup_by_name(sp[0]) {

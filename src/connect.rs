@@ -162,7 +162,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::new("test:///default") {
+    /// match Connect::open("test:///default") {
     ///   Ok(conn) => {
     ///       conn.close();
     ///       return
@@ -171,7 +171,7 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     /// }
     /// ```
-    pub fn new(uri: &str) -> Result<Connect, Error> {
+    pub fn open(uri: &str) -> Result<Connect, Error> {
         unsafe {
             let c = virConnectOpen(CString::new(uri).unwrap().as_ptr());
             if c.is_null() {
@@ -195,7 +195,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::new_read_only("test:///default") {
+    /// match Connect::open_read_only("test:///default") {
     ///   Ok(conn) => {
     ///       conn.close();
     ///       return
@@ -204,7 +204,7 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     /// }
     /// ```
-    pub fn new_read_only(uri: &str) -> Result<Connect, Error> {
+    pub fn open_read_only(uri: &str) -> Result<Connect, Error> {
         unsafe {
             let c = virConnectOpenReadOnly(CString::new(uri).unwrap().as_ptr());
             if c.is_null() {
@@ -309,7 +309,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::new("test:///default") {
+    /// match Connect::open("test:///default") {
     ///   Ok(conn) => {
     ///     match conn.list_domains() {
     ///       Ok(arr) => assert_eq!(1, arr.len()),
@@ -345,7 +345,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::new("test:///default") {
+    /// match Connect::open("test:///default") {
     ///   Ok(conn) => {
     ///     match conn.list_interfaces() {
     ///       Ok(arr) => assert_eq!(1, arr.len()),
@@ -382,7 +382,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::new("test:///default") {
+    /// match Connect::open("test:///default") {
     ///   Ok(conn) => {
     ///     match conn.list_networks() {
     ///       Ok(arr) => assert_eq!(1, arr.len()),
@@ -472,7 +472,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::new("test:///default") {
+    /// match Connect::open("test:///default") {
     ///   Ok(conn) => {
     ///     match conn.list_storage_pools() {
     ///       Ok(arr) => assert_eq!(1, arr.len()),
@@ -509,7 +509,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::new("test:///default") {
+    /// match Connect::open("test:///default") {
     ///   Ok(conn) => {
     ///     match conn.list_defined_domains() {
     ///       Ok(arr) => assert_eq!(0, arr.len()),
@@ -546,7 +546,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::new("test:///default") {
+    /// match Connect::open("test:///default") {
     ///   Ok(conn) => {
     ///     match conn.list_defined_interfaces() {
     ///       Ok(arr) => assert_eq!(0, arr.len()),
@@ -583,7 +583,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::new("test:///default") {
+    /// match Connect::open("test:///default") {
     ///   Ok(conn) => {
     ///     match conn.list_defined_storage_pools() {
     ///       Ok(arr) => assert_eq!(0, arr.len()),
@@ -621,7 +621,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::new("test:///default") {
+    /// match Connect::open("test:///default") {
     ///   Ok(conn) => {
     ///     match conn.list_networks() {
     ///       Ok(arr) => assert_eq!(1, arr.len()),
@@ -656,7 +656,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::new("test:///default") {
+    /// match Connect::open("test:///default") {
     ///   Ok(conn) => {
     ///     match conn.num_of_domains() {
     ///       Ok(n) => assert_eq!(1, n),
@@ -684,7 +684,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::new("test:///default") {
+    /// match Connect::open("test:///default") {
     ///   Ok(conn) => {
     ///     match conn.num_of_interfaces() {
     ///       Ok(n) => assert_eq!(1, n),
@@ -712,7 +712,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::new("test:///default") {
+    /// match Connect::open("test:///default") {
     ///   Ok(conn) => {
     ///     match conn.num_of_networks() {
     ///       Ok(n) => assert_eq!(1, n),
@@ -740,7 +740,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::new("test:///default") {
+    /// match Connect::open("test:///default") {
     ///   Ok(conn) => {
     ///     match conn.num_of_storage_pools() {
     ///       Ok(n) => assert_eq!(1, n),
@@ -789,7 +789,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::new("test:///default") {
+    /// match Connect::open("test:///default") {
     ///   Ok(conn) => {
     ///     match conn.num_of_defined_domains() {
     ///       Ok(n) => assert_eq!(0, n),
@@ -817,7 +817,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::new("test:///default") {
+    /// match Connect::open("test:///default") {
     ///   Ok(conn) => {
     ///     match conn.num_of_defined_interfaces() {
     ///       Ok(n) => assert_eq!(0, n),
@@ -845,7 +845,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::new("test:///default") {
+    /// match Connect::open("test:///default") {
     ///   Ok(conn) => {
     ///     match conn.num_of_defined_networks() {
     ///       Ok(n) => assert_eq!(0, n),
@@ -873,7 +873,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::new("test:///default") {
+    /// match Connect::open("test:///default") {
     ///   Ok(conn) => {
     ///     match conn.num_of_defined_storage_pools() {
     ///       Ok(n) => assert_eq!(0, n),
@@ -904,7 +904,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::new("test:///default") {
+    /// match Connect::open("test:///default") {
     ///   Ok(conn) => {
     ///       match conn.get_hyp_version() {
     ///         Ok(hyver) => assert_eq!(2, hyver),

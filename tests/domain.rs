@@ -24,7 +24,7 @@ use virt::domain::VIR_DOMAIN_XML_SECURE;
 
 #[test]
 fn exercices() {
-    match Connect::new("test:///default") {
+    match Connect::open("test:///default") {
         Ok(conn) => {
             let doms = conn.list_domains().unwrap_or(vec![]);
             assert_eq!(1, doms.len());

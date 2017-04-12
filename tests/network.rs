@@ -23,7 +23,7 @@ use virt::connect::Connect;
 
 #[test]
 fn exercices() {
-    match Connect::new("test:///default") {
+    match Connect::open("test:///default") {
         Ok(conn) => {
             let nets = conn.list_networks().unwrap_or(vec![]);
             match conn.network_lookup_by_name(nets[0]) {

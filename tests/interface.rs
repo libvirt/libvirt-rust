@@ -23,7 +23,7 @@ use virt::interface::Interface;
 
 #[test]
 fn exercices() {
-    match Connect::new("test:///default") {
+    match Connect::open("test:///default") {
         Ok(conn) => {
             let inters = conn.list_interfaces().unwrap_or(vec![]);
             let intid = inters[0];
@@ -55,7 +55,7 @@ fn exercices() {
 
 #[test]
 fn defining() {
-    match Connect::new("test:///default") {
+    match Connect::open("test:///default") {
         Ok(conn) => {
             let xml = "<interface type='ethernet' name='eth2'>
   <start mode='onboot'/>
