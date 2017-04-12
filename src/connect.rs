@@ -38,13 +38,43 @@ pub struct virConnect {
 #[allow(non_camel_case_types)]
 pub type virConnectPtr = *const virConnect;
 
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct virConnectCredential {
+}
+
+#[allow(non_camel_case_types)]
+pub type virConnectCredentialPtr = *const virConnectCredential;
+
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct virConnectAuthCallback {
+}
+
+#[allow(non_camel_case_types)]
+pub type virConnectAuthCallbackPtr = *const virConnectAuthCallback;
+
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct virConnectAuth {
+    credtype: *const libc::c_uint,
+    ncredtype: libc::c_uint,
+    cb: unsafe extern fn(*const virConnectCredential, u32, *const libc::c_void) -> i32,
+    cbdata: *const libc::c_void,
+}
+
+#[allow(non_camel_case_types)]
+pub type virConnectAuthPtr = *const virConnect;
+
+
 #[link(name = "virt")]
 extern {
     fn virGetVersion(hyver: *const libc::c_ulong,
                      ctype: *const libc::c_char,
                      typever: *const libc::c_ulong) -> libc::c_int;
     fn virConnectOpen(uri: *const libc::c_char) -> virConnectPtr;
-    fn virConnectOpenReadOnly(uri: *const libc::c_char) -> virConnectPtr;    
+    fn virConnectOpenReadOnly(uri: *const libc::c_char) -> virConnectPtr;
+    fn virConnectOpenAuth(uri: *const libc::c_char, auth: *const virConnectAuth, flags: libc::c_uint) -> virConnectPtr;
     fn virConnectClose(c: virConnectPtr) -> libc::c_int;
     fn virConnectGetVersion(c: virConnectPtr,
                             hyver: *const libc::c_ulong) -> libc::c_int;
@@ -115,6 +145,54 @@ pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_FC_HOST: ConnectListAllNodeDeviceFla
 pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_VPORTS: ConnectListAllNodeDeviceFlags = 1 << 10;
 pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_SCSI_GENERIC: ConnectListAllNodeDeviceFlags = 1 << 11;
 pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_DRM: ConnectListAllNodeDeviceFlags = 1 << 12;
+
+pub type ConnectFlags = self::libc::c_uint;
+pub const VIR_CONNECT_RO: ConnectFlags = 1 << 0;
+pub const VIR_CONNECT_NO_ALIASES: ConnectFlags = 1 << 1;
+
+pub type ConnectCredentialType = self::libc::c_uint;
+pub const VIR_CRED_USERNAME: ConnectCredentialType = 1;
+pub const VIR_CRED_AUTHNAME: ConnectCredentialType = 2;
+pub const VIR_CRED_LANGUAGE: ConnectCredentialType = 3;
+pub const VIR_CRED_CNONCE: ConnectCredentialType = 4;
+pub const VIR_CRED_PASSPHRASE: ConnectCredentialType = 5;
+pub const VIR_CRED_ECHOPROMPT: ConnectCredentialType = 6;
+pub const VIR_CRED_NOECHOPROMPT: ConnectCredentialType = 7;
+pub const VIR_CRED_REALM: ConnectCredentialType = 8;
+pub const VIR_CRED_EXTERNAL: ConnectCredentialType = 9;
+
+pub struct ConnectAuth {
+    ptr: *const virConnectAuth
+}
+
+#[allow(unused_variables)]
+extern "C" fn connect_auth_callback_default(cred: virConnectCredentialPtr,
+                                            ncred: libc::c_uint,
+                                            cbdata: *const libc::c_void) -> libc::c_int {
+    // TODO(sahid): needs to provide what we have in libvirt.
+    return 0;
+}
+
+impl ConnectAuth {
+    pub fn as_ptr(&self) -> *const virConnectAuth {
+        self.ptr
+    }
+
+    pub fn new_default() -> ConnectAuth {
+        let auth = virConnectAuth{
+            credtype: [VIR_CRED_AUTHNAME,
+                       VIR_CRED_ECHOPROMPT,
+                       VIR_CRED_REALM,
+                       VIR_CRED_PASSPHRASE,
+                       VIR_CRED_NOECHOPROMPT,
+                       VIR_CRED_EXTERNAL].as_ptr(),
+            ncredtype: 6,
+            cb: connect_auth_callback_default,
+            cbdata: ptr::null(),
+        };
+        ConnectAuth{ptr: &auth}
+    }
+}
 
 pub struct Connect {
     pub c: virConnectPtr
@@ -213,6 +291,35 @@ impl Connect {
             return Ok(Connect{c: c});
         }
     }
+
+    /// # Examples
+    ///
+    /// ```
+    /// use virt::connect::Connect;
+    /// use virt::connect::ConnectAuth;
+    /// 
+    /// let auth = ConnectAuth::new_default();
+    /// match Connect::open_auth("test:///default", &auth, 0) {
+    ///   Ok(conn) => {
+    ///       conn.close();
+    ///       return
+    ///   },
+    ///   Err(e) => panic!(
+    ///     "failed with code {}, message: {}", e.code, e.message)
+    /// }
+    /// ```
+    pub fn open_auth(uri: &str, auth: &ConnectAuth, flags: ConnectFlags) -> Result<Connect, Error> {
+        unsafe {
+            let c = virConnectOpenAuth(
+                CString::new(uri).unwrap().as_ptr(),
+                auth.as_ptr(), flags as libc::c_uint);
+            if c.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(Connect{c: c});
+        }
+    }
+
 
     /// This function closes the connection to the hypervisor. This
     /// should not be called if further interaction with the
