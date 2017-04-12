@@ -27,4 +27,5 @@ pub mod error;
 pub mod network;
 pub mod nodedev;
 pub mod interface;
+pub mod secret;
 pub mod storage_pool;

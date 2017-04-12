@@ -29,6 +29,7 @@ use network::Network;
 use nodedev::NodeDevice;
 use interface::Interface;
 use storage_pool::StoragePool;
+use secret::{Secret, virSecretPtr};
 
 #[allow(non_camel_case_types)]
 #[repr(C)]
@@ -110,6 +111,9 @@ extern {
     fn virConnectListSecrets(c: virConnectPtr,
                              names: *const *const libc::c_char,
                              maxnames: libc::c_int) -> libc::c_int;
+    fn virConnectListAllSecrets(c: virConnectPtr,
+                                secrets: *const virSecretPtr,
+                                flags: libc::c_uint) -> libc::c_int;
     fn virConnectListDefinedInterfaces(c: virConnectPtr,
                                        names: *const *const libc::c_char,
                                        maxifaces: libc::c_int) -> libc::c_int;
@@ -149,6 +153,12 @@ pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_DRM: ConnectListAllNodeDeviceFlags =
 pub type ConnectFlags = self::libc::c_uint;
 pub const VIR_CONNECT_RO: ConnectFlags = 1 << 0;
 pub const VIR_CONNECT_NO_ALIASES: ConnectFlags = 1 << 1;
+
+pub type ConnectListSecretsFlags = self::libc::c_uint;
+pub const VIR_CONNECT_LIST_SECRETS_EPHEMERAL: ConnectListSecretsFlags = 1 << 0;
+pub const VIR_CONNECT_LIST_SECRETS_NO_EPHEMERAL: ConnectListSecretsFlags = 1 << 1;
+pub const VIR_CONNECT_LIST_SECRETS_PRIVATE: ConnectListSecretsFlags = 1 << 2;
+pub const VIR_CONNECT_LIST_SECRETS_NO_PRIVATE: ConnectListSecretsFlags  = 1 << 3;
 
 pub type ConnectCredentialType = self::libc::c_uint;
 pub const VIR_CRED_USERNAME: ConnectCredentialType = 1;
@@ -604,6 +614,23 @@ impl Connect {
             for x in 0..size as usize {
                 array.push(str::from_utf8(
                     CStr::from_ptr(names[x]).to_bytes()).unwrap());
+            }
+            return Ok(array)
+        }
+    }
+
+    pub fn list_all_secrets(&self, flags: ConnectListSecretsFlags) -> Result<Vec<Secret>, Error> {
+        unsafe {
+            let secrets: [virSecretPtr; 256] = mem::uninitialized();
+            let size = virConnectListAllSecrets(
+                self.c, secrets.as_ptr(), flags as libc::c_uint);
+            if size == -1 {
+                return Err(Error::new())
+            }
+
+            let mut array: Vec<Secret> = Vec::new();
+            for x in 0..size as usize {
+                array.push(Secret{d: secrets[x]});
             }
             return Ok(array)
         }
