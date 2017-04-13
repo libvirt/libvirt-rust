@@ -21,7 +21,7 @@
 extern crate libc;
 
 use std::ffi::{CString, CStr};
-use std::{str, mem};
+use std::{str};
 
 use connect::{Connect, virConnectPtr};
 use error::Error;
@@ -43,7 +43,7 @@ extern {
     fn virNWFilterUndefine(d: virNWFilterPtr) -> libc::c_int;
     fn virNWFilterFree(d: virNWFilterPtr) -> libc::c_int;
     fn virNWFilterGetName(d: virNWFilterPtr) -> *const libc::c_char;
-    fn virNWFilterGetUUIDString(d: virNWFilterPtr, uuid: *const libc::c_char) -> libc::c_int;
+    fn virNWFilterGetUUIDString(d: virNWFilterPtr, uuid: *mut libc::c_char) -> libc::c_int;
     fn virNWFilterGetXMLDesc(d: virNWFilterPtr, flags: libc::c_uint) -> *const libc::c_char;
 }
 
@@ -101,8 +101,8 @@ impl NWFilter {
 
     pub fn get_uuid_string(&self) -> Result<String, Error> {
         unsafe {
-            let uuid: [libc::c_char; 37] = mem::uninitialized();
-            if virNWFilterGetUUIDString(self.d, uuid.as_ptr()) == -1 {
+            let mut uuid: [libc::c_char; 37] = [0; 37];
+            if virNWFilterGetUUIDString(self.d, uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new())
             }
             return Ok(CStr::from_ptr(

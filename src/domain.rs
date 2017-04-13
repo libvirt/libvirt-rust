@@ -21,7 +21,7 @@
 extern crate libc;
 
 use std::ffi::{CString, CStr};
-use std::{str, mem};
+use std::{str};
 
 use connect::{Connect, virConnectPtr};
 use error::Error;
@@ -53,7 +53,7 @@ extern {
     fn virDomainIsActive(d: virDomainPtr) -> libc::c_int;
     fn virDomainIsUpdated(d: virDomainPtr) -> libc::c_int;
     fn virDomainGetName(d: virDomainPtr) -> *const libc::c_char;
-    fn virDomainGetUUIDString(d: virDomainPtr, uuid: *const libc::c_char) -> libc::c_int;
+    fn virDomainGetUUIDString(d: virDomainPtr, uuid: *mut libc::c_char) -> libc::c_int;
     fn virDomainGetXMLDesc(d: virDomainPtr, flags: libc::c_uint) -> *const libc::c_char;
     fn virDomainGetAutostart(d: virDomainPtr) -> libc::c_int;
     fn virDomainSetAutostart(d: virDomainPtr, autostart: libc::c_uint) -> libc::c_int;
@@ -156,8 +156,8 @@ impl Domain {
 
     pub fn get_uuid_string(&self) -> Result<String, Error> {
         unsafe {
-            let uuid: [libc::c_char; 37] = mem::uninitialized();
-            if virDomainGetUUIDString(self.d, uuid.as_ptr()) == -1 {
+            let mut uuid: [libc::c_char; 37] = [0; 37];
+            if virDomainGetUUIDString(self.d, uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new())
             }
             return Ok(CStr::from_ptr(

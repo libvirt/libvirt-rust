@@ -21,7 +21,7 @@
 extern crate libc;
 
 use std::ffi::{CString, CStr};
-use std::{str, mem};
+use std::{str};
 
 use connect::{Connect, virConnectPtr};
 use error::Error;
@@ -45,7 +45,7 @@ extern {
     fn virNetworkFree(d: virNetworkPtr) -> libc::c_int;
     fn virNetworkIsActive(d: virNetworkPtr) -> libc::c_int;
     fn virNetworkGetName(d: virNetworkPtr) -> *const libc::c_char;
-    fn virNetworkGetUUIDString(d: virNetworkPtr, uuid: *const libc::c_char) -> libc::c_int;
+    fn virNetworkGetUUIDString(d: virNetworkPtr, uuid: *mut libc::c_char) -> libc::c_int;
     fn virNetworkGetXMLDesc(d: virNetworkPtr, flags: libc::c_uint) -> *const libc::c_char;
     fn virNetworkGetBridgeName(d: virNetworkPtr) -> *const libc::c_char;
     fn virNetworkGetAutostart(d: virNetworkPtr) -> libc::c_int;
@@ -142,15 +142,14 @@ impl Network {
 
     pub fn get_uuid_string(&self) -> Result<String, Error> {
         unsafe {
-            let uuid: [libc::c_char; 37] = mem::uninitialized();
-            if virNetworkGetUUIDString(self.d, uuid.as_ptr()) == -1 {
+            let mut uuid: [libc::c_char; 37] = [0; 37];
+            if virNetworkGetUUIDString(self.d, uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new())
             }
             return Ok(CStr::from_ptr(
                 uuid.as_ptr()).to_string_lossy().into_owned())
         }
     }
-
 
     pub fn get_bridge_name(&self) -> Result<String, Error> {
         unsafe {

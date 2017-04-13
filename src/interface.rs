@@ -50,6 +50,7 @@ extern {
     fn virInterfaceGetName(d: virInterfacePtr) -> *const libc::c_char;
     fn virInterfaceGetMACString(d: virInterfacePtr) -> *const libc::c_char;
     fn virInterfaceGetXMLDesc(d: virInterfacePtr, flags: libc::c_uint) -> *const libc::c_char;
+    fn virInterfaceGetUUIDString(d: virInterfacePtr, uuid: *mut libc::c_char) -> libc::c_int;
 }
 
 pub type InterfaceXMLFlags = self::libc::c_uint;
@@ -127,6 +128,17 @@ impl Interface {
                 return Err(Error::new())
             }
             return Ok(CStr::from_ptr(n).to_string_lossy().into_owned())
+        }
+    }
+
+    pub fn get_uuid_string(&self) -> Result<String, Error> {
+        unsafe {
+            let mut uuid: [libc::c_char; 37] = [0; 37];
+            if virInterfaceGetUUIDString(self.d, uuid.as_mut_ptr()) == -1 {
+                return Err(Error::new())
+            }
+            return Ok(CStr::from_ptr(
+                uuid.as_ptr()).to_string_lossy().into_owned())
         }
     }
 

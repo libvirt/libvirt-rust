@@ -42,6 +42,7 @@ extern {
     fn virNodeDeviceFree(d: virNodeDevicePtr) -> libc::c_int;
     fn virNodeDeviceGetName(d: virNodeDevicePtr) -> *const libc::c_char;
     fn virNodeDeviceGetXMLDesc(d: virNodeDevicePtr, flags: libc::c_uint) -> *const libc::c_char;
+    fn virNodeDeviceGetUUIDString(d: virNodeDevicePtr, uuid: *mut libc::c_char) -> libc::c_int;
 }
 
 pub type NodeDeviceXMLFlags = self::libc::c_uint;
@@ -87,6 +88,17 @@ impl NodeDevice {
                 return Err(Error::new())
             }
             return Ok(CStr::from_ptr(n).to_string_lossy().into_owned())
+        }
+    }
+
+    pub fn get_uuid_string(&self) -> Result<String, Error> {
+        unsafe {
+            let mut uuid: [libc::c_char; 37] = [0; 37];
+            if virNodeDeviceGetUUIDString(self.d, uuid.as_mut_ptr()) == -1 {
+                return Err(Error::new())
+            }
+            return Ok(CStr::from_ptr(
+                uuid.as_ptr()).to_string_lossy().into_owned())
         }
     }
 

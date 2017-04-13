@@ -20,7 +20,6 @@ extern crate virt;
 
 use virt::connect::Connect;
 use virt::domain::Domain;
-use virt::domain::VIR_DOMAIN_XML_SECURE;
 
 
 fn conn() -> Connect {

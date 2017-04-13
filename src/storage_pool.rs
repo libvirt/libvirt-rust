@@ -21,7 +21,7 @@
 extern crate libc;
 
 use std::ffi::{CString, CStr};
-use std::{str, mem};
+use std::{str};
 
 use connect::{Connect, virConnectPtr};
 use error::Error;
@@ -48,7 +48,7 @@ extern {
     fn virStoragePoolIsPersistent(d: virStoragePoolPtr) -> libc::c_int;
     fn virStoragePoolGetName(d: virStoragePoolPtr) -> *const libc::c_char;
     fn virStoragePoolGetXMLDesc(d: virStoragePoolPtr, flags: libc::c_uint) -> *const libc::c_char;
-    fn virStoragePoolGetUUIDString(d: virStoragePoolPtr, uuid: *const libc::c_char) -> libc::c_int;
+    fn virStoragePoolGetUUIDString(d: virStoragePoolPtr, uuid: *mut libc::c_char) -> libc::c_int;
 }
 
 pub type StoragePoolXMLFlags = self::libc::c_uint;
@@ -116,8 +116,8 @@ impl StoragePool {
 
     pub fn get_uuid_string(&self) -> Result<String, Error> {
         unsafe {
-            let uuid: [libc::c_char; 37] = mem::uninitialized();
-            if virStoragePoolGetUUIDString(self.d, uuid.as_ptr()) == -1 {
+            let mut uuid: [libc::c_char; 37] = [0; 37];
+            if virStoragePoolGetUUIDString(self.d, uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new())
             }
             return Ok(CStr::from_ptr(

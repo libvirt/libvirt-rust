@@ -21,7 +21,7 @@
 extern crate libc;
 
 use std::ffi::{CString, CStr};
-use std::mem;
+use std::ptr;
 
 use connect::{Connect, virConnectPtr};
 use error::Error;
@@ -40,7 +40,7 @@ extern {
     fn virSecretUndefine(d: virSecretPtr) -> libc::c_int;
     fn virSecretFree(d: virSecretPtr) -> libc::c_int;
     fn virSecretGetName(d: virSecretPtr) -> *const libc::c_char;
-    fn virSecretGetUUIDString(d: virSecretPtr, uuid: *const libc::c_char) -> libc::c_int;
+    fn virSecretGetUUIDString(d: virSecretPtr, uuid: *mut libc::c_char) -> libc::c_int;
     fn virSecretGetUsageID(d: virSecretPtr) -> *const libc::c_char;
     fn virSecretGetXMLDesc(d: virSecretPtr, flags: libc::c_uint) -> *const libc::c_char;
 }
@@ -105,12 +105,12 @@ impl Secret {
 
     pub fn get_uuid_string(&self) -> Result<String, Error> {
         unsafe {
-            let uuid: [libc::c_char; 37] = mem::uninitialized();
-            if virSecretGetUUIDString(self.d, uuid.as_ptr()) == -1 {
+            let uuid: *mut libc::c_char = ptr::null_mut();
+            if virSecretGetUUIDString(self.d, uuid) == -1 {
                 return Err(Error::new())
             }
             return Ok(CStr::from_ptr(
-                uuid.as_ptr()).to_string_lossy().into_owned())
+                uuid).to_string_lossy().into_owned())
         }
     }
 

@@ -166,6 +166,17 @@ fn test_list_storage_pools() {
     c.close();
 }
 
+
+#[test]
+fn test_list_all_domains() {
+    let c = conn();
+    let v = c.list_all_domains(0).unwrap_or(vec![]);
+    assert!(0 < v.len(),
+            "At least one domain should exist");
+    assert_eq!("test", v[0].get_name().unwrap_or(String::new()));
+    c.close();
+}
+
 #[test]
 fn test_lookup_domain_by_id() {
     let c = conn();
