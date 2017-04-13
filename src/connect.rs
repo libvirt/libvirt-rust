@@ -350,25 +350,23 @@ impl Connect {
     /// but possibly expanded to a fully-qualified domain name via
     /// getaddrinfo).  If we are connected to a remote system, then
     /// this returns the hostname of the remote system.
-    pub fn get_hostname(&self) -> Result<&str, Error> {
+    pub fn get_hostname(&self) -> Result<String, Error> {
         unsafe {
             let n = virConnectGetHostname(self.c);
             if n.is_null() {
                 return Err(Error::new())
             }
-            return Ok(str::from_utf8(
-                CStr::from_ptr(n).to_bytes()).unwrap())
+            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned())
         }
     }
 
-    pub fn get_capabilities(&self) -> Result<&str, Error> {
+    pub fn get_capabilities(&self) -> Result<String, Error> {
         unsafe {
             let n = virConnectGetCapabilities(self.c);
             if n.is_null() {
                 return Err(Error::new())
             }
-            return Ok(str::from_utf8(
-                CStr::from_ptr(n).to_bytes()).unwrap())
+            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned())
         }
     }
     
@@ -382,14 +380,13 @@ impl Connect {
         }
     }
 
-    pub fn get_type(&self) -> Result<&str, Error> {
+    pub fn get_type(&self) -> Result<String, Error> {
         unsafe {
             let t = virConnectGetType(self.c);
             if t.is_null() {
                 return Err(Error::new())
             }
-            return Ok(str::from_utf8(
-                CStr::from_ptr(t).to_bytes()).unwrap())
+            return Ok(CStr::from_ptr(t).to_string_lossy().into_owned())
         }
     }
 
@@ -403,7 +400,7 @@ impl Connect {
         }
     }
 
-    pub fn is_enscrypted(&self) -> Result<bool, Error> {
+    pub fn is_encrypted(&self) -> Result<bool, Error> {
         unsafe {
             let t = virConnectIsEncrypted(self.c);
             if t == -1 {
