@@ -182,6 +182,17 @@ fn test_lookup_domain_by_id() {
 }
 
 #[test]
+fn test_lookup_domain_by_name() {
+    let c = conn();
+    match c.domain_lookup_by_name("test") {
+        Ok(r) => r.free().unwrap_or(()),
+        Err(e) => panic!(
+            "failed with code {}, message: {}", e.code, e.message)
+    }
+    c.close();
+}
+
+#[test]
 fn test_lookup_network_by_name() {
     let c = conn();
     let v = c.list_networks().unwrap_or(vec![]);
