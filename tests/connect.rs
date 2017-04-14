@@ -254,3 +254,12 @@ fn test_lookup_storage_pool_by_name() {
     }
     c.close();
 }
+
+#[test]
+fn test_get_cpu_models_names() {
+    let c = conn();
+    let mcpus = c.get_cpu_models_names("i686", 0).unwrap_or(vec![]);
+    assert!(0 < mcpus.len(),
+            "At least one cpu model should exist");
+    c.close();
+}

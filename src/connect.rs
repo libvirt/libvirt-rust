@@ -151,6 +151,10 @@ extern {
     fn virConnectNumOfDefinedInterfaces(c: virConnectPtr) -> libc::c_int;
     fn virConnectNumOfDefinedNetworks(c: virConnectPtr) -> libc::c_int;
     fn virConnectNumOfDefinedStoragePools(c: virConnectPtr) -> libc::c_int;
+    fn virConnectGetCPUModelNames(c: virConnectPtr,
+                                  arch: *const libc::c_char,
+                                  mcpus: *mut *mut *mut libc::c_char,
+                                  flags: libc::c_uint) -> libc::c_int;
 }
 
 pub type ConnectFlags = self::libc::c_uint;
@@ -460,6 +464,29 @@ impl Connect {
                 return Err(Error::new())
             }
             return Ok(CStr::from_ptr(t).to_string_lossy().into_owned())
+        }
+    }
+
+    pub fn get_cpu_models_names(&self, arch: &str, flags: u32) -> Result<Vec<String>, Error> {
+        unsafe {
+            let mut names: *mut *mut libc::c_char = ptr::null_mut();
+            let size = virConnectGetCPUModelNames(
+                self.c,
+                CString::new(arch).unwrap().as_ptr(),
+                &mut names,
+                flags as libc::c_uint);
+            if size == -1 {
+                return Err(Error::new())
+            }
+
+            let mut array: Vec<String> = Vec::new();
+            for x in 0..size as isize {
+                array.push(CStr::from_ptr(
+                    *names.offset(x)).to_string_lossy().into_owned());
+            }
+            libc::free(names as *mut libc::c_void);
+
+            return Ok(array)
         }
     }
 
