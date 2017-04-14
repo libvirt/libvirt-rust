@@ -66,6 +66,7 @@ extern {
     fn virDomainSetVcpusFlags(d: virDomainPtr, vcpus: libc::c_uint, flags: libc::c_uint) -> libc::c_int;
     fn virDomainRestore(c: virConnectPtr, source: *const libc::c_char) -> libc::c_int;
     fn virDomainRestoreFlags(c: virConnectPtr, source: *const libc::c_char, flags: libc::c_uint) -> libc::c_int;
+    fn virDomainGetConnect(d: virDomainPtr) -> virConnectPtr;
 
     // TODO: need to be implemented
     // see: python tools/api_tests.py virDomain
@@ -121,6 +122,16 @@ impl Domain {
 
     pub fn as_ptr(&self) -> virDomainPtr {
         self.d
+    }
+
+    pub fn get_connect(&self) -> Result<Connect, Error> {
+        unsafe {
+            let ptr = virDomainGetConnect(self.d);
+            if ptr.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(Connect{c: ptr});
+        }
     }
 
     pub fn lookup_by_id(conn: &Connect, id: u32) -> Result<Domain, Error> {

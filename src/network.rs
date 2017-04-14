@@ -56,10 +56,10 @@ extern {
                         index: libc::c_uint,
                         xml: *const libc::c_char,
                         flags: libc::c_uint) -> libc::c_int;
+    fn virNetworkGetConnect(d: virNetworkPtr) -> virConnectPtr;
 
     // TODO: need to be implemented
     fn virNetworkGetDHCPLeases() -> ();
-    fn virNetworkGetConnect() -> ();
     fn virNetworkDefineXML() -> ();
     fn virNetworkDHCPLeaseFree() -> ();
     fn virNetworkRef() -> ();
@@ -105,6 +105,16 @@ impl Network {
 
     pub fn as_ptr(&self) -> virNetworkPtr {
         self.d
+    }
+
+    pub fn get_connect(&self) -> Result<Connect, Error> {
+        unsafe {
+            let ptr = virNetworkGetConnect(self.d);
+            if ptr.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(Connect{c: ptr});
+        }
     }
 
     pub fn lookup_by_id(conn: &Connect, id: u32) -> Result<Network, Error> {

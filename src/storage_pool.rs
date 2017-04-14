@@ -49,6 +49,7 @@ extern {
     fn virStoragePoolGetName(d: virStoragePoolPtr) -> *const libc::c_char;
     fn virStoragePoolGetXMLDesc(d: virStoragePoolPtr, flags: libc::c_uint) -> *const libc::c_char;
     fn virStoragePoolGetUUIDString(d: virStoragePoolPtr, uuid: *mut libc::c_char) -> libc::c_int;
+    fn virStoragePoolGetConnect(d: virStoragePoolPtr) -> virConnectPtr;
 
     //TODO(sahid): need to be implemented...
     fn virStorageVolGetInfo() -> ();
@@ -74,7 +75,6 @@ extern {
     fn virStorageVolRef() -> ();
     fn virStorageVolFree() -> ();
     fn virStoragePoolDefineXML() -> ();
-    fn virStoragePoolGetConnect() -> ();
     fn virStorageVolGetPath() -> ();
     fn virStorageVolGetXMLDesc() -> ();
     fn virStorageVolGetConnect() -> ();
@@ -94,7 +94,6 @@ pub const STORAGE_POOL_CREATE_WITH_BUILD_OVERWRITE: StoragePoolCreateFlags = 1 <
 pub const STORAGE_POOL_CREATE_WITH_BUILD_NO_OVERWRITE: StoragePoolCreateFlags = 1 << 2;
 
 
-
 pub struct StoragePool {
     pub d: virStoragePoolPtr
 }
@@ -103,6 +102,16 @@ impl StoragePool {
 
     pub fn as_ptr(&self) -> virStoragePoolPtr {
         self.d
+    }
+
+    pub fn get_connect(&self) -> Result<Connect, Error> {
+        unsafe {
+            let ptr = virStoragePoolGetConnect(self.d);
+            if ptr.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(Connect{c: ptr});
+        }
     }
 
     pub fn lookup_by_id(conn: &Connect, id: u32) -> Result<StoragePool, Error> {
