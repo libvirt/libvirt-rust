@@ -26,7 +26,7 @@ fn exercices() {
     match Connect::open("test:///default") {
         Ok(conn) => {
             let nets = conn.list_networks().unwrap_or(vec![]);
-            match conn.network_lookup_by_name(nets[0]) {
+            match conn.network_lookup_by_name(&nets[0]) {
                 Ok(network) => {
                     assert_eq!("default", network.get_name().unwrap_or("n/a".to_string()));
                     assert_eq!("dd8fe884-6c02-601e-7551-cca97df1c5df",

@@ -217,7 +217,7 @@ fn test_lookup_network_by_name() {
     assert!(
         0 < v.len(),
         "At least one network should exist");
-    match c.network_lookup_by_name(v[0]) {
+    match c.network_lookup_by_name(&v[0]) {
         Ok(r) => r.free().unwrap_or(()),
         Err(e) => panic!(
             "failed with code {}, message: {}", e.code, e.message)
@@ -232,7 +232,7 @@ fn test_lookup_interface_by_name() {
     assert!(
         0 < v.len(),
         "At least one interface should exist");
-    match c.interface_lookup_by_name(v[0]) {
+    match c.interface_lookup_by_name(&v[0]) {
         Ok(r) => r.free().unwrap_or(()),
         Err(e) => panic!(
             "failed with code {}, message: {}", e.code, e.message)
@@ -247,7 +247,7 @@ fn test_lookup_storage_pool_by_name() {
     assert!(
         0 < v.len(),
         "At least one storage_pool should exist");
-    match c.storage_pool_lookup_by_name(v[0]) {
+    match c.storage_pool_lookup_by_name(&v[0]) {
         Ok(r) => r.free().unwrap_or(()),
         Err(e) => panic!(
             "failed with code {}, message: {}", e.code, e.message)

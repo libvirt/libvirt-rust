@@ -26,7 +26,7 @@ fn exercices() {
     match Connect::open("test:///default") {
         Ok(conn) => {
             let sp = conn.list_storage_pools().unwrap_or(vec![]);
-            match conn.storage_pool_lookup_by_name(sp[0]) {
+            match conn.storage_pool_lookup_by_name(&sp[0]) {
                 Ok(storage_pool) => {
                     assert_eq!("default-pool", storage_pool.get_name().unwrap_or("n/a".to_string()));
                     assert_eq!("dfe224cb-28fb-8dd0-c4b2-64eb3f0f4566",

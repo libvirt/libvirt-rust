@@ -576,7 +576,7 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
-    pub fn list_interfaces(&self) -> Result<Vec<&str>, Error> {
+    pub fn list_interfaces(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let names: [*const libc::c_char; 1024] = [ptr::null_mut(); 1024];
             let size = virConnectListInterfaces(self.c, names.as_ptr(), 1024);
@@ -584,10 +584,10 @@ impl Connect {
                 return Err(Error::new())
             }
 
-            let mut array: Vec<&str> = Vec::new();
+            let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(str::from_utf8(
-                    CStr::from_ptr(names[x]).to_bytes()).unwrap());
+                array.push(CStr::from_ptr(
+                    names[x]).to_string_lossy().into_owned());
             }
             return Ok(array)
         }
@@ -613,7 +613,7 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
-    pub fn list_networks(&self) -> Result<Vec<&str>, Error> {
+    pub fn list_networks(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let names: [*const libc::c_char; 1024] = [ptr::null_mut(); 1024];
             let size = virConnectListNetworks(self.c, names.as_ptr(), 1024);
@@ -621,16 +621,16 @@ impl Connect {
                 return Err(Error::new())
             }
 
-            let mut array: Vec<&str> = Vec::new();
+            let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(str::from_utf8(
-                    CStr::from_ptr(names[x]).to_bytes()).unwrap());
+                array.push(CStr::from_ptr(
+                    names[x]).to_string_lossy().into_owned());
             }
             return Ok(array)
         }
     }
 
-    pub fn list_nw_filters(&self) -> Result<Vec<&str>, Error> {
+    pub fn list_nw_filters(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let names: [*const libc::c_char; 1024] = [ptr::null_mut(); 1024];
             let size = virConnectListNWFilters(self.c, names.as_ptr(), 1024);
@@ -638,16 +638,16 @@ impl Connect {
                 return Err(Error::new())
             }
 
-            let mut array: Vec<&str> = Vec::new();
+            let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(str::from_utf8(
-                    CStr::from_ptr(names[x]).to_bytes()).unwrap());
+                array.push(CStr::from_ptr(
+                    names[x]).to_string_lossy().into_owned());
             }
             return Ok(array)
         }
     }
 
-    pub fn list_secrets(&self) -> Result<Vec<&str>, Error> {
+    pub fn list_secrets(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let names: [*const libc::c_char; 1024] = [ptr::null_mut(); 1024];
             let size = virConnectListSecrets(self.c, names.as_ptr(), 1024);
@@ -655,10 +655,10 @@ impl Connect {
                 return Err(Error::new())
             }
 
-            let mut array: Vec<&str> = Vec::new();
+            let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(str::from_utf8(
-                    CStr::from_ptr(names[x]).to_bytes()).unwrap());
+                array.push(CStr::from_ptr(
+                    names[x]).to_string_lossy().into_owned());
             }
             return Ok(array)
         }
@@ -684,7 +684,7 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
-    pub fn list_storage_pools(&self) -> Result<Vec<&str>, Error> {
+    pub fn list_storage_pools(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let names: [*const libc::c_char; 1024] = [ptr::null_mut(); 1024];
             let size = virConnectListStoragePools(self.c, names.as_ptr(), 1024);
@@ -692,10 +692,10 @@ impl Connect {
                 return Err(Error::new())
             }
 
-            let mut array: Vec<&str> = Vec::new();
+            let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(str::from_utf8(
-                    CStr::from_ptr(names[x]).to_bytes()).unwrap());
+                array.push(CStr::from_ptr(
+                    names[x]).to_string_lossy().into_owned());
             }
             return Ok(array)
         }
@@ -854,7 +854,7 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
-    pub fn list_defined_domains(&self) -> Result<Vec<&str>, Error> {
+    pub fn list_defined_domains(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let names: [*const libc::c_char; 1024] = [ptr::null_mut(); 1024];
             let size = virConnectListDefinedDomains(self.c, names.as_ptr(), 1024);
@@ -862,10 +862,10 @@ impl Connect {
                 return Err(Error::new())
             }
 
-            let mut array: Vec<&str> = Vec::new();
+            let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(str::from_utf8(
-                    CStr::from_ptr(names[x]).to_bytes()).unwrap());
+                array.push(CStr::from_ptr(
+                    names[x]).to_string_lossy().into_owned());
             }
             return Ok(array)
         }
@@ -891,7 +891,7 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
-    pub fn list_defined_interfaces(&self) -> Result<Vec<&str>, Error> {
+    pub fn list_defined_interfaces(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let names: [*const libc::c_char; 1024] = [ptr::null_mut(); 1024];
             let size = virConnectListDefinedInterfaces(self.c, names.as_ptr(), 1024);
@@ -899,10 +899,10 @@ impl Connect {
                 return Err(Error::new())
             }
 
-            let mut array: Vec<&str> = Vec::new();
+            let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(str::from_utf8(
-                    CStr::from_ptr(names[x]).to_bytes()).unwrap());
+                array.push(CStr::from_ptr(
+                    names[x]).to_string_lossy().into_owned());
             }
             return Ok(array)
         }
@@ -928,7 +928,7 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
-    pub fn list_defined_storage_pools(&self) -> Result<Vec<&str>, Error> {
+    pub fn list_defined_storage_pools(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let names: [*const libc::c_char; 1024] = [ptr::null_mut(); 1024];
             let size = virConnectListDefinedStoragePools(
@@ -937,10 +937,10 @@ impl Connect {
                 return Err(Error::new())
             }
 
-            let mut array: Vec<&str> = Vec::new();
+            let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(str::from_utf8(
-                    CStr::from_ptr(names[x]).to_bytes()).unwrap());
+                array.push(CStr::from_ptr(
+                    names[x]).to_string_lossy().into_owned());
             }
             return Ok(array)
         }
@@ -966,7 +966,7 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
-    pub fn list_defined_networks(&self) -> Result<Vec<&str>, Error> {
+    pub fn list_defined_networks(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let names: [*const libc::c_char; 1024] = [ptr::null_mut(); 1024];
             let size = virConnectListDefinedNetworks(self.c, names.as_ptr(), 1024);
@@ -974,10 +974,10 @@ impl Connect {
                 return Err(Error::new())
             }
 
-            let mut array: Vec<&str> = Vec::new();
+            let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(str::from_utf8(
-                    CStr::from_ptr(names[x]).to_bytes()).unwrap());
+                array.push(CStr::from_ptr(
+                    names[x]).to_string_lossy().into_owned());
             }
             return Ok(array)
         }

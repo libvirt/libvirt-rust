@@ -26,7 +26,7 @@ fn exercices() {
     match Connect::open("test:///default") {
         Ok(conn) => {
             let inters = conn.list_interfaces().unwrap_or(vec![]);
-            let intid = inters[0];
+            let intid = &inters[0];
             match conn.interface_lookup_by_name(intid) {
                 Ok(interface) => {
                     assert_eq!("eth1", interface.get_name().unwrap_or("n/a".to_string()));
