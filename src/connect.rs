@@ -87,6 +87,7 @@ extern {
                                ver: *const libc::c_ulong) -> libc::c_int;
     fn virConnectGetType(c: virConnectPtr) -> *const libc::c_char;
     fn virConnectGetURI(c: virConnectPtr) -> *const libc::c_char;
+    fn virConnectGetSysinfo(c: virConnectPtr, flags: libc::c_uint) -> *const libc::c_char;
     fn virConnectIsAlive(c: virConnectPtr) -> libc::c_int;
     fn virConnectIsEncrypted(c: virConnectPtr) -> libc::c_int;
     fn virConnectIsSecure(c: virConnectPtr) -> libc::c_int;
@@ -465,6 +466,16 @@ impl Connect {
                 return Err(Error::new())
             }
             return Ok(CStr::from_ptr(t).to_string_lossy().into_owned())
+        }
+    }
+
+    pub fn get_sys_info(&self, flags: u32) -> Result<String, Error> {
+        unsafe {
+            let sys = virConnectGetSysinfo(self.c, flags as libc::c_uint);
+            if sys.is_null() {
+                return Err(Error::new())
+            }
+            return Ok(CStr::from_ptr(sys).to_string_lossy().into_owned())
         }
     }
 
