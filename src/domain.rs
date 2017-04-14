@@ -64,6 +64,8 @@ extern {
     fn virDomainSetMemoryStatsPeriod(d: virDomainPtr, period: libc::c_int, flags: libc::c_uint) -> libc::c_int;
     fn virDomainSetVcpus(d: virDomainPtr, vcpus: libc::c_uint) -> libc::c_int;
     fn virDomainSetVcpusFlags(d: virDomainPtr, vcpus: libc::c_uint, flags: libc::c_uint) -> libc::c_int;
+    fn virDomainRestore(c: virConnectPtr, source: *const libc::c_char) -> libc::c_int;
+    fn virDomainRestoreFlags(c: virConnectPtr, source: *const libc::c_char, flags: libc::c_uint) -> libc::c_int;
 }
 
 pub type DomainXMLFlags = self::libc::c_uint;
@@ -101,6 +103,12 @@ pub const VIR_DOMAIN_VCPU_HOTPLUGGABLE: DomainVcpuFlags = 1 << 4;
 
 pub type DomainDefineFlags = self::libc::c_uint;
 pub const VIR_DOMAIN_DEFINE_VALIDATE: DomainDefineFlags = 1 << 0;
+
+pub type DomainSaveRestoreFlags = self::libc::c_uint;
+pub const VIR_DOMAIN_SAVE_BYPASS_CACHE: DomainSaveRestoreFlags = 1 << 0;
+pub const VIR_DOMAIN_SAVE_RUNNING: DomainSaveRestoreFlags = 1 << 1;
+pub const VIR_DOMAIN_SAVE_PAUSED: DomainSaveRestoreFlags = 1 << 2;
+
 
 pub struct Domain {
     pub d: virDomainPtr
@@ -402,4 +410,26 @@ impl Domain {
             return Ok(ret == 1);
         }
     }
+
+    pub fn domain_restore(conn: &Connect, path: &str) -> Result<(), Error> {
+        unsafe {
+            if virDomainRestore(
+                conn.as_ptr(), CString::new(path).unwrap().as_ptr()) == -1 {
+                return Err(Error::new());
+            }
+            return Ok(());
+        }
+    }
+
+    pub fn domain_restore_flags(conn: &Connect, path: &str, flags: DomainSaveRestoreFlags) -> Result<(), Error> {
+        unsafe {
+            if virDomainRestoreFlags(
+                conn.as_ptr(), CString::new(path).unwrap().as_ptr(),
+                flags as libc::c_uint) == -1 {
+                return Err(Error::new());
+            }
+            return Ok(());
+        }
+    }
+
 }
