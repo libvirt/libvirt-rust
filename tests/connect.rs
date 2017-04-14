@@ -79,6 +79,13 @@ fn test_get_type() {
 }
 
 #[test]
+fn test_get_uri() {
+    let c = conn();
+    assert_eq!("test:///default", c.get_uri().unwrap_or(String::new()));
+    c.close();
+}
+
+#[test]
 fn test_is_alive() {
     let c = conn();
     assert_eq!(true, c.is_alive().unwrap_or(false));

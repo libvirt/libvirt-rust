@@ -86,6 +86,7 @@ extern {
     fn virConnectGetLibVersion(c: virConnectPtr,
                                ver: *const libc::c_ulong) -> libc::c_int;
     fn virConnectGetType(c: virConnectPtr) -> *const libc::c_char;
+    fn virConnectGetURI(c: virConnectPtr) -> *const libc::c_char;
     fn virConnectIsAlive(c: virConnectPtr) -> libc::c_int;
     fn virConnectIsEncrypted(c: virConnectPtr) -> libc::c_int;
     fn virConnectIsSecure(c: virConnectPtr) -> libc::c_int;
@@ -445,6 +446,16 @@ impl Connect {
     pub fn get_type(&self) -> Result<String, Error> {
         unsafe {
             let t = virConnectGetType(self.c);
+            if t.is_null() {
+                return Err(Error::new())
+            }
+            return Ok(CStr::from_ptr(t).to_string_lossy().into_owned())
+        }
+    }
+
+    pub fn get_uri(&self) -> Result<String, Error> {
+        unsafe {
+            let t = virConnectGetURI(self.c);
             if t.is_null() {
                 return Err(Error::new())
             }
