@@ -43,6 +43,17 @@ extern {
     fn virNodeDeviceGetName(d: virNodeDevicePtr) -> *const libc::c_char;
     fn virNodeDeviceGetXMLDesc(d: virNodeDevicePtr, flags: libc::c_uint) -> *const libc::c_char;
     fn virNodeDeviceGetUUIDString(d: virNodeDevicePtr, uuid: *mut libc::c_char) -> libc::c_int;
+
+    // TODO: need to be implemented
+    fn virNodeDeviceLookupSCSIHostByWWN() -> ();
+    fn virNodeDeviceNumOfCaps() -> ();
+    fn virNodeDeviceReset() -> ();
+    fn virNodeDeviceListCaps() -> ();
+    fn virNodeDeviceRef() -> ();
+    fn virNodeDeviceDetachFlags() -> ();
+    fn virNodeDeviceReAttach() -> ();
+    fn virNodeDeviceGetParent() -> ();
+    fn virNodeDeviceDettach() -> ();
 }
 
 pub type NodeDeviceXMLFlags = self::libc::c_uint;

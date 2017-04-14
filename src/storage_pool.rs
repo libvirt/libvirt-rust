@@ -49,6 +49,39 @@ extern {
     fn virStoragePoolGetName(d: virStoragePoolPtr) -> *const libc::c_char;
     fn virStoragePoolGetXMLDesc(d: virStoragePoolPtr, flags: libc::c_uint) -> *const libc::c_char;
     fn virStoragePoolGetUUIDString(d: virStoragePoolPtr, uuid: *mut libc::c_char) -> libc::c_int;
+
+    //TODO(sahid): need to be implemented...
+    fn virStorageVolGetInfo() -> ();
+    fn virStorageVolLookupByKey() -> ();
+    fn virStoragePoolBuild() -> ();
+    fn virStoragePoolSetAutostart() -> ();
+    fn virStorageVolDelete() -> ();
+    fn virStoragePoolCreateXML() -> ();
+    fn virStorageVolLookupByName() -> ();
+    fn virStorageVolGetKey() -> ();
+    fn virStorageVolDownload() -> ();
+    fn virStoragePoolListAllVolumes() -> ();
+    fn virStorageVolWipe() -> ();
+    fn virStorageVolUpload() -> ();
+    fn virStorageVolGetName() -> ();
+    fn virStoragePoolLookupByVolume() -> ();
+    fn virStorageVolLookupByPath() -> ();
+    fn virStoragePoolGetAutostart() -> ();
+    fn virStoragePoolListVolumes() -> ();
+    fn virStorageVolWipePattern() -> ();
+    fn virStoragePoolNumOfVolumes() -> ();
+    fn virStorageVolCreateXML() -> ();
+    fn virStorageVolRef() -> ();
+    fn virStorageVolFree() -> ();
+    fn virStoragePoolDefineXML() -> ();
+    fn virStoragePoolGetConnect() -> ();
+    fn virStorageVolGetPath() -> ();
+    fn virStorageVolGetXMLDesc() -> ();
+    fn virStorageVolGetConnect() -> ();
+    fn virStorageVolCreateXMLFrom() -> ();
+    fn virStorageVolResize() -> ();
+    fn virStoragePoolGetInfo() -> ();
+    fn virStoragePoolDelete() -> ();
 }
 
 pub type StoragePoolXMLFlags = self::libc::c_uint;

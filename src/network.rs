@@ -56,6 +56,15 @@ extern {
                         index: libc::c_uint,
                         xml: *const libc::c_char,
                         flags: libc::c_uint) -> libc::c_int;
+
+    // TODO: need to be implemented
+    fn virNetworkGetDHCPLeases() -> ();
+    fn virNetworkGetConnect() -> ();
+    fn virNetworkDefineXML() -> ();
+    fn virNetworkDHCPLeaseFree() -> ();
+    fn virNetworkRef() -> ();
+    fn virNetworkIsPersistent() -> ();
+    fn virNetworkCreateXML() -> ();
 }
 
 pub type NetworkXMLFlags = self::libc::c_uint;

@@ -158,6 +158,28 @@ extern {
                                   flags: libc::c_uint) -> libc::c_int;
     fn virConnectGetMaxVcpus(c: virConnectPtr, attr: *const libc::c_char) -> libc::c_int;
     fn virConnectCompareCPU(c: virConnectPtr, xml: *const libc::c_char, flags: libc::c_uint) -> libc::c_int;
+
+    // TODO: need to be implemented
+    fn virConnectNetworkEventDeregisterAny() -> ();
+    fn virConnectUnregisterCloseCallback() -> ();
+    fn virConnectNodeDeviceEventRegisterAny() -> ();
+    fn virConnectStoragePoolEventDeregisterAny() -> ();
+    fn virConnectNodeDeviceEventDeregisterAny() -> ();
+    fn virConnectGetAllDomainStats() -> ();
+    fn virConnectDomainEventDeregisterAny() -> ();
+    fn virConnectGetDomainCapabilities() -> ();
+    fn virConnectNetworkEventRegisterAny() -> ();
+    fn virConnectStoragePoolEventRegisterAny() -> ();
+    fn virConnectDomainEventDeregister() -> ();
+    fn virConnectRegisterCloseCallback() -> ();
+    fn virConnectSetKeepAlive() -> ();
+    fn virConnectDomainXMLToNative() -> ();
+    fn virConnectDomainXMLFromNative() -> ();
+    fn virConnectDomainEventRegisterAny() -> ();
+    fn virConnectRef() -> ();
+    fn virConnectBaselineCPU() -> ();
+    fn virConnectDomainEventRegister() -> ();
+    fn virConnectFindStoragePoolSources() -> ();
 }
 
 pub type ConnectFlags = self::libc::c_uint;

@@ -66,6 +66,9 @@ extern {
     fn virDomainSetVcpusFlags(d: virDomainPtr, vcpus: libc::c_uint, flags: libc::c_uint) -> libc::c_int;
     fn virDomainRestore(c: virConnectPtr, source: *const libc::c_char) -> libc::c_int;
     fn virDomainRestoreFlags(c: virConnectPtr, source: *const libc::c_char, flags: libc::c_uint) -> libc::c_int;
+
+    // TODO: need to be implemented
+    // see: python tools/api_tests.py virDomain
 }
 
 pub type DomainXMLFlags = self::libc::c_uint;

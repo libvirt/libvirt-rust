@@ -3,6 +3,25 @@ Rust bindings for libvirt.
 Make sure to have `libvirt-dev` package (or the development files
 otherwise somewhere in your include path)
 
+## Contributing
+
+To look at what we still need to implement in each source file a there
+is TODO note with a list of API missing;
+
+```
+$ git grep TODO:
+```
+
+In `tools/` a small script can be use to look at what is missing:
+
+```
+$ python tools/api_tests.py virDomain
+{'file': 'libvirt-domain', 'name': 'virDomainMigrateSetMaxSpeed', 'module': 'libvirt-domain'}
+{'file': 'libvirt-domain', 'name': 'virDomainRef', 'module': 'libvirt-domain'}
+{'file': 'libvirt-domain', 'name': 'virDomainGetMemoryParameters', 'module': 'libvirt-domain'}
+...
+```
+
 ## Sample
 
 ```

@@ -45,6 +45,9 @@ extern {
     fn virNWFilterGetName(d: virNWFilterPtr) -> *const libc::c_char;
     fn virNWFilterGetUUIDString(d: virNWFilterPtr, uuid: *mut libc::c_char) -> libc::c_int;
     fn virNWFilterGetXMLDesc(d: virNWFilterPtr, flags: libc::c_uint) -> *const libc::c_char;
+
+    // TODO: need to be implemented
+    fn virNWFilterRef() -> ();
 }
 
 pub struct NWFilter {

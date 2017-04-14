@@ -51,6 +51,13 @@ extern {
     fn virInterfaceGetMACString(d: virInterfacePtr) -> *const libc::c_char;
     fn virInterfaceGetXMLDesc(d: virInterfacePtr, flags: libc::c_uint) -> *const libc::c_char;
     fn virInterfaceGetUUIDString(d: virInterfacePtr, uuid: *mut libc::c_char) -> libc::c_int;
+
+    // TODO: need to be implemented
+    fn virInterfaceChangeBegin() -> ();
+    fn virInterfaceGetConnect() -> ();
+    fn virInterfaceRef() -> ();
+    fn virInterfaceChangeRollback() -> ();
+    fn virInterfaceChangeCommit() -> ();
 }
 
 pub type InterfaceXMLFlags = self::libc::c_uint;
