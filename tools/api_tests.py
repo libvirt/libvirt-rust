@@ -3,6 +3,7 @@
 import os
 import glob
 import xml.etree.ElementTree
+import sys
 
 
 LIBVIRT_API_FILE="/usr/share/libvirt/api/libvirt-api.xml"
@@ -22,13 +23,18 @@ def match(el, content):
     return content.find(el) >= 0
 
 def main():
+    filter_by = ""
+    if len(sys.argv) > 1:
+        filter_by = sys.argv[1]
+    
     doc = xml.etree.ElementTree.parse(LIBVIRT_API_FILE).getroot()
 
     implemented = set([])
     missing = set([])
     for el in doc.iter('function'):
+
         
-        if el.get('name').startswith('virConnect'): # What i'm looking for?
+        if el.get('name').startswith(filter_by): # What i'm looking for?
             
             status = False
             for source in get_sources():
