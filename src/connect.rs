@@ -157,6 +157,7 @@ extern {
                                   mcpus: *mut *mut *mut libc::c_char,
                                   flags: libc::c_uint) -> libc::c_int;
     fn virConnectGetMaxVcpus(c: virConnectPtr, attr: *const libc::c_char) -> libc::c_int;
+    fn virConnectCompareCPU(c: virConnectPtr, xml: *const libc::c_char, flags: libc::c_uint) -> libc::c_int;
 }
 
 pub type ConnectFlags = self::libc::c_uint;
@@ -233,6 +234,16 @@ pub const VIR_CONNECT_LIST_STORAGE_POOLS_GLUSTER: ConnectListAllStoragePoolsFlag
 pub const VIR_CONNECT_LIST_STORAGE_POOLS_ZFS: ConnectListAllStoragePoolsFlags = 1 << 17;
 pub const VIR_CONNECT_LIST_STORAGE_POOLS_VSTORAGE: ConnectListAllStoragePoolsFlags = 1 << 18;
 
+pub type ConnectCompareCPUFlags = self::libc::c_uint;
+pub const VIR_CONNECT_COMPARE_CPU_FAIL_INCOMPATIBLE: ConnectCompareCPUFlags = 1 << 0;
+
+pub type CPUCompareResult = self::libc::c_int;
+pub const VIR_CPU_COMPARE_ERROR: CPUCompareResult = -1;
+pub const VIR_CPU_COMPARE_INCOMPATIBLE: CPUCompareResult = 0;
+pub const VIR_CPU_COMPARE_IDENTICAL: CPUCompareResult = 1;
+pub const VIR_CPU_COMPARE_SUPERSET: CPUCompareResult = 2;
+
+  
 pub type ConnectCredentialType = self::libc::c_uint;
 pub const VIR_CRED_USERNAME: ConnectCredentialType = 1;
 pub const VIR_CRED_AUTHNAME: ConnectCredentialType = 2;
@@ -1280,6 +1291,19 @@ impl Connect {
                 return Err(Error::new());
             }
             return Ok(hyver as u32);
+        }
+    }
+
+    pub fn compare_cpu(&self, xml: &str, flags: ConnectCompareCPUFlags) -> Result<CPUCompareResult, Error> {
+        unsafe {
+            let res = virConnectCompareCPU(
+                self.c,
+                CString::new(xml).unwrap().as_ptr(),
+                flags as libc::c_uint);
+            if res == VIR_CPU_COMPARE_ERROR {
+                return Err(Error::new())
+            }
+            return Ok(res as CPUCompareResult)
         }
     }
 
