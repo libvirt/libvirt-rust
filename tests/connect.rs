@@ -263,3 +263,11 @@ fn test_get_cpu_models_names() {
             "At least one cpu model should exist");
     c.close();
 }
+
+#[test]
+fn test_get_max_vcpus() {
+    let c = conn();
+    let m = c.get_max_vcpus("").unwrap_or(0);
+    assert!(0 < m, "At least one cpu should exist");
+    c.close();
+}

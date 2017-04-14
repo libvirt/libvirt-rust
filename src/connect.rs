@@ -155,6 +155,7 @@ extern {
                                   arch: *const libc::c_char,
                                   mcpus: *mut *mut *mut libc::c_char,
                                   flags: libc::c_uint) -> libc::c_int;
+    fn virConnectGetMaxVcpus(c: virConnectPtr, attr: *const libc::c_char) -> libc::c_int;
 }
 
 pub type ConnectFlags = self::libc::c_uint;
@@ -464,6 +465,18 @@ impl Connect {
                 return Err(Error::new())
             }
             return Ok(CStr::from_ptr(t).to_string_lossy().into_owned())
+        }
+    }
+
+    pub fn get_max_vcpus(&self, attr: &str) -> Result<u32, Error> {
+        unsafe {
+            let max = virConnectGetMaxVcpus(
+                self.c,
+                CString::new(attr).unwrap().as_ptr());
+            if max == -1 {
+                return Err(Error::new())
+            }
+            return Ok(max as u32)
         }
     }
 
