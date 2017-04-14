@@ -227,7 +227,7 @@ impl Domain {
         }
     }
 
-    pub fn define_xml_with_flags(conn: &Connect, xml: &str,
+    pub fn define_xml_flags(conn: &Connect, xml: &str,
                       flags: DomainDefineFlags) -> Result<Domain, Error> {
         unsafe {
             let ptr = virDomainDefineXMLFlags(
@@ -362,7 +362,7 @@ impl Domain {
         }
     }
 
-    pub fn set_memory_with_flags(&self, memory: u64,
+    pub fn set_memory_flags(&self, memory: u64,
                                  flags: DomainMemoryModFlags) -> Result<bool, Error> {
         unsafe {
             let ret = virDomainSetMemoryFlags(self.d,
@@ -398,7 +398,7 @@ impl Domain {
         }
     }
 
-    pub fn set_vcpus_with_flags(&self, vcpus: u32,
+    pub fn set_vcpus_flags(&self, vcpus: u32,
                                 flags: DomainVcpuFlags) -> Result<bool, Error> {
         unsafe {
             let ret = virDomainSetVcpusFlags(self.d,
