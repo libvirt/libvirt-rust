@@ -65,3 +65,11 @@ fn test_get_xml_desc() {
     assert!("" != tdom().get_xml_desc(0).unwrap_or(String::new()),
             "Should not be empty");
 }
+
+#[test]
+fn test_get_info() {
+    match tdom().get_info() {
+        Ok(info) => assert_eq!(1, info.state),
+        Err(_) => panic!("should have a node info")
+    }
+}

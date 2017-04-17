@@ -53,6 +53,7 @@ extern {
     fn virDomainIsActive(d: virDomainPtr) -> libc::c_int;
     fn virDomainIsUpdated(d: virDomainPtr) -> libc::c_int;
     fn virDomainGetName(d: virDomainPtr) -> *const libc::c_char;
+    fn virDomainGetHostname(d: virDomainPtr, flags: libc::c_uint) -> *const libc::c_char;
     fn virDomainGetUUIDString(d: virDomainPtr, uuid: *mut libc::c_char) -> libc::c_int;
     fn virDomainGetXMLDesc(d: virDomainPtr, flags: libc::c_uint) -> *const libc::c_char;
     fn virDomainGetAutostart(d: virDomainPtr) -> libc::c_int;
@@ -67,6 +68,7 @@ extern {
     fn virDomainRestore(c: virConnectPtr, source: *const libc::c_char) -> libc::c_int;
     fn virDomainRestoreFlags(c: virConnectPtr, source: *const libc::c_char, flags: libc::c_uint) -> libc::c_int;
     fn virDomainGetConnect(d: virDomainPtr) -> virConnectPtr;
+    fn virDomainGetInfo(d: virDomainPtr, ninfo: virDomainInfoPtr) -> libc::c_int;
 
     // TODO: need to be implemented
     // see: python tools/api_tests.py virDomain
@@ -113,6 +115,36 @@ pub const VIR_DOMAIN_SAVE_BYPASS_CACHE: DomainSaveRestoreFlags = 1 << 0;
 pub const VIR_DOMAIN_SAVE_RUNNING: DomainSaveRestoreFlags = 1 << 1;
 pub const VIR_DOMAIN_SAVE_PAUSED: DomainSaveRestoreFlags = 1 << 2;
 
+pub type DomainState = self::libc::c_uint;
+pub const VIR_DOMAIN_NOSTATE: DomainState = 0;
+pub const VIR_DOMAIN_RUNNING: DomainState = 1;
+pub const VIR_DOMAIN_BLOCKED: DomainState = 2;
+pub const VIR_DOMAIN_PAUSED: DomainState  = 3;
+pub const VIR_DOMAIN_SHUTDOWN: DomainState = 4;
+pub const VIR_DOMAIN_SHUTOFF: DomainState = 5;
+pub const VIR_DOMAIN_CRASHED: DomainState = 6;
+pub const VIR_DOMAIN_PMSUSPENDED: DomainState = 7;
+
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct virDomainInfo {
+    state: libc::c_ulong,
+    maxMem: libc::c_ulong,
+    memory: libc::c_ulong,
+    nrVirtCpu: libc::c_uint,
+    cpuTime: libc::c_ulong,
+}
+
+#[allow(non_camel_case_types)]
+pub type virDomainInfoPtr = *mut virDomainInfo;
+
+pub struct DomainInfo {
+    pub state: DomainState,
+    pub maxMem: u64,
+    pub memory: u64,
+    pub nrVirtCpu: u32,
+    pub cpuTime: u64,
+}
 
 pub struct Domain {
     pub d: virDomainPtr
@@ -176,6 +208,16 @@ impl Domain {
         }
     }
 
+    pub fn get_hostname(&self, flags: u32) -> Result<String, Error> {
+        unsafe {
+            let n = virDomainGetHostname(self.d, flags as libc::c_uint);
+            if n.is_null() {
+                return Err(Error::new())
+            }
+            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned())
+        }
+    }
+
     pub fn get_uuid_string(&self) -> Result<String, Error> {
         unsafe {
             let mut uuid: [libc::c_char; 37] = [0; 37];
@@ -214,6 +256,29 @@ impl Domain {
                 return Err(Error::new());
             }
             return Ok(Domain{d: ptr});
+        }
+    }
+
+    pub fn get_info(&self) -> Result<DomainInfo, Error> {
+        unsafe {
+            let pinfo = &mut virDomainInfo{
+                state: 0,
+                maxMem: 0,
+                memory: 0,
+                nrVirtCpu: 0,
+                cpuTime: 0,
+            };
+            let res = virDomainGetInfo(self.d, pinfo);
+            if res == -1 {
+                return Err(Error::new());
+            }
+            return Ok(DomainInfo{
+                state: (*pinfo).state as DomainState,
+                maxMem: (*pinfo).maxMem as u64,
+                memory: (*pinfo).memory as u64,
+                nrVirtCpu: (*pinfo).nrVirtCpu as u32,
+                cpuTime: (*pinfo).cpuTime as u64,
+            })
         }
     }
 
