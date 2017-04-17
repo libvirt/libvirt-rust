@@ -65,6 +65,7 @@ extern {
     fn virDomainSetMemoryStatsPeriod(d: virDomainPtr, period: libc::c_int, flags: libc::c_uint) -> libc::c_int;
     fn virDomainSetVcpus(d: virDomainPtr, vcpus: libc::c_uint) -> libc::c_int;
     fn virDomainSetVcpusFlags(d: virDomainPtr, vcpus: libc::c_uint, flags: libc::c_uint) -> libc::c_int;
+    fn virDomainGetVcpusFlags(d: virDomainPtr, vcpus: libc::c_uint) -> libc::c_int;
     fn virDomainRestore(c: virConnectPtr, source: *const libc::c_char) -> libc::c_int;
     fn virDomainRestoreFlags(c: virConnectPtr, source: *const libc::c_char, flags: libc::c_uint) -> libc::c_int;
     fn virDomainGetConnect(d: virDomainPtr) -> virConnectPtr;
@@ -511,4 +512,13 @@ impl Domain {
         }
     }
 
+    pub fn get_vcpus_flags(&self, flags: DomainVcpuFlags) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainGetVcpusFlags(self.d, flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
 }

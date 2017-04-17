@@ -73,3 +73,9 @@ fn test_get_info() {
         Err(_) => panic!("should have a node info")
     }
 }
+
+#[test]
+fn test_get_vcpus_flags() {
+    assert_eq!(2, tdom().get_vcpus_flags(0).unwrap_or(0));
+}
+
