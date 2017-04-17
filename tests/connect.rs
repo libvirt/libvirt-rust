@@ -120,6 +120,16 @@ fn test_capabilities() {
 }
 
 #[test]
+fn test_get_node_info() {
+    let c = conn();
+    match c.get_node_info() {
+        Ok(info) => assert_eq!("i686", info.model),
+        Err(_) => panic!("should have a node info")
+    }
+    c.close();
+}
+
+#[test]
 fn test_hostname() {
     let c = conn();
     assert_eq!(
@@ -127,6 +137,17 @@ fn test_hostname() {
         c.get_hostname().unwrap_or(String::new()));
     c.close();
 }
+
+/*
+#[test]
+fn test_get_free_memory() {
+    let c = conn();
+    assert!(
+        0 != c.get_free_memory().unwrap_or(0),
+        "Version was 0");
+    c.close();
+}
+*/
 
 #[test]
 fn test_lib_version() {
