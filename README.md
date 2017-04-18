@@ -1,4 +1,4 @@
-This crate provides a Rust bindings to the libvirt C library
+# This crate provides a Rust bindings to the libvirt C library
 
 The binding tries to be a fairly direct mapping of the underling C API
 with some differences to respect Rust conventions.

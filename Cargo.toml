@@ -1,12 +1,13 @@
 [package]
 name = "virt"
 version = "0.1.0"
-authors = ["Sahid Orentino Ferdjaoui"]
-license = "GNU Lesser General Public License"
+authors = ["Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>",]
+license = "LGPL-2.1"
 readme = "README.md"
-description = """
-The libvirt Rust package provides API coverage for libvirt.
-"""
+description = "Rust bindings to the libvirt C library"
+documentation = "http://docs.rs/virt"
+keywords = ["libvirt",]
+categories = ["api-bindings",]
 
 [dependencies]
-libc = "0.2"
+libc = "0.2.0"
