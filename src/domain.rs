@@ -21,7 +21,7 @@
 extern crate libc;
 
 use std::ffi::{CString, CStr};
-use std::{str};
+use std::{str, ptr};
 
 use connect::{Connect, virConnectPtr};
 use error::Error;
@@ -32,7 +32,7 @@ pub struct virDomain {
 }
 
 #[allow(non_camel_case_types)]
-pub type virDomainPtr = *const virDomain;
+pub type virDomainPtr = *mut virDomain;
 
 #[link(name = "virt")]
 extern {
@@ -149,6 +149,15 @@ pub struct DomainInfo {
 
 pub struct Domain {
     pub d: virDomainPtr
+}
+
+impl Drop for Domain {
+    fn drop(&mut self) {
+        if !self.d.is_null() {
+            self.free();
+            return;
+        }
+    }
 }
 
 impl Domain {
@@ -383,11 +392,12 @@ impl Domain {
         }
     }
 
-    pub fn free(&self) -> Result<(), Error> {
+    pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
             if virDomainFree(self.d) == -1 {
                 return Err(Error::new());
             }
+            self.d = ptr::null_mut();
             return Ok(());
         }
     }

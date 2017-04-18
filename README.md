@@ -25,16 +25,19 @@ The binding uses standard errors handling from Rust. Each method
   }
 ```
 
-For structs which are reference counted at C level, it is necessary to
-explicitly release the reference at Rust level. For instance is a Rust
-method returns a &Domain, it is necessary to call `free` on it when no
-longer required.
+Most of the structs are automatically release their references by
+implemementing `Drop` trait. It provides a way to run some code when a
+value goes out of scope. But for structs which are reference counted
+at C level, it is still possible to explicitly release the reference
+at Rust level. For instance if a Rust method returns a *Domain, it is
+possible to call `free` on it when no longer required.
+
 
 ```
   match conn.lookup_domain_by_name("myguest") {
-    Ok(dom) => {
+    Ok(mut dom) => {
       ...
-      dom.free()
+      dom.free() // Explicitly releases memory at Rust level.
     }
     Err(e) => panic!("Something wrongs....")
   }

@@ -32,12 +32,12 @@ fn conn() -> Connect {
     }
 }
 
-fn tdom() -> Domain {
+fn tdom(exec_test: fn(dom: Domain)) {
     let c = conn();
     match c.domain_lookup_by_name("test") {
-        Ok(r) => {
-            c.close();
-            r
+        Ok(dom) => {
+            exec_test(dom);
+            c.close()
         }
         Err(e) => panic!(
             "failed with code {}, message: {}", e.code, e.message)
@@ -46,36 +46,53 @@ fn tdom() -> Domain {
     
 #[test]
 fn test_name() {
-    assert_eq!("test", tdom().get_name().unwrap_or(String::new()))
+    fn t(dom: Domain) {
+        assert_eq!("test", dom.get_name().unwrap_or(String::new()));
+    }
+    tdom(t);
 }
 
 #[test]
 fn test_uuid_string() {
-    assert_eq!("6695eb01-f6a4-8304-79aa-97f2502e193f",
-               tdom().get_uuid_string().unwrap_or(String::new()))
+    fn t(dom: Domain) {
+        assert_eq!("6695eb01-f6a4-8304-79aa-97f2502e193f",
+                   dom.get_uuid_string().unwrap_or(String::new()));
+    }
+    tdom(t);
 }
 
 #[test]
 fn test_id() {
-    assert_eq!(1, tdom().get_id().unwrap_or(0));
+    fn t(dom: Domain) {
+        assert_eq!(1, dom.get_id().unwrap_or(0));
+    }
+    tdom(t);
 }
 
 #[test]
 fn test_get_xml_desc() {
-    assert!("" != tdom().get_xml_desc(0).unwrap_or(String::new()),
-            "Should not be empty");
+    fn t(dom: Domain) {
+        assert!("" != dom.get_xml_desc(0).unwrap_or(String::new()),
+                "Should not be empty");
+    }
+    tdom(t);
 }
 
 #[test]
 fn test_get_info() {
-    match tdom().get_info() {
-        Ok(info) => assert_eq!(1, info.state),
-        Err(_) => panic!("should have a node info")
+    fn t(dom: Domain) {
+        match dom.get_info() {
+            Ok(info) => assert_eq!(1, info.state),
+            Err(_) => panic!("should have a node info")
+        }
     }
+    tdom(t);    
 }
 
 #[test]
 fn test_get_vcpus_flags() {
-    assert_eq!(2, tdom().get_vcpus_flags(0).unwrap_or(0));
+    fn t(dom: Domain) {
+        assert_eq!(2, dom.get_vcpus_flags(0).unwrap_or(0));
+    }
+    tdom(t);
 }
-

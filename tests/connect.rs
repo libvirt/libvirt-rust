@@ -212,10 +212,14 @@ fn test_lookup_domain_by_id() {
     assert!(
         0 < v.len(),
         "At least one domain should exist");
-    match c.domain_lookup_by_id(v[0]) {
-        Ok(r) => r.free().unwrap_or(()),
-        Err(e) => panic!(
-            "failed with code {}, message: {}", e.code, e.message)
+    for domid in v {
+        match c.domain_lookup_by_id(domid) {
+            Ok(mut dom) => {
+                dom.free().unwrap_or(())
+            }
+            Err(e) => panic!(
+                "failed with code {}, message: {}", e.code, e.message)
+        }
     }
     c.close();
 }
@@ -224,7 +228,7 @@ fn test_lookup_domain_by_id() {
 fn test_lookup_domain_by_name() {
     let c = conn();
     match c.domain_lookup_by_name("test") {
-        Ok(r) => r.free().unwrap_or(()),
+        Ok(mut r) => r.free().unwrap_or(()),
         Err(e) => panic!(
             "failed with code {}, message: {}", e.code, e.message)
     }
