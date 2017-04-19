@@ -36,13 +36,15 @@ pub type virNodeDevicePtr = *mut virNodeDevice;
 
 #[link(name = "virt")]
 extern {
-    fn virNodeDeviceLookupByName(c: virConnectPtr,id: *const libc::c_char) -> virNodeDevicePtr;
+    fn virNodeDeviceLookupByName(c: virConnectPtr, id: *const libc::c_char) -> virNodeDevicePtr;
     fn virNodeDeviceCreateXML(c: virConnectPtr, xml: *const libc::c_char, flags: libc::c_uint) -> virNodeDevicePtr;
     fn virNodeDeviceDestroy(d: virNodeDevicePtr) -> libc::c_int;
     fn virNodeDeviceFree(d: virNodeDevicePtr) -> libc::c_int;
     fn virNodeDeviceGetName(d: virNodeDevicePtr) -> *const libc::c_char;
     fn virNodeDeviceGetXMLDesc(d: virNodeDevicePtr, flags: libc::c_uint) -> *const libc::c_char;
     fn virNodeDeviceGetUUIDString(d: virNodeDevicePtr, uuid: *mut libc::c_char) -> libc::c_int;
+
+    fn virNodeNumOfDevices(d: virNodeDevicePtr, cap: *const libc::c_char, flags: libc::c_uint) -> libc::c_int;
 
     // TODO: need to be implemented
     fn virNodeDeviceLookupSCSIHostByWWN() -> ();
@@ -148,6 +150,19 @@ impl NodeDevice {
             }
             self.d = ptr::null_mut();
             return Ok(());
+        }
+    }
+
+    pub fn num_of_devices(&self, cap: &str, flags: u32) -> Result<u32, Error> {
+        unsafe {
+            let num = virNodeNumOfDevices(
+                self.d,
+                CString::new(cap).unwrap().as_ptr(),
+                flags as libc::c_uint);
+            if num == -1 {
+                return Err(Error::new())
+            }
+            return Ok(num as u32)
         }
     }
 }
