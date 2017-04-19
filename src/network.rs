@@ -21,7 +21,7 @@
 extern crate libc;
 
 use std::ffi::{CString, CStr};
-use std::{str};
+use std::{str, ptr};
 
 use connect::{Connect, virConnectPtr};
 use error::Error;
@@ -99,6 +99,15 @@ pub const VIR_NETWORK_UPDATE_AFFECT_CONFIG: NetworkUpdateFlags = 1 << 1;
 
 pub struct Network {
     pub d: virNetworkPtr
+}
+
+impl Drop for Network {
+    fn drop(&mut self) {
+        if !self.d.is_null() {
+            self.free();
+            return;
+        }
+    }
 }
 
 impl Network {
@@ -218,11 +227,12 @@ impl Network {
         }
     }
 
-    pub fn free(&self) -> Result<(), Error> {
+    pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
             if virNetworkFree(self.d) == -1 {
                 return Err(Error::new());
             }
+            self.d = ptr::null_mut();
             return Ok(());
         }
     }

@@ -21,7 +21,7 @@
 extern crate libc;
 
 use std::ffi::{CString, CStr};
-use std::{str};
+use std::{str, ptr};
 
 use connect::{Connect, virConnectPtr};
 use error::Error;
@@ -32,7 +32,7 @@ pub struct virStoragePool {
 }
 
 #[allow(non_camel_case_types)]
-pub type virStoragePoolPtr = *const virStoragePool;
+pub type virStoragePoolPtr = *mut virStoragePool;
 
 #[link(name = "virt")]
 extern {
@@ -96,6 +96,15 @@ pub const STORAGE_POOL_CREATE_WITH_BUILD_NO_OVERWRITE: StoragePoolCreateFlags = 
 
 pub struct StoragePool {
     pub d: virStoragePoolPtr
+}
+
+impl Drop for StoragePool {
+    fn drop(&mut self) {
+        if !self.d.is_null() {
+            self.free();
+            return;
+        }
+    }
 }
 
 impl StoragePool {
@@ -205,11 +214,12 @@ impl StoragePool {
         }
     }
 
-    pub fn free(&self) -> Result<(), Error> {
+    pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
             if virStoragePoolFree(self.d) == -1 {
                 return Err(Error::new());
             }
+            self.d = ptr::null_mut();
             return Ok(());
         }
     }

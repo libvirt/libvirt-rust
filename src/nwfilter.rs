@@ -21,7 +21,7 @@
 extern crate libc;
 
 use std::ffi::{CString, CStr};
-use std::{str};
+use std::{str, ptr};
 
 use connect::{Connect, virConnectPtr};
 use error::Error;
@@ -32,7 +32,7 @@ pub struct virNWFilter {
 }
 
 #[allow(non_camel_case_types)]
-pub type virNWFilterPtr = *const virNWFilter;
+pub type virNWFilterPtr = *mut virNWFilter;
 
 #[link(name = "virt")]
 extern {
@@ -52,6 +52,15 @@ extern {
 
 pub struct NWFilter {
     pub d: virNWFilterPtr
+}
+
+impl Drop for NWFilter {
+    fn drop(&mut self) {
+        if !self.d.is_null() {
+            self.free();
+            return;
+        }
+    }
 }
 
 impl NWFilter {
@@ -143,11 +152,12 @@ impl NWFilter {
         }
     }
 
-    pub fn free(&self) -> Result<(), Error> {
+    pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
             if virNWFilterFree(self.d) == -1 {
                 return Err(Error::new());
             }
+            self.d = ptr::null_mut();
             return Ok(());
         }
     }

@@ -21,7 +21,7 @@
 extern crate libc;
 
 use std::ffi::{CString, CStr};
-use std::str;
+use std::{str, ptr};
 
 use connect::{Connect, virConnectPtr};
 use error::Error;
@@ -32,7 +32,7 @@ pub struct virInterface {
 }
 
 #[allow(non_camel_case_types)]
-pub type virInterfacePtr = *const virInterface;
+pub type virInterfacePtr = *mut virInterface;
 
 #[link(name = "virt")]
 extern {
@@ -65,6 +65,15 @@ pub const VIR_INTERFACE_XML_INACTIVE:InterfaceXMLFlags = 1 << 0;
 
 pub struct Interface {
     pub d: virInterfacePtr
+}
+
+impl Drop for Interface {
+    fn drop(&mut self) {
+        if !self.d.is_null() {
+            self.free();
+            return;
+        }
+    }
 }
 
 impl Interface {
@@ -206,11 +215,12 @@ impl Interface {
         }
     }
 
-    pub fn free(&self) -> Result<(), Error> {
+    pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
             if virInterfaceFree(self.d) == -1 {
                 return Err(Error::new());
             }
+            self.d = ptr::null_mut();
             return Ok(());
         }
     }

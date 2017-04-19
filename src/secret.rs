@@ -32,7 +32,7 @@ pub struct virSecret {
 }
 
 #[allow(non_camel_case_types)]
-pub type virSecretPtr = *const virSecret;
+pub type virSecretPtr = *mut virSecret;
 
 #[link(name = "virt")]
 extern {
@@ -64,6 +64,15 @@ pub const VIR_CONNECT_LIST_SECRETS_NO_PRIVATE: SecretsFlags  = 1 << 3;
 
 pub struct Secret {
     pub d: virSecretPtr
+}
+
+impl Drop for Secret {
+    fn drop(&mut self) {
+        if !self.d.is_null() {
+            self.free();
+            return;
+        }
+    }
 }
 
 impl Secret {
@@ -133,11 +142,12 @@ impl Secret {
         }
     }
 
-    pub fn free(&self) -> Result<(), Error> {
+    pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
             if virSecretFree(self.d) == -1 {
                 return Err(Error::new());
             }
+            self.d = ptr::null_mut();
             return Ok(());
         }
     }
