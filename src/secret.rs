@@ -37,12 +37,20 @@ pub type virSecretPtr = *mut virSecret;
 #[link(name = "virt")]
 extern {
     fn virSecretLookupByUUIDString(c: virConnectPtr, uuid: *const libc::c_char) -> virSecretPtr;
+    fn virSecretLookupByUsage(c: virConnectPtr, usaget: libc::c_int, usageid: *const libc::c_char) -> virSecretPtr;
     fn virSecretUndefine(d: virSecretPtr) -> libc::c_int;
     fn virSecretFree(d: virSecretPtr) -> libc::c_int;
     fn virSecretGetName(d: virSecretPtr) -> *const libc::c_char;
     fn virSecretGetUUIDString(d: virSecretPtr, uuid: *mut libc::c_char) -> libc::c_int;
     fn virSecretGetUsageID(d: virSecretPtr) -> *const libc::c_char;
     fn virSecretGetXMLDesc(d: virSecretPtr, flags: libc::c_uint) -> *const libc::c_char;
+
+    fn virSecretSetValue(d: virSecretPtr, value: *const libc::c_uchar,
+                         vsize: libc::c_uint, flags: libc::c_uint) -> libc::c_int;
+    fn virSecretGetValue(d: virSecretPtr, vsize: libc::c_uint, flags: libc::c_uint) -> *const libc::c_uchar;
+    fn virSecretGetConnect(d: virSecretPtr) -> virConnectPtr;
+    fn virSecretGetUsageType(d: virSecretPtr) -> libc::c_int;
+    fn virSecretDefineXML(c: virConnectPtr, xml: *const libc::c_char, flags: libc::c_uint) -> virSecretPtr;
 }
 
 pub type SecretXMLFlags = self::libc::c_uint;
@@ -81,10 +89,44 @@ impl Secret {
         self.d
     }
 
+    pub fn get_connect(&self) -> Result<Connect, Error> {
+        unsafe {
+            let ptr = virSecretGetConnect(self.d);
+            if ptr.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(Connect{c: ptr});
+        }
+    }
+
+    pub fn define_xml(conn: &Connect, xml: &str, flags: u32) -> Result<Secret, Error> {
+        unsafe {
+            let ptr = virSecretDefineXML(
+                conn.as_ptr(),  CString::new(xml).unwrap().as_ptr(),
+                flags as libc::c_uint);
+            if ptr.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(Secret{d: ptr});
+        }
+    }
+
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Secret, Error> {
         unsafe {
             let ptr = virSecretLookupByUUIDString(
                 conn.as_ptr(), CString::new(uuid).unwrap().as_ptr());
+            if ptr.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(Secret{d: ptr});
+        }
+    }
+
+    pub fn lookup_by_usage(conn: &Connect, usagetype: i32, usageid: &str) -> Result<Secret, Error> {
+        unsafe {
+            let ptr = virSecretLookupByUsage(
+                conn.as_ptr(), usagetype as libc::c_int,
+                CString::new(usageid).unwrap().as_ptr());
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -112,6 +154,16 @@ impl Secret {
         }
     }
 
+    pub fn get_usage_type(&self) -> Result<u32, Error> {
+        unsafe {
+            let t = virSecretGetUsageType(self.d);
+            if t == -1 {
+                return Err(Error::new())
+            }
+            return Ok(t as u32)
+        }
+    }
+
     pub fn get_uuid_string(&self) -> Result<String, Error> {
         unsafe {
             let uuid: *mut libc::c_char = ptr::null_mut();
@@ -130,6 +182,31 @@ impl Secret {
                 return Err(Error::new())
             }
             return Ok(CStr::from_ptr(xml).to_string_lossy().into_owned())
+        }
+    }
+
+    pub fn set_value(&self, value: &[u8], flags: u32) -> Result<(), Error> {
+        unsafe {
+            if virSecretSetValue(self.d, value.as_ptr(),
+                                 value.len() as libc::c_uint, flags) == -1 {
+                return Err(Error::new())
+            }
+            return Ok(())
+        }
+    }
+
+    pub fn get_value(&self, size: isize, flags: u32) -> Result<Vec<u8>, Error> {
+        unsafe {
+            let n = virSecretGetValue(self.d, size as libc::c_uint, flags as libc::c_uint);
+            if n.is_null() {
+                return Err(Error::new())
+            }
+
+            let mut array: Vec<u8> = Vec::new();
+            for x in 0..size {
+                array.push(*n.offset(x))
+            }
+            return Ok(array)
         }
     }
 
