@@ -15,10 +15,9 @@ The binding uses standard errors handling from Rust. Each method
 (there are some exceptions) is returning a type `Result`.
 
 ```
-  match Connect.connect("test:///default") {
+  match Connect.open("test:///default") {
     Ok(conn) => {
       ...
-
       assert_eq!(0, conn.close().unwrap_or(-1)) // Verify that all objects has
                                                 // been freen before we close
 						// the connection.
