@@ -195,6 +195,7 @@ extern {
     fn virConnectCompareCPU(c: virConnectPtr, xml: *const libc::c_char, flags: libc::c_uint) -> libc::c_int;
     fn virNodeGetInfo(c: virConnectPtr, ninfo: virNodeInfoPtr) -> libc::c_int;
     fn virNodeGetFreeMemory(c: virConnectPtr) -> libc::c_long;
+    fn virConnectSetKeepAlive(c: virConnectPtr, interval: libc::c_int, count: libc::c_uint) -> libc::c_int;
 }
 
 pub type ConnectFlags = self::libc::c_uint;
@@ -1388,6 +1389,18 @@ impl Connect {
                 cores: (*pinfo).cores as u32,
                 threads: (*pinfo).threads as u32,
             })
+        }
+    }
+
+    pub fn set_keep_alive(&self, interval: i32, count: u32) -> Result<i32, Error> {
+        unsafe {
+            let ret = virConnectSetKeepAlive(
+                self.ptr, interval as libc::c_int,
+                count as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            Ok(ret as i32)
         }
     }
 }
