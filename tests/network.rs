@@ -24,7 +24,7 @@ use virt::connect::Connect;
 #[test]
 fn exercices() {
     match Connect::open("test:///default") {
-        Ok(conn) => {
+        Ok(mut conn) => {
             let nets = conn.list_networks().unwrap_or(vec![]);
             match conn.network_lookup_by_name(&nets[0]) {
                 Ok(network) => {
@@ -47,7 +47,7 @@ fn exercices() {
                 Err(e) => panic!(
                     "failed with code {}, message: {}", e.code, e.message)
             }
-            conn.close();
+            assert_eq!(0, conn.close().unwrap_or(-1));
         },
         Err(e) => panic!(
             "failed with code {}, message: {}", e.code, e.message)

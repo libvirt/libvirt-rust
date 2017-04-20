@@ -18,7 +18,10 @@ The binding uses standard errors handling from Rust. Each method
   match Connect.connect("test:///default") {
     Ok(conn) => {
       ...
-      conn.close()
+
+      assert_eq!(0, conn.close().unwrap_or(-1)) // Verify that all objects has
+                                                // been freen before we close
+						// the connection.
     }
     Err(e) => panic!("Not able to connect; code:{}, message:{}",
                      e.code, e.message)

@@ -18,27 +18,18 @@
 
 extern crate virt;
 
-use virt::connect::Connect;
+mod common;
+
 use virt::domain::Domain;
 
 
-fn conn() -> Connect {
-    match Connect::open("test:///default") {
-        Err(e) => panic!(
-            "Build connection failed with code {}, message: {}",
-            e.code, e.message),
-        Ok(conn) =>
-            conn
-    }
-}
-
 fn tdom(exec_test: fn(dom: Domain)) {
-    let c = conn();
+    let c = common::conn();
     match c.domain_lookup_by_name("test") {
         Ok(dom) => {
             exec_test(dom);
-            c.close()
-        }
+            common::close(c);
+        },
         Err(e) => panic!(
             "failed with code {}, message: {}", e.code, e.message)
     }

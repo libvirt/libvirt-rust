@@ -26,62 +26,32 @@ use std::{str, ptr};
 use connect::{Connect, virConnectPtr};
 use error::Error;
 
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct virStoragePool {
-}
+pub mod sys {
+    #[allow(non_camel_case_types)]
+    #[repr(C)]
+    pub struct virStoragePool {
+    }
 
-#[allow(non_camel_case_types)]
-pub type virStoragePoolPtr = *mut virStoragePool;
+    #[allow(non_camel_case_types)]
+    pub type virStoragePoolPtr = *mut virStoragePool;
+}
 
 #[link(name = "virt")]
 extern {
-    fn virStoragePoolLookupByID(c: virConnectPtr, id: libc::c_int) -> virStoragePoolPtr;
-    fn virStoragePoolLookupByName(c: virConnectPtr, id: *const libc::c_char) -> virStoragePoolPtr;
-    fn virStoragePoolLookupByUUIDString(c: virConnectPtr, uuid: *const libc::c_char) -> virStoragePoolPtr;
-    fn virStoragePoolCreate(c: virConnectPtr, flags: libc::c_uint) -> virStoragePoolPtr;
-    fn virStoragePoolRefresh(d: virStoragePoolPtr, flags: libc::c_uint) -> libc::c_int;
-    fn virStoragePoolDestroy(d: virStoragePoolPtr) -> libc::c_int;
-    fn virStoragePoolUndefine(d: virStoragePoolPtr) -> libc::c_int;
-    fn virStoragePoolFree(d: virStoragePoolPtr) -> libc::c_int;
-    fn virStoragePoolIsActive(d: virStoragePoolPtr) -> libc::c_int;
-    fn virStoragePoolIsPersistent(d: virStoragePoolPtr) -> libc::c_int;
-    fn virStoragePoolGetName(d: virStoragePoolPtr) -> *const libc::c_char;
-    fn virStoragePoolGetXMLDesc(d: virStoragePoolPtr, flags: libc::c_uint) -> *const libc::c_char;
-    fn virStoragePoolGetUUIDString(d: virStoragePoolPtr, uuid: *mut libc::c_char) -> libc::c_int;
-    fn virStoragePoolGetConnect(d: virStoragePoolPtr) -> virConnectPtr;
-
-    //TODO(sahid): need to be implemented...
-    fn virStorageVolGetInfo() -> ();
-    fn virStorageVolLookupByKey() -> ();
-    fn virStoragePoolBuild() -> ();
-    fn virStoragePoolSetAutostart() -> ();
-    fn virStorageVolDelete() -> ();
-    fn virStoragePoolCreateXML() -> ();
-    fn virStorageVolLookupByName() -> ();
-    fn virStorageVolGetKey() -> ();
-    fn virStorageVolDownload() -> ();
-    fn virStoragePoolListAllVolumes() -> ();
-    fn virStorageVolWipe() -> ();
-    fn virStorageVolUpload() -> ();
-    fn virStorageVolGetName() -> ();
-    fn virStoragePoolLookupByVolume() -> ();
-    fn virStorageVolLookupByPath() -> ();
-    fn virStoragePoolGetAutostart() -> ();
-    fn virStoragePoolListVolumes() -> ();
-    fn virStorageVolWipePattern() -> ();
-    fn virStoragePoolNumOfVolumes() -> ();
-    fn virStorageVolCreateXML() -> ();
-    fn virStorageVolRef() -> ();
-    fn virStorageVolFree() -> ();
-    fn virStoragePoolDefineXML() -> ();
-    fn virStorageVolGetPath() -> ();
-    fn virStorageVolGetXMLDesc() -> ();
-    fn virStorageVolGetConnect() -> ();
-    fn virStorageVolCreateXMLFrom() -> ();
-    fn virStorageVolResize() -> ();
-    fn virStoragePoolGetInfo() -> ();
-    fn virStoragePoolDelete() -> ();
+    fn virStoragePoolLookupByID(c: virConnectPtr, id: libc::c_int) -> sys::virStoragePoolPtr;
+    fn virStoragePoolLookupByName(c: virConnectPtr, id: *const libc::c_char) -> sys::virStoragePoolPtr;
+    fn virStoragePoolLookupByUUIDString(c: virConnectPtr, uuid: *const libc::c_char) -> sys::virStoragePoolPtr;
+    fn virStoragePoolCreate(c: virConnectPtr, flags: libc::c_uint) -> sys::virStoragePoolPtr;
+    fn virStoragePoolRefresh(ptr: sys::virStoragePoolPtr, flags: libc::c_uint) -> libc::c_int;
+    fn virStoragePoolDestroy(ptr: sys::virStoragePoolPtr) -> libc::c_int;
+    fn virStoragePoolUndefine(ptr: sys::virStoragePoolPtr) -> libc::c_int;
+    fn virStoragePoolFree(ptr: sys::virStoragePoolPtr) -> libc::c_int;
+    fn virStoragePoolIsActive(ptr: sys::virStoragePoolPtr) -> libc::c_int;
+    fn virStoragePoolIsPersistent(ptr: sys::virStoragePoolPtr) -> libc::c_int;
+    fn virStoragePoolGetName(ptr: sys::virStoragePoolPtr) -> *const libc::c_char;
+    fn virStoragePoolGetXMLDesc(ptr: sys::virStoragePoolPtr, flags: libc::c_uint) -> *const libc::c_char;
+    fn virStoragePoolGetUUIDString(ptr: sys::virStoragePoolPtr, uuid: *mut libc::c_char) -> libc::c_int;
+    fn virStoragePoolGetConnect(ptr: sys::virStoragePoolPtr) -> virConnectPtr;
 }
 
 pub type StoragePoolXMLFlags = self::libc::c_uint;
@@ -95,13 +65,15 @@ pub const STORAGE_POOL_CREATE_WITH_BUILD_NO_OVERWRITE: StoragePoolCreateFlags = 
 
 
 pub struct StoragePool {
-    pub d: virStoragePoolPtr
+    ptr: sys::virStoragePoolPtr
 }
 
 impl Drop for StoragePool {
     fn drop(&mut self) {
-        if !self.d.is_null() {
-            self.free();
+        if !self.ptr.is_null() {
+            if self.free().is_err() {
+                panic!("Unable to drop memory for StoragePool")
+            }
             return;
         }
     }
@@ -109,17 +81,17 @@ impl Drop for StoragePool {
 
 impl StoragePool {
 
-    pub fn as_ptr(&self) -> virStoragePoolPtr {
-        self.d
+    pub fn new(ptr: sys::virStoragePoolPtr) -> StoragePool {
+        return StoragePool{ptr: ptr}
     }
 
     pub fn get_connect(&self) -> Result<Connect, Error> {
         unsafe {
-            let ptr = virStoragePoolGetConnect(self.d);
+            let ptr = virStoragePoolGetConnect(self.ptr);
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Connect{c: ptr});
+            return Ok(Connect::new(ptr));
         }
     }
 
@@ -129,7 +101,7 @@ impl StoragePool {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(StoragePool{d: ptr});
+            return Ok(StoragePool::new(ptr));
         }
     }
 
@@ -140,7 +112,7 @@ impl StoragePool {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(StoragePool{d: ptr});
+            return Ok(StoragePool::new(ptr));
         }
     }
 
@@ -151,13 +123,13 @@ impl StoragePool {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(StoragePool{d: ptr});
+            return Ok(StoragePool::new(ptr));
         }
     }
 
     pub fn get_name(&self) -> Result<String, Error> {
         unsafe {
-            let n = virStoragePoolGetName(self.d);
+            let n = virStoragePoolGetName(self.ptr);
             if n.is_null() {
                 return Err(Error::new())
             }
@@ -168,7 +140,7 @@ impl StoragePool {
     pub fn get_uuid_string(&self) -> Result<String, Error> {
         unsafe {
             let mut uuid: [libc::c_char; 37] = [0; 37];
-            if virStoragePoolGetUUIDString(self.d, uuid.as_mut_ptr()) == -1 {
+            if virStoragePoolGetUUIDString(self.ptr, uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new())
             }
             return Ok(CStr::from_ptr(
@@ -178,7 +150,7 @@ impl StoragePool {
 
     pub fn get_xml_desc(&self, flags:StoragePoolXMLFlags) -> Result<String, Error> {
         unsafe {
-            let xml = virStoragePoolGetXMLDesc(self.d, flags);
+            let xml = virStoragePoolGetXMLDesc(self.ptr, flags);
             if xml.is_null() {
                 return Err(Error::new())
             }
@@ -192,13 +164,13 @@ impl StoragePool {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(StoragePool{d: ptr});
+            return Ok(StoragePool::new(ptr));
         }
     }
 
     pub fn destroy(&self) -> Result<(), Error> {
         unsafe {
-            if virStoragePoolDestroy(self.d) == -1 {
+            if virStoragePoolDestroy(self.ptr) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -207,7 +179,7 @@ impl StoragePool {
 
     pub fn undefine(&self) -> Result<(), Error> {
         unsafe {
-            if virStoragePoolUndefine(self.d) == -1 {
+            if virStoragePoolUndefine(self.ptr) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -216,17 +188,17 @@ impl StoragePool {
 
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
-            if virStoragePoolFree(self.d) == -1 {
+            if virStoragePoolFree(self.ptr) == -1 {
                 return Err(Error::new());
             }
-            self.d = ptr::null_mut();
+            self.ptr = ptr::null_mut();
             return Ok(());
         }
     }
 
     pub fn is_active(&self) -> Result<bool, Error> {
         unsafe {
-            let ret = virStoragePoolIsActive(self.d);
+            let ret = virStoragePoolIsActive(self.ptr);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -236,7 +208,7 @@ impl StoragePool {
 
     pub fn is_persistent(&self) -> Result<bool, Error> {
         unsafe {
-            let ret = virStoragePoolIsPersistent(self.d);
+            let ret = virStoragePoolIsPersistent(self.ptr);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -246,7 +218,7 @@ impl StoragePool {
 
     pub fn refresh(&self, flags: u32) -> Result<(), Error> {
         unsafe {
-            if virStoragePoolRefresh(self.d, flags as libc::c_uint) == -1 {
+            if virStoragePoolRefresh(self.ptr, flags as libc::c_uint) == -1 {
                 return Err(Error::new());
             }
             return Ok(());

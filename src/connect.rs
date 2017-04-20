@@ -23,14 +23,23 @@ extern crate libc;
 use std::ffi::{CString, CStr};
 use std::{str, ptr};
 
-use domain::{Domain, virDomainPtr};
+use network::sys::virNetworkPtr;
+use interface::sys::virInterfacePtr;
+use secret::sys::virSecretPtr;
+use nwfilter::sys::virNWFilterPtr;
+use nodedev::sys::virNodeDevicePtr;
+use storage_pool::sys::virStoragePoolPtr;
+use domain::sys::virDomainPtr;
+
+use domain::Domain;
 use error::Error;
-use network::{Network, virNetworkPtr};
-use nodedev::{NodeDevice, virNodeDevicePtr};
-use nwfilter::{NWFilter, virNWFilterPtr};
-use interface::{Interface, virInterfacePtr};
-use storage_pool::{StoragePool, virStoragePoolPtr};
-use secret::{Secret, virSecretPtr};
+use network::Network;
+use nodedev::NodeDevice;
+use nwfilter::NWFilter;
+use interface::Interface;
+use storage_pool::StoragePool;
+use secret::Secret;
+
 
 #[allow(non_camel_case_types)]
 #[repr(C)]
@@ -186,40 +195,6 @@ extern {
     fn virConnectCompareCPU(c: virConnectPtr, xml: *const libc::c_char, flags: libc::c_uint) -> libc::c_int;
     fn virNodeGetInfo(c: virConnectPtr, ninfo: virNodeInfoPtr) -> libc::c_int;
     fn virNodeGetFreeMemory(c: virConnectPtr) -> libc::c_long;
-
-    // TODO: need to be implemented
-    fn virNodeGetMemoryParameters() -> ();
-    fn virNodeSetMemoryParameters() -> ();
-    fn virNodeGetFreePages() -> ();
-    fn virNodeGetCPUStats() -> ();
-    fn virNodeGetCellsFreeMemory() -> ();
-    fn virNodeGetCPUMap() -> ();
-    fn virNodeAllocPages() -> ();
-    fn virNodeGetMemoryStats() -> ();
-    fn virNodeGetSecurityModel() -> ();
-    fn virNodeSuspendForDuration() -> ();
-
-    // TODO: need to be implemented
-    fn virConnectNetworkEventDeregisterAny() -> ();
-    fn virConnectUnregisterCloseCallback() -> ();
-    fn virConnectNodeDeviceEventRegisterAny() -> ();
-    fn virConnectStoragePoolEventDeregisterAny() -> ();
-    fn virConnectNodeDeviceEventDeregisterAny() -> ();
-    fn virConnectGetAllDomainStats() -> ();
-    fn virConnectDomainEventDeregisterAny() -> ();
-    fn virConnectGetDomainCapabilities() -> ();
-    fn virConnectNetworkEventRegisterAny() -> ();
-    fn virConnectStoragePoolEventRegisterAny() -> ();
-    fn virConnectDomainEventDeregister() -> ();
-    fn virConnectRegisterCloseCallback() -> ();
-    fn virConnectSetKeepAlive() -> ();
-    fn virConnectDomainXMLToNative() -> ();
-    fn virConnectDomainXMLFromNative() -> ();
-    fn virConnectDomainEventRegisterAny() -> ();
-    fn virConnectRef() -> ();
-    fn virConnectBaselineCPU() -> ();
-    fn virConnectDomainEventRegister() -> ();
-    fn virConnectFindStoragePoolSources() -> ();
 }
 
 pub type ConnectFlags = self::libc::c_uint;
@@ -351,13 +326,17 @@ impl ConnectAuth {
 }
 
 pub struct Connect {
-    pub c: virConnectPtr
+    pub ptr: virConnectPtr
 }
 
 impl Connect {
 
     pub fn as_ptr(&self) -> virConnectPtr {
-        self.c
+        self.ptr
+    }
+
+    pub fn new(ptr: virConnectPtr) -> Connect {
+        return Connect{ptr: ptr};
     }
 
     pub fn get_version() -> Result<u32, Error> {
@@ -397,9 +376,8 @@ impl Connect {
     /// use virt::connect::Connect;
     ///
     /// match Connect::open("test:///default") {
-    ///   Ok(conn) => {
-    ///       conn.close();
-    ///       return
+    ///   Ok(mut conn) => {
+    ///       assert_eq!(0, conn.close().unwrap_or(-1));
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -411,7 +389,7 @@ impl Connect {
             if c.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Connect{c: c});
+            return Ok(Connect::new(c));
         }
     }
 
@@ -430,9 +408,8 @@ impl Connect {
     /// use virt::connect::Connect;
     ///
     /// match Connect::open_read_only("test:///default") {
-    ///   Ok(conn) => {
-    ///       conn.close();
-    ///       return
+    ///   Ok(mut conn) => {
+    ///     assert_eq!(0, conn.close().unwrap_or(-1));
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -444,7 +421,7 @@ impl Connect {
             if c.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Connect{c: c});
+            return Ok(Connect::new(c));
         }
     }
 
@@ -456,9 +433,8 @@ impl Connect {
     /// 
     /// let auth = ConnectAuth::new_default();
     /// match Connect::open_auth("test:///default", &auth, 0) {
-    ///   Ok(conn) => {
-    ///       conn.close();
-    ///       return
+    ///   Ok(mut conn) => {
+    ///       assert_eq!(0, conn.close().unwrap_or(-1));
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -466,13 +442,13 @@ impl Connect {
     /// ```
     pub fn open_auth(uri: &str, auth: &ConnectAuth, flags: ConnectFlags) -> Result<Connect, Error> {
         unsafe {
-            let mut c = virConnectOpenAuth(
+            let c = virConnectOpenAuth(
                 CString::new(uri).unwrap().as_ptr(),
                 auth.as_ptr(), flags as libc::c_uint);
             if c.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Connect{c: c});
+            return Ok(Connect::new(c));
         }
     }
 
@@ -481,9 +457,16 @@ impl Connect {
     /// should not be called if further interaction with the
     /// hypervisor are needed especially if there is running domain
     /// which need further monitoring by the application.
-    pub fn close(&self) {
+    pub fn close(&mut self) -> Result<i32, Error> {
         unsafe {
-            virConnectClose(self.c);
+            let ret = virConnectClose(self.ptr);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            if ret == 0 {
+                self.ptr = ptr::null_mut();
+            }
+            Ok(ret)
         }
     }
 
@@ -494,7 +477,7 @@ impl Connect {
     /// this returns the hostname of the remote system.
     pub fn get_hostname(&self) -> Result<String, Error> {
         unsafe {
-            let n = virConnectGetHostname(self.c);
+            let n = virConnectGetHostname(self.ptr);
             if n.is_null() {
                 return Err(Error::new())
             }
@@ -504,7 +487,7 @@ impl Connect {
 
     pub fn get_capabilities(&self) -> Result<String, Error> {
         unsafe {
-            let n = virConnectGetCapabilities(self.c);
+            let n = virConnectGetCapabilities(self.ptr);
             if n.is_null() {
                 return Err(Error::new())
             }
@@ -515,7 +498,7 @@ impl Connect {
     pub fn get_lib_version(&self) -> Result<u32, Error> {
         unsafe {
             let mut ver: libc::c_ulong = 0;
-            if virConnectGetLibVersion(self.c, &mut ver) == -1 {
+            if virConnectGetLibVersion(self.ptr, &mut ver) == -1 {
                 return Err(Error::new());
             }
             return Ok(ver as u32);
@@ -524,7 +507,7 @@ impl Connect {
 
     pub fn get_type(&self) -> Result<String, Error> {
         unsafe {
-            let t = virConnectGetType(self.c);
+            let t = virConnectGetType(self.ptr);
             if t.is_null() {
                 return Err(Error::new())
             }
@@ -534,7 +517,7 @@ impl Connect {
 
     pub fn get_uri(&self) -> Result<String, Error> {
         unsafe {
-            let t = virConnectGetURI(self.c);
+            let t = virConnectGetURI(self.ptr);
             if t.is_null() {
                 return Err(Error::new())
             }
@@ -544,7 +527,7 @@ impl Connect {
 
     pub fn get_sys_info(&self, flags: u32) -> Result<String, Error> {
         unsafe {
-            let sys = virConnectGetSysinfo(self.c, flags as libc::c_uint);
+            let sys = virConnectGetSysinfo(self.ptr, flags as libc::c_uint);
             if sys.is_null() {
                 return Err(Error::new())
             }
@@ -555,7 +538,7 @@ impl Connect {
     pub fn get_max_vcpus(&self, attr: &str) -> Result<u32, Error> {
         unsafe {
             let max = virConnectGetMaxVcpus(
-                self.c,
+                self.ptr,
                 CString::new(attr).unwrap().as_ptr());
             if max == -1 {
                 return Err(Error::new())
@@ -568,7 +551,7 @@ impl Connect {
         unsafe {
             let mut names: *mut *mut libc::c_char = ptr::null_mut();
             let size = virConnectGetCPUModelNames(
-                self.c,
+                self.ptr,
                 CString::new(arch).unwrap().as_ptr(),
                 &mut names,
                 flags as libc::c_uint);
@@ -589,7 +572,7 @@ impl Connect {
 
     pub fn is_alive(&self) -> Result<bool, Error> {
         unsafe {
-            let t = virConnectIsAlive(self.c);
+            let t = virConnectIsAlive(self.ptr);
             if t == -1 {
                 return Err(Error::new())
             }
@@ -599,7 +582,7 @@ impl Connect {
 
     pub fn is_encrypted(&self) -> Result<bool, Error> {
         unsafe {
-            let t = virConnectIsEncrypted(self.c);
+            let t = virConnectIsEncrypted(self.ptr);
             if t == -1 {
                 return Err(Error::new())
             }
@@ -609,7 +592,7 @@ impl Connect {
 
     pub fn is_secure(&self) -> Result<bool, Error> {
         unsafe {
-            let t = virConnectIsSecure(self.c);
+            let t = virConnectIsSecure(self.ptr);
             if t == -1 {
                 return Err(Error::new())
             }
@@ -625,13 +608,13 @@ impl Connect {
     /// use virt::connect::Connect;
     ///
     /// match Connect::open("test:///default") {
-    ///   Ok(conn) => {
+    ///   Ok(mut conn) => {
     ///     match conn.list_domains() {
     ///       Ok(arr) => assert_eq!(1, arr.len()),
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     conn.close();
+    ///     assert_eq!(0, conn.close().unwrap_or(-1));
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -640,7 +623,7 @@ impl Connect {
     pub fn list_domains(&self) -> Result<Vec<u32>, Error> {
         unsafe {
             let mut ids: [libc::c_int; 512] = [0; 512];
-            let size = virConnectListDomains(self.c, ids.as_mut_ptr(), 512);
+            let size = virConnectListDomains(self.ptr, ids.as_mut_ptr(), 512);
             if size == -1 {
                 return Err(Error::new())
             }
@@ -661,13 +644,13 @@ impl Connect {
     /// use virt::connect::Connect;
     ///
     /// match Connect::open("test:///default") {
-    ///   Ok(conn) => {
+    ///   Ok(mut conn) => {
     ///     match conn.list_interfaces() {
     ///       Ok(arr) => assert_eq!(1, arr.len()),
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     conn.close();
+    ///     assert_eq!(0, conn.close().unwrap_or(-1));
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -676,7 +659,7 @@ impl Connect {
     pub fn list_interfaces(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
-            let size = virConnectListInterfaces(self.c, names.as_mut_ptr(), 1024);
+            let size = virConnectListInterfaces(self.ptr, names.as_mut_ptr(), 1024);
             if size == -1 {
                 return Err(Error::new())
             }
@@ -698,13 +681,13 @@ impl Connect {
     /// use virt::connect::Connect;
     ///
     /// match Connect::open("test:///default") {
-    ///   Ok(conn) => {
+    ///   Ok(mut conn) => {
     ///     match conn.list_networks() {
     ///       Ok(arr) => assert_eq!(1, arr.len()),
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     conn.close();
+    ///     assert_eq!(0, conn.close().unwrap_or(-1));
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -713,7 +696,7 @@ impl Connect {
     pub fn list_networks(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
-            let size = virConnectListNetworks(self.c, names.as_mut_ptr(), 1024);
+            let size = virConnectListNetworks(self.ptr, names.as_mut_ptr(), 1024);
             if size == -1 {
                 return Err(Error::new())
             }
@@ -730,7 +713,7 @@ impl Connect {
     pub fn list_nw_filters(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
-            let size = virConnectListNWFilters(self.c, names.as_mut_ptr(), 1024);
+            let size = virConnectListNWFilters(self.ptr, names.as_mut_ptr(), 1024);
             if size == -1 {
                 return Err(Error::new())
             }
@@ -747,7 +730,7 @@ impl Connect {
     pub fn list_secrets(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
-            let size = virConnectListSecrets(self.c, names.as_mut_ptr(), 1024);
+            let size = virConnectListSecrets(self.ptr, names.as_mut_ptr(), 1024);
             if size == -1 {
                 return Err(Error::new())
             }
@@ -769,13 +752,13 @@ impl Connect {
     /// use virt::connect::Connect;
     ///
     /// match Connect::open("test:///default") {
-    ///   Ok(conn) => {
+    ///   Ok(mut conn) => {
     ///     match conn.list_storage_pools() {
     ///       Ok(arr) => assert_eq!(1, arr.len()),
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     conn.close();
+    ///     assert_eq!(0, conn.close().unwrap_or(-1));
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -784,7 +767,7 @@ impl Connect {
     pub fn list_storage_pools(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
-            let size = virConnectListStoragePools(self.c, names.as_mut_ptr(), 1024);
+            let size = virConnectListStoragePools(self.ptr, names.as_mut_ptr(), 1024);
             if size == -1 {
                 return Err(Error::new())
             }
@@ -802,14 +785,14 @@ impl Connect {
         unsafe {
             let mut domains: *mut virDomainPtr = ptr::null_mut();
             let size = virConnectListAllDomains(
-                self.c, &mut domains, flags as libc::c_uint);
+                self.ptr, &mut domains, flags as libc::c_uint);
             if size == -1 {
                 return Err(Error::new())
             }
 
             let mut array: Vec<Domain> = Vec::new();
             for x in 0..size as isize {
-                array.push(Domain{d: *domains.offset(x)});
+                array.push(Domain::new(*domains.offset(x)));
             }
             libc::free(domains as *mut libc::c_void);
 
@@ -821,14 +804,14 @@ impl Connect {
         unsafe {
             let mut networks: *mut virNetworkPtr = ptr::null_mut();
             let size = virConnectListAllNetworks(
-                self.c, &mut networks, flags as libc::c_uint);
+                self.ptr, &mut networks, flags as libc::c_uint);
             if size == -1 {
                 return Err(Error::new())
             }
 
             let mut array: Vec<Network> = Vec::new();
             for x in 0..size as isize {
-                array.push(Network{d: *networks.offset(x)});
+                array.push(Network::new(*networks.offset(x)));
             }
             libc::free(networks as *mut libc::c_void);
 
@@ -840,14 +823,14 @@ impl Connect {
         unsafe {
             let mut interfaces: *mut virInterfacePtr = ptr::null_mut();
             let size = virConnectListAllInterfaces(
-                self.c, &mut interfaces, flags as libc::c_uint);
+                self.ptr, &mut interfaces, flags as libc::c_uint);
             if size == -1 {
                 return Err(Error::new())
             }
 
             let mut array: Vec<Interface> = Vec::new();
             for x in 0..size as isize {
-                array.push(Interface{d: *interfaces.offset(x)});
+                array.push(Interface::new(*interfaces.offset(x)));
             }
             libc::free(interfaces as *mut libc::c_void);
 
@@ -859,14 +842,14 @@ impl Connect {
         unsafe {
             let mut nodedevs: *mut virNodeDevicePtr = ptr::null_mut();
             let size = virConnectListAllNodeDevices(
-                self.c, &mut nodedevs, flags as libc::c_uint);
+                self.ptr, &mut nodedevs, flags as libc::c_uint);
             if size == -1 {
                 return Err(Error::new())
             }
             
             let mut array: Vec<NodeDevice> = Vec::new();
             for x in 0..size as isize {
-                array.push(NodeDevice{d: *nodedevs.offset(x)});
+                array.push(NodeDevice::new(*nodedevs.offset(x)));
             }
             libc::free(nodedevs as *mut libc::c_void);
 
@@ -878,14 +861,14 @@ impl Connect {
         unsafe {
             let mut secrets: *mut virSecretPtr = ptr::null_mut();
             let size = virConnectListAllSecrets(
-                self.c, &mut secrets, flags as libc::c_uint);
+                self.ptr, &mut secrets, flags as libc::c_uint);
             if size == -1 {
                 return Err(Error::new())
             }
 
             let mut array: Vec<Secret> = Vec::new();
             for x in 0..size as isize {
-                array.push(Secret{d: *secrets.offset(x)});
+                array.push(Secret::new(*secrets.offset(x)));
             }
             libc::free(secrets as *mut libc::c_void);
 
@@ -897,14 +880,14 @@ impl Connect {
         unsafe {
             let mut storages: *mut virStoragePoolPtr = ptr::null_mut();
             let size = virConnectListAllStoragePools(
-                self.c, &mut storages, flags as libc::c_uint);
+                self.ptr, &mut storages, flags as libc::c_uint);
             if size == -1 {
                 return Err(Error::new())
             }
 
             let mut array: Vec<StoragePool> = Vec::new();
             for x in 0..size as isize {
-                array.push(StoragePool{d: *storages.offset(x)});
+                array.push(StoragePool::new(*storages.offset(x)));
             }
             libc::free(storages as *mut libc::c_void);
 
@@ -916,14 +899,14 @@ impl Connect {
         unsafe {
             let mut filters: *mut virNWFilterPtr = ptr::null_mut();
             let size = virConnectListAllNWFilters(
-                self.c, &mut filters, flags as libc::c_uint);
+                self.ptr, &mut filters, flags as libc::c_uint);
             if size == -1 {
                 return Err(Error::new())
             }
 
             let mut array: Vec<NWFilter> = Vec::new();
             for x in 0..size as isize {
-                array.push(NWFilter{d: *filters.offset(x)});
+                array.push(NWFilter::new(*filters.offset(x)));
             }
             libc::free(filters as *mut libc::c_void);
 
@@ -939,13 +922,13 @@ impl Connect {
     /// use virt::connect::Connect;
     ///
     /// match Connect::open("test:///default") {
-    ///   Ok(conn) => {
+    ///   Ok(mut conn) => {
     ///     match conn.list_defined_domains() {
     ///       Ok(arr) => assert_eq!(0, arr.len()),
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     conn.close();
+    ///     assert_eq!(0, conn.close().unwrap_or(-1));
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -954,7 +937,7 @@ impl Connect {
     pub fn list_defined_domains(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
-            let size = virConnectListDefinedDomains(self.c, names.as_mut_ptr(), 1024);
+            let size = virConnectListDefinedDomains(self.ptr, names.as_mut_ptr(), 1024);
             if size == -1 {
                 return Err(Error::new())
             }
@@ -976,13 +959,13 @@ impl Connect {
     /// use virt::connect::Connect;
     ///
     /// match Connect::open("test:///default") {
-    ///   Ok(conn) => {
+    ///   Ok(mut conn) => {
     ///     match conn.list_defined_interfaces() {
     ///       Ok(arr) => assert_eq!(0, arr.len()),
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     conn.close();
+    ///     assert_eq!(0, conn.close().unwrap_or(-1));
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -991,7 +974,7 @@ impl Connect {
     pub fn list_defined_interfaces(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
-            let size = virConnectListDefinedInterfaces(self.c, names.as_mut_ptr(), 1024);
+            let size = virConnectListDefinedInterfaces(self.ptr, names.as_mut_ptr(), 1024);
             if size == -1 {
                 return Err(Error::new())
             }
@@ -1013,13 +996,13 @@ impl Connect {
     /// use virt::connect::Connect;
     ///
     /// match Connect::open("test:///default") {
-    ///   Ok(conn) => {
+    ///   Ok(mut conn) => {
     ///     match conn.list_defined_storage_pools() {
     ///       Ok(arr) => assert_eq!(0, arr.len()),
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     conn.close();
+    ///     assert_eq!(0, conn.close().unwrap_or(-1));
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1029,7 +1012,7 @@ impl Connect {
         unsafe {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
             let size = virConnectListDefinedStoragePools(
-                self.c, names.as_mut_ptr(), 1024);
+                self.ptr, names.as_mut_ptr(), 1024);
             if size == -1 {
                 return Err(Error::new())
             }
@@ -1051,13 +1034,13 @@ impl Connect {
     /// use virt::connect::Connect;
     ///
     /// match Connect::open("test:///default") {
-    ///   Ok(conn) => {
+    ///   Ok(mut conn) => {
     ///     match conn.list_networks() {
     ///       Ok(arr) => assert_eq!(1, arr.len()),
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     conn.close();
+    ///     assert_eq!(0, conn.close().unwrap_or(-1));
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1066,7 +1049,7 @@ impl Connect {
     pub fn list_defined_networks(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
-            let size = virConnectListDefinedNetworks(self.c, names.as_mut_ptr(), 1024);
+            let size = virConnectListDefinedNetworks(self.ptr, names.as_mut_ptr(), 1024);
             if size == -1 {
                 return Err(Error::new())
             }
@@ -1086,13 +1069,13 @@ impl Connect {
     /// use virt::connect::Connect;
     ///
     /// match Connect::open("test:///default") {
-    ///   Ok(conn) => {
+    ///   Ok(mut conn) => {
     ///     match conn.num_of_domains() {
     ///       Ok(n) => assert_eq!(1, n),
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     conn.close();
+    ///     assert_eq!(0, conn.close().unwrap_or(-1));
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1100,7 +1083,7 @@ impl Connect {
     /// ```
     pub fn num_of_domains(&self) -> Result<u32, Error> {
         unsafe {
-            let num = virConnectNumOfDomains(self.c);
+            let num = virConnectNumOfDomains(self.ptr);
             if num == -1 {
                 return Err(Error::new())
             }
@@ -1114,13 +1097,13 @@ impl Connect {
     /// use virt::connect::Connect;
     ///
     /// match Connect::open("test:///default") {
-    ///   Ok(conn) => {
+    ///   Ok(mut conn) => {
     ///     match conn.num_of_interfaces() {
     ///       Ok(n) => assert_eq!(1, n),
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     conn.close();
+    ///     assert_eq!(0, conn.close().unwrap_or(-1));
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1128,7 +1111,7 @@ impl Connect {
     /// ```
     pub fn num_of_interfaces(&self) -> Result<u32, Error> {
         unsafe {
-            let num = virConnectNumOfInterfaces(self.c);
+            let num = virConnectNumOfInterfaces(self.ptr);
             if num == -1 {
                 return Err(Error::new())
             }
@@ -1142,13 +1125,13 @@ impl Connect {
     /// use virt::connect::Connect;
     ///
     /// match Connect::open("test:///default") {
-    ///   Ok(conn) => {
+    ///   Ok(mut conn) => {
     ///     match conn.num_of_networks() {
     ///       Ok(n) => assert_eq!(1, n),
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     conn.close();
+    ///     assert_eq!(0, conn.close().unwrap_or(-1));
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1156,7 +1139,7 @@ impl Connect {
     /// ```
     pub fn num_of_networks(&self) -> Result<u32, Error> {
         unsafe {
-            let num = virConnectNumOfNetworks(self.c);
+            let num = virConnectNumOfNetworks(self.ptr);
             if num == -1 {
                 return Err(Error::new())
             }
@@ -1170,13 +1153,13 @@ impl Connect {
     /// use virt::connect::Connect;
     ///
     /// match Connect::open("test:///default") {
-    ///   Ok(conn) => {
+    ///   Ok(mut conn) => {
     ///     match conn.num_of_storage_pools() {
     ///       Ok(n) => assert_eq!(1, n),
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     conn.close();
+    ///     assert_eq!(0, conn.close().unwrap_or(-1));
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1184,7 +1167,7 @@ impl Connect {
     /// ```
     pub fn num_of_storage_pools(&self) -> Result<u32, Error> {
         unsafe {
-            let num = virConnectNumOfStoragePools(self.c);
+            let num = virConnectNumOfStoragePools(self.ptr);
             if num == -1 {
                 return Err(Error::new())
             }
@@ -1194,7 +1177,7 @@ impl Connect {
 
     pub fn num_of_nw_filters(&self) -> Result<u32, Error> {
         unsafe {
-            let num = virConnectNumOfNWFilters(self.c);
+            let num = virConnectNumOfNWFilters(self.ptr);
             if num == -1 {
                 return Err(Error::new())
             }
@@ -1204,7 +1187,7 @@ impl Connect {
 
     pub fn num_of_secrets(&self) -> Result<u32, Error> {
         unsafe {
-            let num = virConnectNumOfSecrets(self.c);
+            let num = virConnectNumOfSecrets(self.ptr);
             if num == -1 {
                 return Err(Error::new())
             }
@@ -1219,13 +1202,13 @@ impl Connect {
     /// use virt::connect::Connect;
     ///
     /// match Connect::open("test:///default") {
-    ///   Ok(conn) => {
+    ///   Ok(mut conn) => {
     ///     match conn.num_of_defined_domains() {
     ///       Ok(n) => assert_eq!(0, n),
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     conn.close();
+    ///     assert_eq!(0, conn.close().unwrap_or(-1));
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1233,7 +1216,7 @@ impl Connect {
     /// ```
     pub fn num_of_defined_domains(&self) -> Result<u32, Error> {
         unsafe {
-            let num = virConnectNumOfDefinedDomains(self.c);
+            let num = virConnectNumOfDefinedDomains(self.ptr);
             if num == -1 {
                 return Err(Error::new())
             }
@@ -1247,13 +1230,13 @@ impl Connect {
     /// use virt::connect::Connect;
     ///
     /// match Connect::open("test:///default") {
-    ///   Ok(conn) => {
+    ///   Ok(mut conn) => {
     ///     match conn.num_of_defined_interfaces() {
     ///       Ok(n) => assert_eq!(0, n),
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     conn.close();
+    ///     assert_eq!(0, conn.close().unwrap_or(-1));
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1261,7 +1244,7 @@ impl Connect {
     /// ```
     pub fn num_of_defined_interfaces(&self) -> Result<u32, Error> {
         unsafe {
-            let num = virConnectNumOfDefinedInterfaces(self.c);
+            let num = virConnectNumOfDefinedInterfaces(self.ptr);
             if num == -1 {
                 return Err(Error::new())
             }
@@ -1275,13 +1258,13 @@ impl Connect {
     /// use virt::connect::Connect;
     ///
     /// match Connect::open("test:///default") {
-    ///   Ok(conn) => {
+    ///   Ok(mut conn) => {
     ///     match conn.num_of_defined_networks() {
     ///       Ok(n) => assert_eq!(0, n),
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     conn.close();
+    ///     assert_eq!(0, conn.close().unwrap_or(-1));
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1289,7 +1272,7 @@ impl Connect {
     /// ```
     pub fn num_of_defined_networks(&self) -> Result<u32, Error> {
         unsafe {
-            let num = virConnectNumOfDefinedNetworks(self.c);
+            let num = virConnectNumOfDefinedNetworks(self.ptr);
             if num == -1 {
                 return Err(Error::new())
             }
@@ -1303,13 +1286,13 @@ impl Connect {
     /// use virt::connect::Connect;
     ///
     /// match Connect::open("test:///default") {
-    ///   Ok(conn) => {
+    ///   Ok(mut conn) => {
     ///     match conn.num_of_defined_storage_pools() {
     ///       Ok(n) => assert_eq!(0, n),
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     conn.close();
+    ///     assert_eq!(0, conn.close().unwrap_or(-1));
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1317,7 +1300,7 @@ impl Connect {
     /// ```
     pub fn num_of_defined_storage_pools(&self) -> Result<u32, Error> {
         unsafe {
-            let num = virConnectNumOfDefinedStoragePools(self.c);
+            let num = virConnectNumOfDefinedStoragePools(self.ptr);
             if num == -1 {
                 return Err(Error::new())
             }
@@ -1334,13 +1317,13 @@ impl Connect {
     /// use virt::connect::Connect;
     ///
     /// match Connect::open("test:///default") {
-    ///   Ok(conn) => {
+    ///   Ok(mut conn) => {
     ///       match conn.get_hyp_version() {
     ///         Ok(hyver) => assert_eq!(2, hyver),
     ///         Err(e) => panic!(
     ///           "failed with code {}, message: {}", e.code, e.message)
     ///       }
-    ///       return
+    ///       assert_eq!(0, conn.close().unwrap_or(-1));
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1349,7 +1332,7 @@ impl Connect {
     pub fn get_hyp_version(&self) -> Result<u32, Error> {
         unsafe {
             let mut hyver: libc::c_ulong = 0;
-            if virConnectGetVersion(self.c, &mut hyver) == -1 {
+            if virConnectGetVersion(self.ptr, &mut hyver) == -1 {
                 return Err(Error::new());
             }
             return Ok(hyver as u32);
@@ -1359,7 +1342,7 @@ impl Connect {
     pub fn compare_cpu(&self, xml: &str, flags: ConnectCompareCPUFlags) -> Result<CPUCompareResult, Error> {
         unsafe {
             let res = virConnectCompareCPU(
-                self.c,
+                self.ptr,
                 CString::new(xml).unwrap().as_ptr(),
                 flags as libc::c_uint);
             if res == VIR_CPU_COMPARE_ERROR {
@@ -1371,7 +1354,7 @@ impl Connect {
 
     pub fn get_free_memory(&self) -> Result<u64, Error> {
         unsafe {
-            let res = virNodeGetFreeMemory(self.c);
+            let res = virNodeGetFreeMemory(self.ptr);
             if res == -1 {
                 return Err(Error::new());
             }
@@ -1391,7 +1374,7 @@ impl Connect {
                 cores: 0,
                 threads: 0,
             };
-            let res = virNodeGetInfo(self.c, pinfo);
+            let res = virNodeGetInfo(self.ptr, pinfo);
             if res == -1 {
                 return Err(Error::new());
             }

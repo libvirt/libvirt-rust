@@ -26,53 +26,68 @@ use std::{str, ptr};
 use connect::{Connect, virConnectPtr};
 use error::Error;
 
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct virDomain {
-}
+pub mod sys {
+    extern crate libc;
 
-#[allow(non_camel_case_types)]
-pub type virDomainPtr = *mut virDomain;
+    #[allow(non_camel_case_types)]
+    #[repr(C)]
+    pub struct virDomain {
+    }
+
+    #[allow(non_camel_case_types)]
+    pub type virDomainPtr = *mut virDomain;
+
+    #[allow(non_camel_case_types)]
+    #[allow(non_snake_case)]
+    #[repr(C)]
+    pub struct virDomainInfo {
+        pub state: libc::c_ulong,
+        pub maxMem: libc::c_ulong,
+        pub memory: libc::c_ulong,
+        pub nrVirtCpu: libc::c_uint,
+        pub cpuTime: libc::c_ulong,
+    }
+
+    #[allow(non_camel_case_types)]
+    pub type virDomainInfoPtr = *mut virDomainInfo;
+}
 
 #[link(name = "virt")]
 extern {
-    fn virDomainLookupByID(c: virConnectPtr, id: libc::c_int) -> virDomainPtr;
-    fn virDomainLookupByName(c: virConnectPtr, id: *const libc::c_char) -> virDomainPtr;
-    fn virDomainLookupByUUIDString(c: virConnectPtr, uuid: *const libc::c_char) -> virDomainPtr;
-    fn virDomainCreate(c: virConnectPtr) -> virDomainPtr;
-    fn virDomainCreateXML(c: virConnectPtr, xml: *const libc::c_char, flags: libc::c_uint) -> virDomainPtr;
-    fn virDomainDefineXML(c: virConnectPtr, xml: *const libc::c_char) -> virDomainPtr;
-    fn virDomainDefineXMLFlags(c: virConnectPtr, xml: *const libc::c_char, flags: libc::c_uint) -> virDomainPtr;
-    fn virDomainDestroy(d: virDomainPtr) -> libc::c_int;
-    fn virDomainUndefine(d: virDomainPtr) -> libc::c_int;
-    fn virDomainFree(d: virDomainPtr) -> libc::c_int;
-    fn virDomainShutdown(d: virDomainPtr) -> libc::c_int;
-    fn virDomainReboot(d: virDomainPtr) -> libc::c_int;
-    fn virDomainSuspend(d: virDomainPtr) -> libc::c_int;
-    fn virDomainResume(d: virDomainPtr) -> libc::c_int;
-    fn virDomainIsActive(d: virDomainPtr) -> libc::c_int;
-    fn virDomainIsUpdated(d: virDomainPtr) -> libc::c_int;
-    fn virDomainGetName(d: virDomainPtr) -> *const libc::c_char;
-    fn virDomainGetHostname(d: virDomainPtr, flags: libc::c_uint) -> *const libc::c_char;
-    fn virDomainGetUUIDString(d: virDomainPtr, uuid: *mut libc::c_char) -> libc::c_int;
-    fn virDomainGetXMLDesc(d: virDomainPtr, flags: libc::c_uint) -> *const libc::c_char;
-    fn virDomainGetAutostart(d: virDomainPtr) -> libc::c_int;
-    fn virDomainSetAutostart(d: virDomainPtr, autostart: libc::c_uint) -> libc::c_int;
-    fn virDomainGetID(d: virDomainPtr) -> libc::c_int;
-    fn virDomainSetMaxMemory(d: virDomainPtr, memory: libc::c_ulong) -> libc::c_int;
-    fn virDomainSetMemory(d: virDomainPtr, memory: libc::c_ulong) -> libc::c_int;
-    fn virDomainSetMemoryFlags(d: virDomainPtr, memory: libc::c_ulong, flags: libc::c_uint) -> libc::c_int;
-    fn virDomainSetMemoryStatsPeriod(d: virDomainPtr, period: libc::c_int, flags: libc::c_uint) -> libc::c_int;
-    fn virDomainSetVcpus(d: virDomainPtr, vcpus: libc::c_uint) -> libc::c_int;
-    fn virDomainSetVcpusFlags(d: virDomainPtr, vcpus: libc::c_uint, flags: libc::c_uint) -> libc::c_int;
-    fn virDomainGetVcpusFlags(d: virDomainPtr, vcpus: libc::c_uint) -> libc::c_int;
+    fn virDomainLookupByID(c: virConnectPtr, id: libc::c_int) -> sys::virDomainPtr;
+    fn virDomainLookupByName(c: virConnectPtr, id: *const libc::c_char) -> sys::virDomainPtr;
+    fn virDomainLookupByUUIDString(c: virConnectPtr, uuid: *const libc::c_char) -> sys::virDomainPtr;
+    fn virDomainCreate(c: virConnectPtr) -> sys::virDomainPtr;
+    fn virDomainCreateXML(c: virConnectPtr, xml: *const libc::c_char, flags: libc::c_uint) -> sys::virDomainPtr;
+    fn virDomainDefineXML(c: virConnectPtr, xml: *const libc::c_char) -> sys::virDomainPtr;
+    fn virDomainDefineXMLFlags(c: virConnectPtr, xml: *const libc::c_char, flags: libc::c_uint) -> sys::virDomainPtr;
+    fn virDomainDestroy(ptr: sys::virDomainPtr) -> libc::c_int;
+    fn virDomainUndefine(ptr: sys::virDomainPtr) -> libc::c_int;
+    fn virDomainFree(ptr: sys::virDomainPtr) -> libc::c_int;
+    fn virDomainShutdown(ptr: sys::virDomainPtr) -> libc::c_int;
+    fn virDomainReboot(ptr: sys::virDomainPtr) -> libc::c_int;
+    fn virDomainSuspend(ptr: sys::virDomainPtr) -> libc::c_int;
+    fn virDomainResume(ptr: sys::virDomainPtr) -> libc::c_int;
+    fn virDomainIsActive(ptr: sys::virDomainPtr) -> libc::c_int;
+    fn virDomainIsUpdated(ptr: sys::virDomainPtr) -> libc::c_int;
+    fn virDomainGetName(ptr: sys::virDomainPtr) -> *const libc::c_char;
+    fn virDomainGetHostname(ptr: sys::virDomainPtr, flags: libc::c_uint) -> *const libc::c_char;
+    fn virDomainGetUUIDString(ptr: sys::virDomainPtr, uuid: *mut libc::c_char) -> libc::c_int;
+    fn virDomainGetXMLDesc(ptr: sys::virDomainPtr, flags: libc::c_uint) -> *const libc::c_char;
+    fn virDomainGetAutostart(ptr: sys::virDomainPtr) -> libc::c_int;
+    fn virDomainSetAutostart(ptr: sys::virDomainPtr, autostart: libc::c_uint) -> libc::c_int;
+    fn virDomainGetID(ptr: sys::virDomainPtr) -> libc::c_int;
+    fn virDomainSetMaxMemory(ptr: sys::virDomainPtr, memory: libc::c_ulong) -> libc::c_int;
+    fn virDomainSetMemory(ptr: sys::virDomainPtr, memory: libc::c_ulong) -> libc::c_int;
+    fn virDomainSetMemoryFlags(ptr: sys::virDomainPtr, memory: libc::c_ulong, flags: libc::c_uint) -> libc::c_int;
+    fn virDomainSetMemoryStatsPeriod(ptr: sys::virDomainPtr, period: libc::c_int, flags: libc::c_uint) -> libc::c_int;
+    fn virDomainSetVcpus(ptr: sys::virDomainPtr, vcpus: libc::c_uint) -> libc::c_int;
+    fn virDomainSetVcpusFlags(ptr: sys::virDomainPtr, vcpus: libc::c_uint, flags: libc::c_uint) -> libc::c_int;
+    fn virDomainGetVcpusFlags(ptr: sys::virDomainPtr, vcpus: libc::c_uint) -> libc::c_int;
     fn virDomainRestore(c: virConnectPtr, source: *const libc::c_char) -> libc::c_int;
     fn virDomainRestoreFlags(c: virConnectPtr, source: *const libc::c_char, flags: libc::c_uint) -> libc::c_int;
-    fn virDomainGetConnect(d: virDomainPtr) -> virConnectPtr;
-    fn virDomainGetInfo(d: virDomainPtr, ninfo: virDomainInfoPtr) -> libc::c_int;
-
-    // TODO: need to be implemented
-    // see: python tools/api_tests.py virDomain
+    fn virDomainGetConnect(ptr: sys::virDomainPtr) -> virConnectPtr;
+    fn virDomainGetInfo(ptr: sys::virDomainPtr, ninfo: sys::virDomainInfoPtr) -> libc::c_int;
 }
 
 pub type DomainXMLFlags = self::libc::c_uint;
@@ -126,35 +141,24 @@ pub const VIR_DOMAIN_SHUTOFF: DomainState = 5;
 pub const VIR_DOMAIN_CRASHED: DomainState = 6;
 pub const VIR_DOMAIN_PMSUSPENDED: DomainState = 7;
 
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct virDomainInfo {
-    state: libc::c_ulong,
-    maxMem: libc::c_ulong,
-    memory: libc::c_ulong,
-    nrVirtCpu: libc::c_uint,
-    cpuTime: libc::c_ulong,
-}
-
-#[allow(non_camel_case_types)]
-pub type virDomainInfoPtr = *mut virDomainInfo;
-
 pub struct DomainInfo {
     pub state: DomainState,
-    pub maxMem: u64,
+    pub max_mem: u64,
     pub memory: u64,
-    pub nrVirtCpu: u32,
-    pub cpuTime: u64,
+    pub nr_virt_cpu: u32,
+    pub cpu_time: u64,
 }
 
 pub struct Domain {
-    pub d: virDomainPtr
+    ptr: sys::virDomainPtr
 }
 
 impl Drop for Domain {
     fn drop(&mut self) {
-        if !self.d.is_null() {
-            self.free();
+        if !self.ptr.is_null() {
+            if self.free().is_err() {
+                panic!("Unable to drop memory for Domain")
+            }
             return;
         }
     }
@@ -162,17 +166,17 @@ impl Drop for Domain {
 
 impl Domain {
 
-    pub fn as_ptr(&self) -> virDomainPtr {
-        self.d
+    pub fn new(ptr: sys::virDomainPtr) -> Domain {
+        return Domain{ptr: ptr}
     }
 
     pub fn get_connect(&self) -> Result<Connect, Error> {
         unsafe {
-            let ptr = virDomainGetConnect(self.d);
+            let ptr = virDomainGetConnect(self.ptr);
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Connect{c: ptr});
+            return Ok(Connect::new(ptr));
         }
     }
 
@@ -182,7 +186,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Domain{d: ptr});
+            return Ok(Domain::new(ptr));
         }
     }
 
@@ -193,7 +197,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Domain{d: ptr});
+            return Ok(Domain::new(ptr));
         }
     }
 
@@ -204,13 +208,13 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Domain{d: ptr});
+            return Ok(Domain::new(ptr));
         }
     }
 
     pub fn get_name(&self) -> Result<String, Error> {
         unsafe {
-            let n = virDomainGetName(self.d);
+            let n = virDomainGetName(self.ptr);
             if n.is_null() {
                 return Err(Error::new())
             }
@@ -220,7 +224,7 @@ impl Domain {
 
     pub fn get_hostname(&self, flags: u32) -> Result<String, Error> {
         unsafe {
-            let n = virDomainGetHostname(self.d, flags as libc::c_uint);
+            let n = virDomainGetHostname(self.ptr, flags as libc::c_uint);
             if n.is_null() {
                 return Err(Error::new())
             }
@@ -231,7 +235,7 @@ impl Domain {
     pub fn get_uuid_string(&self) -> Result<String, Error> {
         unsafe {
             let mut uuid: [libc::c_char; 37] = [0; 37];
-            if virDomainGetUUIDString(self.d, uuid.as_mut_ptr()) == -1 {
+            if virDomainGetUUIDString(self.ptr, uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new())
             }
             return Ok(CStr::from_ptr(
@@ -241,7 +245,7 @@ impl Domain {
 
     pub fn get_id(&self) -> Result<u32, Error> {
         unsafe {
-            let ret = virDomainGetID(self.d);
+            let ret = virDomainGetID(self.ptr);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -251,7 +255,7 @@ impl Domain {
 
     pub fn get_xml_desc(&self, flags:DomainCreateFlags) -> Result<String, Error> {
         unsafe {
-            let xml = virDomainGetXMLDesc(self.d, flags);
+            let xml = virDomainGetXMLDesc(self.ptr, flags);
             if xml.is_null() {
                 return Err(Error::new())
             }
@@ -265,29 +269,29 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Domain{d: ptr});
+            return Ok(Domain::new(ptr));
         }
     }
 
     pub fn get_info(&self) -> Result<DomainInfo, Error> {
         unsafe {
-            let pinfo = &mut virDomainInfo{
+            let pinfo = &mut sys::virDomainInfo{
                 state: 0,
                 maxMem: 0,
                 memory: 0,
                 nrVirtCpu: 0,
                 cpuTime: 0,
             };
-            let res = virDomainGetInfo(self.d, pinfo);
+            let res = virDomainGetInfo(self.ptr, pinfo);
             if res == -1 {
                 return Err(Error::new());
             }
             return Ok(DomainInfo{
                 state: (*pinfo).state as DomainState,
-                maxMem: (*pinfo).maxMem as u64,
+                max_mem: (*pinfo).maxMem as u64,
                 memory: (*pinfo).memory as u64,
-                nrVirtCpu: (*pinfo).nrVirtCpu as u32,
-                cpuTime: (*pinfo).cpuTime as u64,
+                nr_virt_cpu: (*pinfo).nrVirtCpu as u32,
+                cpu_time: (*pinfo).cpuTime as u64,
             })
         }
     }
@@ -300,7 +304,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Domain{d: ptr});
+            return Ok(Domain::new(ptr));
         }
     }
 
@@ -312,7 +316,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Domain{d: ptr});
+            return Ok(Domain::new(ptr));
         }
     }
 
@@ -324,13 +328,13 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Domain{d: ptr});
+            return Ok(Domain::new(ptr));
         }
     }
 
     pub fn destroy(&self) -> Result<(), Error> {
         unsafe {
-            if virDomainDestroy(self.d) == -1 {
+            if virDomainDestroy(self.ptr) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -339,7 +343,7 @@ impl Domain {
 
     pub fn shutdown(&self) -> Result<(), Error> {
         unsafe {
-            if virDomainShutdown(self.d) == -1 {
+            if virDomainShutdown(self.ptr) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -348,7 +352,7 @@ impl Domain {
 
     pub fn reboot(&self) -> Result<(), Error> {
         unsafe {
-            if virDomainReboot(self.d) == -1 {
+            if virDomainReboot(self.ptr) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -357,7 +361,7 @@ impl Domain {
 
     pub fn suspend(&self) -> Result<(), Error> {
         unsafe {
-            if virDomainSuspend(self.d) == -1 {
+            if virDomainSuspend(self.ptr) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -366,7 +370,7 @@ impl Domain {
 
     pub fn resume(&self) -> Result<(), Error> {
         unsafe {
-            if virDomainResume(self.d) == -1 {
+            if virDomainResume(self.ptr) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -375,7 +379,7 @@ impl Domain {
 
     pub fn is_active(&self) -> Result<bool, Error> {
         unsafe {
-            let ret = virDomainIsActive(self.d);
+            let ret = virDomainIsActive(self.ptr);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -385,7 +389,7 @@ impl Domain {
 
     pub fn undefine(&self) -> Result<(), Error> {
         unsafe {
-            if virDomainUndefine(self.d) == -1 {
+            if virDomainUndefine(self.ptr) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -394,17 +398,17 @@ impl Domain {
 
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
-            if virDomainFree(self.d) == -1 {
+            if virDomainFree(self.ptr) == -1 {
                 return Err(Error::new());
             }
-            self.d = ptr::null_mut();
+            self.ptr = ptr::null_mut();
             return Ok(());
         }
     }
 
     pub fn is_updated(&self) -> Result<bool, Error> {
         unsafe {
-            let ret = virDomainIsUpdated(self.d);
+            let ret = virDomainIsUpdated(self.ptr);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -414,7 +418,7 @@ impl Domain {
 
     pub fn get_autostart(&self) -> Result<bool, Error> {
         unsafe {
-            let ret = virDomainGetAutostart(self.d);
+            let ret = virDomainGetAutostart(self.ptr);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -424,7 +428,7 @@ impl Domain {
 
     pub fn set_autostart(&self, autostart: bool) -> Result<bool, Error> {
         unsafe {
-            let ret = virDomainSetAutostart(self.d, autostart as libc::c_uint);
+            let ret = virDomainSetAutostart(self.ptr, autostart as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -434,7 +438,7 @@ impl Domain {
 
     pub fn set_max_memory(&self, memory: u64) -> Result<bool, Error> {
         unsafe {
-            let ret = virDomainSetMaxMemory(self.d, memory as libc::c_ulong);
+            let ret = virDomainSetMaxMemory(self.ptr, memory as libc::c_ulong);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -444,7 +448,7 @@ impl Domain {
 
     pub fn set_memory(&self, memory: u64) -> Result<bool, Error> {
         unsafe {
-            let ret = virDomainSetMemory(self.d, memory as libc::c_ulong);
+            let ret = virDomainSetMemory(self.ptr, memory as libc::c_ulong);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -455,7 +459,7 @@ impl Domain {
     pub fn set_memory_flags(&self, memory: u64,
                                  flags: DomainMemoryModFlags) -> Result<bool, Error> {
         unsafe {
-            let ret = virDomainSetMemoryFlags(self.d,
+            let ret = virDomainSetMemoryFlags(self.ptr,
                                               memory as libc::c_ulong,
                                               flags as libc::c_uint);
             if ret == -1 {
@@ -468,7 +472,7 @@ impl Domain {
     pub fn set_memory_stats_period(&self, period: i32,
                                    flags: DomainMemoryModFlags) -> Result<bool, Error> {
         unsafe {
-            let ret = virDomainSetMemoryStatsPeriod(self.d,
+            let ret = virDomainSetMemoryStatsPeriod(self.ptr,
                                                     period as libc::c_int,
                                                     flags as libc::c_uint);
             if ret == -1 {
@@ -480,7 +484,7 @@ impl Domain {
 
     pub fn set_vcpus(&self, vcpus: u32) -> Result<bool, Error> {
         unsafe {
-            let ret = virDomainSetVcpus(self.d, vcpus as libc::c_uint);
+            let ret = virDomainSetVcpus(self.ptr, vcpus as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -491,7 +495,7 @@ impl Domain {
     pub fn set_vcpus_flags(&self, vcpus: u32,
                                 flags: DomainVcpuFlags) -> Result<bool, Error> {
         unsafe {
-            let ret = virDomainSetVcpusFlags(self.d,
+            let ret = virDomainSetVcpusFlags(self.ptr,
                                              vcpus as libc::c_uint,
                                              flags as libc::c_uint);
             if ret == -1 {
@@ -524,7 +528,7 @@ impl Domain {
 
     pub fn get_vcpus_flags(&self, flags: DomainVcpuFlags) -> Result<u32, Error> {
         unsafe {
-            let ret = virDomainGetVcpusFlags(self.d, flags as libc::c_uint);
+            let ret = virDomainGetVcpusFlags(self.ptr, flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }

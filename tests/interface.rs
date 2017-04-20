@@ -24,7 +24,7 @@ use virt::interface::Interface;
 #[test]
 fn exercices() {
     match Connect::open("test:///default") {
-        Ok(conn) => {
+        Ok(mut conn) => {
             let inters = conn.list_interfaces().unwrap_or(vec![]);
             let intid = &inters[0];
             match conn.interface_lookup_by_name(intid) {
@@ -46,7 +46,7 @@ fn exercices() {
                 Err(e) => panic!(
                     "failed with code {}, message: {}", e.code, e.message)
             }
-            conn.close();
+            assert_eq!(0, conn.close().unwrap_or(-1));
         },
         Err(e) => panic!(
             "failed with code {}, message: {}", e.code, e.message)
@@ -56,7 +56,7 @@ fn exercices() {
 #[test]
 fn defining() {
     match Connect::open("test:///default") {
-        Ok(conn) => {
+        Ok(mut conn) => {
             let xml = "<interface type='ethernet' name='eth2'>
   <start mode='onboot'/>
   <mtu size='1492'/>
@@ -83,7 +83,7 @@ fn defining() {
                 Err(e) => panic!(
                     "failed with code {}, message: {}", e.code, e.message)
             }
-            conn.close();
+            assert_eq!(0, conn.close().unwrap_or(-1));
         },
         Err(e) => panic!(
             "failed with code {}, message: {}", e.code, e.message)

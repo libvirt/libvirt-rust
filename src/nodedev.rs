@@ -26,49 +26,42 @@ use std::{str, ptr};
 use connect::{Connect, virConnectPtr};
 use error::Error;
 
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct virNodeDevice {
-}
+pub mod sys {
+    #[allow(non_camel_case_types)]
+    #[repr(C)]
+    pub struct virNodeDevice {
+    }
 
-#[allow(non_camel_case_types)]
-pub type virNodeDevicePtr = *mut virNodeDevice;
+    #[allow(non_camel_case_types)]
+    pub type virNodeDevicePtr = *mut virNodeDevice;
+}
 
 #[link(name = "virt")]
 extern {
-    fn virNodeDeviceLookupByName(c: virConnectPtr, id: *const libc::c_char) -> virNodeDevicePtr;
-    fn virNodeDeviceCreateXML(c: virConnectPtr, xml: *const libc::c_char, flags: libc::c_uint) -> virNodeDevicePtr;
-    fn virNodeDeviceDestroy(d: virNodeDevicePtr) -> libc::c_int;
-    fn virNodeDeviceFree(d: virNodeDevicePtr) -> libc::c_int;
-    fn virNodeDeviceGetName(d: virNodeDevicePtr) -> *const libc::c_char;
-    fn virNodeDeviceGetXMLDesc(d: virNodeDevicePtr, flags: libc::c_uint) -> *const libc::c_char;
-    fn virNodeDeviceGetUUIDString(d: virNodeDevicePtr, uuid: *mut libc::c_char) -> libc::c_int;
+    fn virNodeDeviceLookupByName(c: virConnectPtr, id: *const libc::c_char) -> sys::virNodeDevicePtr;
+    fn virNodeDeviceCreateXML(c: virConnectPtr, xml: *const libc::c_char, flags: libc::c_uint) -> sys::virNodeDevicePtr;
+    fn virNodeDeviceDestroy(ptr: sys::virNodeDevicePtr) -> libc::c_int;
+    fn virNodeDeviceFree(ptr: sys::virNodeDevicePtr) -> libc::c_int;
+    fn virNodeDeviceGetName(ptr: sys::virNodeDevicePtr) -> *const libc::c_char;
+    fn virNodeDeviceGetXMLDesc(ptr: sys::virNodeDevicePtr, flags: libc::c_uint) -> *const libc::c_char;
+    fn virNodeDeviceGetUUIDString(ptr: sys::virNodeDevicePtr, uuid: *mut libc::c_char) -> libc::c_int;
 
-    fn virNodeNumOfDevices(d: virNodeDevicePtr, cap: *const libc::c_char, flags: libc::c_uint) -> libc::c_int;
-
-    // TODO: need to be implemented
-    fn virNodeDeviceLookupSCSIHostByWWN() -> ();
-    fn virNodeDeviceNumOfCaps() -> ();
-    fn virNodeDeviceReset() -> ();
-    fn virNodeDeviceListCaps() -> ();
-    fn virNodeDeviceRef() -> ();
-    fn virNodeDeviceDetachFlags() -> ();
-    fn virNodeDeviceReAttach() -> ();
-    fn virNodeDeviceGetParent() -> ();
-    fn virNodeDeviceDettach() -> ();
+    fn virNodeNumOfDevices(ptr: sys::virNodeDevicePtr, cap: *const libc::c_char, flags: libc::c_uint) -> libc::c_int;
 }
 
 pub type NodeDeviceXMLFlags = self::libc::c_uint;
 pub const VIR_INTERFACE_XML_INACTIVE:NodeDeviceXMLFlags = 1 << 0;
 
 pub struct NodeDevice {
-    pub d: virNodeDevicePtr
+    pub ptr: sys::virNodeDevicePtr
 }
 
 impl Drop for NodeDevice {
     fn drop(&mut self) {
-        if !self.d.is_null() {
-            self.free();
+        if !self.ptr.is_null() {
+            if self.free().is_err() {
+                panic!("Unable to drop memory for NodeDevice")
+            }
             return;
         }
     }
@@ -76,8 +69,8 @@ impl Drop for NodeDevice {
 
 impl NodeDevice {
 
-    pub fn as_ptr(&self) -> virNodeDevicePtr {
-        self.d
+    pub fn new(ptr: sys::virNodeDevicePtr) -> NodeDevice {
+        return NodeDevice{ptr: ptr}
     }
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<NodeDevice, Error> {
@@ -87,7 +80,7 @@ impl NodeDevice {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(NodeDevice{d: ptr});
+            return Ok(NodeDevice::new(ptr));
         }
     }
 
@@ -99,13 +92,13 @@ impl NodeDevice {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(NodeDevice{d: ptr});
+            return Ok(NodeDevice::new(ptr));
         }
     }
 
     pub fn get_name(&self) -> Result<String, Error> {
         unsafe {
-            let n = virNodeDeviceGetName(self.d);
+            let n = virNodeDeviceGetName(self.ptr);
             if n.is_null() {
                 return Err(Error::new())
             }
@@ -116,7 +109,7 @@ impl NodeDevice {
     pub fn get_uuid_string(&self) -> Result<String, Error> {
         unsafe {
             let mut uuid: [libc::c_char; 37] = [0; 37];
-            if virNodeDeviceGetUUIDString(self.d, uuid.as_mut_ptr()) == -1 {
+            if virNodeDeviceGetUUIDString(self.ptr, uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new())
             }
             return Ok(CStr::from_ptr(
@@ -126,7 +119,7 @@ impl NodeDevice {
 
     pub fn get_xml_desc(&self, flags: u32) -> Result<String, Error> {
         unsafe {
-            let xml = virNodeDeviceGetXMLDesc(self.d, flags as libc::c_uint);
+            let xml = virNodeDeviceGetXMLDesc(self.ptr, flags as libc::c_uint);
             if xml.is_null() {
                 return Err(Error::new())
             }
@@ -136,7 +129,7 @@ impl NodeDevice {
 
     pub fn destroy(&self) -> Result<(), Error> {
         unsafe {
-            if virNodeDeviceDestroy(self.d) == -1 {
+            if virNodeDeviceDestroy(self.ptr) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -145,10 +138,10 @@ impl NodeDevice {
 
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
-            if virNodeDeviceFree(self.d) == -1 {
+            if virNodeDeviceFree(self.ptr) == -1 {
                 return Err(Error::new());
             }
-            self.d = ptr::null_mut();
+            self.ptr = ptr::null_mut();
             return Ok(());
         }
     }
@@ -156,7 +149,7 @@ impl NodeDevice {
     pub fn num_of_devices(&self, cap: &str, flags: u32) -> Result<u32, Error> {
         unsafe {
             let num = virNodeNumOfDevices(
-                self.d,
+                self.ptr,
                 CString::new(cap).unwrap().as_ptr(),
                 flags as libc::c_uint);
             if num == -1 {

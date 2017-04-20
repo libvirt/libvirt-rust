@@ -24,7 +24,7 @@ use virt::connect::Connect;
 #[test]
 fn exercices() {
     match Connect::open("test:///default") {
-        Ok(conn) => {
+        Ok(mut conn) => {
             let sp = conn.list_storage_pools().unwrap_or(vec![]);
             match conn.storage_pool_lookup_by_name(&sp[0]) {
                 Ok(storage_pool) => {
@@ -48,7 +48,7 @@ fn exercices() {
                 Err(e) => panic!(
                     "failed with code {}, message: {}", e.code, e.message)
             }
-            conn.close();
+            assert_eq!(0, conn.close().unwrap_or(-1));
         },
         Err(e) => panic!(
             "failed with code {}, message: {}", e.code, e.message)

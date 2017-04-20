@@ -26,38 +26,39 @@ use std::{str, ptr};
 use connect::{Connect, virConnectPtr};
 use error::Error;
 
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct virNWFilter {
-}
+pub mod sys {
+    #[allow(non_camel_case_types)]
+    #[repr(C)]
+    pub struct virNWFilter {
+    }
 
-#[allow(non_camel_case_types)]
-pub type virNWFilterPtr = *mut virNWFilter;
+    #[allow(non_camel_case_types)]
+    pub type virNWFilterPtr = *mut virNWFilter;
+}
 
 #[link(name = "virt")]
 extern {
-    fn virNWFilterLookupByID(c: virConnectPtr, id: libc::c_int) -> virNWFilterPtr;
-    fn virNWFilterLookupByName(c: virConnectPtr, id: *const libc::c_char) -> virNWFilterPtr;
-    fn virNWFilterLookupByUUIDString(c: virConnectPtr, uuid: *const libc::c_char) -> virNWFilterPtr;
-    fn virNWFilterDefineXML(c: virConnectPtr, xml: *const libc::c_char) -> virNWFilterPtr;
-    fn virNWFilterUndefine(d: virNWFilterPtr) -> libc::c_int;
-    fn virNWFilterFree(d: virNWFilterPtr) -> libc::c_int;
-    fn virNWFilterGetName(d: virNWFilterPtr) -> *const libc::c_char;
-    fn virNWFilterGetUUIDString(d: virNWFilterPtr, uuid: *mut libc::c_char) -> libc::c_int;
-    fn virNWFilterGetXMLDesc(d: virNWFilterPtr, flags: libc::c_uint) -> *const libc::c_char;
-
-    // TODO: need to be implemented
-    fn virNWFilterRef() -> ();
+    fn virNWFilterLookupByID(c: virConnectPtr, id: libc::c_int) -> sys::virNWFilterPtr;
+    fn virNWFilterLookupByName(c: virConnectPtr, id: *const libc::c_char) -> sys::virNWFilterPtr;
+    fn virNWFilterLookupByUUIDString(c: virConnectPtr, uuid: *const libc::c_char) -> sys::virNWFilterPtr;
+    fn virNWFilterDefineXML(c: virConnectPtr, xml: *const libc::c_char) -> sys::virNWFilterPtr;
+    fn virNWFilterUndefine(ptr: sys::virNWFilterPtr) -> libc::c_int;
+    fn virNWFilterFree(ptr: sys::virNWFilterPtr) -> libc::c_int;
+    fn virNWFilterGetName(ptr: sys::virNWFilterPtr) -> *const libc::c_char;
+    fn virNWFilterGetUUIDString(ptr: sys::virNWFilterPtr, uuid: *mut libc::c_char) -> libc::c_int;
+    fn virNWFilterGetXMLDesc(ptr: sys::virNWFilterPtr, flags: libc::c_uint) -> *const libc::c_char;
 }
 
 pub struct NWFilter {
-    pub d: virNWFilterPtr
+    ptr: sys::virNWFilterPtr
 }
 
 impl Drop for NWFilter {
     fn drop(&mut self) {
-        if !self.d.is_null() {
-            self.free();
+        if !self.ptr.is_null() {
+            if self.free().is_err() {
+                panic!("Unable to drop memory for NWFilter")
+            }
             return;
         }
     }
@@ -65,8 +66,8 @@ impl Drop for NWFilter {
 
 impl NWFilter {
 
-    pub fn as_ptr(&self) -> virNWFilterPtr {
-        self.d
+    pub fn new(ptr: sys::virNWFilterPtr) -> NWFilter {
+        return NWFilter{ptr: ptr}
     }
 
     pub fn lookup_by_id(conn: &Connect, id: u32) -> Result<NWFilter, Error> {
@@ -75,7 +76,7 @@ impl NWFilter {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(NWFilter{d: ptr});
+            return Ok(NWFilter::new(ptr));
         }
     }
 
@@ -86,7 +87,7 @@ impl NWFilter {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(NWFilter{d: ptr});
+            return Ok(NWFilter::new(ptr));
         }
     }
 
@@ -97,13 +98,13 @@ impl NWFilter {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(NWFilter{d: ptr});
+            return Ok(NWFilter::new(ptr));
         }
     }
 
     pub fn get_name(&self) -> Result<String, Error> {
         unsafe {
-            let n = virNWFilterGetName(self.d);
+            let n = virNWFilterGetName(self.ptr);
             if n.is_null() {
                 return Err(Error::new())
             }
@@ -114,7 +115,7 @@ impl NWFilter {
     pub fn get_uuid_string(&self) -> Result<String, Error> {
         unsafe {
             let mut uuid: [libc::c_char; 37] = [0; 37];
-            if virNWFilterGetUUIDString(self.d, uuid.as_mut_ptr()) == -1 {
+            if virNWFilterGetUUIDString(self.ptr, uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new())
             }
             return Ok(CStr::from_ptr(
@@ -124,7 +125,7 @@ impl NWFilter {
 
     pub fn get_xml_desc(&self, flags:u32) -> Result<String, Error> {
         unsafe {
-            let xml = virNWFilterGetXMLDesc(self.d, flags as libc::c_uint);
+            let xml = virNWFilterGetXMLDesc(self.ptr, flags as libc::c_uint);
             if xml.is_null() {
                 return Err(Error::new())
             }
@@ -139,13 +140,13 @@ impl NWFilter {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(NWFilter{d: ptr});
+            return Ok(NWFilter::new(ptr));
         }
     }
 
     pub fn undefine(&self) -> Result<(), Error> {
         unsafe {
-            if virNWFilterUndefine(self.d) == -1 {
+            if virNWFilterUndefine(self.ptr) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -154,10 +155,10 @@ impl NWFilter {
 
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
-            if virNWFilterFree(self.d) == -1 {
+            if virNWFilterFree(self.ptr) == -1 {
                 return Err(Error::new());
             }
-            self.d = ptr::null_mut();
+            self.ptr = ptr::null_mut();
             return Ok(());
         }
     }
