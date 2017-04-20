@@ -25,7 +25,7 @@ use virt::domain::Domain;
 
 fn tdom(exec_test: fn(dom: Domain)) {
     let c = common::conn();
-    match c.domain_lookup_by_name("test") {
+    match Domain::lookup_by_name(&c, "test") {
         Ok(dom) => {
             exec_test(dom);
             common::close(c);
@@ -86,4 +86,34 @@ fn test_get_vcpus_flags() {
         assert_eq!(2, dom.get_vcpus_flags(0).unwrap_or(0));
     }
     tdom(t);
+}
+
+#[test]
+fn test_lookup_domain_by_id() {
+    let c = common::conn();
+    let v = c.list_domains().unwrap_or(vec![]);
+    assert!(
+        0 < v.len(),
+        "At least one domain should exist");
+    for domid in v {
+        match Domain::lookup_by_id(&c, domid) {
+            Ok(mut dom) => {
+                dom.free().unwrap_or(())
+            }
+            Err(e) => panic!(
+                "failed with code {}, message: {}", e.code, e.message)
+        }
+    }
+    common::close(c);
+}
+
+#[test]
+fn test_lookup_domain_by_name() {
+    let c = common::conn();
+    match Domain::lookup_by_name(&c, "test") {
+        Ok(mut r) => r.free().unwrap_or(()),
+        Err(e) => panic!(
+            "failed with code {}, message: {}", e.code, e.message)
+    }
+    common::close(c);
 }

@@ -19,14 +19,16 @@
 extern crate virt;
 
 use virt::connect::Connect;
+use virt::storage_pool::StoragePool;
 
+mod common;
 
 #[test]
 fn exercices() {
     match Connect::open("test:///default") {
         Ok(mut conn) => {
             let sp = conn.list_storage_pools().unwrap_or(vec![]);
-            match conn.storage_pool_lookup_by_name(&sp[0]) {
+            match StoragePool::lookup_by_name(&conn, &sp[0]) {
                 Ok(storage_pool) => {
                     assert_eq!("default-pool", storage_pool.get_name().unwrap_or("n/a".to_string()));
                     assert_eq!("dfe224cb-28fb-8dd0-c4b2-64eb3f0f4566",
@@ -53,4 +55,20 @@ fn exercices() {
         Err(e) => panic!(
             "failed with code {}, message: {}", e.code, e.message)
     }
+}
+
+
+#[test]
+fn test_lookup_storage_pool_by_name() {
+    let c = common::conn();
+    let v = c.list_storage_pools().unwrap_or(vec![]);
+    assert!(
+        0 < v.len(),
+        "At least one storage_pool should exist");
+    match StoragePool::lookup_by_name(&c, &v[0]) {
+        Ok(mut s) => s.free().unwrap_or(()),
+        Err(e) => panic!(
+            "failed with code {}, message: {}", e.code, e.message)
+    }
+    common::close(c);
 }

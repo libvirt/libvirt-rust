@@ -21,13 +21,15 @@ extern crate virt;
 use virt::connect::Connect;
 use virt::interface::Interface;
 
+mod common;
+
 #[test]
 fn exercices() {
     match Connect::open("test:///default") {
         Ok(mut conn) => {
             let inters = conn.list_interfaces().unwrap_or(vec![]);
             let intid = &inters[0];
-            match conn.interface_lookup_by_name(intid) {
+            match Interface::lookup_by_name(&conn, intid) {
                 Ok(interface) => {
                     assert_eq!("eth1", interface.get_name().unwrap_or("n/a".to_string()));
                     assert_eq!(true, interface.is_active().unwrap_or(false));
@@ -89,3 +91,19 @@ fn defining() {
             "failed with code {}, message: {}", e.code, e.message)
     }
 }
+
+#[test]
+fn test_lookup_interface_by_name() {
+    let c = common::conn();
+    let v = c.list_interfaces().unwrap_or(vec![]);
+    assert!(
+        0 < v.len(),
+        "At least one interface should exist");
+    match Interface::lookup_by_name(&c, &v[0]) {
+        Ok(mut i) => i.free().unwrap_or(()),
+        Err(e) => panic!(
+            "failed with code {}, message: {}", e.code, e.message)
+    }
+    common::close(c);
+}
+

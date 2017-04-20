@@ -18,7 +18,10 @@
 
 extern crate virt;
 
+mod common;
+
 use virt::connect::Connect;
+use virt::network::Network;
 
 
 #[test]
@@ -26,7 +29,7 @@ fn exercices() {
     match Connect::open("test:///default") {
         Ok(mut conn) => {
             let nets = conn.list_networks().unwrap_or(vec![]);
-            match conn.network_lookup_by_name(&nets[0]) {
+            match Network::lookup_by_name(&conn, &nets[0]) {
                 Ok(network) => {
                     assert_eq!("default", network.get_name().unwrap_or("n/a".to_string()));
                     assert_eq!("dd8fe884-6c02-601e-7551-cca97df1c5df",
@@ -52,4 +55,19 @@ fn exercices() {
         Err(e) => panic!(
             "failed with code {}, message: {}", e.code, e.message)
     }
+}
+
+#[test]
+fn test_lookup_network_by_name() {
+    let c = common::conn();
+    let v = c.list_networks().unwrap_or(vec![]);
+    assert!(
+        0 < v.len(),
+        "At least one network should exist");
+    match Network::lookup_by_name(&c, &v[0]) {
+        Ok(mut n) => n.free().unwrap_or(()),
+        Err(e) => panic!(
+            "failed with code {}, message: {}", e.code, e.message)
+    }
+    common::close(c);
 }
