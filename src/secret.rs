@@ -23,7 +23,9 @@ extern crate libc;
 use std::ffi::{CString, CStr};
 use std::ptr;
 
-use connect::{Connect, virConnectPtr};
+use connect::sys::virConnectPtr;
+
+use connect::Connect;
 use error::Error;
 
 pub mod sys {

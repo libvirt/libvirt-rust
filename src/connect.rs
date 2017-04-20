@@ -41,181 +41,173 @@ use storage_pool::StoragePool;
 use secret::Secret;
 
 
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct virConnect {}
+pub mod sys {
+    extern crate libc;
 
-#[allow(non_camel_case_types)]
-pub type virConnectPtr = *mut virConnect;
+    #[allow(non_camel_case_types)]
+    #[repr(C)]
+    pub struct virConnect {}
 
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct virConnectCredential {}
+    #[allow(non_camel_case_types)]
+    pub type virConnectPtr = *mut virConnect;
 
-#[allow(non_camel_case_types)]
-pub type virConnectCredentialPtr = *mut virConnectCredential;
+    #[allow(non_camel_case_types)]
+    #[repr(C)]
+    pub struct virConnectCredential {}
 
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct virConnectAuthCallback {}
+    #[allow(non_camel_case_types)]
+    pub type virConnectCredentialPtr = *mut virConnectCredential;
 
-#[allow(non_camel_case_types)]
-pub type virConnectAuthCallbackPtr = *mut virConnectAuthCallback;
+    #[allow(non_camel_case_types)]
+    #[repr(C)]
+    pub struct virConnectAuthCallback {}
 
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct virConnectAuth {
-    credtype: *mut libc::c_uint,
-    ncredtype: libc::c_uint,
-    cb: unsafe extern "C" fn(*mut virConnectCredential, u32, *mut libc::c_void) -> i32,
-    cbdata: *mut libc::c_void,
+    #[allow(non_camel_case_types)]
+    pub type virConnectAuthCallbackPtr = *mut virConnectAuthCallback;
+
+    #[allow(non_camel_case_types)]
+    #[repr(C)]
+    pub struct virConnectAuth {
+        pub credtype: *mut libc::c_uint,
+        pub ncredtype: libc::c_uint,
+        pub cb: unsafe extern "C" fn(*mut virConnectCredential, u32, *mut libc::c_void) -> i32,
+        pub cbdata: *mut libc::c_void,
+    }
+
+    #[allow(non_camel_case_types)]
+    pub type virConnectAuthPtr = *mut virConnectAuth;
+
+    #[allow(non_camel_case_types)]
+    #[repr(C)]
+    pub struct virNodeInfo {
+        pub model: [libc::c_char; 32],
+        pub memory: libc::c_ulong,
+        pub cpus: libc::c_uint,
+        pub mhz: libc::c_uint,
+        pub nodes: libc::c_uint,
+        pub sockets: libc::c_uint,
+        pub cores: libc::c_uint,
+        pub threads: libc::c_uint,
+    }
+
+    #[allow(non_camel_case_types)]
+    pub type virNodeInfoPtr = *mut virNodeInfo;
 }
 
-#[allow(non_camel_case_types)]
-pub type virConnectAuthPtr = *mut virConnect;
-
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct virNodeInfo {
-    model: [libc::c_char; 32],
-    memory: libc::c_ulong,
-    cpus: libc::c_uint,
-    mhz: libc::c_uint,
-    nodes: libc::c_uint,
-    sockets: libc::c_uint,
-    cores: libc::c_uint,
-    threads: libc::c_uint,
-}
-
-#[allow(non_camel_case_types)]
-pub type virNodeInfoPtr = *mut virNodeInfo;
-
-pub struct NodeInfo {
-    pub model: String,
-    pub memory: u64,
-    pub cpus: u32,
-    pub mhz: u32,
-    pub nodes: u32,
-    pub sockets: u32,
-    pub cores: u32,
-    pub threads: u32,
-}
-
-//#[deny(dead_code)]
 #[link(name="virt")]
 extern "C" {
     fn virGetVersion(hyver: *const libc::c_ulong,
                      ctype: *const libc::c_char,
                      typever: *const libc::c_ulong)
                      -> libc::c_int;
-    fn virConnectOpen(uri: *const libc::c_char) -> virConnectPtr;
-    fn virConnectOpenReadOnly(uri: *const libc::c_char) -> virConnectPtr;
+    fn virConnectOpen(uri: *const libc::c_char) -> sys::virConnectPtr;
+    fn virConnectOpenReadOnly(uri: *const libc::c_char) -> sys::virConnectPtr;
     fn virConnectOpenAuth(uri: *const libc::c_char,
-                          auth: *mut virConnectAuth,
+                          auth: *mut sys::virConnectAuth,
                           flags: libc::c_uint)
-                          -> virConnectPtr;
-    fn virConnectClose(ptr: virConnectPtr) -> libc::c_int;
-    fn virConnectGetVersion(ptr: virConnectPtr, hyver: *mut libc::c_ulong) -> libc::c_int;
-    fn virConnectGetHostname(ptr: virConnectPtr) -> *const libc::c_char;
-    fn virConnectGetCapabilities(ptr: virConnectPtr) -> *const libc::c_char;
-    fn virConnectGetLibVersion(ptr: virConnectPtr, ver: *mut libc::c_ulong) -> libc::c_int;
-    fn virConnectGetType(ptr: virConnectPtr) -> *const libc::c_char;
-    fn virConnectGetURI(ptr: virConnectPtr) -> *const libc::c_char;
-    fn virConnectGetSysinfo(ptr: virConnectPtr, flags: libc::c_uint) -> *const libc::c_char;
-    fn virConnectIsAlive(ptr: virConnectPtr) -> libc::c_int;
-    fn virConnectIsEncrypted(ptr: virConnectPtr) -> libc::c_int;
-    fn virConnectIsSecure(ptr: virConnectPtr) -> libc::c_int;
-    fn virConnectListDomains(ptr: virConnectPtr,
+                          -> sys::virConnectPtr;
+    fn virConnectClose(ptr: sys::virConnectPtr) -> libc::c_int;
+    fn virConnectGetVersion(ptr: sys::virConnectPtr, hyver: *mut libc::c_ulong) -> libc::c_int;
+    fn virConnectGetHostname(ptr: sys::virConnectPtr) -> *const libc::c_char;
+    fn virConnectGetCapabilities(ptr: sys::virConnectPtr) -> *const libc::c_char;
+    fn virConnectGetLibVersion(ptr: sys::virConnectPtr, ver: *mut libc::c_ulong) -> libc::c_int;
+    fn virConnectGetType(ptr: sys::virConnectPtr) -> *const libc::c_char;
+    fn virConnectGetURI(ptr: sys::virConnectPtr) -> *const libc::c_char;
+    fn virConnectGetSysinfo(ptr: sys::virConnectPtr, flags: libc::c_uint) -> *const libc::c_char;
+    fn virConnectIsAlive(ptr: sys::virConnectPtr) -> libc::c_int;
+    fn virConnectIsEncrypted(ptr: sys::virConnectPtr) -> libc::c_int;
+    fn virConnectIsSecure(ptr: sys::virConnectPtr) -> libc::c_int;
+    fn virConnectListDomains(ptr: sys::virConnectPtr,
                              ids: *mut libc::c_int,
                              maxids: libc::c_int)
                              -> libc::c_int;
-    fn virConnectListDefinedDomains(ptr: virConnectPtr,
+    fn virConnectListDefinedDomains(ptr: sys::virConnectPtr,
                                     names: *mut *mut libc::c_char,
                                     maxnames: libc::c_int)
                                     -> libc::c_int;
-    fn virConnectListInterfaces(ptr: virConnectPtr,
+    fn virConnectListInterfaces(ptr: sys::virConnectPtr,
                                 names: *mut *mut libc::c_char,
                                 maxnames: libc::c_int)
                                 -> libc::c_int;
-    fn virConnectListNetworks(ptr: virConnectPtr,
+    fn virConnectListNetworks(ptr: sys::virConnectPtr,
                               names: *mut *mut libc::c_char,
                               maxnames: libc::c_int)
                               -> libc::c_int;
-    fn virConnectListNWFilters(ptr: virConnectPtr,
+    fn virConnectListNWFilters(ptr: sys::virConnectPtr,
                                names: *mut *mut libc::c_char,
                                maxnames: libc::c_int)
                                -> libc::c_int;
-    fn virConnectListStoragePools(ptr: virConnectPtr,
+    fn virConnectListStoragePools(ptr: sys::virConnectPtr,
                                   names: *mut *mut libc::c_char,
                                   maxnames: libc::c_int)
                                   -> libc::c_int;
-    fn virConnectListSecrets(ptr: virConnectPtr,
+    fn virConnectListSecrets(ptr: sys::virConnectPtr,
                              names: *mut *mut libc::c_char,
                              maxnames: libc::c_int)
                              -> libc::c_int;
-    fn virConnectListDefinedInterfaces(ptr: virConnectPtr,
+    fn virConnectListDefinedInterfaces(ptr: sys::virConnectPtr,
                                        names: *mut *mut libc::c_char,
                                        maxifaces: libc::c_int)
                                        -> libc::c_int;
-    fn virConnectListDefinedNetworks(ptr: virConnectPtr,
+    fn virConnectListDefinedNetworks(ptr: sys::virConnectPtr,
                                      names: *mut *mut libc::c_char,
                                      maxnets: libc::c_int)
                                      -> libc::c_int;
-    fn virConnectListDefinedStoragePools(ptr: virConnectPtr,
+    fn virConnectListDefinedStoragePools(ptr: sys::virConnectPtr,
                                          names: *mut *mut libc::c_char,
                                          maxpools: libc::c_int)
                                          -> libc::c_int;
-    fn virConnectListAllDomains(ptr: virConnectPtr,
+    fn virConnectListAllDomains(ptr: sys::virConnectPtr,
                                 domains: *mut *mut virDomainPtr,
                                 flags: libc::c_uint)
                                 -> libc::c_int;
-    fn virConnectListAllNetworks(ptr: virConnectPtr,
+    fn virConnectListAllNetworks(ptr: sys::virConnectPtr,
                                  networks: *mut *mut virNetworkPtr,
                                  flags: libc::c_uint)
                                  -> libc::c_int;
-    fn virConnectListAllInterfaces(ptr: virConnectPtr,
+    fn virConnectListAllInterfaces(ptr: sys::virConnectPtr,
                                    interfaces: *mut *mut virInterfacePtr,
                                    flags: libc::c_uint)
                                    -> libc::c_int;
-    fn virConnectListAllNodeDevices(ptr: virConnectPtr,
+    fn virConnectListAllNodeDevices(ptr: sys::virConnectPtr,
                                     devices: *mut *mut virNodeDevicePtr,
                                     flags: libc::c_uint)
                                     -> libc::c_int;
-    fn virConnectListAllSecrets(ptr: virConnectPtr,
+    fn virConnectListAllSecrets(ptr: sys::virConnectPtr,
                                 secrets: *mut *mut virSecretPtr,
                                 flags: libc::c_uint)
                                 -> libc::c_int;
-    fn virConnectListAllNWFilters(ptr: virConnectPtr,
+    fn virConnectListAllNWFilters(ptr: sys::virConnectPtr,
                                   nwfilters: *mut *mut virNWFilterPtr,
                                   flags: libc::c_uint)
                                   -> libc::c_int;
-    fn virConnectListAllStoragePools(ptr: virConnectPtr,
+    fn virConnectListAllStoragePools(ptr: sys::virConnectPtr,
                                      storages: *mut *mut virStoragePoolPtr,
                                      flags: libc::c_uint)
                                      -> libc::c_int;
-    fn virConnectNumOfDomains(ptr: virConnectPtr) -> libc::c_int;
-    fn virConnectNumOfInterfaces(ptr: virConnectPtr) -> libc::c_int;
-    fn virConnectNumOfNetworks(ptr: virConnectPtr) -> libc::c_int;
-    fn virConnectNumOfStoragePools(ptr: virConnectPtr) -> libc::c_int;
-    fn virConnectNumOfNWFilters(ptr: virConnectPtr) -> libc::c_int;
-    fn virConnectNumOfSecrets(ptr: virConnectPtr) -> libc::c_int;
-    fn virConnectNumOfDefinedDomains(ptr: virConnectPtr) -> libc::c_int;
-    fn virConnectNumOfDefinedInterfaces(ptr: virConnectPtr) -> libc::c_int;
-    fn virConnectNumOfDefinedNetworks(ptr: virConnectPtr) -> libc::c_int;
-    fn virConnectNumOfDefinedStoragePools(ptr: virConnectPtr) -> libc::c_int;
-    fn virConnectGetCPUModelNames(ptr: virConnectPtr,
+    fn virConnectNumOfDomains(ptr: sys::virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfInterfaces(ptr: sys::virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfNetworks(ptr: sys::virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfStoragePools(ptr: sys::virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfNWFilters(ptr: sys::virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfSecrets(ptr: sys::virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfDefinedDomains(ptr: sys::virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfDefinedInterfaces(ptr: sys::virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfDefinedNetworks(ptr: sys::virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfDefinedStoragePools(ptr: sys::virConnectPtr) -> libc::c_int;
+    fn virConnectGetCPUModelNames(ptr: sys::virConnectPtr,
                                   arch: *const libc::c_char,
                                   mcpus: *mut *mut *mut libc::c_char,
                                   flags: libc::c_uint)
                                   -> libc::c_int;
-    fn virConnectGetMaxVcpus(ptr: virConnectPtr, attr: *const libc::c_char) -> libc::c_int;
-    fn virConnectCompareCPU(ptr: virConnectPtr,
+    fn virConnectGetMaxVcpus(ptr: sys::virConnectPtr, attr: *const libc::c_char) -> libc::c_int;
+    fn virConnectCompareCPU(ptr: sys::virConnectPtr,
                             xml: *const libc::c_char,
                             flags: libc::c_uint)
                             -> libc::c_int;
-    fn virNodeGetInfo(ptr: virConnectPtr, ninfo: virNodeInfoPtr) -> libc::c_int;
-    fn virNodeGetFreeMemory(ptr: virConnectPtr) -> libc::c_long;
-    fn virConnectSetKeepAlive(ptr: virConnectPtr,
+    fn virNodeGetInfo(ptr: sys::virConnectPtr, ninfo: sys::virNodeInfoPtr) -> libc::c_int;
+    fn virNodeGetFreeMemory(ptr: sys::virConnectPtr) -> libc::c_long;
+    fn virConnectSetKeepAlive(ptr: sys::virConnectPtr,
                               interval: libc::c_int,
                               count: libc::c_uint)
                               -> libc::c_int;
@@ -316,12 +308,23 @@ pub const VIR_CRED_NOECHOPROMPT: ConnectCredentialType = 7;
 pub const VIR_CRED_REALM: ConnectCredentialType = 8;
 pub const VIR_CRED_EXTERNAL: ConnectCredentialType = 9;
 
+pub struct NodeInfo {
+    pub model: String,
+    pub memory: u64,
+    pub cpus: u32,
+    pub mhz: u32,
+    pub nodes: u32,
+    pub sockets: u32,
+    pub cores: u32,
+    pub threads: u32,
+}
+
 pub struct ConnectAuth {
-    ptr: *mut virConnectAuth,
+    ptr: *mut sys::virConnectAuth,
 }
 
 #[allow(unused_variables)]
-extern "C" fn connect_auth_callback_default(cred: virConnectCredentialPtr,
+extern "C" fn connect_auth_callback_default(cred: sys::virConnectCredentialPtr,
                                             ncred: libc::c_uint,
                                             cbdata: *mut libc::c_void)
                                             -> libc::c_int {
@@ -330,12 +333,12 @@ extern "C" fn connect_auth_callback_default(cred: virConnectCredentialPtr,
 }
 
 impl ConnectAuth {
-    pub fn as_ptr(&self) -> *mut virConnectAuth {
+    pub fn as_ptr(&self) -> *mut sys::virConnectAuth {
         self.ptr
     }
 
     pub fn new_default() -> ConnectAuth {
-        let auth = &mut virConnectAuth {
+        let auth = &mut sys::virConnectAuth {
                             credtype: [VIR_CRED_AUTHNAME,
                                        VIR_CRED_ECHOPROMPT,
                                        VIR_CRED_REALM,
@@ -352,15 +355,15 @@ impl ConnectAuth {
 }
 
 pub struct Connect {
-    pub ptr: virConnectPtr,
+    pub ptr: sys::virConnectPtr,
 }
 
 impl Connect {
-    pub fn as_ptr(&self) -> virConnectPtr {
+    pub fn as_ptr(&self) -> sys::virConnectPtr {
         self.ptr
     }
 
-    pub fn new(ptr: virConnectPtr) -> Connect {
+    pub fn new(ptr: sys::virConnectPtr) -> Connect {
         return Connect { ptr: ptr };
     }
 
@@ -1386,7 +1389,7 @@ impl Connect {
 
     pub fn get_node_info(&self) -> Result<NodeInfo, Error> {
         unsafe {
-            let pinfo = &mut virNodeInfo {
+            let pinfo = &mut sys::virNodeInfo {
                                  model: [0i8; 32],
                                  memory: 0,
                                  cpus: 0,
