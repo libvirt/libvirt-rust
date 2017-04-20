@@ -32,20 +32,24 @@ fn test_version() {
 #[test]
 fn test_connection() {
     match Connect::open("test:///default") {
-        Err(e) => panic!(
-            "Build connection failed with code {}, message: {}",
-            e.code, e.message),
-        Ok(conn) => common::close(conn)
+        Err(e) => {
+            panic!("Build connection failed with code {}, message: {}",
+                   e.code,
+                   e.message)
+        }
+        Ok(conn) => common::close(conn),
     }
 }
 
 #[test]
 fn test_read_only_connection() {
     match Connect::open_read_only("test:///default") {
-        Err(e) => panic!(
-            "Build connection failed with code {}, message: {}",
-            e.code, e.message),
-        Ok(conn) => common::close(conn)
+        Err(e) => {
+            panic!("Build connection failed with code {}, message: {}",
+                   e.code,
+                   e.message)
+        }
+        Ok(conn) => common::close(conn),
     }
 }
 
@@ -53,10 +57,12 @@ fn test_read_only_connection() {
 #[should_panic]
 fn test_connection_invalid() {
     match Connect::open_read_only("invalid") {
-        Err(e) => panic!(
-            "Build connection failed with code {}, message: {}",
-            e.code, e.message),
-        Ok(conn) => common::close(conn)
+        Err(e) => {
+            panic!("Build connection failed with code {}, message: {}",
+                   e.code,
+                   e.message)
+        }
+        Ok(conn) => common::close(conn),
     }
 }
 
@@ -84,27 +90,26 @@ fn test_is_alive() {
 #[test]
 fn test_is_encrypted() {
     let c = common::conn();
-    assert_eq!(
-        false, c.is_encrypted().unwrap_or(true),
-        "Test driver should not be encrypted");
+    assert_eq!(false,
+               c.is_encrypted().unwrap_or(true),
+               "Test driver should not be encrypted");
     common::close(c);
 }
 
 #[test]
 fn test_is_secure() {
     let c = common::conn();
-    assert_eq!(
-        true, c.is_secure().unwrap_or(false),
-        "Test driver should be secure");
+    assert_eq!(true,
+               c.is_secure().unwrap_or(false),
+               "Test driver should be secure");
     common::close(c);
 }
 
 #[test]
 fn test_capabilities() {
     let c = common::conn();
-    assert!(
-        "" != c.get_capabilities().unwrap_or(String::new()),
-        "Capabilities should not be empty");
+    assert!("" != c.get_capabilities().unwrap_or(String::new()),
+            "Capabilities should not be empty");
     common::close(c);
 }
 
@@ -113,7 +118,7 @@ fn test_get_node_info() {
     let c = common::conn();
     match c.get_node_info() {
         Ok(info) => assert_eq!("i686", info.model),
-        Err(_) => panic!("should have a node info")
+        Err(_) => panic!("should have a node info"),
     }
     common::close(c);
 }
@@ -121,9 +126,8 @@ fn test_get_node_info() {
 #[test]
 fn test_hostname() {
     let c = common::conn();
-    assert_eq!(
-        "localhost.localdomain",
-        c.get_hostname().unwrap_or(String::new()));
+    assert_eq!("localhost.localdomain",
+               c.get_hostname().unwrap_or(String::new()));
     common::close(c);
 }
 
@@ -141,45 +145,39 @@ fn test_get_free_memory() {
 #[test]
 fn test_lib_version() {
     let c = common::conn();
-    assert!(
-        0 != c.get_lib_version().unwrap_or(0),
-        "Version was 0");
+    assert!(0 != c.get_lib_version().unwrap_or(0), "Version was 0");
     common::close(c);
 }
 
 #[test]
 fn test_list_domains() {
     let c = common::conn();
-    assert!(
-        0 < c.list_domains().unwrap_or(vec![]).len(),
-        "At least one domain should exist");
+    assert!(0 < c.list_domains().unwrap_or(vec![]).len(),
+            "At least one domain should exist");
     common::close(c);
 }
 
 #[test]
 fn test_list_interfaces() {
     let c = common::conn();
-    assert!(
-        0 < c.list_interfaces().unwrap_or(vec![]).len(),
-        "At least one interface should exist");
+    assert!(0 < c.list_interfaces().unwrap_or(vec![]).len(),
+            "At least one interface should exist");
     common::close(c);
 }
 
 #[test]
 fn test_list_networks() {
     let c = common::conn();
-    assert!(
-        0 < c.list_networks().unwrap_or(vec![]).len(),
-        "At least one networks should exist");
+    assert!(0 < c.list_networks().unwrap_or(vec![]).len(),
+            "At least one networks should exist");
     common::close(c);
 }
 
 #[test]
 fn test_list_storage_pools() {
     let c = common::conn();
-    assert!(
-        0 < c.list_storage_pools().unwrap_or(vec![]).len(),
-        "At least one storage pool should exist");
+    assert!(0 < c.list_storage_pools().unwrap_or(vec![]).len(),
+            "At least one storage pool should exist");
     common::close(c);
 }
 
@@ -187,8 +185,7 @@ fn test_list_storage_pools() {
 fn test_list_all_domains() {
     let c = common::conn();
     let v = c.list_all_domains(0).unwrap_or(vec![]);
-    assert!(0 < v.len(),
-            "At least one domain should exist");
+    assert!(0 < v.len(), "At least one domain should exist");
     for mut dom in v {
         assert!("" != dom.get_name().unwrap_or(String::new()));
         dom.free().unwrap_or(());
@@ -200,8 +197,7 @@ fn test_list_all_domains() {
 fn test_get_cpu_models_names() {
     let c = common::conn();
     let mcpus = c.get_cpu_models_names("i686", 0).unwrap_or(vec![]);
-    assert!(0 < mcpus.len(),
-            "At least one cpu model should exist");
+    assert!(0 < mcpus.len(), "At least one cpu model should exist");
     common::close(c);
 }
 

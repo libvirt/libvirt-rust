@@ -33,7 +33,8 @@ fn exercices() {
                 Ok(interface) => {
                     assert_eq!("eth1", interface.get_name().unwrap_or("n/a".to_string()));
                     assert_eq!(true, interface.is_active().unwrap_or(false));
-                    assert_eq!("aa:bb:cc:dd:ee:ff", interface.get_mac_string().unwrap_or("n/a".to_string()));
+                    assert_eq!("aa:bb:cc:dd:ee:ff",
+                               interface.get_mac_string().unwrap_or("n/a".to_string()));
                     assert_eq!("<interface type='ethernet' name='eth1'>
   <start mode='onboot'/>
   <mtu size='1492'/>
@@ -43,15 +44,14 @@ fn exercices() {
   </protocol>
   <mac address='aa:bb:cc:dd:ee:ff'/>
 </interface>
-", interface.get_xml_desc(0).unwrap_or("n/a".to_string()));
+",
+                               interface.get_xml_desc(0).unwrap_or("n/a".to_string()));
                 }
-                Err(e) => panic!(
-                    "failed with code {}, message: {}", e.code, e.message)
+                Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
             }
             assert_eq!(0, conn.close().unwrap_or(-1));
-        },
-        Err(e) => panic!(
-            "failed with code {}, message: {}", e.code, e.message)
+        }
+        Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
     }
 }
 
@@ -74,7 +74,8 @@ fn defining() {
                     interface.create(0).unwrap_or(());
                     assert_eq!(true, interface.is_active().unwrap_or(false));
                     assert_eq!("eth2", interface.get_name().unwrap_or("n/a".to_string()));
-                    assert_eq!("a1:bb:cc:dd:ee:ff", interface.get_mac_string().unwrap_or("n/a".to_string()));
+                    assert_eq!("a1:bb:cc:dd:ee:ff",
+                               interface.get_mac_string().unwrap_or("n/a".to_string()));
                     let inters = conn.list_interfaces().unwrap_or(vec![]);
                     assert_eq!(2, inters.len());
                     interface.destroy().unwrap_or(());
@@ -82,13 +83,11 @@ fn defining() {
                     let inters = conn.list_interfaces().unwrap_or(vec![]);
                     assert_eq!(1, inters.len());
                 }
-                Err(e) => panic!(
-                    "failed with code {}, message: {}", e.code, e.message)
+                Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
             }
             assert_eq!(0, conn.close().unwrap_or(-1));
-        },
-        Err(e) => panic!(
-            "failed with code {}, message: {}", e.code, e.message)
+        }
+        Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
     }
 }
 
@@ -96,14 +95,10 @@ fn defining() {
 fn test_lookup_interface_by_name() {
     let c = common::conn();
     let v = c.list_interfaces().unwrap_or(vec![]);
-    assert!(
-        0 < v.len(),
-        "At least one interface should exist");
+    assert!(0 < v.len(), "At least one interface should exist");
     match Interface::lookup_by_name(&c, &v[0]) {
         Ok(mut i) => i.free().unwrap_or(()),
-        Err(e) => panic!(
-            "failed with code {}, message: {}", e.code, e.message)
+        Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
     }
     common::close(c);
 }
-

@@ -29,17 +29,21 @@ use error::Error;
 pub mod sys {
     #[allow(non_camel_case_types)]
     #[repr(C)]
-    pub struct virSecret {
-    }
+    pub struct virSecret {}
 
     #[allow(non_camel_case_types)]
     pub type virSecretPtr = *mut virSecret;
 }
 
 #[link(name = "virt")]
-extern {
-    fn virSecretLookupByUUIDString(c: virConnectPtr, uuid: *const libc::c_char) -> sys::virSecretPtr;
-    fn virSecretLookupByUsage(c: virConnectPtr, usaget: libc::c_int, usageid: *const libc::c_char) -> sys::virSecretPtr;
+extern "C" {
+    fn virSecretLookupByUUIDString(c: virConnectPtr,
+                                   uuid: *const libc::c_char)
+                                   -> sys::virSecretPtr;
+    fn virSecretLookupByUsage(c: virConnectPtr,
+                              usaget: libc::c_int,
+                              usageid: *const libc::c_char)
+                              -> sys::virSecretPtr;
     fn virSecretUndefine(ptr: sys::virSecretPtr) -> libc::c_int;
     fn virSecretFree(ptr: sys::virSecretPtr) -> libc::c_int;
     fn virSecretGetName(ptr: sys::virSecretPtr) -> *const libc::c_char;
@@ -47,16 +51,25 @@ extern {
     fn virSecretGetUsageID(ptr: sys::virSecretPtr) -> *const libc::c_char;
     fn virSecretGetXMLDesc(ptr: sys::virSecretPtr, flags: libc::c_uint) -> *const libc::c_char;
 
-    fn virSecretSetValue(ptr: sys::virSecretPtr, value: *const libc::c_uchar,
-                         vsize: libc::c_uint, flags: libc::c_uint) -> libc::c_int;
-    fn virSecretGetValue(ptr: sys::virSecretPtr, vsize: libc::c_uint, flags: libc::c_uint) -> *const libc::c_uchar;
+    fn virSecretSetValue(ptr: sys::virSecretPtr,
+                         value: *const libc::c_uchar,
+                         vsize: libc::c_uint,
+                         flags: libc::c_uint)
+                         -> libc::c_int;
+    fn virSecretGetValue(ptr: sys::virSecretPtr,
+                         vsize: libc::c_uint,
+                         flags: libc::c_uint)
+                         -> *const libc::c_uchar;
     fn virSecretGetConnect(ptr: sys::virSecretPtr) -> virConnectPtr;
     fn virSecretGetUsageType(ptr: sys::virSecretPtr) -> libc::c_int;
-    fn virSecretDefineXML(c: virConnectPtr, xml: *const libc::c_char, flags: libc::c_uint) -> sys::virSecretPtr;
+    fn virSecretDefineXML(c: virConnectPtr,
+                          xml: *const libc::c_char,
+                          flags: libc::c_uint)
+                          -> sys::virSecretPtr;
 }
 
 pub type SecretXMLFlags = self::libc::c_uint;
-pub const VIR_SECRET_XML_INACTIVE:SecretXMLFlags = 1 << 0;
+pub const VIR_SECRET_XML_INACTIVE: SecretXMLFlags = 1 << 0;
 
 pub type SecretSecretUsageType = self::libc::c_uint;
 pub const VIR_SECRET_USAGE_TYPE_NONE: SecretSecretUsageType = 0;
@@ -69,11 +82,11 @@ pub type SecretsFlags = self::libc::c_uint;
 pub const VIR_CONNECT_LIST_SECRETS_EPHEMERAL: SecretsFlags = 1 << 0;
 pub const VIR_CONNECT_LIST_SECRETS_NO_EPHEMERAL: SecretsFlags = 1 << 1;
 pub const VIR_CONNECT_LIST_SECRETS_PRIVATE: SecretsFlags = 1 << 2;
-pub const VIR_CONNECT_LIST_SECRETS_NO_PRIVATE: SecretsFlags  = 1 << 3;
+pub const VIR_CONNECT_LIST_SECRETS_NO_PRIVATE: SecretsFlags = 1 << 3;
 
 
 pub struct Secret {
-    ptr: sys::virSecretPtr
+    ptr: sys::virSecretPtr,
 }
 
 impl Drop for Secret {
@@ -88,9 +101,8 @@ impl Drop for Secret {
 }
 
 impl Secret {
-
     pub fn new(ptr: sys::virSecretPtr) -> Secret {
-        return Secret{ptr: ptr}
+        return Secret { ptr: ptr };
     }
 
     pub fn get_connect(&self) -> Result<Connect, Error> {
@@ -105,9 +117,9 @@ impl Secret {
 
     pub fn define_xml(conn: &Connect, xml: &str, flags: u32) -> Result<Secret, Error> {
         unsafe {
-            let ptr = virSecretDefineXML(
-                conn.as_ptr(),  CString::new(xml).unwrap().as_ptr(),
-                flags as libc::c_uint);
+            let ptr = virSecretDefineXML(conn.as_ptr(),
+                                         CString::new(xml).unwrap().as_ptr(),
+                                         flags as libc::c_uint);
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -117,8 +129,8 @@ impl Secret {
 
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Secret, Error> {
         unsafe {
-            let ptr = virSecretLookupByUUIDString(
-                conn.as_ptr(), CString::new(uuid).unwrap().as_ptr());
+            let ptr = virSecretLookupByUUIDString(conn.as_ptr(),
+                                                  CString::new(uuid).unwrap().as_ptr());
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -128,9 +140,9 @@ impl Secret {
 
     pub fn lookup_by_usage(conn: &Connect, usagetype: i32, usageid: &str) -> Result<Secret, Error> {
         unsafe {
-            let ptr = virSecretLookupByUsage(
-                conn.as_ptr(), usagetype as libc::c_int,
-                CString::new(usageid).unwrap().as_ptr());
+            let ptr = virSecretLookupByUsage(conn.as_ptr(),
+                                             usagetype as libc::c_int,
+                                             CString::new(usageid).unwrap().as_ptr());
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -142,9 +154,9 @@ impl Secret {
         unsafe {
             let n = virSecretGetName(self.ptr);
             if n.is_null() {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned())
+            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned());
         }
     }
 
@@ -152,9 +164,9 @@ impl Secret {
         unsafe {
             let n = virSecretGetUsageID(self.ptr);
             if n.is_null() {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned())
+            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned());
         }
     }
 
@@ -162,9 +174,9 @@ impl Secret {
         unsafe {
             let t = virSecretGetUsageType(self.ptr);
             if t == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(t as u32)
+            return Ok(t as u32);
         }
     }
 
@@ -172,30 +184,29 @@ impl Secret {
         unsafe {
             let uuid: *mut libc::c_char = ptr::null_mut();
             if virSecretGetUUIDString(self.ptr, uuid) == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(
-                uuid).to_string_lossy().into_owned())
+            return Ok(CStr::from_ptr(uuid).to_string_lossy().into_owned());
         }
     }
 
-    pub fn get_xml_desc(&self, flags:SecretXMLFlags) -> Result<String, Error> {
+    pub fn get_xml_desc(&self, flags: SecretXMLFlags) -> Result<String, Error> {
         unsafe {
             let xml = virSecretGetXMLDesc(self.ptr, flags);
             if xml.is_null() {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(xml).to_string_lossy().into_owned())
+            return Ok(CStr::from_ptr(xml).to_string_lossy().into_owned());
         }
     }
 
     pub fn set_value(&self, value: &[u8], flags: u32) -> Result<(), Error> {
         unsafe {
-            if virSecretSetValue(self.ptr, value.as_ptr(),
-                                 value.len() as libc::c_uint, flags) == -1 {
-                return Err(Error::new())
+            if virSecretSetValue(self.ptr, value.as_ptr(), value.len() as libc::c_uint, flags) ==
+               -1 {
+                return Err(Error::new());
             }
-            return Ok(())
+            return Ok(());
         }
     }
 
@@ -203,14 +214,14 @@ impl Secret {
         unsafe {
             let n = virSecretGetValue(self.ptr, size as libc::c_uint, flags as libc::c_uint);
             if n.is_null() {
-                return Err(Error::new())
+                return Err(Error::new());
             }
 
             let mut array: Vec<u8> = Vec::new();
             for x in 0..size {
                 array.push(*n.offset(x))
             }
-            return Ok(array)
+            return Ok(array);
         }
     }
 

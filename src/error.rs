@@ -31,8 +31,8 @@ struct virError {
 
 
 #[link(name = "virt")]
-extern {
-//    fn virGetLastErrorMessage() -> *const libc::c_char;
+extern "C" {
+    //    fn virGetLastErrorMessage() -> *const libc::c_char;
     fn virGetLastError() -> *const virError;
 }
 
@@ -50,8 +50,9 @@ impl Error {
             Error {
                 code: (*ptr).code,
                 domain: (*ptr).domain,
-                message: CStr::from_ptr(
-                    (*ptr).message).to_string_lossy().into_owned(),
+                message: CStr::from_ptr((*ptr).message)
+                    .to_string_lossy()
+                    .into_owned(),
                 level: (*ptr).level,
             }
         }

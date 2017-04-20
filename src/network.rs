@@ -29,18 +29,19 @@ use error::Error;
 pub mod sys {
     #[allow(non_camel_case_types)]
     #[repr(C)]
-    pub struct virNetwork {
-    }
+    pub struct virNetwork {}
 
     #[allow(non_camel_case_types)]
     pub type virNetworkPtr = *mut virNetwork;
 }
 
 #[link(name = "virt")]
-extern {
+extern "C" {
     fn virNetworkLookupByID(c: virConnectPtr, id: libc::c_int) -> sys::virNetworkPtr;
     fn virNetworkLookupByName(c: virConnectPtr, id: *const libc::c_char) -> sys::virNetworkPtr;
-    fn virNetworkLookupByUUIDString(c: virConnectPtr, uuid: *const libc::c_char) -> sys::virNetworkPtr;
+    fn virNetworkLookupByUUIDString(c: virConnectPtr,
+                                    uuid: *const libc::c_char)
+                                    -> sys::virNetworkPtr;
     fn virNetworkCreate(c: virConnectPtr, flags: libc::c_uint) -> sys::virNetworkPtr;
     fn virNetworkDestroy(ptr: sys::virNetworkPtr) -> libc::c_int;
     fn virNetworkUndefine(ptr: sys::virNetworkPtr) -> libc::c_int;
@@ -57,18 +58,19 @@ extern {
                         section: libc::c_uint,
                         index: libc::c_uint,
                         xml: *const libc::c_char,
-                        flags: libc::c_uint) -> libc::c_int;
+                        flags: libc::c_uint)
+                        -> libc::c_int;
     fn virNetworkGetConnect(ptr: sys::virNetworkPtr) -> virConnectPtr;
 }
 
 pub type NetworkXMLFlags = self::libc::c_uint;
-pub const VIR_NETWORK_XML_INACTIVE:NetworkXMLFlags = 1 << 0;
+pub const VIR_NETWORK_XML_INACTIVE: NetworkXMLFlags = 1 << 0;
 
 pub type NetworkUpdateCommand = self::libc::c_uint;
 pub const VIR_NETWORK_UPDATE_COMMAND_NONE: NetworkUpdateCommand = 0;
 pub const VIR_NETWORK_UPDATE_COMMAND_MODIFY: NetworkUpdateCommand = 1;
 pub const VIR_NETWORK_UPDATE_COMMAND_DELETE: NetworkUpdateCommand = 2;
-pub const VIR_NETWORK_UPDATE_COMMAND_ADD_LAST:NetworkUpdateCommand = 3;
+pub const VIR_NETWORK_UPDATE_COMMAND_ADD_LAST: NetworkUpdateCommand = 3;
 pub const VIR_NETWORK_UPDATE_COMMAND_ADD_FIRST: NetworkUpdateCommand = 4;
 
 pub type NetworkUpdateSection = self::libc::c_uint;
@@ -92,7 +94,7 @@ pub const VIR_NETWORK_UPDATE_AFFECT_LIVE: NetworkUpdateFlags = 1 << 0;
 pub const VIR_NETWORK_UPDATE_AFFECT_CONFIG: NetworkUpdateFlags = 1 << 1;
 
 pub struct Network {
-    ptr: sys::virNetworkPtr
+    ptr: sys::virNetworkPtr,
 }
 
 impl Drop for Network {
@@ -107,9 +109,8 @@ impl Drop for Network {
 }
 
 impl Network {
-
     pub fn new(ptr: sys::virNetworkPtr) -> Network {
-        return Network{ptr: ptr}
+        return Network { ptr: ptr };
     }
 
     pub fn get_connect(&self) -> Result<Connect, Error> {
@@ -134,8 +135,7 @@ impl Network {
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<Network, Error> {
         unsafe {
-            let ptr = virNetworkLookupByName(
-                conn.as_ptr(), CString::new(id).unwrap().as_ptr());
+            let ptr = virNetworkLookupByName(conn.as_ptr(), CString::new(id).unwrap().as_ptr());
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -145,8 +145,8 @@ impl Network {
 
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Network, Error> {
         unsafe {
-            let ptr = virNetworkLookupByUUIDString(
-                conn.as_ptr(), CString::new(uuid).unwrap().as_ptr());
+            let ptr = virNetworkLookupByUUIDString(conn.as_ptr(),
+                                                   CString::new(uuid).unwrap().as_ptr());
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -158,9 +158,9 @@ impl Network {
         unsafe {
             let n = virNetworkGetName(self.ptr);
             if n.is_null() {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned())
+            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned());
         }
     }
 
@@ -168,10 +168,11 @@ impl Network {
         unsafe {
             let mut uuid: [libc::c_char; 37] = [0; 37];
             if virNetworkGetUUIDString(self.ptr, uuid.as_mut_ptr()) == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(
-                uuid.as_ptr()).to_string_lossy().into_owned())
+            return Ok(CStr::from_ptr(uuid.as_ptr())
+                          .to_string_lossy()
+                          .into_owned());
         }
     }
 
@@ -179,19 +180,19 @@ impl Network {
         unsafe {
             let n = virNetworkGetBridgeName(self.ptr);
             if n.is_null() {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned())
+            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned());
         }
     }
-    
-    pub fn get_xml_desc(&self, flags:NetworkXMLFlags) -> Result<String, Error> {
+
+    pub fn get_xml_desc(&self, flags: NetworkXMLFlags) -> Result<String, Error> {
         unsafe {
             let xml = virNetworkGetXMLDesc(self.ptr, flags);
             if xml.is_null() {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(xml).to_string_lossy().into_owned())
+            return Ok(CStr::from_ptr(xml).to_string_lossy().into_owned());
         }
     }
 
@@ -201,7 +202,7 @@ impl Network {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Network{ptr: ptr});
+            return Ok(Network { ptr: ptr });
         }
     }
 
@@ -268,20 +269,19 @@ impl Network {
                   section: NetworkUpdateSection,
                   index: i32,
                   xml: &str,
-                  flags: NetworkUpdateFlags) -> Result<(), Error> {
+                  flags: NetworkUpdateFlags)
+                  -> Result<(), Error> {
         unsafe {
-            let ret = virNetworkUpdate(
-                self.ptr,
-                cmd,
-                section,
-                index as libc::c_uint,
-                CString::new(xml).unwrap().as_ptr(),
-                flags);
+            let ret = virNetworkUpdate(self.ptr,
+                                       cmd,
+                                       section,
+                                       index as libc::c_uint,
+                                       CString::new(xml).unwrap().as_ptr(),
+                                       flags);
             if ret == -1 {
                 return Err(Error::new());
             }
             return Ok(());
         }
     }
-
 }

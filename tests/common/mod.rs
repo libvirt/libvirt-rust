@@ -23,19 +23,22 @@ use virt::connect::Connect;
 
 pub fn conn() -> Connect {
     match Connect::open("test:///default") {
-        Err(e) => panic!(
-            "Build connection failed with code {}, message: {}",
-            e.code, e.message),
-        Ok(conn) => conn
+        Err(e) => {
+            panic!("Build connection failed with code {}, message: {}",
+                   e.code,
+                   e.message)
+        }
+        Ok(conn) => conn,
     }
 }
 
 pub fn close(mut conn: Connect) {
     match conn.close() {
-        Err(e) => panic!(
-            "Close connection failed with code {}, message: {}",
-            e.code, e.message),
-        Ok(status) => assert_eq!(
-            0, status, "Close() == {}, expected 0", status)
+        Err(e) => {
+            panic!("Close connection failed with code {}, message: {}",
+                   e.code,
+                   e.message)
+        }
+        Ok(status) => assert_eq!(0, status, "Close() == {}, expected 0", status),
     }
 }

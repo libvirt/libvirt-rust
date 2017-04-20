@@ -45,15 +45,14 @@ fn exercices() {
     </dhcp>
   </ip>
 </network>
-", network.get_xml_desc(0).unwrap_or("n/a".to_string()));
+",
+                               network.get_xml_desc(0).unwrap_or("n/a".to_string()));
                 }
-                Err(e) => panic!(
-                    "failed with code {}, message: {}", e.code, e.message)
+                Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
             }
             assert_eq!(0, conn.close().unwrap_or(-1));
-        },
-        Err(e) => panic!(
-            "failed with code {}, message: {}", e.code, e.message)
+        }
+        Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
     }
 }
 
@@ -61,13 +60,10 @@ fn exercices() {
 fn test_lookup_network_by_name() {
     let c = common::conn();
     let v = c.list_networks().unwrap_or(vec![]);
-    assert!(
-        0 < v.len(),
-        "At least one network should exist");
+    assert!(0 < v.len(), "At least one network should exist");
     match Network::lookup_by_name(&c, &v[0]) {
         Ok(mut n) => n.free().unwrap_or(()),
-        Err(e) => panic!(
-            "failed with code {}, message: {}", e.code, e.message)
+        Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
     }
     common::close(c);
 }

@@ -43,24 +43,21 @@ use secret::Secret;
 
 #[allow(non_camel_case_types)]
 #[repr(C)]
-pub struct virConnect {
-}
+pub struct virConnect {}
 
 #[allow(non_camel_case_types)]
 pub type virConnectPtr = *mut virConnect;
 
 #[allow(non_camel_case_types)]
 #[repr(C)]
-pub struct virConnectCredential {
-}
+pub struct virConnectCredential {}
 
 #[allow(non_camel_case_types)]
 pub type virConnectCredentialPtr = *mut virConnectCredential;
 
 #[allow(non_camel_case_types)]
 #[repr(C)]
-pub struct virConnectAuthCallback {
-}
+pub struct virConnectAuthCallback {}
 
 #[allow(non_camel_case_types)]
 pub type virConnectAuthCallbackPtr = *mut virConnectAuthCallback;
@@ -70,7 +67,7 @@ pub type virConnectAuthCallbackPtr = *mut virConnectAuthCallback;
 pub struct virConnectAuth {
     credtype: *mut libc::c_uint,
     ncredtype: libc::c_uint,
-    cb: unsafe extern fn(*mut virConnectCredential, u32, *mut libc::c_void) -> i32,
+    cb: unsafe extern "C" fn(*mut virConnectCredential, u32, *mut libc::c_void) -> i32,
     cbdata: *mut libc::c_void,
 }
 
@@ -99,103 +96,129 @@ pub struct NodeInfo {
     pub cpus: u32,
     pub mhz: u32,
     pub nodes: u32,
-    pub sockets:u32,
+    pub sockets: u32,
     pub cores: u32,
     pub threads: u32,
 }
 
 //#[deny(dead_code)]
 #[link(name="virt")]
-extern {
+extern "C" {
     fn virGetVersion(hyver: *const libc::c_ulong,
                      ctype: *const libc::c_char,
-                     typever: *const libc::c_ulong) -> libc::c_int;
+                     typever: *const libc::c_ulong)
+                     -> libc::c_int;
     fn virConnectOpen(uri: *const libc::c_char) -> virConnectPtr;
     fn virConnectOpenReadOnly(uri: *const libc::c_char) -> virConnectPtr;
-    fn virConnectOpenAuth(uri: *const libc::c_char, auth: *mut virConnectAuth, flags: libc::c_uint) -> virConnectPtr;
-    fn virConnectClose(c: virConnectPtr) -> libc::c_int;
-    fn virConnectGetVersion(c: virConnectPtr,
-                            hyver: *mut libc::c_ulong) -> libc::c_int;
-    fn virConnectGetHostname(c: virConnectPtr) -> *const libc::c_char;
-    fn virConnectGetCapabilities(c: virConnectPtr) -> *const libc::c_char;
-    fn virConnectGetLibVersion(c: virConnectPtr,
-                               ver: *mut libc::c_ulong) -> libc::c_int;
-    fn virConnectGetType(c: virConnectPtr) -> *const libc::c_char;
-    fn virConnectGetURI(c: virConnectPtr) -> *const libc::c_char;
-    fn virConnectGetSysinfo(c: virConnectPtr, flags: libc::c_uint) -> *const libc::c_char;
-    fn virConnectIsAlive(c: virConnectPtr) -> libc::c_int;
-    fn virConnectIsEncrypted(c: virConnectPtr) -> libc::c_int;
-    fn virConnectIsSecure(c: virConnectPtr) -> libc::c_int;
-    fn virConnectListDomains(c: virConnectPtr,
+    fn virConnectOpenAuth(uri: *const libc::c_char,
+                          auth: *mut virConnectAuth,
+                          flags: libc::c_uint)
+                          -> virConnectPtr;
+    fn virConnectClose(ptr: virConnectPtr) -> libc::c_int;
+    fn virConnectGetVersion(ptr: virConnectPtr, hyver: *mut libc::c_ulong) -> libc::c_int;
+    fn virConnectGetHostname(ptr: virConnectPtr) -> *const libc::c_char;
+    fn virConnectGetCapabilities(ptr: virConnectPtr) -> *const libc::c_char;
+    fn virConnectGetLibVersion(ptr: virConnectPtr, ver: *mut libc::c_ulong) -> libc::c_int;
+    fn virConnectGetType(ptr: virConnectPtr) -> *const libc::c_char;
+    fn virConnectGetURI(ptr: virConnectPtr) -> *const libc::c_char;
+    fn virConnectGetSysinfo(ptr: virConnectPtr, flags: libc::c_uint) -> *const libc::c_char;
+    fn virConnectIsAlive(ptr: virConnectPtr) -> libc::c_int;
+    fn virConnectIsEncrypted(ptr: virConnectPtr) -> libc::c_int;
+    fn virConnectIsSecure(ptr: virConnectPtr) -> libc::c_int;
+    fn virConnectListDomains(ptr: virConnectPtr,
                              ids: *mut libc::c_int,
-                             maxids: libc::c_int) -> libc::c_int;
-    fn virConnectListDefinedDomains(c: virConnectPtr,
+                             maxids: libc::c_int)
+                             -> libc::c_int;
+    fn virConnectListDefinedDomains(ptr: virConnectPtr,
                                     names: *mut *mut libc::c_char,
-                                    maxnames: libc::c_int) -> libc::c_int;
-    fn virConnectListInterfaces(c: virConnectPtr,
+                                    maxnames: libc::c_int)
+                                    -> libc::c_int;
+    fn virConnectListInterfaces(ptr: virConnectPtr,
                                 names: *mut *mut libc::c_char,
-                                maxnames: libc::c_int) -> libc::c_int;
-    fn virConnectListNetworks(c: virConnectPtr,
+                                maxnames: libc::c_int)
+                                -> libc::c_int;
+    fn virConnectListNetworks(ptr: virConnectPtr,
                               names: *mut *mut libc::c_char,
-                              maxnames: libc::c_int) -> libc::c_int;
-    fn virConnectListNWFilters(c: virConnectPtr,
+                              maxnames: libc::c_int)
+                              -> libc::c_int;
+    fn virConnectListNWFilters(ptr: virConnectPtr,
                                names: *mut *mut libc::c_char,
-                               maxnames: libc::c_int) -> libc::c_int;
-    fn virConnectListStoragePools(c: virConnectPtr,
+                               maxnames: libc::c_int)
+                               -> libc::c_int;
+    fn virConnectListStoragePools(ptr: virConnectPtr,
                                   names: *mut *mut libc::c_char,
-                                  maxnames: libc::c_int) -> libc::c_int;
-    fn virConnectListSecrets(c: virConnectPtr,
+                                  maxnames: libc::c_int)
+                                  -> libc::c_int;
+    fn virConnectListSecrets(ptr: virConnectPtr,
                              names: *mut *mut libc::c_char,
-                             maxnames: libc::c_int) -> libc::c_int;
-    fn virConnectListDefinedInterfaces(c: virConnectPtr,
+                             maxnames: libc::c_int)
+                             -> libc::c_int;
+    fn virConnectListDefinedInterfaces(ptr: virConnectPtr,
                                        names: *mut *mut libc::c_char,
-                                       maxifaces: libc::c_int) -> libc::c_int;
-    fn virConnectListDefinedNetworks(c: virConnectPtr,
+                                       maxifaces: libc::c_int)
+                                       -> libc::c_int;
+    fn virConnectListDefinedNetworks(ptr: virConnectPtr,
                                      names: *mut *mut libc::c_char,
-                                     maxnets: libc::c_int) -> libc::c_int;
-    fn virConnectListDefinedStoragePools(c: virConnectPtr,
+                                     maxnets: libc::c_int)
+                                     -> libc::c_int;
+    fn virConnectListDefinedStoragePools(ptr: virConnectPtr,
                                          names: *mut *mut libc::c_char,
-                                         maxpools: libc::c_int) -> libc::c_int;
-    fn virConnectListAllDomains(c: virConnectPtr,
+                                         maxpools: libc::c_int)
+                                         -> libc::c_int;
+    fn virConnectListAllDomains(ptr: virConnectPtr,
                                 domains: *mut *mut virDomainPtr,
-                                flags: libc::c_uint) -> libc::c_int;
-    fn virConnectListAllNetworks(c: virConnectPtr,
+                                flags: libc::c_uint)
+                                -> libc::c_int;
+    fn virConnectListAllNetworks(ptr: virConnectPtr,
                                  networks: *mut *mut virNetworkPtr,
-                                 flags: libc::c_uint) -> libc::c_int;
-    fn virConnectListAllInterfaces(c: virConnectPtr,
+                                 flags: libc::c_uint)
+                                 -> libc::c_int;
+    fn virConnectListAllInterfaces(ptr: virConnectPtr,
                                    interfaces: *mut *mut virInterfacePtr,
-                                   flags: libc::c_uint) -> libc::c_int;
-    fn virConnectListAllNodeDevices(c: virConnectPtr,
+                                   flags: libc::c_uint)
+                                   -> libc::c_int;
+    fn virConnectListAllNodeDevices(ptr: virConnectPtr,
                                     devices: *mut *mut virNodeDevicePtr,
-                                    flags: libc::c_uint) -> libc::c_int;
-    fn virConnectListAllSecrets(c: virConnectPtr,
+                                    flags: libc::c_uint)
+                                    -> libc::c_int;
+    fn virConnectListAllSecrets(ptr: virConnectPtr,
                                 secrets: *mut *mut virSecretPtr,
-                                flags: libc::c_uint) -> libc::c_int;
-    fn virConnectListAllNWFilters(c: virConnectPtr,
+                                flags: libc::c_uint)
+                                -> libc::c_int;
+    fn virConnectListAllNWFilters(ptr: virConnectPtr,
                                   nwfilters: *mut *mut virNWFilterPtr,
-                                  flags: libc::c_uint) -> libc::c_int;
-    fn virConnectListAllStoragePools(c: virConnectPtr,
+                                  flags: libc::c_uint)
+                                  -> libc::c_int;
+    fn virConnectListAllStoragePools(ptr: virConnectPtr,
                                      storages: *mut *mut virStoragePoolPtr,
-                                     flags: libc::c_uint) -> libc::c_int;
-    fn virConnectNumOfDomains(c: virConnectPtr) -> libc::c_int;
-    fn virConnectNumOfInterfaces(c: virConnectPtr) -> libc::c_int;
-    fn virConnectNumOfNetworks(c: virConnectPtr) -> libc::c_int;
-    fn virConnectNumOfStoragePools(c: virConnectPtr) -> libc::c_int;
-    fn virConnectNumOfNWFilters(c: virConnectPtr) -> libc::c_int;
-    fn virConnectNumOfSecrets(c: virConnectPtr) -> libc::c_int;
-    fn virConnectNumOfDefinedDomains(c: virConnectPtr) -> libc::c_int;
-    fn virConnectNumOfDefinedInterfaces(c: virConnectPtr) -> libc::c_int;
-    fn virConnectNumOfDefinedNetworks(c: virConnectPtr) -> libc::c_int;
-    fn virConnectNumOfDefinedStoragePools(c: virConnectPtr) -> libc::c_int;
-    fn virConnectGetCPUModelNames(c: virConnectPtr,
+                                     flags: libc::c_uint)
+                                     -> libc::c_int;
+    fn virConnectNumOfDomains(ptr: virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfInterfaces(ptr: virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfNetworks(ptr: virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfStoragePools(ptr: virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfNWFilters(ptr: virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfSecrets(ptr: virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfDefinedDomains(ptr: virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfDefinedInterfaces(ptr: virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfDefinedNetworks(ptr: virConnectPtr) -> libc::c_int;
+    fn virConnectNumOfDefinedStoragePools(ptr: virConnectPtr) -> libc::c_int;
+    fn virConnectGetCPUModelNames(ptr: virConnectPtr,
                                   arch: *const libc::c_char,
                                   mcpus: *mut *mut *mut libc::c_char,
-                                  flags: libc::c_uint) -> libc::c_int;
-    fn virConnectGetMaxVcpus(c: virConnectPtr, attr: *const libc::c_char) -> libc::c_int;
-    fn virConnectCompareCPU(c: virConnectPtr, xml: *const libc::c_char, flags: libc::c_uint) -> libc::c_int;
-    fn virNodeGetInfo(c: virConnectPtr, ninfo: virNodeInfoPtr) -> libc::c_int;
-    fn virNodeGetFreeMemory(c: virConnectPtr) -> libc::c_long;
-    fn virConnectSetKeepAlive(c: virConnectPtr, interval: libc::c_int, count: libc::c_uint) -> libc::c_int;
+                                  flags: libc::c_uint)
+                                  -> libc::c_int;
+    fn virConnectGetMaxVcpus(ptr: virConnectPtr, attr: *const libc::c_char) -> libc::c_int;
+    fn virConnectCompareCPU(ptr: virConnectPtr,
+                            xml: *const libc::c_char,
+                            flags: libc::c_uint)
+                            -> libc::c_int;
+    fn virNodeGetInfo(ptr: virConnectPtr, ninfo: virNodeInfoPtr) -> libc::c_int;
+    fn virNodeGetFreeMemory(ptr: virConnectPtr) -> libc::c_long;
+    fn virConnectSetKeepAlive(ptr: virConnectPtr,
+                              interval: libc::c_int,
+                              count: libc::c_uint)
+                              -> libc::c_int;
 }
 
 pub type ConnectFlags = self::libc::c_uint;
@@ -221,7 +244,7 @@ pub type ConnectListAllSecretsFlags = self::libc::c_uint;
 pub const VIR_CONNECT_LIST_SECRETS_EPHEMERAL: ConnectListAllSecretsFlags = 1 << 0;
 pub const VIR_CONNECT_LIST_SECRETS_NO_EPHEMERAL: ConnectListAllSecretsFlags = 1 << 1;
 pub const VIR_CONNECT_LIST_SECRETS_PRIVATE: ConnectListAllSecretsFlags = 1 << 2;
-pub const VIR_CONNECT_LIST_SECRETS_NO_PRIVATE: ConnectListAllSecretsFlags  = 1 << 3;
+pub const VIR_CONNECT_LIST_SECRETS_NO_PRIVATE: ConnectListAllSecretsFlags = 1 << 3;
 
 pub type ConnectListAllDomainsFlags = self::libc::c_uint;
 pub const VIR_CONNECT_LIST_DOMAINS_ACTIVE: ConnectListAllDomainsFlags = 1 << 0;
@@ -281,7 +304,7 @@ pub const VIR_CPU_COMPARE_INCOMPATIBLE: CPUCompareResult = 0;
 pub const VIR_CPU_COMPARE_IDENTICAL: CPUCompareResult = 1;
 pub const VIR_CPU_COMPARE_SUPERSET: CPUCompareResult = 2;
 
-  
+
 pub type ConnectCredentialType = self::libc::c_uint;
 pub const VIR_CRED_USERNAME: ConnectCredentialType = 1;
 pub const VIR_CRED_AUTHNAME: ConnectCredentialType = 2;
@@ -294,13 +317,14 @@ pub const VIR_CRED_REALM: ConnectCredentialType = 8;
 pub const VIR_CRED_EXTERNAL: ConnectCredentialType = 9;
 
 pub struct ConnectAuth {
-    ptr: *mut virConnectAuth
+    ptr: *mut virConnectAuth,
 }
 
 #[allow(unused_variables)]
 extern "C" fn connect_auth_callback_default(cred: virConnectCredentialPtr,
                                             ncred: libc::c_uint,
-                                            cbdata: *mut libc::c_void) -> libc::c_int {
+                                            cbdata: *mut libc::c_void)
+                                            -> libc::c_int {
     // TODO(sahid): needs to provide what we have in libvirt.
     return 0;
 }
@@ -311,33 +335,33 @@ impl ConnectAuth {
     }
 
     pub fn new_default() -> ConnectAuth {
-        let auth = &mut virConnectAuth{
-            credtype: [VIR_CRED_AUTHNAME,
-                       VIR_CRED_ECHOPROMPT,
-                       VIR_CRED_REALM,
-                       VIR_CRED_PASSPHRASE,
-                       VIR_CRED_NOECHOPROMPT,
-                       VIR_CRED_EXTERNAL].as_mut_ptr(),
-            ncredtype: 6,
-            cb: connect_auth_callback_default,
-            cbdata: ptr::null_mut(),
-        };
-        ConnectAuth{ptr: auth}
+        let auth = &mut virConnectAuth {
+                            credtype: [VIR_CRED_AUTHNAME,
+                                       VIR_CRED_ECHOPROMPT,
+                                       VIR_CRED_REALM,
+                                       VIR_CRED_PASSPHRASE,
+                                       VIR_CRED_NOECHOPROMPT,
+                                       VIR_CRED_EXTERNAL]
+                                    .as_mut_ptr(),
+                            ncredtype: 6,
+                            cb: connect_auth_callback_default,
+                            cbdata: ptr::null_mut(),
+                        };
+        ConnectAuth { ptr: auth }
     }
 }
 
 pub struct Connect {
-    pub ptr: virConnectPtr
+    pub ptr: virConnectPtr,
 }
 
 impl Connect {
-
     pub fn as_ptr(&self) -> virConnectPtr {
         self.ptr
     }
 
     pub fn new(ptr: virConnectPtr) -> Connect {
-        return Connect{ptr: ptr};
+        return Connect { ptr: ptr };
     }
 
     pub fn get_version() -> Result<u32, Error> {
@@ -431,7 +455,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     /// use virt::connect::ConnectAuth;
-    /// 
+    ///
     /// let auth = ConnectAuth::new_default();
     /// match Connect::open_auth("test:///default", &auth, 0) {
     ///   Ok(mut conn) => {
@@ -443,9 +467,9 @@ impl Connect {
     /// ```
     pub fn open_auth(uri: &str, auth: &ConnectAuth, flags: ConnectFlags) -> Result<Connect, Error> {
         unsafe {
-            let c = virConnectOpenAuth(
-                CString::new(uri).unwrap().as_ptr(),
-                auth.as_ptr(), flags as libc::c_uint);
+            let c = virConnectOpenAuth(CString::new(uri).unwrap().as_ptr(),
+                                       auth.as_ptr(),
+                                       flags as libc::c_uint);
             if c.is_null() {
                 return Err(Error::new());
             }
@@ -480,9 +504,9 @@ impl Connect {
         unsafe {
             let n = virConnectGetHostname(self.ptr);
             if n.is_null() {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned())
+            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned());
         }
     }
 
@@ -490,12 +514,12 @@ impl Connect {
         unsafe {
             let n = virConnectGetCapabilities(self.ptr);
             if n.is_null() {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned())
+            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned());
         }
     }
-    
+
     pub fn get_lib_version(&self) -> Result<u32, Error> {
         unsafe {
             let mut ver: libc::c_ulong = 0;
@@ -510,9 +534,9 @@ impl Connect {
         unsafe {
             let t = virConnectGetType(self.ptr);
             if t.is_null() {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(t).to_string_lossy().into_owned())
+            return Ok(CStr::from_ptr(t).to_string_lossy().into_owned());
         }
     }
 
@@ -520,9 +544,9 @@ impl Connect {
         unsafe {
             let t = virConnectGetURI(self.ptr);
             if t.is_null() {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(t).to_string_lossy().into_owned())
+            return Ok(CStr::from_ptr(t).to_string_lossy().into_owned());
         }
     }
 
@@ -530,44 +554,42 @@ impl Connect {
         unsafe {
             let sys = virConnectGetSysinfo(self.ptr, flags as libc::c_uint);
             if sys.is_null() {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(sys).to_string_lossy().into_owned())
+            return Ok(CStr::from_ptr(sys).to_string_lossy().into_owned());
         }
     }
 
     pub fn get_max_vcpus(&self, attr: &str) -> Result<u32, Error> {
         unsafe {
-            let max = virConnectGetMaxVcpus(
-                self.ptr,
-                CString::new(attr).unwrap().as_ptr());
+            let max = virConnectGetMaxVcpus(self.ptr, CString::new(attr).unwrap().as_ptr());
             if max == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(max as u32)
+            return Ok(max as u32);
         }
     }
 
     pub fn get_cpu_models_names(&self, arch: &str, flags: u32) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: *mut *mut libc::c_char = ptr::null_mut();
-            let size = virConnectGetCPUModelNames(
-                self.ptr,
-                CString::new(arch).unwrap().as_ptr(),
-                &mut names,
-                flags as libc::c_uint);
+            let size = virConnectGetCPUModelNames(self.ptr,
+                                                  CString::new(arch).unwrap().as_ptr(),
+                                                  &mut names,
+                                                  flags as libc::c_uint);
             if size == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
 
             let mut array: Vec<String> = Vec::new();
             for x in 0..size as isize {
-                array.push(CStr::from_ptr(
-                    *names.offset(x)).to_string_lossy().into_owned());
+                array.push(CStr::from_ptr(*names.offset(x))
+                               .to_string_lossy()
+                               .into_owned());
             }
             libc::free(names as *mut libc::c_void);
 
-            return Ok(array)
+            return Ok(array);
         }
     }
 
@@ -575,9 +597,9 @@ impl Connect {
         unsafe {
             let t = virConnectIsAlive(self.ptr);
             if t == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(t == 1)
+            return Ok(t == 1);
         }
     }
 
@@ -585,9 +607,9 @@ impl Connect {
         unsafe {
             let t = virConnectIsEncrypted(self.ptr);
             if t == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(t == 1)
+            return Ok(t == 1);
         }
     }
 
@@ -595,9 +617,9 @@ impl Connect {
         unsafe {
             let t = virConnectIsSecure(self.ptr);
             if t == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(t == 1)
+            return Ok(t == 1);
         }
     }
 
@@ -626,14 +648,14 @@ impl Connect {
             let mut ids: [libc::c_int; 512] = [0; 512];
             let size = virConnectListDomains(self.ptr, ids.as_mut_ptr(), 512);
             if size == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
 
             let mut array: Vec<u32> = Vec::new();
             for x in 0..size as usize {
                 array.push(ids[x] as u32);
             }
-            return Ok(array)
+            return Ok(array);
         }
     }
 
@@ -662,15 +684,14 @@ impl Connect {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
             let size = virConnectListInterfaces(self.ptr, names.as_mut_ptr(), 1024);
             if size == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
 
             let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(CStr::from_ptr(
-                    names[x]).to_string_lossy().into_owned());
+                array.push(CStr::from_ptr(names[x]).to_string_lossy().into_owned());
             }
-            return Ok(array)
+            return Ok(array);
         }
     }
 
@@ -699,15 +720,14 @@ impl Connect {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
             let size = virConnectListNetworks(self.ptr, names.as_mut_ptr(), 1024);
             if size == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
 
             let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(CStr::from_ptr(
-                    names[x]).to_string_lossy().into_owned());
+                array.push(CStr::from_ptr(names[x]).to_string_lossy().into_owned());
             }
-            return Ok(array)
+            return Ok(array);
         }
     }
 
@@ -716,15 +736,14 @@ impl Connect {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
             let size = virConnectListNWFilters(self.ptr, names.as_mut_ptr(), 1024);
             if size == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
 
             let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(CStr::from_ptr(
-                    names[x]).to_string_lossy().into_owned());
+                array.push(CStr::from_ptr(names[x]).to_string_lossy().into_owned());
             }
-            return Ok(array)
+            return Ok(array);
         }
     }
 
@@ -733,15 +752,14 @@ impl Connect {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
             let size = virConnectListSecrets(self.ptr, names.as_mut_ptr(), 1024);
             if size == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
 
             let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(CStr::from_ptr(
-                    names[x]).to_string_lossy().into_owned());
+                array.push(CStr::from_ptr(names[x]).to_string_lossy().into_owned());
             }
-            return Ok(array)
+            return Ok(array);
         }
     }
 
@@ -770,25 +788,25 @@ impl Connect {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
             let size = virConnectListStoragePools(self.ptr, names.as_mut_ptr(), 1024);
             if size == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
 
             let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(CStr::from_ptr(
-                    names[x]).to_string_lossy().into_owned());
+                array.push(CStr::from_ptr(names[x]).to_string_lossy().into_owned());
             }
-            return Ok(array)
+            return Ok(array);
         }
     }
 
-    pub fn list_all_domains(&self, flags: ConnectListAllDomainsFlags) -> Result<Vec<Domain>, Error> {
+    pub fn list_all_domains(&self,
+                            flags: ConnectListAllDomainsFlags)
+                            -> Result<Vec<Domain>, Error> {
         unsafe {
             let mut domains: *mut virDomainPtr = ptr::null_mut();
-            let size = virConnectListAllDomains(
-                self.ptr, &mut domains, flags as libc::c_uint);
+            let size = virConnectListAllDomains(self.ptr, &mut domains, flags as libc::c_uint);
             if size == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
 
             let mut array: Vec<Domain> = Vec::new();
@@ -797,17 +815,18 @@ impl Connect {
             }
             libc::free(domains as *mut libc::c_void);
 
-            return Ok(array)
+            return Ok(array);
         }
     }
 
-    pub fn list_all_networks(&self, flags: ConnectListAllNetworksFlags) -> Result<Vec<Network>, Error> {
+    pub fn list_all_networks(&self,
+                             flags: ConnectListAllNetworksFlags)
+                             -> Result<Vec<Network>, Error> {
         unsafe {
             let mut networks: *mut virNetworkPtr = ptr::null_mut();
-            let size = virConnectListAllNetworks(
-                self.ptr, &mut networks, flags as libc::c_uint);
+            let size = virConnectListAllNetworks(self.ptr, &mut networks, flags as libc::c_uint);
             if size == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
 
             let mut array: Vec<Network> = Vec::new();
@@ -816,17 +835,19 @@ impl Connect {
             }
             libc::free(networks as *mut libc::c_void);
 
-            return Ok(array)
+            return Ok(array);
         }
     }
 
-    pub fn list_all_interfaces(&self, flags: ConnectListAllInterfacesFlags) -> Result<Vec<Interface>, Error> {
+    pub fn list_all_interfaces(&self,
+                               flags: ConnectListAllInterfacesFlags)
+                               -> Result<Vec<Interface>, Error> {
         unsafe {
             let mut interfaces: *mut virInterfacePtr = ptr::null_mut();
-            let size = virConnectListAllInterfaces(
-                self.ptr, &mut interfaces, flags as libc::c_uint);
+            let size =
+                virConnectListAllInterfaces(self.ptr, &mut interfaces, flags as libc::c_uint);
             if size == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
 
             let mut array: Vec<Interface> = Vec::new();
@@ -835,36 +856,38 @@ impl Connect {
             }
             libc::free(interfaces as *mut libc::c_void);
 
-            return Ok(array)
+            return Ok(array);
         }
     }
 
-    pub fn list_all_node_devices(&self, flags: ConnectListAllNodeDeviceFlags) -> Result<Vec<NodeDevice>, Error> {
+    pub fn list_all_node_devices(&self,
+                                 flags: ConnectListAllNodeDeviceFlags)
+                                 -> Result<Vec<NodeDevice>, Error> {
         unsafe {
             let mut nodedevs: *mut virNodeDevicePtr = ptr::null_mut();
-            let size = virConnectListAllNodeDevices(
-                self.ptr, &mut nodedevs, flags as libc::c_uint);
+            let size = virConnectListAllNodeDevices(self.ptr, &mut nodedevs, flags as libc::c_uint);
             if size == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            
+
             let mut array: Vec<NodeDevice> = Vec::new();
             for x in 0..size as isize {
                 array.push(NodeDevice::new(*nodedevs.offset(x)));
             }
             libc::free(nodedevs as *mut libc::c_void);
 
-            return Ok(array)
+            return Ok(array);
         }
     }
 
-    pub fn list_all_secrets(&self, flags: ConnectListAllSecretsFlags) -> Result<Vec<Secret>, Error> {
+    pub fn list_all_secrets(&self,
+                            flags: ConnectListAllSecretsFlags)
+                            -> Result<Vec<Secret>, Error> {
         unsafe {
             let mut secrets: *mut virSecretPtr = ptr::null_mut();
-            let size = virConnectListAllSecrets(
-                self.ptr, &mut secrets, flags as libc::c_uint);
+            let size = virConnectListAllSecrets(self.ptr, &mut secrets, flags as libc::c_uint);
             if size == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
 
             let mut array: Vec<Secret> = Vec::new();
@@ -873,17 +896,19 @@ impl Connect {
             }
             libc::free(secrets as *mut libc::c_void);
 
-            return Ok(array)
+            return Ok(array);
         }
     }
 
-    pub fn list_all_storage_pools(&self, flags: ConnectListAllStoragePoolsFlags) -> Result<Vec<StoragePool>, Error> {
+    pub fn list_all_storage_pools(&self,
+                                  flags: ConnectListAllStoragePoolsFlags)
+                                  -> Result<Vec<StoragePool>, Error> {
         unsafe {
             let mut storages: *mut virStoragePoolPtr = ptr::null_mut();
-            let size = virConnectListAllStoragePools(
-                self.ptr, &mut storages, flags as libc::c_uint);
+            let size =
+                virConnectListAllStoragePools(self.ptr, &mut storages, flags as libc::c_uint);
             if size == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
 
             let mut array: Vec<StoragePool> = Vec::new();
@@ -892,17 +917,16 @@ impl Connect {
             }
             libc::free(storages as *mut libc::c_void);
 
-            return Ok(array)
+            return Ok(array);
         }
     }
 
     pub fn list_all_nw_filters(&self, flags: u32) -> Result<Vec<NWFilter>, Error> {
         unsafe {
             let mut filters: *mut virNWFilterPtr = ptr::null_mut();
-            let size = virConnectListAllNWFilters(
-                self.ptr, &mut filters, flags as libc::c_uint);
+            let size = virConnectListAllNWFilters(self.ptr, &mut filters, flags as libc::c_uint);
             if size == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
 
             let mut array: Vec<NWFilter> = Vec::new();
@@ -911,7 +935,7 @@ impl Connect {
             }
             libc::free(filters as *mut libc::c_void);
 
-            return Ok(array)
+            return Ok(array);
         }
     }
 
@@ -940,15 +964,14 @@ impl Connect {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
             let size = virConnectListDefinedDomains(self.ptr, names.as_mut_ptr(), 1024);
             if size == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
 
             let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(CStr::from_ptr(
-                    names[x]).to_string_lossy().into_owned());
+                array.push(CStr::from_ptr(names[x]).to_string_lossy().into_owned());
             }
-            return Ok(array)
+            return Ok(array);
         }
     }
 
@@ -977,15 +1000,14 @@ impl Connect {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
             let size = virConnectListDefinedInterfaces(self.ptr, names.as_mut_ptr(), 1024);
             if size == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
 
             let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(CStr::from_ptr(
-                    names[x]).to_string_lossy().into_owned());
+                array.push(CStr::from_ptr(names[x]).to_string_lossy().into_owned());
             }
-            return Ok(array)
+            return Ok(array);
         }
     }
 
@@ -1012,18 +1034,16 @@ impl Connect {
     pub fn list_defined_storage_pools(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
-            let size = virConnectListDefinedStoragePools(
-                self.ptr, names.as_mut_ptr(), 1024);
+            let size = virConnectListDefinedStoragePools(self.ptr, names.as_mut_ptr(), 1024);
             if size == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
 
             let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(CStr::from_ptr(
-                    names[x]).to_string_lossy().into_owned());
+                array.push(CStr::from_ptr(names[x]).to_string_lossy().into_owned());
             }
-            return Ok(array)
+            return Ok(array);
         }
     }
 
@@ -1052,15 +1072,14 @@ impl Connect {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
             let size = virConnectListDefinedNetworks(self.ptr, names.as_mut_ptr(), 1024);
             if size == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
 
             let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(CStr::from_ptr(
-                    names[x]).to_string_lossy().into_owned());
+                array.push(CStr::from_ptr(names[x]).to_string_lossy().into_owned());
             }
-            return Ok(array)
+            return Ok(array);
         }
     }
 
@@ -1086,12 +1105,12 @@ impl Connect {
         unsafe {
             let num = virConnectNumOfDomains(self.ptr);
             if num == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(num as u32)
+            return Ok(num as u32);
         }
     }
-    
+
     /// # Examples
     ///
     /// ```
@@ -1114,9 +1133,9 @@ impl Connect {
         unsafe {
             let num = virConnectNumOfInterfaces(self.ptr);
             if num == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(num as u32)
+            return Ok(num as u32);
         }
     }
 
@@ -1142,9 +1161,9 @@ impl Connect {
         unsafe {
             let num = virConnectNumOfNetworks(self.ptr);
             if num == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(num as u32)
+            return Ok(num as u32);
         }
     }
 
@@ -1170,9 +1189,9 @@ impl Connect {
         unsafe {
             let num = virConnectNumOfStoragePools(self.ptr);
             if num == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(num as u32)
+            return Ok(num as u32);
         }
     }
 
@@ -1180,9 +1199,9 @@ impl Connect {
         unsafe {
             let num = virConnectNumOfNWFilters(self.ptr);
             if num == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(num as u32)
+            return Ok(num as u32);
         }
     }
 
@@ -1190,9 +1209,9 @@ impl Connect {
         unsafe {
             let num = virConnectNumOfSecrets(self.ptr);
             if num == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(num as u32)
+            return Ok(num as u32);
         }
     }
 
@@ -1219,12 +1238,12 @@ impl Connect {
         unsafe {
             let num = virConnectNumOfDefinedDomains(self.ptr);
             if num == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(num as u32)
+            return Ok(num as u32);
         }
     }
-    
+
     /// # Examples
     ///
     /// ```
@@ -1247,9 +1266,9 @@ impl Connect {
         unsafe {
             let num = virConnectNumOfDefinedInterfaces(self.ptr);
             if num == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(num as u32)
+            return Ok(num as u32);
         }
     }
 
@@ -1275,9 +1294,9 @@ impl Connect {
         unsafe {
             let num = virConnectNumOfDefinedNetworks(self.ptr);
             if num == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(num as u32)
+            return Ok(num as u32);
         }
     }
 
@@ -1303,9 +1322,9 @@ impl Connect {
         unsafe {
             let num = virConnectNumOfDefinedStoragePools(self.ptr);
             if num == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(num as u32)
+            return Ok(num as u32);
         }
     }
 
@@ -1340,16 +1359,18 @@ impl Connect {
         }
     }
 
-    pub fn compare_cpu(&self, xml: &str, flags: ConnectCompareCPUFlags) -> Result<CPUCompareResult, Error> {
+    pub fn compare_cpu(&self,
+                       xml: &str,
+                       flags: ConnectCompareCPUFlags)
+                       -> Result<CPUCompareResult, Error> {
         unsafe {
-            let res = virConnectCompareCPU(
-                self.ptr,
-                CString::new(xml).unwrap().as_ptr(),
-                flags as libc::c_uint);
+            let res = virConnectCompareCPU(self.ptr,
+                                           CString::new(xml).unwrap().as_ptr(),
+                                           flags as libc::c_uint);
             if res == VIR_CPU_COMPARE_ERROR {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(res as CPUCompareResult)
+            return Ok(res as CPUCompareResult);
         }
     }
 
@@ -1365,38 +1386,39 @@ impl Connect {
 
     pub fn get_node_info(&self) -> Result<NodeInfo, Error> {
         unsafe {
-            let pinfo = &mut virNodeInfo{
-                model: [0i8; 32],
-                memory: 0,
-                cpus: 0,
-                mhz: 0,
-                nodes: 0,
-                sockets: 0,
-                cores: 0,
-                threads: 0,
-            };
+            let pinfo = &mut virNodeInfo {
+                                 model: [0i8; 32],
+                                 memory: 0,
+                                 cpus: 0,
+                                 mhz: 0,
+                                 nodes: 0,
+                                 sockets: 0,
+                                 cores: 0,
+                                 threads: 0,
+                             };
             let res = virNodeGetInfo(self.ptr, pinfo);
             if res == -1 {
                 return Err(Error::new());
             }
-            return Ok(NodeInfo{
-                model: CStr::from_ptr((*pinfo).model.as_ptr()).to_string_lossy().into_owned(),
-                memory: (*pinfo).memory as u64,
-                cpus: (*pinfo).cpus as u32,
-                mhz: (*pinfo).mhz as u32,
-                nodes: (*pinfo).nodes as u32,
-                sockets: (*pinfo).sockets as u32,
-                cores: (*pinfo).cores as u32,
-                threads: (*pinfo).threads as u32,
-            })
+            return Ok(NodeInfo {
+                          model: CStr::from_ptr((*pinfo).model.as_ptr())
+                              .to_string_lossy()
+                              .into_owned(),
+                          memory: (*pinfo).memory as u64,
+                          cpus: (*pinfo).cpus as u32,
+                          mhz: (*pinfo).mhz as u32,
+                          nodes: (*pinfo).nodes as u32,
+                          sockets: (*pinfo).sockets as u32,
+                          cores: (*pinfo).cores as u32,
+                          threads: (*pinfo).threads as u32,
+                      });
         }
     }
 
     pub fn set_keep_alive(&self, interval: i32, count: u32) -> Result<i32, Error> {
         unsafe {
-            let ret = virConnectSetKeepAlive(
-                self.ptr, interval as libc::c_int,
-                count as libc::c_uint);
+            let ret =
+                virConnectSetKeepAlive(self.ptr, interval as libc::c_int, count as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }

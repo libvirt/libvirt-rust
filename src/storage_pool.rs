@@ -29,18 +29,21 @@ use error::Error;
 pub mod sys {
     #[allow(non_camel_case_types)]
     #[repr(C)]
-    pub struct virStoragePool {
-    }
+    pub struct virStoragePool {}
 
     #[allow(non_camel_case_types)]
     pub type virStoragePoolPtr = *mut virStoragePool;
 }
 
 #[link(name = "virt")]
-extern {
+extern "C" {
     fn virStoragePoolLookupByID(c: virConnectPtr, id: libc::c_int) -> sys::virStoragePoolPtr;
-    fn virStoragePoolLookupByName(c: virConnectPtr, id: *const libc::c_char) -> sys::virStoragePoolPtr;
-    fn virStoragePoolLookupByUUIDString(c: virConnectPtr, uuid: *const libc::c_char) -> sys::virStoragePoolPtr;
+    fn virStoragePoolLookupByName(c: virConnectPtr,
+                                  id: *const libc::c_char)
+                                  -> sys::virStoragePoolPtr;
+    fn virStoragePoolLookupByUUIDString(c: virConnectPtr,
+                                        uuid: *const libc::c_char)
+                                        -> sys::virStoragePoolPtr;
     fn virStoragePoolCreate(c: virConnectPtr, flags: libc::c_uint) -> sys::virStoragePoolPtr;
     fn virStoragePoolRefresh(ptr: sys::virStoragePoolPtr, flags: libc::c_uint) -> libc::c_int;
     fn virStoragePoolDestroy(ptr: sys::virStoragePoolPtr) -> libc::c_int;
@@ -49,23 +52,27 @@ extern {
     fn virStoragePoolIsActive(ptr: sys::virStoragePoolPtr) -> libc::c_int;
     fn virStoragePoolIsPersistent(ptr: sys::virStoragePoolPtr) -> libc::c_int;
     fn virStoragePoolGetName(ptr: sys::virStoragePoolPtr) -> *const libc::c_char;
-    fn virStoragePoolGetXMLDesc(ptr: sys::virStoragePoolPtr, flags: libc::c_uint) -> *const libc::c_char;
-    fn virStoragePoolGetUUIDString(ptr: sys::virStoragePoolPtr, uuid: *mut libc::c_char) -> libc::c_int;
+    fn virStoragePoolGetXMLDesc(ptr: sys::virStoragePoolPtr,
+                                flags: libc::c_uint)
+                                -> *const libc::c_char;
+    fn virStoragePoolGetUUIDString(ptr: sys::virStoragePoolPtr,
+                                   uuid: *mut libc::c_char)
+                                   -> libc::c_int;
     fn virStoragePoolGetConnect(ptr: sys::virStoragePoolPtr) -> virConnectPtr;
 }
 
 pub type StoragePoolXMLFlags = self::libc::c_uint;
-pub const VIR_STORAGE_POOL_XML_INACTIVE:StoragePoolXMLFlags = 1 << 0;
+pub const VIR_STORAGE_POOL_XML_INACTIVE: StoragePoolXMLFlags = 1 << 0;
 
 pub type StoragePoolCreateFlags = self::libc::c_uint;
-pub const STORAGE_POOL_CREATE_NORMAL:StoragePoolCreateFlags = 0;
+pub const STORAGE_POOL_CREATE_NORMAL: StoragePoolCreateFlags = 0;
 pub const STORAGE_POOL_CREATE_WITH_BUILD: StoragePoolCreateFlags = 1 << 0;
 pub const STORAGE_POOL_CREATE_WITH_BUILD_OVERWRITE: StoragePoolCreateFlags = 1 << 1;
 pub const STORAGE_POOL_CREATE_WITH_BUILD_NO_OVERWRITE: StoragePoolCreateFlags = 1 << 2;
 
 
 pub struct StoragePool {
-    ptr: sys::virStoragePoolPtr
+    ptr: sys::virStoragePoolPtr,
 }
 
 impl Drop for StoragePool {
@@ -80,9 +87,8 @@ impl Drop for StoragePool {
 }
 
 impl StoragePool {
-
     pub fn new(ptr: sys::virStoragePoolPtr) -> StoragePool {
-        return StoragePool{ptr: ptr}
+        return StoragePool { ptr: ptr };
     }
 
     pub fn get_connect(&self) -> Result<Connect, Error> {
@@ -107,8 +113,7 @@ impl StoragePool {
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<StoragePool, Error> {
         unsafe {
-            let ptr = virStoragePoolLookupByName(
-                conn.as_ptr(), CString::new(id).unwrap().as_ptr());
+            let ptr = virStoragePoolLookupByName(conn.as_ptr(), CString::new(id).unwrap().as_ptr());
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -118,8 +123,8 @@ impl StoragePool {
 
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<StoragePool, Error> {
         unsafe {
-            let ptr = virStoragePoolLookupByUUIDString(
-                conn.as_ptr(), CString::new(uuid).unwrap().as_ptr());
+            let ptr = virStoragePoolLookupByUUIDString(conn.as_ptr(),
+                                                       CString::new(uuid).unwrap().as_ptr());
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -131,9 +136,9 @@ impl StoragePool {
         unsafe {
             let n = virStoragePoolGetName(self.ptr);
             if n.is_null() {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned())
+            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned());
         }
     }
 
@@ -141,20 +146,21 @@ impl StoragePool {
         unsafe {
             let mut uuid: [libc::c_char; 37] = [0; 37];
             if virStoragePoolGetUUIDString(self.ptr, uuid.as_mut_ptr()) == -1 {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(
-                uuid.as_ptr()).to_string_lossy().into_owned())
+            return Ok(CStr::from_ptr(uuid.as_ptr())
+                          .to_string_lossy()
+                          .into_owned());
         }
     }
 
-    pub fn get_xml_desc(&self, flags:StoragePoolXMLFlags) -> Result<String, Error> {
+    pub fn get_xml_desc(&self, flags: StoragePoolXMLFlags) -> Result<String, Error> {
         unsafe {
             let xml = virStoragePoolGetXMLDesc(self.ptr, flags);
             if xml.is_null() {
-                return Err(Error::new())
+                return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(xml).to_string_lossy().into_owned())
+            return Ok(CStr::from_ptr(xml).to_string_lossy().into_owned());
         }
     }
 

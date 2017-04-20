@@ -29,12 +29,11 @@ fn tdom(exec_test: fn(dom: Domain)) {
         Ok(dom) => {
             exec_test(dom);
             common::close(c);
-        },
-        Err(e) => panic!(
-            "failed with code {}, message: {}", e.code, e.message)
+        }
+        Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
     }
 }
-    
+
 #[test]
 fn test_name() {
     fn t(dom: Domain) {
@@ -74,10 +73,10 @@ fn test_get_info() {
     fn t(dom: Domain) {
         match dom.get_info() {
             Ok(info) => assert_eq!(1, info.state),
-            Err(_) => panic!("should have a node info")
+            Err(_) => panic!("should have a node info"),
         }
     }
-    tdom(t);    
+    tdom(t);
 }
 
 #[test]
@@ -92,16 +91,11 @@ fn test_get_vcpus_flags() {
 fn test_lookup_domain_by_id() {
     let c = common::conn();
     let v = c.list_domains().unwrap_or(vec![]);
-    assert!(
-        0 < v.len(),
-        "At least one domain should exist");
+    assert!(0 < v.len(), "At least one domain should exist");
     for domid in v {
         match Domain::lookup_by_id(&c, domid) {
-            Ok(mut dom) => {
-                dom.free().unwrap_or(())
-            }
-            Err(e) => panic!(
-                "failed with code {}, message: {}", e.code, e.message)
+            Ok(mut dom) => dom.free().unwrap_or(()),
+            Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
         }
     }
     common::close(c);
@@ -112,8 +106,7 @@ fn test_lookup_domain_by_name() {
     let c = common::conn();
     match Domain::lookup_by_name(&c, "test") {
         Ok(mut r) => r.free().unwrap_or(()),
-        Err(e) => panic!(
-            "failed with code {}, message: {}", e.code, e.message)
+        Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
     }
     common::close(c);
 }
