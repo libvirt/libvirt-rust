@@ -31,6 +31,8 @@ use error::Error;
 pub mod sys {
     extern crate libc;
 
+    use common::sys::virTypedParameterPtr;
+
     #[allow(non_camel_case_types)]
     #[repr(C)]
     pub struct virDomain {}
@@ -51,6 +53,18 @@ pub mod sys {
 
     #[allow(non_camel_case_types)]
     pub type virDomainInfoPtr = *mut virDomainInfo;
+
+    #[allow(non_camel_case_types)]
+    #[allow(non_snake_case)]
+    #[repr(C)]
+    pub struct virDomainStatsRecord {
+        pub dom: virDomainPtr,
+        pub params: virTypedParameterPtr,
+        pub nparams: libc::c_uint,
+    }
+
+    #[allow(non_camel_case_types)]
+    pub type virDomainStatsRecordPtr = *mut virDomainStatsRecord;
 }
 
 #[link(name = "virt")]
@@ -168,6 +182,11 @@ pub struct DomainInfo {
     pub memory: u64,
     pub nr_virt_cpu: u32,
     pub cpu_time: u64,
+}
+
+pub struct DomainStatsRecord {
+    // TODO(sahid): needs to be implemented
+    pub ptr: sys::virDomainStatsRecordPtr,
 }
 
 pub struct Domain {

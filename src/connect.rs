@@ -29,9 +29,9 @@ use secret::sys::virSecretPtr;
 use nwfilter::sys::virNWFilterPtr;
 use nodedev::sys::virNodeDevicePtr;
 use storage_pool::sys::virStoragePoolPtr;
-use domain::sys::virDomainPtr;
+use domain::sys::{virDomainPtr, virDomainStatsRecordPtr};
 
-use domain::Domain;
+use domain::{Domain, DomainStatsRecord};
 use error::Error;
 use network::Network;
 use nodedev::NodeDevice;
@@ -227,7 +227,11 @@ extern "C" {
                                        machine: *const libc::c_char,
                                        virttype: *const libc::c_char,
                                        flags: libc::c_uint) -> *mut libc::c_char;
-
+    fn virConnectGetAllDomainStats(ptr: sys::virConnectPtr,
+                                   stats: libc::c_uint,
+                                   ret: *mut *mut virDomainStatsRecordPtr,
+                                   flags: libc::c_uint)
+                                   -> libc::c_int;
 }
 
 pub type ConnectFlags = self::libc::c_uint;
@@ -1502,4 +1506,28 @@ impl Connect {
         }
     }
 
+    pub fn get_all_domain_stats(&self,
+                                stats: u32,
+                                flags: u32)
+                                -> Result<Vec<DomainStatsRecord>, Error> {
+        unsafe {
+            let mut record: *mut virDomainStatsRecordPtr = ptr::null_mut();
+            let size = virConnectGetAllDomainStats(
+                self.ptr,
+                stats as libc::c_uint,
+                &mut record,
+                flags as libc::c_uint);
+            if size == -1 {
+                return Err(Error::new());
+            }
+
+            let mut array: Vec<DomainStatsRecord> = Vec::new();
+            for x in 0..size as isize {
+                array.push(DomainStatsRecord{ptr: *record.offset(x)});
+            }
+            libc::free(record as *mut libc::c_void);
+
+            return Ok(array);
+        }
+    }
 }
