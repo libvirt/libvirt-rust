@@ -221,6 +221,12 @@ extern "C" {
                                    dxml: *const libc::c_char,
                                    flags: libc::c_uint)
                                    -> *mut libc::c_char;
+    fn virConnectGetDomainCapabilities(ptr: sys::virConnectPtr,
+                                       emulatorbin: *const libc::c_char,
+                                       arch: *const libc::c_char,
+                                       machine: *const libc::c_char,
+                                       virttype: *const libc::c_char,
+                                       flags: libc::c_uint) -> *mut libc::c_char;
 
 }
 
@@ -1473,4 +1479,27 @@ impl Connect {
             Ok(CStr::from_ptr(ret).to_string_lossy().into_owned())
         }
     }
+
+    pub fn get_domain_capabilities(&self,
+                                   emulatorbin: &str,
+                                   arch: &str,
+                                   machine: &str,
+                                   virttype: &str,
+                                   flags: u32)
+                                   -> Result<String, Error> {
+        unsafe {
+            let ret = virConnectGetDomainCapabilities(
+                self.ptr,
+                CString::new(emulatorbin).unwrap().as_ptr(),
+                CString::new(arch).unwrap().as_ptr(),
+                CString::new(machine).unwrap().as_ptr(),
+                CString::new(virttype).unwrap().as_ptr(),
+                flags as libc::c_uint);
+            if ret.is_null() {
+                return Err(Error::new());
+            }
+            Ok(CStr::from_ptr(ret).to_string_lossy().into_owned())
+        }
+    }
+
 }
