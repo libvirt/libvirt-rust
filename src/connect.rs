@@ -211,6 +211,17 @@ extern "C" {
                               interval: libc::c_int,
                               count: libc::c_uint)
                               -> libc::c_int;
+    fn virConnectDomainXMLFromNative(ptr: sys::virConnectPtr,
+                                     nformat: *const libc::c_char,
+                                     nconfig: *const libc::c_char,
+                                     flags: libc::c_uint)
+                                     -> *mut libc::c_char;
+    fn virConnectDomainXMLToNative(ptr: sys::virConnectPtr,
+                                   nformat: *const libc::c_char,
+                                   dxml: *const libc::c_char,
+                                   flags: libc::c_uint)
+                                   -> *mut libc::c_char;
+
 }
 
 pub type ConnectFlags = self::libc::c_uint;
@@ -1426,6 +1437,40 @@ impl Connect {
                 return Err(Error::new());
             }
             Ok(ret as i32)
+        }
+    }
+
+    pub fn domain_xml_from_native(&self,
+                                  nformat: &str,
+                                  nconfig: &str,
+                                  flags: u32)
+                                  -> Result<String, Error> {
+        unsafe {
+            let ret = virConnectDomainXMLFromNative(self.ptr,
+                                                    CString::new(nformat).unwrap().as_ptr(),
+                                                    CString::new(nconfig).unwrap().as_ptr(),
+                                                    flags as libc::c_uint);
+            if ret.is_null() {
+                return Err(Error::new());
+            }
+            Ok(CStr::from_ptr(ret).to_string_lossy().into_owned())
+        }
+    }
+
+    pub fn domain_xml_to_native(&self,
+                                nformat: &str,
+                                dxml: &str,
+                                flags: u32)
+                                -> Result<String, Error> {
+        unsafe {
+            let ret = virConnectDomainXMLToNative(self.ptr,
+                                                  CString::new(nformat).unwrap().as_ptr(),
+                                                  CString::new(dxml).unwrap().as_ptr(),
+                                                  flags as libc::c_uint);
+            if ret.is_null() {
+                return Err(Error::new());
+            }
+            Ok(CStr::from_ptr(ret).to_string_lossy().into_owned())
         }
     }
 }
