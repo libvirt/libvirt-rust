@@ -65,6 +65,23 @@ pub mod sys {
 
     #[allow(non_camel_case_types)]
     pub type virDomainStatsRecordPtr = *mut virDomainStatsRecord;
+
+    #[allow(non_camel_case_types)]
+    #[repr(C)]
+    pub struct virDomainBlockInfo {
+        pub capacity: libc::c_ulonglong,
+        pub allocation: libc::c_ulonglong,
+        pub physical: libc::c_ulonglong,
+    }
+
+    impl virDomainBlockInfo {
+        pub fn new() -> virDomainBlockInfo {
+            virDomainBlockInfo{capacity: 0, allocation: 0, physical: 0}
+        }
+    }
+
+    #[allow(non_camel_case_types)]
+    pub type virDomainBlockInfoPtr = *mut virDomainBlockInfo;
 }
 
 #[link(name = "virt")]
@@ -155,6 +172,27 @@ extern "C" {
                         nseconds: libc::c_int,
                         flags: libc::c_uint)
                         -> libc::c_int;
+    fn virDomainGetBlockInfo(ptr: sys::virDomainPtr,
+                             disk: *const libc::c_char,
+                             info: sys::virDomainBlockInfoPtr,
+                             flags: libc::c_uint)
+                             -> libc::c_int;
+    fn virDomainPinVcpu(ptr: sys::virDomainPtr,
+                        vcpu: libc::c_uint,
+                        vcpumap: *const libc::c_uchar,
+                        maplen: libc::c_uint)
+                        -> libc::c_int;
+    fn virDomainPinVcpuFlags(ptr: sys::virDomainPtr,
+                             vcpu: libc::c_uint,
+                             vcpumap: *const libc::c_uchar,
+                             maplen: libc::c_uint,
+                             flags: libc::c_uint)
+                             -> libc::c_int;
+    fn virDomainPinEmulator(ptr: sys::virDomainPtr,
+                            vcpumap: *const libc::c_uchar,
+                            maplen: libc::c_uint,
+                            flags: libc::c_uint)
+                            -> libc::c_int;
 }
 
 pub type DomainXMLFlags = self::libc::c_uint;
@@ -219,6 +257,24 @@ pub struct DomainInfo {
 pub struct DomainStatsRecord {
     // TODO(sahid): needs to be implemented
     pub ptr: sys::virDomainStatsRecordPtr,
+}
+
+pub struct BlockInfo {
+    pub capacity: u64,
+    pub allocation: u64,
+    pub physical: u64,
+}
+
+impl BlockInfo {
+    pub fn from_ptr(ptr: sys::virDomainBlockInfoPtr) -> BlockInfo {
+        unsafe {
+            BlockInfo {
+                capacity: (*ptr).capacity as u64,
+                allocation: (*ptr).capacity as u64,
+                physical: (*ptr).capacity as u64,
+            }
+        }
+    }
 }
 
 pub struct Domain {
@@ -717,6 +773,64 @@ impl Domain {
                 return Err(Error::new());
             }
             return Ok((seconds as i64, nseconds as i32));
+        }
+    }
+
+    pub fn get_block_info(&self, disk: &str, flags: u32) -> Result<BlockInfo, Error> {
+        unsafe {
+            let pinfo = &mut sys::virDomainBlockInfo::new();
+            let ret = virDomainGetBlockInfo(
+                self.ptr,
+                CString::new(disk).unwrap().as_ptr(),
+                pinfo,
+                flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(BlockInfo::from_ptr(pinfo));
+        }
+    }
+
+    pub fn pin_vcpu(&self, vcpu: u32, cpumap: &[u8]) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainPinVcpu(
+                self.ptr,
+                vcpu as libc::c_uint,
+                cpumap.as_ptr(),
+                cpumap.len() as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn pin_vcpu_flags(&self, vcpu: u32, cpumap: &[u8], flags: u32) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainPinVcpuFlags(
+                self.ptr,
+                vcpu as libc::c_uint,
+                cpumap.as_ptr(),
+                cpumap.len() as libc::c_uint,
+                flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn pin_emulator(&self, cpumap: &[u8], flags: u32) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainPinEmulator(
+                self.ptr,
+                cpumap.as_ptr(),
+                cpumap.len() as libc::c_uint,
+                flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
         }
     }
 }
