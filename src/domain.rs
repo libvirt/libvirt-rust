@@ -127,27 +127,34 @@ extern "C" {
     fn virDomainGetInfo(ptr: sys::virDomainPtr, ninfo: sys::virDomainInfoPtr) -> libc::c_int;
     fn virDomainMigrateSetMaxSpeed(ptr: sys::virDomainPtr,
                                    bandwidth: libc::c_ulong,
-                                   flags: libc::c_uint) -> libc::c_int;
+                                   flags: libc::c_uint)
+                                   -> libc::c_int;
     fn virDomainMigrateGetMaxSpeed(ptr: sys::virDomainPtr,
                                    bandwidth: *mut libc::c_ulong,
-                                   flags: libc::c_uint) -> libc::c_int;
+                                   flags: libc::c_uint)
+                                   -> libc::c_int;
     fn virDomainMigrateSetCompressionCache(ptr: sys::virDomainPtr,
                                            size: libc::c_ulong,
-                                           flags: libc::c_uint) -> libc::c_int;
+                                           flags: libc::c_uint)
+                                           -> libc::c_int;
     fn virDomainMigrateGetCompressionCache(ptr: sys::virDomainPtr,
                                            size: *mut libc::c_ulong,
-                                           flags: libc::c_uint) -> libc::c_int;
+                                           flags: libc::c_uint)
+                                           -> libc::c_int;
     fn virDomainMigrateSetMaxDowntime(ptr: sys::virDomainPtr,
                                       downtime: libc::c_ulong,
-                                      flags: libc::c_uint) -> libc::c_int;
+                                      flags: libc::c_uint)
+                                      -> libc::c_int;
     fn virDomainGetTime(ptr: sys::virDomainPtr,
                         seconds: *mut libc::c_long,
                         nseconds: *mut libc::c_int,
-                        flags: libc::c_uint) -> libc::c_int;
+                        flags: libc::c_uint)
+                        -> libc::c_int;
     fn virDomainSetTime(ptr: sys::virDomainPtr,
                         seconds: libc::c_long,
                         nseconds: libc::c_int,
-                        flags: libc::c_uint) -> libc::c_int;
+                        flags: libc::c_uint)
+                        -> libc::c_int;
 }
 
 pub type DomainXMLFlags = self::libc::c_uint;
@@ -643,9 +650,7 @@ impl Domain {
     pub fn migrate_get_max_speed(&self, flags: u32) -> Result<u64, Error> {
         unsafe {
             let mut bandwidth: libc::c_ulong = 0;
-            let ret = virDomainMigrateGetMaxSpeed(self.ptr,
-                                                  &mut bandwidth,
-                                                  flags as libc::c_uint);
+            let ret = virDomainMigrateGetMaxSpeed(self.ptr, &mut bandwidth, flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -668,9 +673,8 @@ impl Domain {
     pub fn migrate_get_compression_cache(&self, flags: u32) -> Result<u64, Error> {
         unsafe {
             let mut size: libc::c_ulong = 0;
-            let ret = virDomainMigrateGetCompressionCache(self.ptr,
-                                                          &mut size,
-                                                          flags as libc::c_uint);
+            let ret =
+                virDomainMigrateGetCompressionCache(self.ptr, &mut size, flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -707,10 +711,8 @@ impl Domain {
         unsafe {
             let mut seconds: libc::c_long = 0;
             let mut nseconds: libc::c_int = 0;
-            let ret = virDomainGetTime(self.ptr,
-                                       &mut seconds,
-                                       &mut nseconds,
-                                       flags as libc::c_uint);
+            let ret =
+                virDomainGetTime(self.ptr, &mut seconds, &mut nseconds, flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }

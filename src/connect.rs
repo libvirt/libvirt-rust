@@ -1560,13 +1560,16 @@ impl Connect {
         }
     }
 
-    pub fn find_storage_pool_sources(&self, kind: &str, spec: &str, flags: u32)
+    pub fn find_storage_pool_sources(&self,
+                                     kind: &str,
+                                     spec: &str,
+                                     flags: u32)
                                      -> Result<String, Error> {
         unsafe {
-            let n =virConnectFindStoragePoolSources(self.ptr,
-                                                    CString::new(kind).unwrap().as_ptr(),
-                                                    CString::new(spec).unwrap().as_ptr(),
-                                                    flags as libc::c_uint);
+            let n = virConnectFindStoragePoolSources(self.ptr,
+                                                     CString::new(kind).unwrap().as_ptr(),
+                                                     CString::new(spec).unwrap().as_ptr(),
+                                                     flags as libc::c_uint);
             if n.is_null() {
                 return Err(Error::new());
             }
