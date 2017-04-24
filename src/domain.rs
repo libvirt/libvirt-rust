@@ -101,6 +101,8 @@ extern "C" {
     fn virDomainSetAutostart(ptr: sys::virDomainPtr, autostart: libc::c_uint) -> libc::c_int;
     fn virDomainGetID(ptr: sys::virDomainPtr) -> libc::c_int;
     fn virDomainSetMaxMemory(ptr: sys::virDomainPtr, memory: libc::c_ulong) -> libc::c_int;
+    fn virDomainGetMaxMemory(ptr: sys::virDomainPtr) -> libc::c_ulong;
+    fn virDomainGetMaxVcpus(ptr: sys::virDomainPtr) -> libc::c_ulong;
     fn virDomainSetMemory(ptr: sys::virDomainPtr, memory: libc::c_ulong) -> libc::c_int;
     fn virDomainSetMemoryFlags(ptr: sys::virDomainPtr,
                                memory: libc::c_ulong,
@@ -123,6 +125,29 @@ extern "C" {
                              -> libc::c_int;
     fn virDomainGetConnect(ptr: sys::virDomainPtr) -> virConnectPtr;
     fn virDomainGetInfo(ptr: sys::virDomainPtr, ninfo: sys::virDomainInfoPtr) -> libc::c_int;
+    fn virDomainMigrateSetMaxSpeed(ptr: sys::virDomainPtr,
+                                   bandwidth: libc::c_ulong,
+                                   flags: libc::c_uint) -> libc::c_int;
+    fn virDomainMigrateGetMaxSpeed(ptr: sys::virDomainPtr,
+                                   bandwidth: *mut libc::c_ulong,
+                                   flags: libc::c_uint) -> libc::c_int;
+    fn virDomainMigrateSetCompressionCache(ptr: sys::virDomainPtr,
+                                           size: libc::c_ulong,
+                                           flags: libc::c_uint) -> libc::c_int;
+    fn virDomainMigrateGetCompressionCache(ptr: sys::virDomainPtr,
+                                           size: *mut libc::c_ulong,
+                                           flags: libc::c_uint) -> libc::c_int;
+    fn virDomainMigrateSetMaxDowntime(ptr: sys::virDomainPtr,
+                                      downtime: libc::c_ulong,
+                                      flags: libc::c_uint) -> libc::c_int;
+    fn virDomainGetTime(ptr: sys::virDomainPtr,
+                        seconds: *mut libc::c_long,
+                        nseconds: *mut libc::c_int,
+                        flags: libc::c_uint) -> libc::c_int;
+    fn virDomainSetTime(ptr: sys::virDomainPtr,
+                        seconds: libc::c_long,
+                        nseconds: libc::c_int,
+                        flags: libc::c_uint) -> libc::c_int;
 }
 
 pub type DomainXMLFlags = self::libc::c_uint;
@@ -490,6 +515,26 @@ impl Domain {
         }
     }
 
+    pub fn get_max_memory(&self) -> Result<u64, Error> {
+        unsafe {
+            let ret = virDomainGetMaxMemory(self.ptr);
+            if ret == 0 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u64);
+        }
+    }
+
+    pub fn get_max_vcpus(&self) -> Result<u64, Error> {
+        unsafe {
+            let ret = virDomainGetMaxVcpus(self.ptr);
+            if ret == 0 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u64);
+        }
+    }
+
     pub fn set_memory(&self, memory: u64) -> Result<bool, Error> {
         unsafe {
             let ret = virDomainSetMemory(self.ptr, memory as libc::c_ulong);
@@ -580,6 +625,96 @@ impl Domain {
                 return Err(Error::new());
             }
             return Ok(ret as u32);
+        }
+    }
+
+    pub fn migrate_set_max_speed(&self, bandwidth: u64, flags: u32) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainMigrateSetMaxSpeed(self.ptr,
+                                                  bandwidth as libc::c_ulong,
+                                                  flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn migrate_get_max_speed(&self, flags: u32) -> Result<u64, Error> {
+        unsafe {
+            let mut bandwidth: libc::c_ulong = 0;
+            let ret = virDomainMigrateGetMaxSpeed(self.ptr,
+                                                  &mut bandwidth,
+                                                  flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(bandwidth as u64);
+        }
+    }
+
+    pub fn migrate_set_compression_cache(&self, size: u64, flags: u32) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainMigrateSetCompressionCache(self.ptr,
+                                                          size as libc::c_ulong,
+                                                          flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn migrate_get_compression_cache(&self, flags: u32) -> Result<u64, Error> {
+        unsafe {
+            let mut size: libc::c_ulong = 0;
+            let ret = virDomainMigrateGetCompressionCache(self.ptr,
+                                                          &mut size,
+                                                          flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(size as u64);
+        }
+    }
+
+    pub fn migrate_set_max_downtime(&self, downtime: u64, flags: u32) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainMigrateSetMaxDowntime(self.ptr,
+                                                     downtime as libc::c_ulong,
+                                                     flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn set_time(&self, seconds: i64, nseconds: i32, flags: u32) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainSetTime(self.ptr,
+                                       seconds as libc::c_long,
+                                       nseconds as libc::c_int,
+                                       flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn get_time(&self, flags: u32) -> Result<(i64, i32), Error> {
+        unsafe {
+            let mut seconds: libc::c_long = 0;
+            let mut nseconds: libc::c_int = 0;
+            let ret = virDomainGetTime(self.ptr,
+                                       &mut seconds,
+                                       &mut nseconds,
+                                       flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok((seconds as i64, nseconds as i32));
         }
     }
 }
