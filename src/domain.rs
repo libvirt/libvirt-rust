@@ -24,9 +24,11 @@ use std::ffi::{CString, CStr};
 use std::{str, ptr};
 
 use connect::sys::virConnectPtr;
+use stream::sys::virStreamPtr;
 
 use connect::Connect;
 use error::Error;
+use stream::Stream;
 
 pub mod sys {
     extern crate libc;
@@ -191,6 +193,39 @@ extern "C" {
     fn virDomainPinEmulator(ptr: sys::virDomainPtr,
                             vcpumap: *const libc::c_uchar,
                             maplen: libc::c_uint,
+                            flags: libc::c_uint)
+                            -> libc::c_int;
+    fn virDomainRename(ptr: sys::virDomainPtr,
+                       new_name: *const libc::c_char,
+                       flags: libc::c_uint)
+                       -> libc::c_int;
+    fn virDomainSetUserPassword(ptr: sys::virDomainPtr,
+                                user: *const libc::c_char,
+                                pass: *const libc::c_char,
+                                flags: libc::c_uint)
+                                -> libc::c_int;
+    fn virDomainSetBlockThreshold(ptr: sys::virDomainPtr,
+                                  dev: *const libc::c_char,
+                                  threshold: libc::c_ulonglong,
+                                  flags: libc::c_uint)
+                                  -> libc::c_int;
+    fn virDomainOpenGraphics(ptr: sys::virDomainPtr,
+                             idx: libc::c_uint,
+                             fd: libc::c_int,
+                             flags: libc::c_uint)
+                             -> libc::c_int;
+    fn virDomainOpenGraphicsFD(ptr: sys::virDomainPtr,
+                               idx: libc::c_uint,
+                               flags: libc::c_uint)
+                               -> libc::c_int;
+    fn virDomainOpenChannel(ptr: sys::virDomainPtr,
+                            name: *const libc::c_char,
+                            st: virStreamPtr,
+                            flags: libc::c_uint)
+                            -> libc::c_int;
+    fn virDomainOpenConsole(ptr: sys::virDomainPtr,
+                            dev_name: *const libc::c_char,
+                            st: virStreamPtr,
                             flags: libc::c_uint)
                             -> libc::c_int;
 }
@@ -826,6 +861,104 @@ impl Domain {
                 self.ptr,
                 cpumap.as_ptr(),
                 cpumap.len() as libc::c_uint,
+                flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn rename(&self, new_name: &str, flags: u32) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainRename(
+                self.ptr,
+                CString::new(new_name).unwrap().as_ptr(),
+                flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn set_user_password(&self, user: &str, password: &str, flags: u32)
+                             -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainSetUserPassword(
+                self.ptr,
+                CString::new(user).unwrap().as_ptr(),
+                CString::new(password).unwrap().as_ptr(),
+                flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn set_block_threshold(&self, dev: &str, threshold: u64, flags: u32)
+                               -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainSetBlockThreshold(
+                self.ptr,
+                CString::new(dev).unwrap().as_ptr(),
+                threshold as libc::c_ulonglong,
+                flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn open_graphics(&self, idx: u32, fd: i32, flags: u32) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainOpenGraphics(
+                self.ptr,
+                idx as libc::c_uint,
+                fd as libc::c_int,
+                flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn open_graphics_fd(&self, idx: u32, flags: u32) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainOpenGraphicsFD(
+                self.ptr,
+                idx as libc::c_uint,
+                flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn open_channel(&self, name: &str, stream: Stream, flags: u32) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainOpenChannel(
+                self.ptr,
+                CString::new(name).unwrap().as_ptr(),
+                stream.as_ptr(),
+                flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn open_console(&self, name: &str, stream: Stream, flags: u32) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainOpenConsole(
+                self.ptr,
+                CString::new(name).unwrap().as_ptr(),
+                stream.as_ptr(),
                 flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
