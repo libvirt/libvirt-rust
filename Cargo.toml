@@ -1,6 +1,6 @@
 [package]
 name = "virt"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>",]
 license = "LGPL-2.1"
 readme = "README.md"

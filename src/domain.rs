@@ -78,7 +78,11 @@ pub mod sys {
 
     impl virDomainBlockInfo {
         pub fn new() -> virDomainBlockInfo {
-            virDomainBlockInfo{capacity: 0, allocation: 0, physical: 0}
+            virDomainBlockInfo {
+                capacity: 0,
+                allocation: 0,
+                physical: 0,
+            }
         }
     }
 
@@ -814,11 +818,10 @@ impl Domain {
     pub fn get_block_info(&self, disk: &str, flags: u32) -> Result<BlockInfo, Error> {
         unsafe {
             let pinfo = &mut sys::virDomainBlockInfo::new();
-            let ret = virDomainGetBlockInfo(
-                self.ptr,
-                CString::new(disk).unwrap().as_ptr(),
-                pinfo,
-                flags as libc::c_uint);
+            let ret = virDomainGetBlockInfo(self.ptr,
+                                            CString::new(disk).unwrap().as_ptr(),
+                                            pinfo,
+                                            flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -828,11 +831,10 @@ impl Domain {
 
     pub fn pin_vcpu(&self, vcpu: u32, cpumap: &[u8]) -> Result<u32, Error> {
         unsafe {
-            let ret = virDomainPinVcpu(
-                self.ptr,
-                vcpu as libc::c_uint,
-                cpumap.as_ptr(),
-                cpumap.len() as libc::c_uint);
+            let ret = virDomainPinVcpu(self.ptr,
+                                       vcpu as libc::c_uint,
+                                       cpumap.as_ptr(),
+                                       cpumap.len() as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -842,12 +844,11 @@ impl Domain {
 
     pub fn pin_vcpu_flags(&self, vcpu: u32, cpumap: &[u8], flags: u32) -> Result<u32, Error> {
         unsafe {
-            let ret = virDomainPinVcpuFlags(
-                self.ptr,
-                vcpu as libc::c_uint,
-                cpumap.as_ptr(),
-                cpumap.len() as libc::c_uint,
-                flags as libc::c_uint);
+            let ret = virDomainPinVcpuFlags(self.ptr,
+                                            vcpu as libc::c_uint,
+                                            cpumap.as_ptr(),
+                                            cpumap.len() as libc::c_uint,
+                                            flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -857,11 +858,10 @@ impl Domain {
 
     pub fn pin_emulator(&self, cpumap: &[u8], flags: u32) -> Result<u32, Error> {
         unsafe {
-            let ret = virDomainPinEmulator(
-                self.ptr,
-                cpumap.as_ptr(),
-                cpumap.len() as libc::c_uint,
-                flags as libc::c_uint);
+            let ret = virDomainPinEmulator(self.ptr,
+                                           cpumap.as_ptr(),
+                                           cpumap.len() as libc::c_uint,
+                                           flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -871,10 +871,9 @@ impl Domain {
 
     pub fn rename(&self, new_name: &str, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let ret = virDomainRename(
-                self.ptr,
-                CString::new(new_name).unwrap().as_ptr(),
-                flags as libc::c_uint);
+            let ret = virDomainRename(self.ptr,
+                                      CString::new(new_name).unwrap().as_ptr(),
+                                      flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -882,14 +881,12 @@ impl Domain {
         }
     }
 
-    pub fn set_user_password(&self, user: &str, password: &str, flags: u32)
-                             -> Result<u32, Error> {
+    pub fn set_user_password(&self, user: &str, password: &str, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let ret = virDomainSetUserPassword(
-                self.ptr,
-                CString::new(user).unwrap().as_ptr(),
-                CString::new(password).unwrap().as_ptr(),
-                flags as libc::c_uint);
+            let ret = virDomainSetUserPassword(self.ptr,
+                                               CString::new(user).unwrap().as_ptr(),
+                                               CString::new(password).unwrap().as_ptr(),
+                                               flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -897,14 +894,12 @@ impl Domain {
         }
     }
 
-    pub fn set_block_threshold(&self, dev: &str, threshold: u64, flags: u32)
-                               -> Result<u32, Error> {
+    pub fn set_block_threshold(&self, dev: &str, threshold: u64, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let ret = virDomainSetBlockThreshold(
-                self.ptr,
-                CString::new(dev).unwrap().as_ptr(),
-                threshold as libc::c_ulonglong,
-                flags as libc::c_uint);
+            let ret = virDomainSetBlockThreshold(self.ptr,
+                                                 CString::new(dev).unwrap().as_ptr(),
+                                                 threshold as libc::c_ulonglong,
+                                                 flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -914,11 +909,10 @@ impl Domain {
 
     pub fn open_graphics(&self, idx: u32, fd: i32, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let ret = virDomainOpenGraphics(
-                self.ptr,
-                idx as libc::c_uint,
-                fd as libc::c_int,
-                flags as libc::c_uint);
+            let ret = virDomainOpenGraphics(self.ptr,
+                                            idx as libc::c_uint,
+                                            fd as libc::c_int,
+                                            flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -928,10 +922,7 @@ impl Domain {
 
     pub fn open_graphics_fd(&self, idx: u32, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let ret = virDomainOpenGraphicsFD(
-                self.ptr,
-                idx as libc::c_uint,
-                flags as libc::c_uint);
+            let ret = virDomainOpenGraphicsFD(self.ptr, idx as libc::c_uint, flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -941,11 +932,10 @@ impl Domain {
 
     pub fn open_channel(&self, name: &str, stream: Stream, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let ret = virDomainOpenChannel(
-                self.ptr,
-                CString::new(name).unwrap().as_ptr(),
-                stream.as_ptr(),
-                flags as libc::c_uint);
+            let ret = virDomainOpenChannel(self.ptr,
+                                           CString::new(name).unwrap().as_ptr(),
+                                           stream.as_ptr(),
+                                           flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -955,11 +945,10 @@ impl Domain {
 
     pub fn open_console(&self, name: &str, stream: Stream, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let ret = virDomainOpenConsole(
-                self.ptr,
-                CString::new(name).unwrap().as_ptr(),
-                stream.as_ptr(),
-                flags as libc::c_uint);
+            let ret = virDomainOpenConsole(self.ptr,
+                                           CString::new(name).unwrap().as_ptr(),
+                                           stream.as_ptr(),
+                                           flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }

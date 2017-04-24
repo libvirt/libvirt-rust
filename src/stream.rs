@@ -31,8 +31,7 @@ pub mod sys {
     #[allow(non_camel_case_types)]
     #[allow(non_snake_case)]
     #[repr(C)]
-    pub struct virStream {
-    }
+    pub struct virStream {}
 
     #[allow(non_camel_case_types)]
     pub type virStreamPtr = *mut virStream;
@@ -42,10 +41,12 @@ pub mod sys {
 extern "C" {
     fn virStreamSend(c: sys::virStreamPtr,
                      data: *const libc::c_char,
-                     nbytes: libc::c_uint) -> libc::c_int;
+                     nbytes: libc::c_uint)
+                     -> libc::c_int;
     fn virStreamRecv(c: sys::virStreamPtr,
                      data: *mut libc::c_char,
-                     nbytes: libc::c_uint) -> libc::c_int;
+                     nbytes: libc::c_uint)
+                     -> libc::c_int;
     fn virStreamFree(c: sys::virStreamPtr) -> libc::c_int;
     fn virStreamAbort(c: sys::virStreamPtr) -> libc::c_int;
     fn virStreamFinish(c: sys::virStreamPtr) -> libc::c_int;
@@ -53,7 +54,7 @@ extern "C" {
 
 pub type StreamEventType = self::libc::c_uint;
 pub const VIR_STREAM_EVENT_READABLE: StreamEventType = (1 << 0);
-pub const VIR_STREAM_EVENT_WRITABLE: StreamEventType  = (1 << 1);
+pub const VIR_STREAM_EVENT_WRITABLE: StreamEventType = (1 << 1);
 pub const VIR_STREAM_EVENT_ERROR: StreamEventType = (1 << 2);
 pub const VIR_STREAM_EVENT_HANGUP: StreamEventType = (1 << 3);
 
@@ -111,10 +112,9 @@ impl Stream {
 
     pub fn send(&self, data: &str) -> Result<u32, Error> {
         unsafe {
-            let ret = virStreamSend(
-                self.ptr,
-                CString::new(data).unwrap().as_ptr(),
-                data.len() as libc::c_uint);
+            let ret = virStreamSend(self.ptr,
+                                    CString::new(data).unwrap().as_ptr(),
+                                    data.len() as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -125,14 +125,13 @@ impl Stream {
     pub fn recv(&self, size: u32) -> Result<String, Error> {
         unsafe {
             let mut data: [libc::c_char; 2048] = ['\0' as i8; 2048];
-            let ret = virStreamRecv(
-                self.ptr,
-                data.as_mut_ptr(),
-                size as libc::c_uint);
+            let ret = virStreamRecv(self.ptr, data.as_mut_ptr(), size as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(data.as_ptr()).to_string_lossy().into_owned());
+            return Ok(CStr::from_ptr(data.as_ptr())
+                          .to_string_lossy()
+                          .into_owned());
         }
     }
 }
