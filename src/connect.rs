@@ -238,6 +238,11 @@ extern "C" {
                              ncpus: libc::c_uint,
                              flags: libc::c_uint)
                              -> *mut libc::c_char;
+    fn virConnectFindStoragePoolSources(ptr: sys::virConnectPtr,
+                                        kind: *const libc::c_char,
+                                        spec: *const libc::c_char,
+                                        flags: libc::c_uint)
+                                        -> *mut libc::c_char;
 }
 
 pub type ConnectFlags = self::libc::c_uint;
@@ -1552,6 +1557,20 @@ impl Connect {
                 return Err(Error::new());
             }
             Ok(CStr::from_ptr(ret).to_string_lossy().into_owned())
+        }
+    }
+
+    pub fn find_storage_pool_sources(&self, kind: &str, spec: &str, flags: u32)
+                                     -> Result<String, Error> {
+        unsafe {
+            let n =virConnectFindStoragePoolSources(self.ptr,
+                                                    CString::new(kind).unwrap().as_ptr(),
+                                                    CString::new(spec).unwrap().as_ptr(),
+                                                    flags as libc::c_uint);
+            if n.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned());
         }
     }
 }
