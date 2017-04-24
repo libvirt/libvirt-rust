@@ -226,12 +226,18 @@ extern "C" {
                                        arch: *const libc::c_char,
                                        machine: *const libc::c_char,
                                        virttype: *const libc::c_char,
-                                       flags: libc::c_uint) -> *mut libc::c_char;
+                                       flags: libc::c_uint)
+                                       -> *mut libc::c_char;
     fn virConnectGetAllDomainStats(ptr: sys::virConnectPtr,
                                    stats: libc::c_uint,
                                    ret: *mut *mut virDomainStatsRecordPtr,
                                    flags: libc::c_uint)
                                    -> libc::c_int;
+    fn virConnectBaselineCPU(ptr: sys::virConnectPtr,
+                             xmlcpus: *const *const libc::c_char,
+                             ncpus: libc::c_uint,
+                             flags: libc::c_uint)
+                             -> *mut libc::c_char;
 }
 
 pub type ConnectFlags = self::libc::c_uint;
@@ -317,6 +323,9 @@ pub const VIR_CPU_COMPARE_INCOMPATIBLE: CPUCompareResult = 0;
 pub const VIR_CPU_COMPARE_IDENTICAL: CPUCompareResult = 1;
 pub const VIR_CPU_COMPARE_SUPERSET: CPUCompareResult = 2;
 
+pub type BaselineCPUFlags = self::libc::c_int;
+pub const VIR_CONNECT_BASELINE_CPU_EXPAND_FEATURES: BaselineCPUFlags = (1 << 0);
+pub const VIR_CONNECT_BASELINE_CPU_MIGRATABLE: BaselineCPUFlags = (1 << 1);
 
 pub type ConnectCredentialType = self::libc::c_uint;
 pub const VIR_CRED_USERNAME: ConnectCredentialType = 1;
@@ -1492,13 +1501,12 @@ impl Connect {
                                    flags: u32)
                                    -> Result<String, Error> {
         unsafe {
-            let ret = virConnectGetDomainCapabilities(
-                self.ptr,
-                CString::new(emulatorbin).unwrap().as_ptr(),
-                CString::new(arch).unwrap().as_ptr(),
-                CString::new(machine).unwrap().as_ptr(),
-                CString::new(virttype).unwrap().as_ptr(),
-                flags as libc::c_uint);
+            let ret = virConnectGetDomainCapabilities(self.ptr,
+                                                      CString::new(emulatorbin).unwrap().as_ptr(),
+                                                      CString::new(arch).unwrap().as_ptr(),
+                                                      CString::new(machine).unwrap().as_ptr(),
+                                                      CString::new(virttype).unwrap().as_ptr(),
+                                                      flags as libc::c_uint);
             if ret.is_null() {
                 return Err(Error::new());
             }
@@ -1512,22 +1520,38 @@ impl Connect {
                                 -> Result<Vec<DomainStatsRecord>, Error> {
         unsafe {
             let mut record: *mut virDomainStatsRecordPtr = ptr::null_mut();
-            let size = virConnectGetAllDomainStats(
-                self.ptr,
-                stats as libc::c_uint,
-                &mut record,
-                flags as libc::c_uint);
+            let size = virConnectGetAllDomainStats(self.ptr,
+                                                   stats as libc::c_uint,
+                                                   &mut record,
+                                                   flags as libc::c_uint);
             if size == -1 {
                 return Err(Error::new());
             }
 
             let mut array: Vec<DomainStatsRecord> = Vec::new();
             for x in 0..size as isize {
-                array.push(DomainStatsRecord{ptr: *record.offset(x)});
+                array.push(DomainStatsRecord { ptr: *record.offset(x) });
             }
             libc::free(record as *mut libc::c_void);
 
             return Ok(array);
+        }
+    }
+
+    pub fn baseline_cpu(&self, xmlcpus: &[&str], flags: BaselineCPUFlags) -> Result<String, Error> {
+        unsafe {
+            let mut xcpus: [*const libc::c_char; 512] = [ptr::null_mut(); 512];
+            for x in 0..xmlcpus.len() {
+                xcpus[x] = CString::new(xmlcpus[x]).unwrap().as_ptr();
+            }
+            let ret = virConnectBaselineCPU(self.ptr,
+                                            xcpus.as_ptr(),
+                                            xmlcpus.len() as libc::c_uint,
+                                            flags as libc::c_uint);
+            if ret.is_null() {
+                return Err(Error::new());
+            }
+            Ok(CStr::from_ptr(ret).to_string_lossy().into_owned())
         }
     }
 }
