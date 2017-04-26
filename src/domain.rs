@@ -108,6 +108,7 @@ extern "C" {
                                flags: libc::c_uint)
                                -> sys::virDomainPtr;
     fn virDomainDestroy(ptr: sys::virDomainPtr) -> libc::c_int;
+    fn virDomainDestroyFlags(ptr: sys::virDomainPtr, flags: libc::c_uint) -> libc::c_int;
     fn virDomainUndefine(ptr: sys::virDomainPtr) -> libc::c_int;
     fn virDomainFree(ptr: sys::virDomainPtr) -> libc::c_int;
     fn virDomainShutdown(ptr: sys::virDomainPtr) -> libc::c_int;
@@ -247,6 +248,10 @@ pub const VIR_DOMAIN_START_AUTODESTROY: DomainCreateFlags = 1 << 1;
 pub const VIR_DOMAIN_START_BYPASS_CACHE: DomainCreateFlags = 1 << 2;
 pub const VIR_DOMAIN_START_FORCE_BOOT: DomainCreateFlags = 1 << 3;
 pub const VIR_DOMAIN_START_VALIDATE: DomainCreateFlags = 1 << 4;
+
+pub type DomainDestroyFlags = self::libc::c_uint;
+pub const VIR_DOMAIN_DESTROY_DEFAULT: DomainDestroyFlags = 0;
+pub const VIR_DOMAIN_DESTROY_GRACEFUL: DomainDestroyFlags = 1 << 0;
 
 pub type DomainModImpactFlags = self::libc::c_uint;
 pub const VIR_DOMAIN_AFFECT_CURRENT: DomainModImpactFlags = 0;
@@ -509,6 +514,16 @@ impl Domain {
                 return Err(Error::new());
             }
             return Ok(());
+        }
+    }
+
+    pub fn destroy_flags(&self, flags: DomainDestroyFlags) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainDestroyFlags(self.ptr, flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
         }
     }
 
