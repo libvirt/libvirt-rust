@@ -300,6 +300,19 @@ extern "C" {
                                    file: *const libc::c_char,
                                    dxml: *const libc::c_char,
                                    flags: libc::c_uint) -> libc::c_int;
+    fn virDomainAttachDevice(ptr: sys::virDomainPtr,
+                             xml: *const libc::c_char) -> libc::c_int;
+    fn virDomainAttachDeviceFlags(ptr: sys::virDomainPtr,
+                                  xml: *const libc::c_char,
+                                  flags: libc::c_uint) -> libc::c_int;
+    fn virDomainDetachDevice(ptr: sys::virDomainPtr,
+                             xml: *const libc::c_char) -> libc::c_int;
+    fn virDomainDetachDeviceFlags(ptr: sys::virDomainPtr,
+                                  xml: *const libc::c_char,
+                                  flags: libc::c_uint) -> libc::c_int;
+    fn virDomainUpdateDeviceFlags(ptr: sys::virDomainPtr,
+                                  xml: *const libc::c_char,
+                                  flags: libc::c_uint) -> libc::c_int;
 }
 
 pub type DomainXMLFlags = self::libc::c_uint;
@@ -1138,6 +1151,67 @@ impl Domain {
                 conn.as_ptr(),
                 CString::new(file).unwrap().as_ptr(),
                 CString::new(dxml).unwrap().as_ptr(),
+                flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn attach_device(&self, xml: &str) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainAttachDevice(self.ptr,
+                                            CString::new(xml).unwrap().as_ptr());
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn attach_device_flags(&self, xml: &str, flags: u32) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainAttachDeviceFlags(
+                self.ptr,
+                CString::new(xml).unwrap().as_ptr(),
+                flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn detach_device(&self, xml: &str) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainDetachDevice(self.ptr,
+                                            CString::new(xml).unwrap().as_ptr());
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn detach_device_flags(&self, xml: &str, flags: u32) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainDetachDeviceFlags(
+                self.ptr,
+                CString::new(xml).unwrap().as_ptr(),
+                flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn update_device_flags(&self, xml: &str, flags: u32) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainUpdateDeviceFlags(
+                self.ptr,
+                CString::new(xml).unwrap().as_ptr(),
                 flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
