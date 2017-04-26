@@ -1,13 +1,13 @@
 [package]
 name = "virt"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>",]
 license = "LGPL-2.1"
 readme = "README.md"
 description = "Rust bindings to the libvirt C library"
 documentation = "http://docs.rs/virt"
 keywords = ["libvirt", "virtualization", "KVM", "QEMU", "Xen",]
-categories = ["api-bindings",]
+categories = ["api-bindings", "virtualization"]
 repository = "https://github.com/sahid/libvirt-rs"
 homepage  = "https://docs.rs/crate/virt/"
 
