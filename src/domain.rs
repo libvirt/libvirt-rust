@@ -21,7 +21,7 @@
 extern crate libc;
 
 use std::ffi::{CString, CStr};
-use std::{str, ptr};
+use std::{str, ptr, mem};
 
 use connect::sys::virConnectPtr;
 use stream::sys::virStreamPtr;
@@ -88,6 +88,56 @@ pub mod sys {
 
     #[allow(non_camel_case_types)]
     pub type virDomainBlockInfoPtr = *mut virDomainBlockInfo;
+
+    #[allow(non_camel_case_types)]
+    #[repr(C)]
+    pub struct virDomainInterfaceStats {
+        pub rx_bytes: libc::c_longlong,
+        pub rx_packets: libc::c_longlong,
+        pub rx_errs: libc::c_longlong,
+        pub rx_drop: libc::c_longlong,
+        pub tx_bytes: libc::c_longlong,
+        pub tx_packets: libc::c_longlong,
+        pub tx_errs: libc::c_longlong,
+        pub tx_drop: libc::c_longlong,
+    }
+
+    impl virDomainInterfaceStats {
+        pub fn new() -> virDomainInterfaceStats {
+            virDomainInterfaceStats {
+                rx_bytes: 0,
+                rx_packets: 0,
+                rx_errs: 0,
+                rx_drop: 0,
+                tx_bytes: 0,
+                tx_packets: 0,
+                tx_errs: 0,
+                tx_drop: 0,
+            }
+        }
+    }
+
+    #[allow(non_camel_case_types)]
+    pub type virDomainInterfaceStatsPtr = *mut virDomainInterfaceStats;
+
+    #[allow(non_camel_case_types)]
+    #[repr(C)]
+    pub struct virDomainMemoryStats {
+        pub tag: libc::c_int,
+        pub val: libc::c_ulonglong,
+    }
+
+    impl virDomainMemoryStats {
+        pub fn new() -> virDomainMemoryStats {
+            virDomainMemoryStats {
+                tag: 0,
+                val: 0
+            }
+        }
+    }
+
+    #[allow(non_camel_case_types)]
+    pub type virDomainMemoryStatsPtr = *mut virDomainMemoryStats;
 }
 
 #[link(name = "virt")]
@@ -233,6 +283,23 @@ extern "C" {
                             st: virStreamPtr,
                             flags: libc::c_uint)
                             -> libc::c_int;
+    fn virDomainInterfaceStats(ptr: sys::virDomainPtr,
+                               path: *const libc::c_char,
+                               stats: sys::virDomainInterfaceStatsPtr,
+                               size: libc::c_uint)
+                               -> libc::c_int;
+    fn virDomainMemoryStats(ptr: sys::virDomainPtr,
+                            stats: sys::virDomainMemoryStatsPtr,
+                            nr_stats: libc::c_uint,
+                            flags: libc::c_uint)
+                            -> libc::c_int;
+    fn virDomainSaveImageGetXMLDesc(ptr: virConnectPtr,
+                                    file: *const libc::c_char,
+                                    flags: libc::c_uint) -> *const libc::c_char;
+    fn virDomainSaveImageDefineXML(ptr: virConnectPtr,
+                                   file: *const libc::c_char,
+                                   dxml: *const libc::c_char,
+                                   flags: libc::c_uint) -> libc::c_int;
 }
 
 pub type DomainXMLFlags = self::libc::c_uint;
@@ -316,6 +383,50 @@ impl BlockInfo {
                 capacity: (*ptr).capacity as u64,
                 allocation: (*ptr).capacity as u64,
                 physical: (*ptr).capacity as u64,
+            }
+        }
+    }
+}
+
+pub struct InterfaceStats {
+    pub rx_bytes: i64,
+    pub rx_packets: i64,
+    pub rx_errs: i64,
+    pub rx_drop: i64,
+    pub tx_bytes: i64,
+    pub tx_packets: i64,
+    pub tx_errs: i64,
+    pub tx_drop: i64,
+}
+
+impl InterfaceStats {
+    pub fn from_ptr(ptr: sys::virDomainInterfaceStatsPtr) -> InterfaceStats {
+        unsafe {
+            InterfaceStats {
+                rx_bytes: (*ptr).rx_bytes as i64,
+                rx_packets:(*ptr).rx_packets as i64,
+                rx_errs: (*ptr).rx_errs as i64,
+                rx_drop: (*ptr).rx_drop as i64,
+                tx_bytes: (*ptr).tx_bytes as i64,
+                tx_packets: (*ptr).tx_packets as i64,
+                tx_errs: (*ptr).tx_errs as i64,
+                tx_drop: (*ptr).tx_drop as i64,
+            }
+        }
+    }
+}
+
+pub struct MemoryStats {
+    pub tag: i32,
+    pub val: u64,
+}
+
+impl MemoryStats {
+    pub fn from_ptr(ptr: sys::virDomainMemoryStatsPtr) -> MemoryStats {
+        unsafe {
+            MemoryStats {
+                tag: (*ptr).tag as i32,
+                val:(*ptr).val as u64,
             }
         }
     }
@@ -964,6 +1075,70 @@ impl Domain {
                                            CString::new(name).unwrap().as_ptr(),
                                            stream.as_ptr(),
                                            flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn interface_stats(&self, path: &str) -> Result<InterfaceStats, Error> {
+        unsafe {
+            let pinfo = &mut sys::virDomainInterfaceStats::new();
+            let ret = virDomainInterfaceStats(
+                self.ptr,
+                CString::new(path).unwrap().as_ptr(),
+                pinfo,
+                mem::size_of::<sys::virDomainInterfaceStats>() as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(InterfaceStats::from_ptr(pinfo));
+        }
+    }
+
+    pub fn memory_stats(&self, nr_stats: u32, flags: u32) -> Result<MemoryStats, Error> {
+        unsafe {
+            let pinfo = &mut sys::virDomainMemoryStats::new();
+            let ret = virDomainMemoryStats(
+                self.ptr,
+                pinfo,
+                nr_stats as libc::c_uint,
+                flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(MemoryStats::from_ptr(pinfo));
+        }
+    }
+
+    pub fn save_image_get_xml_desc(conn: &Connect,
+                                   file: &str,
+                                   flags: u32)
+                                   -> Result<String, Error> {
+        unsafe {
+            let ptr = virDomainSaveImageGetXMLDesc(
+                conn.as_ptr(),
+                CString::new(file).unwrap().as_ptr(),
+                flags as libc::c_uint);
+            if ptr.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(CStr::from_ptr(ptr).to_string_lossy().into_owned());
+        }
+    }
+
+    pub fn save_image_define_xml(conn: &Connect,
+                                 file: &str,
+                                 dxml: &str,
+                                 flags: u32)
+                                 -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainSaveImageDefineXML(
+                conn.as_ptr(),
+                CString::new(file).unwrap().as_ptr(),
+                CString::new(dxml).unwrap().as_ptr(),
+                flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
