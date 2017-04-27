@@ -53,6 +53,18 @@ pub mod sys {
         pub cpuTime: libc::c_ulong,
     }
 
+    impl virDomainInfo {
+        pub fn new() -> virDomainInfo {
+            virDomainInfo {
+                state: 0,
+                maxMem: 0,
+                memory: 0,
+                nrVirtCpu: 0,
+                cpuTime: 0,
+            }
+        }
+    }
+
     #[allow(non_camel_case_types)]
     pub type virDomainInfoPtr = *mut virDomainInfo;
 
@@ -378,6 +390,20 @@ pub struct DomainInfo {
     pub cpu_time: u64,
 }
 
+impl DomainInfo {
+    pub fn from_ptr(ptr: sys::virDomainInfoPtr) -> DomainInfo {
+        unsafe {
+            DomainInfo {
+                state: (*ptr).state as DomainState,
+                max_mem: (*ptr).maxMem as u64,
+                memory: (*ptr).memory as u64,
+                nr_virt_cpu: (*ptr).nrVirtCpu as u32,
+                cpu_time: (*ptr).cpuTime as u64,
+            }
+        }
+    }
+}
+
 pub struct DomainStatsRecord {
     // TODO(sahid): needs to be implemented
     pub ptr: sys::virDomainStatsRecordPtr,
@@ -570,24 +596,12 @@ impl Domain {
 
     pub fn get_info(&self) -> Result<DomainInfo, Error> {
         unsafe {
-            let pinfo = &mut sys::virDomainInfo {
-                                 state: 0,
-                                 maxMem: 0,
-                                 memory: 0,
-                                 nrVirtCpu: 0,
-                                 cpuTime: 0,
-                             };
+            let pinfo = &mut sys::virDomainInfo::new();
             let res = virDomainGetInfo(self.ptr, pinfo);
             if res == -1 {
                 return Err(Error::new());
             }
-            return Ok(DomainInfo {
-                          state: (*pinfo).state as DomainState,
-                          max_mem: (*pinfo).maxMem as u64,
-                          memory: (*pinfo).memory as u64,
-                          nr_virt_cpu: (*pinfo).nrVirtCpu as u32,
-                          cpu_time: (*pinfo).cpuTime as u64,
-                      });
+            return Ok(DomainInfo::from_ptr(pinfo))
         }
     }
 
