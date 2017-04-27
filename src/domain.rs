@@ -141,10 +141,7 @@ pub mod sys {
 
     impl virDomainMemoryStats {
         pub fn new() -> virDomainMemoryStats {
-            virDomainMemoryStats {
-                tag: 0,
-                val: 0
-            }
+            virDomainMemoryStats { tag: 0, val: 0 }
         }
     }
 
@@ -307,24 +304,27 @@ extern "C" {
                             -> libc::c_int;
     fn virDomainSaveImageGetXMLDesc(ptr: virConnectPtr,
                                     file: *const libc::c_char,
-                                    flags: libc::c_uint) -> *const libc::c_char;
+                                    flags: libc::c_uint)
+                                    -> *const libc::c_char;
     fn virDomainSaveImageDefineXML(ptr: virConnectPtr,
                                    file: *const libc::c_char,
                                    dxml: *const libc::c_char,
-                                   flags: libc::c_uint) -> libc::c_int;
-    fn virDomainAttachDevice(ptr: sys::virDomainPtr,
-                             xml: *const libc::c_char) -> libc::c_int;
+                                   flags: libc::c_uint)
+                                   -> libc::c_int;
+    fn virDomainAttachDevice(ptr: sys::virDomainPtr, xml: *const libc::c_char) -> libc::c_int;
     fn virDomainAttachDeviceFlags(ptr: sys::virDomainPtr,
                                   xml: *const libc::c_char,
-                                  flags: libc::c_uint) -> libc::c_int;
-    fn virDomainDetachDevice(ptr: sys::virDomainPtr,
-                             xml: *const libc::c_char) -> libc::c_int;
+                                  flags: libc::c_uint)
+                                  -> libc::c_int;
+    fn virDomainDetachDevice(ptr: sys::virDomainPtr, xml: *const libc::c_char) -> libc::c_int;
     fn virDomainDetachDeviceFlags(ptr: sys::virDomainPtr,
                                   xml: *const libc::c_char,
-                                  flags: libc::c_uint) -> libc::c_int;
+                                  flags: libc::c_uint)
+                                  -> libc::c_int;
     fn virDomainUpdateDeviceFlags(ptr: sys::virDomainPtr,
                                   xml: *const libc::c_char,
-                                  flags: libc::c_uint) -> libc::c_int;
+                                  flags: libc::c_uint)
+                                  -> libc::c_int;
 }
 
 pub type DomainXMLFlags = self::libc::c_uint;
@@ -443,7 +443,7 @@ impl InterfaceStats {
         unsafe {
             InterfaceStats {
                 rx_bytes: (*ptr).rx_bytes as i64,
-                rx_packets:(*ptr).rx_packets as i64,
+                rx_packets: (*ptr).rx_packets as i64,
                 rx_errs: (*ptr).rx_errs as i64,
                 rx_drop: (*ptr).rx_drop as i64,
                 tx_bytes: (*ptr).tx_bytes as i64,
@@ -465,7 +465,7 @@ impl MemoryStats {
         unsafe {
             MemoryStats {
                 tag: (*ptr).tag as i32,
-                val:(*ptr).val as u64,
+                val: (*ptr).val as u64,
             }
         }
     }
@@ -601,7 +601,7 @@ impl Domain {
             if res == -1 {
                 return Err(Error::new());
             }
-            return Ok(DomainInfo::from_ptr(pinfo))
+            return Ok(DomainInfo::from_ptr(pinfo));
         }
     }
 
@@ -1112,11 +1112,11 @@ impl Domain {
     pub fn interface_stats(&self, path: &str) -> Result<InterfaceStats, Error> {
         unsafe {
             let pinfo = &mut sys::virDomainInterfaceStats::new();
-            let ret = virDomainInterfaceStats(
-                self.ptr,
-                CString::new(path).unwrap().as_ptr(),
-                pinfo,
-                mem::size_of::<sys::virDomainInterfaceStats>() as libc::c_uint);
+            let ret = virDomainInterfaceStats(self.ptr,
+                                              CString::new(path).unwrap().as_ptr(),
+                                              pinfo,
+                                              mem::size_of::<sys::virDomainInterfaceStats>() as
+                                              libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -1127,11 +1127,10 @@ impl Domain {
     pub fn memory_stats(&self, nr_stats: u32, flags: u32) -> Result<MemoryStats, Error> {
         unsafe {
             let pinfo = &mut sys::virDomainMemoryStats::new();
-            let ret = virDomainMemoryStats(
-                self.ptr,
-                pinfo,
-                nr_stats as libc::c_uint,
-                flags as libc::c_uint);
+            let ret = virDomainMemoryStats(self.ptr,
+                                           pinfo,
+                                           nr_stats as libc::c_uint,
+                                           flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -1144,10 +1143,9 @@ impl Domain {
                                    flags: u32)
                                    -> Result<String, Error> {
         unsafe {
-            let ptr = virDomainSaveImageGetXMLDesc(
-                conn.as_ptr(),
-                CString::new(file).unwrap().as_ptr(),
-                flags as libc::c_uint);
+            let ptr = virDomainSaveImageGetXMLDesc(conn.as_ptr(),
+                                                   CString::new(file).unwrap().as_ptr(),
+                                                   flags as libc::c_uint);
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -1161,11 +1159,10 @@ impl Domain {
                                  flags: u32)
                                  -> Result<u32, Error> {
         unsafe {
-            let ret = virDomainSaveImageDefineXML(
-                conn.as_ptr(),
-                CString::new(file).unwrap().as_ptr(),
-                CString::new(dxml).unwrap().as_ptr(),
-                flags as libc::c_uint);
+            let ret = virDomainSaveImageDefineXML(conn.as_ptr(),
+                                                  CString::new(file).unwrap().as_ptr(),
+                                                  CString::new(dxml).unwrap().as_ptr(),
+                                                  flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -1175,8 +1172,7 @@ impl Domain {
 
     pub fn attach_device(&self, xml: &str) -> Result<u32, Error> {
         unsafe {
-            let ret = virDomainAttachDevice(self.ptr,
-                                            CString::new(xml).unwrap().as_ptr());
+            let ret = virDomainAttachDevice(self.ptr, CString::new(xml).unwrap().as_ptr());
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -1186,10 +1182,9 @@ impl Domain {
 
     pub fn attach_device_flags(&self, xml: &str, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let ret = virDomainAttachDeviceFlags(
-                self.ptr,
-                CString::new(xml).unwrap().as_ptr(),
-                flags as libc::c_uint);
+            let ret = virDomainAttachDeviceFlags(self.ptr,
+                                                 CString::new(xml).unwrap().as_ptr(),
+                                                 flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -1199,8 +1194,7 @@ impl Domain {
 
     pub fn detach_device(&self, xml: &str) -> Result<u32, Error> {
         unsafe {
-            let ret = virDomainDetachDevice(self.ptr,
-                                            CString::new(xml).unwrap().as_ptr());
+            let ret = virDomainDetachDevice(self.ptr, CString::new(xml).unwrap().as_ptr());
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -1210,10 +1204,9 @@ impl Domain {
 
     pub fn detach_device_flags(&self, xml: &str, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let ret = virDomainDetachDeviceFlags(
-                self.ptr,
-                CString::new(xml).unwrap().as_ptr(),
-                flags as libc::c_uint);
+            let ret = virDomainDetachDeviceFlags(self.ptr,
+                                                 CString::new(xml).unwrap().as_ptr(),
+                                                 flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -1223,10 +1216,9 @@ impl Domain {
 
     pub fn update_device_flags(&self, xml: &str, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let ret = virDomainUpdateDeviceFlags(
-                self.ptr,
-                CString::new(xml).unwrap().as_ptr(),
-                flags as libc::c_uint);
+            let ret = virDomainUpdateDeviceFlags(self.ptr,
+                                                 CString::new(xml).unwrap().as_ptr(),
+                                                 flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
