@@ -50,8 +50,15 @@ possible to call `free` on it when no longer required.
 For executing tests and other excerices
 
 ```
-# cargo test --verbose -- --nocapture
+cargo test --verbose -- --nocapture
 ```
+
+For executing examples
+
+```
+cargo run --example hello -- test:///default
+```
+
 
 ## Contributing
 
