@@ -177,6 +177,7 @@ extern "C" {
     fn virDomainIsActive(ptr: sys::virDomainPtr) -> libc::c_int;
     fn virDomainIsUpdated(ptr: sys::virDomainPtr) -> libc::c_int;
     fn virDomainGetName(ptr: sys::virDomainPtr) -> *const libc::c_char;
+    fn virDomainGetOSType(ptr: sys::virDomainPtr) -> *const libc::c_char;
     fn virDomainGetHostname(ptr: sys::virDomainPtr, flags: libc::c_uint) -> *const libc::c_char;
     fn virDomainGetUUIDString(ptr: sys::virDomainPtr, uuid: *mut libc::c_char) -> libc::c_int;
     fn virDomainGetXMLDesc(ptr: sys::virDomainPtr, flags: libc::c_uint) -> *const libc::c_char;
@@ -325,6 +326,35 @@ extern "C" {
                                   xml: *const libc::c_char,
                                   flags: libc::c_uint)
                                   -> libc::c_int;
+    fn virDomainManagedSave(ptr: sys::virDomainPtr, flags: libc::c_uint) -> libc::c_int;
+    fn virDomainHasManagedSaveImage(ptr: sys::virDomainPtr, flags: libc::c_uint) -> libc::c_int;
+    fn virDomainManagedSaveRemove(ptr: sys::virDomainPtr, flags: libc::c_uint) -> libc::c_int;
+    fn virDomainCoreDump(ptr: sys::virDomainPtr,
+                         to: *const libc::c_char,
+                         flags: libc::c_uint)
+                         -> libc::c_int;
+    fn virDomainCoreDumpWithFormat(ptr: sys::virDomainPtr,
+                                   to: *const libc::c_char,
+                                   format: libc::c_uint,
+                                   flags: libc::c_uint)
+                                   -> libc::c_int;
+    fn virDomainSetMetadata(ptr: sys::virDomainPtr,
+                            kind: libc::c_int,
+                            meta: *const libc::c_char,
+                            key: *const libc::c_char,
+                            uri: *const libc::c_char,
+                            flags: libc::c_uint)
+                            -> libc::c_int;
+    fn virDomainGetMetadata(ptr: sys::virDomainPtr,
+                            kind: libc::c_int,
+                            uri: *const libc::c_char,
+                            flags: libc::c_uint)
+                            -> *mut libc::c_char;
+    fn virDomainBlockResize(ptr: sys::virDomainPtr,
+                            disk: *const libc::c_char,
+                            size: libc::c_ulonglong,
+                            flags: libc::c_uint)
+                            -> libc::c_int;
 }
 
 pub type DomainXMLFlags = self::libc::c_uint;
@@ -371,6 +401,11 @@ pub type DomainSaveRestoreFlags = self::libc::c_uint;
 pub const VIR_DOMAIN_SAVE_BYPASS_CACHE: DomainSaveRestoreFlags = 1 << 0;
 pub const VIR_DOMAIN_SAVE_RUNNING: DomainSaveRestoreFlags = 1 << 1;
 pub const VIR_DOMAIN_SAVE_PAUSED: DomainSaveRestoreFlags = 1 << 2;
+
+pub type DomainNumatuneMemMode = self::libc::c_uint;
+pub const VIR_DOMAIN_NUMATUNE_MEM_STRICT: DomainNumatuneMemMode = 0;
+pub const VIR_DOMAIN_NUMATUNE_MEM_PREFERRED: DomainNumatuneMemMode = 1;
+pub const VIR_DOMAIN_NUMATUNE_MEM_INTERLEAVE: DomainNumatuneMemMode = 2;
 
 pub type DomainState = self::libc::c_uint;
 pub const VIR_DOMAIN_NOSTATE: DomainState = 0;
@@ -535,6 +570,16 @@ impl Domain {
     pub fn get_name(&self) -> Result<String, Error> {
         unsafe {
             let n = virDomainGetName(self.ptr);
+            if n.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned());
+        }
+    }
+
+    pub fn get_os_type(&self) -> Result<String, Error> {
+        unsafe {
+            let n = virDomainGetOSType(self.ptr);
             if n.is_null() {
                 return Err(Error::new());
             }
@@ -1219,6 +1264,108 @@ impl Domain {
             let ret = virDomainUpdateDeviceFlags(self.ptr,
                                                  CString::new(xml).unwrap().as_ptr(),
                                                  flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn managed_save(&self, flags: u32) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainManagedSave(self.ptr, flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn has_managed_save(&self, flags: u32) -> Result<bool, Error> {
+        unsafe {
+            let ret = virDomainHasManagedSaveImage(self.ptr, flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret == 1);
+        }
+    }
+
+    pub fn managed_save_remove(&self, flags: u32) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainManagedSaveRemove(self.ptr, flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn core_dump(&self, to: &str, flags: u32) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainCoreDump(self.ptr,
+                                        CString::new(to).unwrap().as_ptr(),
+                                        flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn core_dump_with_format(&self, to: &str, format: u32, flags: u32) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainCoreDumpWithFormat(self.ptr,
+                                                  CString::new(to).unwrap().as_ptr(),
+                                                  format as libc::c_uint,
+                                                  flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn set_metadata(&self,
+                        kind: i32,
+                        metadata: &str,
+                        key: &str,
+                        uri: &str,
+                        flags: u32)
+                        -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainSetMetadata(self.ptr,
+                                           kind as libc::c_int,
+                                           CString::new(metadata).unwrap().as_ptr(),
+                                           CString::new(key).unwrap().as_ptr(),
+                                           CString::new(uri).unwrap().as_ptr(),
+                                           flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn get_metadata(&self, kind: i32, uri: &str, flags: u32) -> Result<String, Error> {
+        unsafe {
+            let n = virDomainGetMetadata(self.ptr,
+                                         kind as libc::c_int,
+                                         CString::new(uri).unwrap().as_ptr(),
+                                         flags as libc::c_uint);
+            if n.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned());
+        }
+    }
+
+    pub fn block_resize(&self, disk: &str, size: u64, flags: u32) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainBlockResize(self.ptr,
+                                           CString::new(disk).unwrap().as_ptr(),
+                                           size as libc::c_ulonglong,
+                                           flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
