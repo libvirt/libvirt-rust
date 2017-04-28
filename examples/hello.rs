@@ -48,6 +48,31 @@ fn show_hypervisor_info(conn: Connect) -> Result<(), Error> {
     Err(Error::new())
 }
 
+fn show_domains(conn: Connect) -> Result<(), Error> {
+    let flags = virt::connect::VIR_CONNECT_LIST_DOMAINS_ACTIVE |
+                virt::connect::VIR_CONNECT_LIST_DOMAINS_INACTIVE;
+
+    if let Ok(num_active_domains) = conn.num_of_domains() {
+        if let Ok(num_inactive_domains) = conn.num_of_defined_domains() {
+            println!("There are {} active and {} inactive domains",
+                     num_active_domains,
+                     num_inactive_domains);
+            /* Return a list of all active and inactive domains. Using this API
+             * instead of virConnectListDomains() and virConnectListDefinedDomains()
+             * is preferred since it "solves" an inherit race between separated API
+             * calls if domains are started or stopped between calls */
+            if let Ok(doms) = conn.list_all_domains(flags) {
+                for dom in doms {
+                    let name = dom.get_name().unwrap_or(String::from("no-name"));
+                    let active = dom.is_active().unwrap_or(false);
+                    println!("domain: {}, active: {}", name, active);
+                }
+            }
+            return Ok(());
+        }
+    }
+    Err(Error::new())
+}
 
 fn main() {
     let uri = match env::args().nth(1) {
@@ -78,6 +103,13 @@ fn main() {
     if let Err(e) = show_hypervisor_info(conn.clone()) {
         disconnect(conn);
         panic!("Failed to show hypervisor info: code {}, message: {}",
+               e.code,
+               e.message);
+    }
+
+    if let Err(e) = show_domains(conn.clone()) {
+        disconnect(conn);
+        panic!("Failed to show domains info: code {}, message: {}",
                e.code,
                e.message);
     }
