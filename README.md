@@ -15,16 +15,31 @@ The binding uses standard errors handling from Rust. Each method
 (there are some exceptions) is returning a type `Result`.
 
 ```
-  match Connect.open("test:///default") {
-    Ok(conn) => {
-      ...
-      assert_eq!(0, conn.close().unwrap_or(-1)) // Verify that all objects has
-                                                // been freen before we close
-						// the connection.
+fn main() {
+    let uri = match env::args().nth(1) {
+        Some(u) => u,
+        None => String::from(""),
+    };
+    println!("Attempting to connect to hypervisor: '{}'", uri);
+
+    let mut conn = match Connect::open(&uri) {
+        Ok(c) => c,
+        Err(e) => {
+            panic!("No connection to hypervisor: code {}, message: {}",
+                   e.code,
+                   e.message)
+        }
+    };
+
+    ...
+    
+    if let Err(e) = conn.close() {
+        panic!("Failed to disconnect from hypervisor: code {}, message: {}",
+               e.code,
+               e.message);
     }
-    Err(e) => panic!("Not able to connect; code:{}, message:{}",
-                     e.code, e.message)
-  }
+    println!("Disconnected from hypervisor");
+}
 ```
 
 Most of the structs are automatically release their references by
@@ -36,13 +51,9 @@ possible to call `free` on it when no longer required.
 
 
 ```
-  match conn.lookup_domain_by_name("myguest") {
-    Ok(mut dom) => {
-      ...
-      dom.free() // Explicitly releases memory at Rust level.
-    }
-    Err(e) => panic!("Something wrongs....")
-  }
+if let Ok(mut dom) = conn.lookup_domain_by_name("myguest") {
+    dom.free() // Explicitly releases memory at Rust level.
+}
 ```
 
 ## Testing/Exercises
@@ -59,17 +70,9 @@ For executing examples
 cargo run --example hello -- test:///default
 ```
 
-
 ## Contributing
 
-To look at what we need to implement, in each source file there is
-TODO note with a list of API missing;
-
-```
-$ git grep TODO:
-```
-
-In `tools/` a small script can be use to look at what is missing:
+To look at what is missing
 
 ```
 $ python tools/api_tests.py virDomain
