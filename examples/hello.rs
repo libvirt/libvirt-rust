@@ -63,9 +63,17 @@ fn show_domains(conn: Connect) -> Result<(), Error> {
              * calls if domains are started or stopped between calls */
             if let Ok(doms) = conn.list_all_domains(flags) {
                 for dom in doms {
+                    let id = dom.get_id().unwrap_or(0);
                     let name = dom.get_name().unwrap_or(String::from("no-name"));
                     let active = dom.is_active().unwrap_or(false);
-                    println!("domain: {}, active: {}", name, active);
+                    println!("ID: {}, Name: {}, Active: {}", id, name, active);
+                    if let Ok(dinfo) = dom.get_info() {
+                        println!("    State: {}", dinfo.state);
+                        println!("    Max Memory: {}", dinfo.max_mem);
+                        println!("    Memory: {}", dinfo.memory);
+                        println!("    CPUs: {}", dinfo.nr_virt_cpu);
+                        println!("    CPU Time: {}", dinfo.cpu_time);
+                    }
                 }
             }
             return Ok(());
