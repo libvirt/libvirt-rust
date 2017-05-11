@@ -184,7 +184,7 @@ extern "C" {
     fn virDomainGetXMLDesc(ptr: sys::virDomainPtr, flags: libc::c_uint) -> *const libc::c_char;
     fn virDomainGetAutostart(ptr: sys::virDomainPtr) -> libc::c_int;
     fn virDomainSetAutostart(ptr: sys::virDomainPtr, autostart: libc::c_uint) -> libc::c_int;
-    fn virDomainGetID(ptr: sys::virDomainPtr) -> libc::c_int;
+    fn virDomainGetID(ptr: sys::virDomainPtr) -> libc::c_uint;
     fn virDomainSetMaxMemory(ptr: sys::virDomainPtr, memory: libc::c_ulong) -> libc::c_int;
     fn virDomainGetMaxMemory(ptr: sys::virDomainPtr) -> libc::c_ulong;
     fn virDomainGetMaxVcpus(ptr: sys::virDomainPtr) -> libc::c_ulong;
@@ -648,13 +648,13 @@ impl Domain {
         }
     }
 
-    pub fn get_id(&self) -> Result<u32, Error> {
+    pub fn get_id(&self) -> Option<u32> {
         unsafe {
             let ret = virDomainGetID(self.ptr);
-            if ret == -1 {
-                return Err(Error::new());
+            if ret as i32 == -1 {
+                return None;
             }
-            return Ok(ret as u32);
+            Some(ret)
         }
     }
 
