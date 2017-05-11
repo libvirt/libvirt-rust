@@ -43,9 +43,7 @@ pub mod sys {
 
     impl std::default::Default for virTypedParameter {
         fn default() -> Self {
-            unsafe {
-                std::mem::zeroed()
-            }
+            unsafe { std::mem::zeroed() }
         }
     }
 
@@ -53,7 +51,7 @@ pub mod sys {
     pub type virTypedParameterPtr = *mut virTypedParameter;
 }
 
-pub type TypedParameterType = self::libc::c_uint;
+pub type TypedParameterType = self::libc::c_int;
 pub const VIR_TYPED_PARAM_INT: TypedParameterType = 1;
 pub const VIR_TYPED_PARAM_UINT: TypedParameterType = 2;
 pub const VIR_TYPED_PARAM_LLONG: TypedParameterType = 3;

@@ -361,6 +361,11 @@ extern "C" {
                                     nparams: *mut libc::c_int,
                                     flags: libc::c_uint)
                                     -> libc::c_int;
+    fn virDomainSetMemoryParameters(ptr: sys::virDomainPtr,
+                                    params: virTypedParameterPtr,
+                                    nparams: libc::c_int,
+                                    flags: libc::c_uint)
+                                    -> libc::c_int;
 }
 
 pub type DomainXMLFlags = self::libc::c_uint;
@@ -490,10 +495,10 @@ impl MemoryParameters {
             for param in vec {
                 match str::from_utf8(CStr::from_ptr(param.field.as_ptr()).to_bytes()).unwrap() {
                     "hard_limit" => ret.hard_limit = Some(param.value as u64),
-                    "soft_limit" => ret.soft_limit = Some(param.value  as u64),
-                    "min_guarantee" => ret.min_guarantee = Some(param.value  as u64),
+                    "soft_limit" => ret.soft_limit = Some(param.value as u64),
+                    "min_guarantee" => ret.min_guarantee = Some(param.value as u64),
                     "swap_hard_limit" => ret.swap_hard_limit = Some(param.value as u64),
-                    _ => panic!("Field not implemented")
+                    _ => panic!("Field not implemented"),
                 }
             }
             ret
@@ -1415,25 +1420,77 @@ impl Domain {
     pub fn get_memory_parameters(&self, flags: u32) -> Result<MemoryParameters, Error> {
         unsafe {
             let mut nparams: libc::c_int = 0;
-            let ret = virDomainGetMemoryParameters(
-                self.ptr,
-                ptr::null_mut(),
-                &mut nparams,
-                flags as libc::c_uint);
+            let ret = virDomainGetMemoryParameters(self.ptr,
+                                                   ptr::null_mut(),
+                                                   &mut nparams,
+                                                   flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
             let mut params: Vec<virTypedParameter> = vec![
                 virTypedParameter::default(); 3];
-            let ret = virDomainGetMemoryParameters(
-                self.ptr,
-                &mut params[0],
-                &mut nparams,
-                flags as libc::c_uint);
+            let ret = virDomainGetMemoryParameters(self.ptr,
+                                                   &mut params[0],
+                                                   &mut nparams,
+                                                   flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
             Ok(MemoryParameters::from_vec(params))
+        }
+    }
+
+    pub fn set_memory_parameters(&self,
+                                 params: MemoryParameters,
+                                 flags: u32)
+                                 -> Result<u32, Error> {
+        unsafe {
+            fn to_arr(name: &str) -> [libc::c_char; 80] {
+                let mut field: [libc::c_char; 80] = [0; 80];
+                for (a, c) in field.iter_mut().zip(name.as_bytes()) {
+                    *a = *c as i8
+                }
+                field
+            }
+
+            let mut cparams: Vec<virTypedParameter> = Vec::new();
+            if params.hard_limit.is_some() {
+                cparams.push(virTypedParameter {
+                                 field: to_arr("hard_limit\0"),
+                                 typed: ::typedparam::VIR_TYPED_PARAM_ULLONG,
+                                 value: params.hard_limit.unwrap(),
+                             })
+            }
+            if params.soft_limit.is_some() {
+                cparams.push(virTypedParameter {
+                                 field: to_arr("soft_limit\0"),
+                                 typed: ::typedparam::VIR_TYPED_PARAM_ULLONG,
+                                 value: params.soft_limit.unwrap(),
+                             })
+            }
+            if params.min_guarantee.is_some() {
+                cparams.push(virTypedParameter {
+                                 field: to_arr("min_guarantee\0"),
+                                 typed: ::typedparam::VIR_TYPED_PARAM_ULLONG,
+                                 value: params.min_guarantee.unwrap(),
+                             })
+            }
+            if params.swap_hard_limit.is_some() {
+                cparams.push(virTypedParameter {
+                                 field: to_arr("swap_hard_limit\0"),
+                                 typed: ::typedparam::VIR_TYPED_PARAM_ULLONG,
+                                 value: params.swap_hard_limit.unwrap(),
+                             })
+            }
+
+            let ret = virDomainSetMemoryParameters(self.ptr,
+                                                   &mut cparams[0],
+                                                   cparams.len() as libc::c_int,
+                                                   flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            Ok(ret as u32)
         }
     }
 }
