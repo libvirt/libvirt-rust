@@ -21,7 +21,7 @@
 //! Libvirt is a portable toolkit to interact with the virtualisation
 //! capabilities of Linux, Solaris and other operating systems.
 
-pub mod common;
+pub mod typedparam;
 pub mod connect;
 pub mod domain;
 pub mod error;

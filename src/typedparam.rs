@@ -23,13 +23,30 @@ extern crate libc;
 pub mod sys {
     extern crate libc;
 
+    use std;
+
     #[allow(non_camel_case_types)]
     #[allow(non_snake_case)]
     #[repr(C)]
+    #[derive(Copy)]
     pub struct virTypedParameter {
-        pub field: [libc::c_char; 80],
+        pub field: [libc::c_char; 80usize],
         pub typed: libc::c_int,
-        pub value: libc::c_void,
+        pub value: libc::c_ulonglong,
+    }
+
+    impl std::clone::Clone for virTypedParameter {
+        fn clone(&self) -> Self {
+            *self
+        }
+    }
+
+    impl std::default::Default for virTypedParameter {
+        fn default() -> Self {
+            unsafe {
+                std::mem::zeroed()
+            }
+        }
     }
 
     #[allow(non_camel_case_types)]

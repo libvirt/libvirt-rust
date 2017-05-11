@@ -25,6 +25,7 @@ use std::{str, ptr, mem};
 
 use connect::sys::virConnectPtr;
 use stream::sys::virStreamPtr;
+use typedparam::sys::{virTypedParameterPtr, virTypedParameter};
 
 use connect::Connect;
 use error::Error;
@@ -33,7 +34,7 @@ use stream::Stream;
 pub mod sys {
     extern crate libc;
 
-    use common::sys::virTypedParameterPtr;
+    use typedparam::sys::virTypedParameterPtr;
 
     #[allow(non_camel_case_types)]
     #[repr(C)]
@@ -355,6 +356,11 @@ extern "C" {
                             size: libc::c_ulonglong,
                             flags: libc::c_uint)
                             -> libc::c_int;
+    fn virDomainGetMemoryParameters(ptr: sys::virDomainPtr,
+                                    params: virTypedParameterPtr,
+                                    nparams: *mut libc::c_int,
+                                    flags: libc::c_uint)
+                                    -> libc::c_int;
 }
 
 pub type DomainXMLFlags = self::libc::c_uint;
@@ -458,6 +464,39 @@ impl BlockInfo {
                 allocation: (*ptr).capacity as u64,
                 physical: (*ptr).capacity as u64,
             }
+        }
+    }
+}
+
+pub struct MemoryParameters {
+    pub hard_limit: Option<u64>,
+    pub soft_limit: Option<u64>,
+    pub min_guarantee: Option<u64>,
+    pub swap_hard_limit: Option<u64>,
+}
+
+impl MemoryParameters {
+    pub fn new() -> MemoryParameters {
+        MemoryParameters {
+            hard_limit: None,
+            soft_limit: None,
+            min_guarantee: None,
+            swap_hard_limit: None,
+        }
+    }
+    pub fn from_vec(vec: Vec<virTypedParameter>) -> MemoryParameters {
+        unsafe {
+            let mut ret = MemoryParameters::new();
+            for param in vec {
+                match str::from_utf8(CStr::from_ptr(param.field.as_ptr()).to_bytes()).unwrap() {
+                    "hard_limit" => ret.hard_limit = Some(param.value as u64),
+                    "soft_limit" => ret.soft_limit = Some(param.value  as u64),
+                    "min_guarantee" => ret.min_guarantee = Some(param.value  as u64),
+                    "swap_hard_limit" => ret.swap_hard_limit = Some(param.value as u64),
+                    _ => panic!("Field not implemented")
+                }
+            }
+            ret
         }
     }
 }
@@ -1370,6 +1409,31 @@ impl Domain {
                 return Err(Error::new());
             }
             return Ok(ret as u32);
+        }
+    }
+
+    pub fn get_memory_parameters(&self, flags: u32) -> Result<MemoryParameters, Error> {
+        unsafe {
+            let mut nparams: libc::c_int = 0;
+            let ret = virDomainGetMemoryParameters(
+                self.ptr,
+                ptr::null_mut(),
+                &mut nparams,
+                flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            let mut params: Vec<virTypedParameter> = vec![
+                virTypedParameter::default(); 3];
+            let ret = virDomainGetMemoryParameters(
+                self.ptr,
+                &mut params[0],
+                &mut nparams,
+                flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            Ok(MemoryParameters::from_vec(params))
         }
     }
 }
