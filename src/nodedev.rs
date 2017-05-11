@@ -20,7 +20,6 @@
 
 extern crate libc;
 
-use std::ffi::{CString, CStr};
 use std::{str, ptr};
 
 use connect::sys::virConnectPtr;
@@ -87,7 +86,7 @@ impl NodeDevice {
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<NodeDevice, Error> {
         unsafe {
-            let ptr = virNodeDeviceLookupByName(conn.as_ptr(), CString::new(id).unwrap().as_ptr());
+            let ptr = virNodeDeviceLookupByName(conn.as_ptr(), string_to_c_chars!(id));
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -98,7 +97,7 @@ impl NodeDevice {
     pub fn create_xml(conn: &Connect, xml: &str, flags: u32) -> Result<NodeDevice, Error> {
         unsafe {
             let ptr = virNodeDeviceCreateXML(conn.as_ptr(),
-                                             CString::new(xml).unwrap().as_ptr(),
+                                             string_to_c_chars!(xml),
                                              flags as libc::c_uint);
             if ptr.is_null() {
                 return Err(Error::new());
@@ -113,7 +112,7 @@ impl NodeDevice {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned());
+            return Ok(c_chars_to_string!(n));
         }
     }
 
@@ -123,9 +122,7 @@ impl NodeDevice {
             if virNodeDeviceGetUUIDString(self.ptr, uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(uuid.as_ptr())
-                          .to_string_lossy()
-                          .into_owned());
+            return Ok(c_chars_to_string!(uuid.as_ptr()));
         }
     }
 
@@ -135,7 +132,7 @@ impl NodeDevice {
             if xml.is_null() {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(xml).to_string_lossy().into_owned());
+            return Ok(c_chars_to_string!(xml));
         }
     }
 
@@ -161,7 +158,7 @@ impl NodeDevice {
     pub fn num_of_devices(&self, cap: &str, flags: u32) -> Result<u32, Error> {
         unsafe {
             let num = virNodeNumOfDevices(self.ptr,
-                                          CString::new(cap).unwrap().as_ptr(),
+                                          string_to_c_chars!(cap),
                                           flags as libc::c_uint);
             if num == -1 {
                 return Err(Error::new());

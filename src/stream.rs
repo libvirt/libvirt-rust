@@ -20,7 +20,6 @@
 
 extern crate libc;
 
-use std::ffi::{CString, CStr};
 use std::{str, ptr};
 
 use error::Error;
@@ -113,7 +112,7 @@ impl Stream {
     pub fn send(&self, data: &str) -> Result<u32, Error> {
         unsafe {
             let ret = virStreamSend(self.ptr,
-                                    CString::new(data).unwrap().as_ptr(),
+                                    string_to_c_chars!(data),
                                     data.len() as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
@@ -129,9 +128,7 @@ impl Stream {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(data.as_ptr())
-                          .to_string_lossy()
-                          .into_owned());
+            return Ok(c_chars_to_string!(data.as_ptr()));
         }
     }
 }

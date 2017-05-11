@@ -20,7 +20,6 @@
 
 extern crate libc;
 
-use std::ffi::{CString, CStr};
 use std::{str, ptr};
 
 use connect::sys::virConnectPtr;
@@ -137,7 +136,7 @@ impl Network {
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<Network, Error> {
         unsafe {
-            let ptr = virNetworkLookupByName(conn.as_ptr(), CString::new(id).unwrap().as_ptr());
+            let ptr = virNetworkLookupByName(conn.as_ptr(), string_to_c_chars!(id));
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -148,7 +147,7 @@ impl Network {
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Network, Error> {
         unsafe {
             let ptr = virNetworkLookupByUUIDString(conn.as_ptr(),
-                                                   CString::new(uuid).unwrap().as_ptr());
+                                                   string_to_c_chars!(uuid));
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -162,7 +161,7 @@ impl Network {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned());
+            return Ok(c_chars_to_string!(n));
         }
     }
 
@@ -172,9 +171,7 @@ impl Network {
             if virNetworkGetUUIDString(self.ptr, uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(uuid.as_ptr())
-                          .to_string_lossy()
-                          .into_owned());
+            return Ok(c_chars_to_string!(uuid.as_ptr()));
         }
     }
 
@@ -184,7 +181,7 @@ impl Network {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned());
+            return Ok(c_chars_to_string!(n));
         }
     }
 
@@ -194,7 +191,7 @@ impl Network {
             if xml.is_null() {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(xml).to_string_lossy().into_owned());
+            return Ok(c_chars_to_string!(xml));
         }
     }
 
@@ -278,7 +275,7 @@ impl Network {
                                        cmd,
                                        section,
                                        index as libc::c_uint,
-                                       CString::new(xml).unwrap().as_ptr(),
+                                       string_to_c_chars!(xml),
                                        flags);
             if ret == -1 {
                 return Err(Error::new());

@@ -20,7 +20,6 @@
 
 extern crate libc;
 
-use std::ffi::{CString, CStr};
 use std::ptr;
 
 use connect::sys::virConnectPtr;
@@ -120,7 +119,7 @@ impl Secret {
     pub fn define_xml(conn: &Connect, xml: &str, flags: u32) -> Result<Secret, Error> {
         unsafe {
             let ptr = virSecretDefineXML(conn.as_ptr(),
-                                         CString::new(xml).unwrap().as_ptr(),
+                                         string_to_c_chars!(xml),
                                          flags as libc::c_uint);
             if ptr.is_null() {
                 return Err(Error::new());
@@ -132,7 +131,7 @@ impl Secret {
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Secret, Error> {
         unsafe {
             let ptr = virSecretLookupByUUIDString(conn.as_ptr(),
-                                                  CString::new(uuid).unwrap().as_ptr());
+                                                  string_to_c_chars!(uuid));
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -144,7 +143,7 @@ impl Secret {
         unsafe {
             let ptr = virSecretLookupByUsage(conn.as_ptr(),
                                              usagetype as libc::c_int,
-                                             CString::new(usageid).unwrap().as_ptr());
+                                             string_to_c_chars!(usageid));
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -158,7 +157,7 @@ impl Secret {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned());
+            return Ok(c_chars_to_string!(n));
         }
     }
 
@@ -168,7 +167,7 @@ impl Secret {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned());
+            return Ok(c_chars_to_string!(n));
         }
     }
 
@@ -188,7 +187,7 @@ impl Secret {
             if virSecretGetUUIDString(self.ptr, uuid) == -1 {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(uuid).to_string_lossy().into_owned());
+            return Ok(c_chars_to_string!(uuid));
         }
     }
 
@@ -198,7 +197,7 @@ impl Secret {
             if xml.is_null() {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(xml).to_string_lossy().into_owned());
+            return Ok(c_chars_to_string!(xml));
         }
     }
 

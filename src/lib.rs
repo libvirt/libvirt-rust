@@ -21,6 +21,14 @@
 //! Libvirt is a portable toolkit to interact with the virtualisation
 //! capabilities of Linux, Solaris and other operating systems.
 
+macro_rules! c_chars_to_string {
+    ($x:expr) => (::std::ffi::CStr::from_ptr($x).to_string_lossy().into_owned())
+}
+
+macro_rules! string_to_c_chars {
+    ($x:expr) => (::std::ffi::CString::new($x).unwrap().as_ptr())
+}
+
 pub mod typedparam;
 pub mod connect;
 pub mod domain;
@@ -32,3 +40,4 @@ pub mod interface;
 pub mod secret;
 pub mod storage_pool;
 pub mod stream;
+

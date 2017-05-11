@@ -20,7 +20,6 @@
 
 extern crate libc;
 
-use std::ffi::{CString, CStr};
 use std::{str, ptr};
 
 use connect::sys::virConnectPtr;
@@ -112,7 +111,7 @@ impl Interface {
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<Interface, Error> {
         unsafe {
-            let ptr = virInterfaceLookupByName(conn.as_ptr(), CString::new(id).unwrap().as_ptr());
+            let ptr = virInterfaceLookupByName(conn.as_ptr(), string_to_c_chars!(id));
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -123,7 +122,7 @@ impl Interface {
     pub fn define_xml(conn: &Connect, xml: &str, flags: u32) -> Result<Interface, Error> {
         unsafe {
             let ptr = virInterfaceDefineXML(conn.as_ptr(),
-                                            CString::new(xml).unwrap().as_ptr(),
+                                            string_to_c_chars!(xml),
                                             flags as libc::c_uint);
             if ptr.is_null() {
                 return Err(Error::new());
@@ -135,7 +134,7 @@ impl Interface {
     pub fn lookup_by_mac_string(conn: &Connect, id: &str) -> Result<Interface, Error> {
         unsafe {
             let ptr = virInterfaceLookupByMACString(conn.as_ptr(),
-                                                    CString::new(id).unwrap().as_ptr());
+                                                    string_to_c_chars!(id));
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -146,7 +145,7 @@ impl Interface {
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Interface, Error> {
         unsafe {
             let ptr = virInterfaceLookupByUUIDString(conn.as_ptr(),
-                                                     CString::new(uuid).unwrap().as_ptr());
+                                                     string_to_c_chars!(uuid));
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -160,7 +159,7 @@ impl Interface {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned());
+            return Ok(c_chars_to_string!(n));
         }
     }
 
@@ -170,9 +169,7 @@ impl Interface {
             if virInterfaceGetUUIDString(self.ptr, uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(uuid.as_ptr())
-                          .to_string_lossy()
-                          .into_owned());
+            return Ok(c_chars_to_string!(uuid.as_ptr()));
         }
     }
 
@@ -182,7 +179,7 @@ impl Interface {
             if mac.is_null() {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(mac).to_string_lossy().into_owned());
+            return Ok(c_chars_to_string!(mac));
         }
     }
 
@@ -192,7 +189,7 @@ impl Interface {
             if xml.is_null() {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(xml).to_string_lossy().into_owned());
+            return Ok(c_chars_to_string!(xml));
         }
     }
 

@@ -20,7 +20,6 @@
 
 extern crate libc;
 
-use std::ffi::{CString, CStr};
 use std::{str, ptr};
 
 use network::sys::virNetworkPtr;
@@ -449,7 +448,7 @@ impl Connect {
     /// ```
     pub fn open(uri: &str) -> Result<Connect, Error> {
         unsafe {
-            let c = virConnectOpen(CString::new(uri).unwrap().as_ptr());
+            let c = virConnectOpen(string_to_c_chars!(uri));
             if c.is_null() {
                 return Err(Error::new());
             }
@@ -481,7 +480,7 @@ impl Connect {
     /// ```
     pub fn open_read_only(uri: &str) -> Result<Connect, Error> {
         unsafe {
-            let c = virConnectOpenReadOnly(CString::new(uri).unwrap().as_ptr());
+            let c = virConnectOpenReadOnly(string_to_c_chars!(uri));
             if c.is_null() {
                 return Err(Error::new());
             }
@@ -506,7 +505,7 @@ impl Connect {
     /// ```
     pub fn open_auth(uri: &str, auth: &ConnectAuth, flags: ConnectFlags) -> Result<Connect, Error> {
         unsafe {
-            let c = virConnectOpenAuth(CString::new(uri).unwrap().as_ptr(),
+            let c = virConnectOpenAuth(string_to_c_chars!(uri),
                                        auth.as_ptr(),
                                        flags as libc::c_uint);
             if c.is_null() {
@@ -545,7 +544,7 @@ impl Connect {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned());
+            return Ok(c_chars_to_string!(n));
         }
     }
 
@@ -555,7 +554,7 @@ impl Connect {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned());
+            return Ok(c_chars_to_string!(n));
         }
     }
 
@@ -575,7 +574,7 @@ impl Connect {
             if t.is_null() {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(t).to_string_lossy().into_owned());
+            return Ok(c_chars_to_string!(t));
         }
     }
 
@@ -585,7 +584,7 @@ impl Connect {
             if t.is_null() {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(t).to_string_lossy().into_owned());
+            return Ok(c_chars_to_string!(t));
         }
     }
 
@@ -595,13 +594,13 @@ impl Connect {
             if sys.is_null() {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(sys).to_string_lossy().into_owned());
+            return Ok(c_chars_to_string!(sys));
         }
     }
 
     pub fn get_max_vcpus(&self, attr: &str) -> Result<u32, Error> {
         unsafe {
-            let max = virConnectGetMaxVcpus(self.ptr, CString::new(attr).unwrap().as_ptr());
+            let max = virConnectGetMaxVcpus(self.ptr, string_to_c_chars!(attr));
             if max == -1 {
                 return Err(Error::new());
             }
@@ -613,7 +612,7 @@ impl Connect {
         unsafe {
             let mut names: *mut *mut libc::c_char = ptr::null_mut();
             let size = virConnectGetCPUModelNames(self.ptr,
-                                                  CString::new(arch).unwrap().as_ptr(),
+                                                  string_to_c_chars!(arch),
                                                   &mut names,
                                                   flags as libc::c_uint);
             if size == -1 {
@@ -622,9 +621,7 @@ impl Connect {
 
             let mut array: Vec<String> = Vec::new();
             for x in 0..size as isize {
-                array.push(CStr::from_ptr(*names.offset(x))
-                               .to_string_lossy()
-                               .into_owned());
+                array.push(c_chars_to_string!(*names.offset(x)));
             }
             libc::free(names as *mut libc::c_void);
 
@@ -728,7 +725,7 @@ impl Connect {
 
             let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(CStr::from_ptr(names[x]).to_string_lossy().into_owned());
+                array.push(c_chars_to_string!(names[x]));
             }
             return Ok(array);
         }
@@ -764,7 +761,7 @@ impl Connect {
 
             let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(CStr::from_ptr(names[x]).to_string_lossy().into_owned());
+                array.push(c_chars_to_string!(names[x]));
             }
             return Ok(array);
         }
@@ -780,7 +777,7 @@ impl Connect {
 
             let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(CStr::from_ptr(names[x]).to_string_lossy().into_owned());
+                array.push(c_chars_to_string!(names[x]));
             }
             return Ok(array);
         }
@@ -796,7 +793,7 @@ impl Connect {
 
             let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(CStr::from_ptr(names[x]).to_string_lossy().into_owned());
+                array.push(c_chars_to_string!(names[x]));
             }
             return Ok(array);
         }
@@ -832,7 +829,7 @@ impl Connect {
 
             let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(CStr::from_ptr(names[x]).to_string_lossy().into_owned());
+                array.push(c_chars_to_string!(names[x]));
             }
             return Ok(array);
         }
@@ -1008,7 +1005,7 @@ impl Connect {
 
             let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(CStr::from_ptr(names[x]).to_string_lossy().into_owned());
+                array.push(c_chars_to_string!(names[x]));
             }
             return Ok(array);
         }
@@ -1044,7 +1041,7 @@ impl Connect {
 
             let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(CStr::from_ptr(names[x]).to_string_lossy().into_owned());
+                array.push(c_chars_to_string!(names[x]));
             }
             return Ok(array);
         }
@@ -1080,7 +1077,7 @@ impl Connect {
 
             let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(CStr::from_ptr(names[x]).to_string_lossy().into_owned());
+                array.push(c_chars_to_string!(names[x]));
             }
             return Ok(array);
         }
@@ -1116,7 +1113,7 @@ impl Connect {
 
             let mut array: Vec<String> = Vec::new();
             for x in 0..size as usize {
-                array.push(CStr::from_ptr(names[x]).to_string_lossy().into_owned());
+                array.push(c_chars_to_string!(names[x]));
             }
             return Ok(array);
         }
@@ -1404,7 +1401,7 @@ impl Connect {
                        -> Result<CPUCompareResult, Error> {
         unsafe {
             let res = virConnectCompareCPU(self.ptr,
-                                           CString::new(xml).unwrap().as_ptr(),
+                                           string_to_c_chars!(xml),
                                            flags as libc::c_uint);
             if res == VIR_CPU_COMPARE_ERROR {
                 return Err(Error::new());
@@ -1440,9 +1437,7 @@ impl Connect {
                 return Err(Error::new());
             }
             return Ok(NodeInfo {
-                          model: CStr::from_ptr((*pinfo).model.as_ptr())
-                              .to_string_lossy()
-                              .into_owned(),
+                          model: c_chars_to_string!((*pinfo).model.as_ptr()),
                           memory: (*pinfo).memory as u64,
                           cpus: (*pinfo).cpus as u32,
                           mhz: (*pinfo).mhz as u32,
@@ -1472,13 +1467,13 @@ impl Connect {
                                   -> Result<String, Error> {
         unsafe {
             let ret = virConnectDomainXMLFromNative(self.ptr,
-                                                    CString::new(nformat).unwrap().as_ptr(),
-                                                    CString::new(nconfig).unwrap().as_ptr(),
+                                                    string_to_c_chars!(nformat),
+                                                    string_to_c_chars!(nconfig),
                                                     flags as libc::c_uint);
             if ret.is_null() {
                 return Err(Error::new());
             }
-            Ok(CStr::from_ptr(ret).to_string_lossy().into_owned())
+            Ok(c_chars_to_string!(ret))
         }
     }
 
@@ -1489,13 +1484,13 @@ impl Connect {
                                 -> Result<String, Error> {
         unsafe {
             let ret = virConnectDomainXMLToNative(self.ptr,
-                                                  CString::new(nformat).unwrap().as_ptr(),
-                                                  CString::new(dxml).unwrap().as_ptr(),
+                                                  string_to_c_chars!(nformat),
+                                                  string_to_c_chars!(dxml),
                                                   flags as libc::c_uint);
             if ret.is_null() {
                 return Err(Error::new());
             }
-            Ok(CStr::from_ptr(ret).to_string_lossy().into_owned())
+            Ok(c_chars_to_string!(ret))
         }
     }
 
@@ -1508,15 +1503,15 @@ impl Connect {
                                    -> Result<String, Error> {
         unsafe {
             let ret = virConnectGetDomainCapabilities(self.ptr,
-                                                      CString::new(emulatorbin).unwrap().as_ptr(),
-                                                      CString::new(arch).unwrap().as_ptr(),
-                                                      CString::new(machine).unwrap().as_ptr(),
-                                                      CString::new(virttype).unwrap().as_ptr(),
+                                                      string_to_c_chars!(emulatorbin),
+                                                      string_to_c_chars!(arch),
+                                                      string_to_c_chars!(machine),
+                                                      string_to_c_chars!(virttype),
                                                       flags as libc::c_uint);
             if ret.is_null() {
                 return Err(Error::new());
             }
-            Ok(CStr::from_ptr(ret).to_string_lossy().into_owned())
+            Ok(c_chars_to_string!(ret))
         }
     }
 
@@ -1548,7 +1543,7 @@ impl Connect {
         unsafe {
             let mut xcpus: [*const libc::c_char; 512] = [ptr::null_mut(); 512];
             for x in 0..xmlcpus.len() {
-                xcpus[x] = CString::new(xmlcpus[x]).unwrap().as_ptr();
+                xcpus[x] = string_to_c_chars!(xmlcpus[x]);
             }
             let ret = virConnectBaselineCPU(self.ptr,
                                             xcpus.as_ptr(),
@@ -1557,7 +1552,7 @@ impl Connect {
             if ret.is_null() {
                 return Err(Error::new());
             }
-            Ok(CStr::from_ptr(ret).to_string_lossy().into_owned())
+            Ok(c_chars_to_string!(ret))
         }
     }
 
@@ -1568,13 +1563,13 @@ impl Connect {
                                      -> Result<String, Error> {
         unsafe {
             let n = virConnectFindStoragePoolSources(self.ptr,
-                                                     CString::new(kind).unwrap().as_ptr(),
-                                                     CString::new(spec).unwrap().as_ptr(),
+                                                     string_to_c_chars!(kind),
+                                                     string_to_c_chars!(spec),
                                                      flags as libc::c_uint);
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned());
+            return Ok(c_chars_to_string!(n));
         }
     }
 }

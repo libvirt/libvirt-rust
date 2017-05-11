@@ -20,7 +20,6 @@
 
 extern crate libc;
 
-use std::ffi::{CString, CStr};
 use std::{str, ptr};
 
 use connect::sys::virConnectPtr;
@@ -84,7 +83,7 @@ impl NWFilter {
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<NWFilter, Error> {
         unsafe {
-            let ptr = virNWFilterLookupByName(conn.as_ptr(), CString::new(id).unwrap().as_ptr());
+            let ptr = virNWFilterLookupByName(conn.as_ptr(), string_to_c_chars!(id));
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -95,7 +94,7 @@ impl NWFilter {
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<NWFilter, Error> {
         unsafe {
             let ptr = virNWFilterLookupByUUIDString(conn.as_ptr(),
-                                                    CString::new(uuid).unwrap().as_ptr());
+                                                    string_to_c_chars!(uuid));
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -109,7 +108,7 @@ impl NWFilter {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(n).to_string_lossy().into_owned());
+            return Ok(c_chars_to_string!(n));
         }
     }
 
@@ -119,9 +118,7 @@ impl NWFilter {
             if virNWFilterGetUUIDString(self.ptr, uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(uuid.as_ptr())
-                          .to_string_lossy()
-                          .into_owned());
+            return Ok(c_chars_to_string!(uuid.as_ptr()));
         }
     }
 
@@ -131,13 +128,13 @@ impl NWFilter {
             if xml.is_null() {
                 return Err(Error::new());
             }
-            return Ok(CStr::from_ptr(xml).to_string_lossy().into_owned());
+            return Ok(c_chars_to_string!(xml));
         }
     }
 
     pub fn define_xml(conn: &Connect, xml: &str) -> Result<NWFilter, Error> {
         unsafe {
-            let ptr = virNWFilterDefineXML(conn.as_ptr(), CString::new(xml).unwrap().as_ptr());
+            let ptr = virNWFilterDefineXML(conn.as_ptr(), string_to_c_chars!(xml));
             if ptr.is_null() {
                 return Err(Error::new());
             }
