@@ -31,22 +31,9 @@ fn exercices() {
             let nets = conn.list_networks().unwrap_or(vec![]);
             match Network::lookup_by_name(&conn, &nets[0]) {
                 Ok(network) => {
-                    assert_eq!("default", network.get_name().unwrap_or("n/a".to_string()));
-                    assert_eq!("dd8fe884-6c02-601e-7551-cca97df1c5df",
-                               network.get_uuid_string().unwrap_or("n/a".to_string()));
-                    assert_eq!("<network>
-  <name>default</name>
-  <uuid>dd8fe884-6c02-601e-7551-cca97df1c5df</uuid>
-  <forward mode='nat'/>
-  <bridge name='virbr0' stp='on' delay='0'/>
-  <ip address='192.168.122.1' netmask='255.255.255.0'>
-    <dhcp>
-      <range start='192.168.122.2' end='192.168.122.254'/>
-    </dhcp>
-  </ip>
-</network>
-",
-                               network.get_xml_desc(0).unwrap_or("n/a".to_string()));
+                    assert!(0 != network.get_name().unwrap_or(String::new()).len());
+                    assert!(0 != network.get_uuid_string().unwrap_or(String::new()).len());
+                    assert!(0 != network.get_xml_desc(0).unwrap_or(String::new()).len());
                 }
                 Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
             }

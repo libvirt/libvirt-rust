@@ -30,26 +30,9 @@ fn exercices() {
             let sp = conn.list_storage_pools().unwrap_or(vec![]);
             match StoragePool::lookup_by_name(&conn, &sp[0]) {
                 Ok(storage_pool) => {
-                    assert_eq!("default-pool",
-                               storage_pool.get_name().unwrap_or("n/a".to_string()));
-                    assert_eq!("dfe224cb-28fb-8dd0-c4b2-64eb3f0f4566",
-                               storage_pool
-                                   .get_uuid_string()
-                                   .unwrap_or("n/a".to_string()));
-                    assert_eq!("<pool type='dir'>
-  <name>default-pool</name>
-  <uuid>dfe224cb-28fb-8dd0-c4b2-64eb3f0f4566</uuid>
-  <capacity unit='bytes'>107374182400</capacity>
-  <allocation unit='bytes'>0</allocation>
-  <available unit='bytes'>107374182400</available>
-  <source>
-  </source>
-  <target>
-    <path>/default-pool</path>
-  </target>
-</pool>
-",
-                               storage_pool.get_xml_desc(0).unwrap_or("n/a".to_string()));
+                    assert!(0 != storage_pool.get_name().unwrap_or(String::new()).len());
+                    assert!(0 != storage_pool.get_uuid_string().unwrap_or(String::new()).len());
+                    assert!(0 != storage_pool.get_xml_desc(0).unwrap_or(String::new()).len());
                 }
                 Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
             }

@@ -31,21 +31,10 @@ fn exercices() {
             let intid = &inters[0];
             match Interface::lookup_by_name(&conn, intid) {
                 Ok(interface) => {
-                    assert_eq!("eth1", interface.get_name().unwrap_or("n/a".to_string()));
+                    assert!(0 != interface.get_name().unwrap_or(String::new()).len());
                     assert_eq!(true, interface.is_active().unwrap_or(false));
-                    assert_eq!("aa:bb:cc:dd:ee:ff",
-                               interface.get_mac_string().unwrap_or("n/a".to_string()));
-                    assert_eq!("<interface type='ethernet' name='eth1'>
-  <start mode='onboot'/>
-  <mtu size='1492'/>
-  <protocol family='ipv4'>
-    <ip address='192.168.0.5' prefix='24'/>
-    <route gateway='192.168.0.1'/>
-  </protocol>
-  <mac address='aa:bb:cc:dd:ee:ff'/>
-</interface>
-",
-                               interface.get_xml_desc(0).unwrap_or("n/a".to_string()));
+                    assert!(0 != interface.get_mac_string().unwrap_or(String::new()).len());
+                    assert!(0 != interface.get_xml_desc(0).unwrap_or(String::new()).len());
                 }
                 Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
             }
