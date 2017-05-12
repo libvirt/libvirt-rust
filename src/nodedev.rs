@@ -157,9 +157,7 @@ impl NodeDevice {
 
     pub fn num_of_devices(&self, cap: &str, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let num = virNodeNumOfDevices(self.ptr,
-                                          string_to_c_chars!(cap),
-                                          flags as libc::c_uint);
+            let num = virNodeNumOfDevices(self.ptr, string_to_c_chars!(cap), flags as libc::c_uint);
             if num == -1 {
                 return Err(Error::new());
             }

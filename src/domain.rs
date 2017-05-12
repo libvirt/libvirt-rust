@@ -20,7 +20,7 @@
 
 extern crate libc;
 
-use std::ffi::{CStr};
+use std::ffi::CStr;
 use std::{str, ptr, mem};
 
 use connect::sys::virConnectPtr;
@@ -602,8 +602,7 @@ impl Domain {
 
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Domain, Error> {
         unsafe {
-            let ptr = virDomainLookupByUUIDString(conn.as_ptr(),
-                                                  string_to_c_chars!(uuid));
+            let ptr = virDomainLookupByUUIDString(conn.as_ptr(), string_to_c_chars!(uuid));
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -1345,9 +1344,7 @@ impl Domain {
 
     pub fn core_dump(&self, to: &str, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let ret = virDomainCoreDump(self.ptr,
-                                        string_to_c_chars!(to),
-                                        flags as libc::c_uint);
+            let ret = virDomainCoreDump(self.ptr, string_to_c_chars!(to), flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }

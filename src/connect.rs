@@ -1400,9 +1400,8 @@ impl Connect {
                        flags: ConnectCompareCPUFlags)
                        -> Result<CPUCompareResult, Error> {
         unsafe {
-            let res = virConnectCompareCPU(self.ptr,
-                                           string_to_c_chars!(xml),
-                                           flags as libc::c_uint);
+            let res =
+                virConnectCompareCPU(self.ptr, string_to_c_chars!(xml), flags as libc::c_uint);
             if res == VIR_CPU_COMPARE_ERROR {
                 return Err(Error::new());
             }

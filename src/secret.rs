@@ -130,8 +130,7 @@ impl Secret {
 
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Secret, Error> {
         unsafe {
-            let ptr = virSecretLookupByUUIDString(conn.as_ptr(),
-                                                  string_to_c_chars!(uuid));
+            let ptr = virSecretLookupByUUIDString(conn.as_ptr(), string_to_c_chars!(uuid));
             if ptr.is_null() {
                 return Err(Error::new());
             }

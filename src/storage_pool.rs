@@ -124,8 +124,7 @@ impl StoragePool {
 
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<StoragePool, Error> {
         unsafe {
-            let ptr = virStoragePoolLookupByUUIDString(conn.as_ptr(),
-                                                       string_to_c_chars!(uuid));
+            let ptr = virStoragePoolLookupByUUIDString(conn.as_ptr(), string_to_c_chars!(uuid));
             if ptr.is_null() {
                 return Err(Error::new());
             }

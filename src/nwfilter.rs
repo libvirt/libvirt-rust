@@ -93,8 +93,7 @@ impl NWFilter {
 
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<NWFilter, Error> {
         unsafe {
-            let ptr = virNWFilterLookupByUUIDString(conn.as_ptr(),
-                                                    string_to_c_chars!(uuid));
+            let ptr = virNWFilterLookupByUUIDString(conn.as_ptr(), string_to_c_chars!(uuid));
             if ptr.is_null() {
                 return Err(Error::new());
             }

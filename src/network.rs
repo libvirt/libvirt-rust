@@ -146,8 +146,7 @@ impl Network {
 
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Network, Error> {
         unsafe {
-            let ptr = virNetworkLookupByUUIDString(conn.as_ptr(),
-                                                   string_to_c_chars!(uuid));
+            let ptr = virNetworkLookupByUUIDString(conn.as_ptr(), string_to_c_chars!(uuid));
             if ptr.is_null() {
                 return Err(Error::new());
             }

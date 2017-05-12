@@ -68,11 +68,20 @@ fn show_domains(conn: Connect) -> Result<(), Error> {
                     let active = dom.is_active().unwrap_or(false);
                     println!("ID: {}, Name: {}, Active: {}", id, name, active);
                     if let Ok(dinfo) = dom.get_info() {
+                        println!("Domain info:");
                         println!("    State: {}", dinfo.state);
                         println!("    Max Memory: {}", dinfo.max_mem);
                         println!("    Memory: {}", dinfo.memory);
                         println!("    CPUs: {}", dinfo.nr_virt_cpu);
                         println!("    CPU Time: {}", dinfo.cpu_time);
+                    }
+                    if let Ok(memtune) = dom.get_memory_parameters(0) {
+                        println!("Memory tune:");
+                        println!("    Hard limit: {}", memtune.hard_limit.unwrap_or(0));
+                        println!("    Soft limit: {}", memtune.soft_limit.unwrap_or(0));
+                        println!("    min guarantee: {}", memtune.min_guarantee.unwrap_or(0));
+                        println!("    swap hard limit: {}",
+                                 memtune.swap_hard_limit.unwrap_or(0));
                     }
                 }
             }

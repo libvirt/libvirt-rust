@@ -133,8 +133,7 @@ impl Interface {
 
     pub fn lookup_by_mac_string(conn: &Connect, id: &str) -> Result<Interface, Error> {
         unsafe {
-            let ptr = virInterfaceLookupByMACString(conn.as_ptr(),
-                                                    string_to_c_chars!(id));
+            let ptr = virInterfaceLookupByMACString(conn.as_ptr(), string_to_c_chars!(id));
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -144,8 +143,7 @@ impl Interface {
 
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Interface, Error> {
         unsafe {
-            let ptr = virInterfaceLookupByUUIDString(conn.as_ptr(),
-                                                     string_to_c_chars!(uuid));
+            let ptr = virInterfaceLookupByUUIDString(conn.as_ptr(), string_to_c_chars!(uuid));
             if ptr.is_null() {
                 return Err(Error::new());
             }
