@@ -434,6 +434,25 @@ pub const VIR_DOMAIN_VCPU_MAXIMUM: DomainVcpuFlags = 1 << 2;
 pub const VIR_DOMAIN_VCPU_GUEST: DomainVcpuFlags = 1 << 3;
 pub const VIR_DOMAIN_VCPU_HOTPLUGGABLE: DomainVcpuFlags = 1 << 4;
 
+pub type DomainMigrateFlags = self::libc::c_uint;
+pub const VIR_MIGRATE_LIVE: DomainMigrateFlags = 1 << 0;
+pub const VIR_MIGRATE_PEER2PEER: DomainMigrateFlags = 1 << 1;
+pub const VIR_MIGRATE_TUNNELLED: DomainMigrateFlags = 1 << 2;
+pub const VIR_MIGRATE_PERSIST_DEST: DomainMigrateFlags = 1 << 3;
+pub const VIR_MIGRATE_UNDEFINE_SOURCE: DomainMigrateFlags = 1 << 4;
+pub const VIR_MIGRATE_PAUSED: DomainMigrateFlags = 1 << 5;
+pub const VIR_MIGRATE_NON_SHARED_DISK: DomainMigrateFlags = 1 << 6;
+pub const VIR_MIGRATE_NON_SHARED_INC: DomainMigrateFlags = 1 << 7;
+pub const VIR_MIGRATE_CHANGE_PROTECTION: DomainMigrateFlags = 1 << 8;
+pub const VIR_MIGRATE_UNSAFE: DomainMigrateFlags = 1 << 9;
+pub const VIR_MIGRATE_OFFLINE: DomainMigrateFlags = 1 << 10;
+pub const VIR_MIGRATE_COMPRESSED: DomainMigrateFlags = 1 << 11;
+pub const VIR_MIGRATE_ABORT_ON_ERROR: DomainMigrateFlags = 1 << 12;
+pub const VIR_MIGRATE_AUTO_CONVERGE: DomainMigrateFlags = 1 << 13;
+pub const VIR_MIGRATE_RDMA_PIN_ALL: DomainMigrateFlags = 1 << 14;
+pub const VIR_MIGRATE_POSTCOPY: DomainMigrateFlags = 1 << 15;
+pub const VIR_MIGRATE_TLS: DomainMigrateFlags = 1 << 16;
+
 pub type DomainDefineFlags = self::libc::c_uint;
 pub const VIR_DOMAIN_DEFINE_VALIDATE: DomainDefineFlags = 1 << 0;
 
@@ -1520,8 +1539,7 @@ impl Domain {
 
     pub fn migrate(&self,
                    dconn: &Connect,
-                   flags: u64,
-                   dname: &str,
+                   flags: u32,
                    uri: &str,
                    bandwidth: u64)
                    -> Result<Domain, Error> {
@@ -1529,7 +1547,7 @@ impl Domain {
             let ptr = virDomainMigrate(self.ptr,
                                        dconn.as_ptr(),
                                        flags as libc::c_uint,
-                                       string_to_c_chars!(dname),
+                                       string_to_c_chars!(""),
                                        string_to_c_chars!(uri),
                                        bandwidth as libc::c_ulong);
             if ptr.is_null() {
@@ -1542,8 +1560,7 @@ impl Domain {
     pub fn migrate2(&self,
                     dconn: &Connect,
                     dxml: &str,
-                    flags: u64,
-                    dname: &str,
+                    flags: u32,
                     uri: &str,
                     bandwidth: u64)
                     -> Result<Domain, Error> {
@@ -1552,7 +1569,7 @@ impl Domain {
                                         dconn.as_ptr(),
                                         string_to_c_chars!(dxml),
                                         flags as libc::c_uint,
-                                        string_to_c_chars!(dname),
+                                        string_to_c_chars!(""),
                                         string_to_c_chars!(uri),
                                         bandwidth as libc::c_ulong);
             if ptr.is_null() {
@@ -1562,17 +1579,12 @@ impl Domain {
         }
     }
 
-    pub fn migrate_to_uri(&self,
-                          duri: &str,
-                          flags: u64,
-                          dname: &str,
-                          bandwidth: u64)
-                          -> Result<Domain, Error> {
+    pub fn migrate_to_uri(&self, duri: &str, flags: u32, bandwidth: u64) -> Result<Domain, Error> {
         unsafe {
             let ptr = virDomainMigrateToURI(self.ptr,
                                             string_to_c_chars!(duri),
                                             flags as libc::c_uint,
-                                            string_to_c_chars!(dname),
+                                            string_to_c_chars!(""),
                                             bandwidth as libc::c_ulong);
             if ptr.is_null() {
                 return Err(Error::new());
@@ -1585,8 +1597,7 @@ impl Domain {
                            dconn_uri: &str,
                            mig_uri: &str,
                            dxml: &str,
-                           flags: u64,
-                           dname: &str,
+                           flags: u32,
                            bandwidth: u64)
                            -> Result<Domain, Error> {
         unsafe {
@@ -1595,7 +1606,7 @@ impl Domain {
                                              string_to_c_chars!(mig_uri),
                                              string_to_c_chars!(dxml),
                                              flags as libc::c_uint,
-                                             string_to_c_chars!(dname),
+                                             string_to_c_chars!(""),
                                              bandwidth as libc::c_ulong);
             if ptr.is_null() {
                 return Err(Error::new());
