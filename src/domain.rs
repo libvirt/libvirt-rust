@@ -366,6 +366,35 @@ extern "C" {
                                     nparams: libc::c_int,
                                     flags: libc::c_uint)
                                     -> libc::c_int;
+    fn virDomainMigrate(ptr: sys::virDomainPtr,
+                        dconn: virConnectPtr,
+                        flags: libc::c_uint,
+                        dname: *const libc::c_char,
+                        uri: *const libc::c_char,
+                        bandwidth: libc::c_ulong)
+                        -> sys::virDomainPtr;
+    fn virDomainMigrate2(ptr: sys::virDomainPtr,
+                         dconn: virConnectPtr,
+                         dxml: *const libc::c_char,
+                         flags: libc::c_uint,
+                         dname: *const libc::c_char,
+                         uri: *const libc::c_char,
+                         bandwidth: libc::c_ulong)
+                         -> sys::virDomainPtr;
+    fn virDomainMigrateToURI(ptr: sys::virDomainPtr,
+                             duri: *const libc::c_char,
+                             flags: libc::c_uint,
+                             dname: *const libc::c_char,
+                             bandwidth: libc::c_ulong)
+                             -> sys::virDomainPtr;
+    fn virDomainMigrateToURI2(ptr: sys::virDomainPtr,
+                              dconnuri: *const libc::c_char,
+                              miguri: *const libc::c_char,
+                              dxml: *const libc::c_char,
+                              flags: libc::c_uint,
+                              dname: *const libc::c_char,
+                              bandwidth: libc::c_ulong)
+                              -> sys::virDomainPtr;
 }
 
 pub type DomainXMLFlags = self::libc::c_uint;
@@ -1486,6 +1515,92 @@ impl Domain {
                 return Err(Error::new());
             }
             Ok(ret as u32)
+        }
+    }
+
+    pub fn migrate(&self,
+                   dconn: &Connect,
+                   flags: u64,
+                   dname: &str,
+                   uri: &str,
+                   bandwidth: u64)
+                   -> Result<Domain, Error> {
+        unsafe {
+            let ptr = virDomainMigrate(self.ptr,
+                                       dconn.as_ptr(),
+                                       flags as libc::c_uint,
+                                       string_to_c_chars!(dname),
+                                       string_to_c_chars!(uri),
+                                       bandwidth as libc::c_ulong);
+            if ptr.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(Domain::new(ptr));
+        }
+    }
+
+    pub fn migrate2(&self,
+                    dconn: &Connect,
+                    dxml: &str,
+                    flags: u64,
+                    dname: &str,
+                    uri: &str,
+                    bandwidth: u64)
+                    -> Result<Domain, Error> {
+        unsafe {
+            let ptr = virDomainMigrate2(self.ptr,
+                                        dconn.as_ptr(),
+                                        string_to_c_chars!(dxml),
+                                        flags as libc::c_uint,
+                                        string_to_c_chars!(dname),
+                                        string_to_c_chars!(uri),
+                                        bandwidth as libc::c_ulong);
+            if ptr.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(Domain::new(ptr));
+        }
+    }
+
+    pub fn migrate_to_uri(&self,
+                          duri: &str,
+                          flags: u64,
+                          dname: &str,
+                          bandwidth: u64)
+                          -> Result<Domain, Error> {
+        unsafe {
+            let ptr = virDomainMigrateToURI(self.ptr,
+                                            string_to_c_chars!(duri),
+                                            flags as libc::c_uint,
+                                            string_to_c_chars!(dname),
+                                            bandwidth as libc::c_ulong);
+            if ptr.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(Domain::new(ptr));
+        }
+    }
+
+    pub fn migrate_to_uri2(&self,
+                           dconn_uri: &str,
+                           mig_uri: &str,
+                           dxml: &str,
+                           flags: u64,
+                           dname: &str,
+                           bandwidth: u64)
+                           -> Result<Domain, Error> {
+        unsafe {
+            let ptr = virDomainMigrateToURI2(self.ptr,
+                                             string_to_c_chars!(dconn_uri),
+                                             string_to_c_chars!(mig_uri),
+                                             string_to_c_chars!(dxml),
+                                             flags as libc::c_uint,
+                                             string_to_c_chars!(dname),
+                                             bandwidth as libc::c_ulong);
+            if ptr.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(Domain::new(ptr));
         }
     }
 }
