@@ -5,58 +5,26 @@ with some differences to respect Rust conventions.
 
 ## Important considerations
 
-Make sure to have `libvirt-dev` package (or the development files
-otherwise somewhere in your include path).
+Make sure to have `libvirt-dev` or `libvirt-devel` package (or the
+development files otherwise somewhere in your include path).
 
-The library is still under development and the API is not quite
-stable.
+The library is still under development and the API is not quite stable
+yet.
 
 The binding uses standard errors handling from Rust. Each method
-(there are some exceptions) is returning a type `Result`.
+(there are some exceptions) is returning a type `Option` or `Result`.
 
-```
-fn main() {
-    let uri = match env::args().nth(1) {
-        Some(u) => u,
-        None => String::from(""),
-    };
-    println!("Attempting to connect to hypervisor: '{}'", uri);
+## Documentation
 
-    let mut conn = match Connect::open(&uri) {
-        Ok(c) => c,
-        Err(e) => {
-            panic!("No connection to hypervisor: code {}, message: {}",
-                   e.code,
-                   e.message)
-        }
-    };
-
-    ...
-    
-    if let Err(e) = conn.close() {
-        panic!("Failed to disconnect from hypervisor: code {}, message: {}",
-               e.code,
-               e.message);
-    }
-    println!("Disconnected from hypervisor");
-}
-```
-
-Most of the structs are automatically release their references by
-implemementing `Drop` trait. It provides a way to run some code when a
-value goes out of scope. But for structs which are reference counted
-at C level, it is still possible to explicitly release the reference
-at Rust level. For instance if a Rust method returns a *Domain, it is
-possible to call `free` on it when no longer required.
-
-
-```
-if let Ok(mut dom) = conn.lookup_domain_by_name("myguest") {
-    dom.free() // Explicitly releases memory at Rust level.
-}
-```
+* https://docs.rs/crate/virt/
+* http://libvirt.org/html/libvirt-libvirt.html
 
 ## Testing/Exercises
+
+CI is executing tests automatically from libvirt 1.2.0 to 2.5.0. Using
+Rust from beta to nightly.
+
+* https://travis-ci.org/sahid/libvirt-rs
 
 For executing tests and other excerices
 
@@ -72,7 +40,8 @@ cargo run --example hello -- test:///default
 
 ## Contributing
 
-To look at what is missing
+Any bug fixes and other improvements are welcome at any time. It's
+possible to look at what is missing by running command like:
 
 ```
 $ python tools/api_tests.py virDomain
