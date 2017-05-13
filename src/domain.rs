@@ -157,7 +157,7 @@ extern "C" {
     fn virDomainLookupByUUIDString(c: virConnectPtr,
                                    uuid: *const libc::c_char)
                                    -> sys::virDomainPtr;
-    fn virDomainCreate(c: virConnectPtr) -> sys::virDomainPtr;
+    fn virDomainCreate(ptr: sys::virDomainPtr) -> libc::c_int;
     fn virDomainCreateXML(c: virConnectPtr,
                           xml: *const libc::c_char,
                           flags: libc::c_uint)
@@ -167,6 +167,7 @@ extern "C" {
                                xml: *const libc::c_char,
                                flags: libc::c_uint)
                                -> sys::virDomainPtr;
+    fn virDomainCreateWithFlags(ptr: sys::virDomainPtr, flags: libc::c_uint) -> libc::c_int;
     fn virDomainDestroy(ptr: sys::virDomainPtr) -> libc::c_int;
     fn virDomainDestroyFlags(ptr: sys::virDomainPtr, flags: libc::c_uint) -> libc::c_int;
     fn virDomainUndefine(ptr: sys::virDomainPtr) -> libc::c_int;
@@ -178,6 +179,11 @@ extern "C" {
     fn virDomainIsActive(ptr: sys::virDomainPtr) -> libc::c_int;
     fn virDomainIsUpdated(ptr: sys::virDomainPtr) -> libc::c_int;
     fn virDomainGetName(ptr: sys::virDomainPtr) -> *const libc::c_char;
+    fn virDomainGetState(ptr: sys::virDomainPtr,
+                         state: *mut libc::c_int,
+                         reason: *mut libc::c_int,
+                         flags: libc::c_uint)
+                         -> libc::c_int;
     fn virDomainGetOSType(ptr: sys::virDomainPtr) -> *const libc::c_char;
     fn virDomainGetHostname(ptr: sys::virDomainPtr, flags: libc::c_uint) -> *const libc::c_char;
     fn virDomainGetUUIDString(ptr: sys::virDomainPtr, uuid: *mut libc::c_char) -> libc::c_int;
@@ -658,6 +664,18 @@ impl Domain {
         }
     }
 
+    pub fn get_state(&self) -> Result<(DomainState, i32), Error> {
+        unsafe {
+            let mut state: libc::c_int = -1;
+            let mut reason: libc::c_int = -1;
+            let ret = virDomainGetState(self.ptr, &mut state, &mut reason, 0);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok((state as DomainState, reason as i32));
+        }
+    }
+
     pub fn get_name(&self) -> Result<String, Error> {
         unsafe {
             let n = virDomainGetName(self.ptr);
@@ -718,13 +736,23 @@ impl Domain {
         }
     }
 
-    pub fn create(conn: &Connect) -> Result<Domain, Error> {
+    pub fn create(&self) -> Result<u32, Error> {
         unsafe {
-            let ptr = virDomainCreate(conn.as_ptr());
-            if ptr.is_null() {
+            let ret = virDomainCreate(self.ptr);
+            if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(Domain::new(ptr));
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn create_with_flags(&self, flags: DomainCreateFlags) -> Result<u32, Error> {
+        unsafe {
+            let res = virDomainCreateWithFlags(self.ptr, flags as libc::c_uint);
+            if res == -1 {
+                return Err(Error::new());
+            }
+            return Ok(res as u32);
         }
     }
 

@@ -33,7 +33,11 @@ fn exercices() {
                 Ok(interface) => {
                     assert!(0 != interface.get_name().unwrap_or(String::new()).len());
                     assert_eq!(true, interface.is_active().unwrap_or(false));
-                    assert!(0 != interface.get_mac_string().unwrap_or(String::new()).len());
+                    assert!(0 !=
+                            interface
+                                .get_mac_string()
+                                .unwrap_or(String::new())
+                                .len());
                     assert!(0 != interface.get_xml_desc(0).unwrap_or(String::new()).len());
                 }
                 Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),

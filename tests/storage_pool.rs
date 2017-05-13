@@ -31,8 +31,16 @@ fn exercices() {
             match StoragePool::lookup_by_name(&conn, &sp[0]) {
                 Ok(storage_pool) => {
                     assert!(0 != storage_pool.get_name().unwrap_or(String::new()).len());
-                    assert!(0 != storage_pool.get_uuid_string().unwrap_or(String::new()).len());
-                    assert!(0 != storage_pool.get_xml_desc(0).unwrap_or(String::new()).len());
+                    assert!(0 !=
+                            storage_pool
+                                .get_uuid_string()
+                                .unwrap_or(String::new())
+                                .len());
+                    assert!(0 !=
+                            storage_pool
+                                .get_xml_desc(0)
+                                .unwrap_or(String::new())
+                                .len());
                 }
                 Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
             }

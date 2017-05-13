@@ -24,8 +24,8 @@
 //! The binding uses standard errors handling from Rust. Each method
 //! (there are some exceptions) is returning a type `Option` or
 //! `Result`.
-//! 
-//! ``` 
+//!
+//! ```
 //! use virt::connect::Connect;
 //!
 //! if let Ok(mut conn) = Connect::open("test://default") {
