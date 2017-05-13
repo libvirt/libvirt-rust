@@ -36,6 +36,7 @@ extern "C" {
     fn virGetLastError() -> *const virError;
 }
 
+#[derive(Debug, PartialEq)]
 pub struct Error {
     pub code: i32,
     pub domain: i32,

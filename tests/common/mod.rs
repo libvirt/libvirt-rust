@@ -33,12 +33,5 @@ pub fn conn() -> Connect {
 }
 
 pub fn close(mut conn: Connect) {
-    match conn.close() {
-        Err(e) => {
-            panic!("Close connection failed with code {}, message: {}",
-                   e.code,
-                   e.message)
-        }
-        Ok(status) => assert_eq!(0, status, "Close() == {}, expected 0", status),
-    }
+    assert_eq!(Ok(0), conn.close(), "close(), expected 0")
 }
