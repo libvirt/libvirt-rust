@@ -110,3 +110,15 @@ fn test_lookup_domain_by_name() {
     }
     common::close(c);
 }
+
+#[test]
+fn test_domain_create_flags() {
+    let c = common::qemu_conn();
+    let d = common::build_domain(&c, "create", false);
+    assert_eq!(Ok(0),
+               d.create_with_flags(::virt::domain::VIR_DOMAIN_START_PAUSED));
+    assert_eq!(Ok((::virt::domain::VIR_DOMAIN_PAUSED, 1)),
+               d.get_state());
+    common::clean(d);
+    common::close(c);
+}

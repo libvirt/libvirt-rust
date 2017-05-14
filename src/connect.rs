@@ -388,7 +388,6 @@ impl ConnectAuth {
     }
 }
 
-#[derive(Clone)]
 pub struct Connect {
     pub ptr: sys::virConnectPtr,
 }

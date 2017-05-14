@@ -30,7 +30,7 @@ use virt::connect::Connect;
 use virt::error::Error;
 
 
-fn show_hypervisor_info(conn: Connect) -> Result<(), Error> {
+fn show_hypervisor_info(conn: &Connect) -> Result<(), Error> {
     if let Ok(hv_type) = conn.get_type() {
         if let Ok(mut hv_ver) = conn.get_hyp_version() {
             let major = hv_ver / 1000000;
@@ -48,7 +48,7 @@ fn show_hypervisor_info(conn: Connect) -> Result<(), Error> {
     Err(Error::new())
 }
 
-fn show_domains(conn: Connect) -> Result<(), Error> {
+fn show_domains(conn: &Connect) -> Result<(), Error> {
     let flags = virt::connect::VIR_CONNECT_LIST_DOMAINS_ACTIVE |
                 virt::connect::VIR_CONNECT_LIST_DOMAINS_INACTIVE;
 
@@ -117,14 +117,14 @@ fn main() {
         }
     };
 
-    if let Err(e) = show_hypervisor_info(conn.clone()) {
+    if let Err(e) = show_hypervisor_info(&conn) {
         disconnect(conn);
         panic!("Failed to show hypervisor info: code {}, message: {}",
                e.code,
                e.message);
     }
 
-    if let Err(e) = show_domains(conn.clone()) {
+    if let Err(e) = show_domains(&conn) {
         disconnect(conn);
         panic!("Failed to show domains info: code {}, message: {}",
                e.code,

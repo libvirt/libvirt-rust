@@ -19,6 +19,8 @@
 extern crate virt;
 
 use virt::connect::Connect;
+use virt::domain::Domain;
+use virt::error::Error;
 
 
 pub fn conn() -> Connect {
@@ -32,6 +34,59 @@ pub fn conn() -> Connect {
     }
 }
 
+pub fn qemu_conn() -> Connect {
+    match Connect::open("qemu:///system") {
+        Err(e) => {
+            panic!("Build connection failed with code {}, message: {}",
+                   e.code,
+                   e.message)
+        }
+        Ok(conn) => conn,
+    }
+}
+
 pub fn close(mut conn: Connect) {
     assert_eq!(Ok(0), conn.close(), "close(), expected 0")
+}
+
+pub fn clean(mut dom: Domain) {
+    dom.destroy();
+    dom.undefine();
+    dom.free();
+}
+
+pub fn build_domain(conn: &Connect, name: &str, transient: bool) -> Domain {
+    let name = format!("libvirt-rs-test-{}", name);
+
+    if let Ok(dom) = Domain::lookup_by_name(&conn, &name) {
+        clean(dom);
+    }
+
+    let xml = format!("<domain type=\"qemu\">
+		         <name>{}</name>
+                         <memory unit=\"KiB\">128</memory>
+                         <features>
+                           <acpi/>
+                           <apic/>
+                         </features>
+                         <os>
+                           <type>hvm</type>
+                         </os>
+                       </domain>", name);
+
+    let result: Result<Domain, Error>;
+    if transient {
+        result = Domain::create_xml(&conn, &xml, 0);
+    } else {
+        result = Domain::define_xml(&conn, &xml);
+    }
+
+    match result {
+        Ok(dom) => dom,
+        Err(e) => {
+            panic!("Build domain failed with code {}, message: {}",
+                   e.code,
+                   e.message)
+        }
+    }
 }
