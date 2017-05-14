@@ -34,6 +34,7 @@ fn tdom(exec_test: fn(dom: Domain)) {
     }
 }
 
+
 #[test]
 fn test_name() {
     fn t(dom: Domain) {
@@ -112,13 +113,40 @@ fn test_lookup_domain_by_name() {
 }
 
 #[test]
-fn test_domain_create_flags() {
-    let c = common::qemu_conn();
-    let d = common::build_domain(&c, "create", false);
-    assert_eq!(Ok(0),
-               d.create_with_flags(::virt::domain::VIR_DOMAIN_START_PAUSED));
-    assert_eq!(Ok((::virt::domain::VIR_DOMAIN_PAUSED, 1)),
-               d.get_state());
+fn test_create_with_flags() {
+    let c = common::conn();
+    let d = common::build_test_domain(&c, "create", false);
+    assert_eq!(Ok(0), d.create_with_flags(0));
+    assert_eq!(Ok((::virt::domain::VIR_DOMAIN_RUNNING, 1)), d.get_state());
+    assert_eq!(Ok(String::from("libvirt-rs-test-create")), d.get_name());
     common::clean(d);
     common::close(c);
 }
+
+#[test]
+fn test_shutdown() {
+    let c = common::conn();
+    let d = common::build_test_domain(&c, "shutdown", false);
+    assert_eq!(Ok(0), d.create_with_flags(0));
+    assert_eq!(Ok((::virt::domain::VIR_DOMAIN_RUNNING, 1)), d.get_state());
+    assert_eq!(Ok(0), d.shutdown());
+    assert_eq!(Ok((::virt::domain::VIR_DOMAIN_SHUTOFF, 1)), d.get_state());
+    common::clean(d);
+    common::close(c);
+}
+
+#[test]
+fn test_pause_resume() {
+    let c = common::conn();
+    let d = common::build_test_domain(&c, "pause_resume", false);
+    assert_eq!(Ok(0), d.create_with_flags(0));
+    assert_eq!(Ok((::virt::domain::VIR_DOMAIN_RUNNING, 1)), d.get_state());
+    assert_eq!(Ok(0), d.suspend());
+    assert_eq!(Ok((::virt::domain::VIR_DOMAIN_PAUSED, 1)), d.get_state());
+    assert_eq!(Ok(0), d.resume());
+    assert_eq!(Ok((::virt::domain::VIR_DOMAIN_RUNNING, 5)), d.get_state());
+    common::clean(d);
+    common::close(c);
+}
+
+

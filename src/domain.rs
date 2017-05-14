@@ -827,12 +827,13 @@ impl Domain {
         }
     }
 
-    pub fn shutdown(&self) -> Result<(), Error> {
+    pub fn shutdown(&self) -> Result<u32, Error> {
         unsafe {
-            if virDomainShutdown(self.ptr) == -1 {
+            let ret = virDomainShutdown(self.ptr);
+            if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            return Ok(ret as u32);
         }
     }
 
@@ -845,21 +846,23 @@ impl Domain {
         }
     }
 
-    pub fn suspend(&self) -> Result<(), Error> {
+    pub fn suspend(&self) -> Result<u32, Error> {
         unsafe {
-            if virDomainSuspend(self.ptr) == -1 {
+            let ret = virDomainSuspend(self.ptr);
+            if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            return Ok(ret as u32);
         }
     }
 
-    pub fn resume(&self) -> Result<(), Error> {
+    pub fn resume(&self) -> Result<u32, Error> {
         unsafe {
-            if virDomainResume(self.ptr) == -1 {
+            let ret = virDomainResume(self.ptr);
+            if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            return Ok(ret as u32);
         }
     }
 

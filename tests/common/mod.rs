@@ -55,7 +55,7 @@ pub fn clean(mut dom: Domain) {
     dom.free();
 }
 
-pub fn build_domain(conn: &Connect, name: &str, transient: bool) -> Domain {
+pub fn build_qemu_domain(conn: &Connect, name: &str, transient: bool) -> Domain {
     let name = format!("libvirt-rs-test-{}", name);
 
     if let Ok(dom) = Domain::lookup_by_name(&conn, &name) {
@@ -72,7 +72,45 @@ pub fn build_domain(conn: &Connect, name: &str, transient: bool) -> Domain {
                          <os>
                            <type>hvm</type>
                          </os>
-                       </domain>", name);
+                       </domain>",
+                      name);
+
+    let result: Result<Domain, Error>;
+    if transient {
+        result = Domain::create_xml(&conn, &xml, 0);
+    } else {
+        result = Domain::define_xml(&conn, &xml);
+    }
+
+    match result {
+        Ok(dom) => dom,
+        Err(e) => {
+            panic!("Build domain failed with code {}, message: {}",
+                   e.code,
+                   e.message)
+        }
+    }
+}
+
+pub fn build_test_domain(conn: &Connect, name: &str, transient: bool) -> Domain {
+    let name = format!("libvirt-rs-test-{}", name);
+
+    if let Ok(dom) = Domain::lookup_by_name(&conn, &name) {
+        clean(dom);
+    }
+
+    let xml = format!("<domain type=\"test\">
+		         <name>{}</name>
+                         <memory unit=\"KiB\">128</memory>
+                         <features>
+                           <acpi/>
+                           <apic/>
+                         </features>
+                         <os>
+                           <type>hvm</type>
+                         </os>
+                       </domain>",
+                      name);
 
     let result: Result<Domain, Error>;
     if transient {
