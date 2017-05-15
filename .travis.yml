@@ -33,3 +33,11 @@ install:
   - make
   - sudo make install
   - popd
+  - sudo libvirtd -d -l -f tests/libvirtd.conf
+  - sudo virtlogd -d || true
+  - sudo chmod a+rwx /var/run/libvirt/libvirt-sock*
+  - echo "pass" | sudo saslpasswd2 -p -a libvirt user
+
+script:
+  cargo test --verbose
+  cargo test --verbose -- --ignored

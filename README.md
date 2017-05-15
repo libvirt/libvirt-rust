@@ -22,14 +22,22 @@ The binding uses standard errors handling from Rust. Each method
 ## Testing/Exercises
 
 CI is executing tests automatically from libvirt 1.2.0 to 2.5.0. Using
-Rust from beta to nightly.
+Rust from stable, beta to nightly.
 
 * https://travis-ci.org/sahid/libvirt-rs
 
-For executing tests and other excerices
+For executing tests and other excerices.
 
 ```
-cargo test --verbose -- --nocapture
+cargo test --verbose --
+```
+
+Integration tests are using real connection for example
+integration_qemu is using a qemu:///system connection. They are all
+ignored by default.
+
+```
+cargo test --verbose -- --ignored
 ```
 
 For executing examples
