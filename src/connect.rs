@@ -439,7 +439,7 @@ impl Connect {
     ///
     /// match Connect::open("test:///default") {
     ///   Ok(mut conn) => {
-    ///       assert_eq!(0, conn.close().unwrap_or(-1));
+    ///       assert_eq!(Ok(0), conn.close());
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -471,7 +471,7 @@ impl Connect {
     ///
     /// match Connect::open_read_only("test:///default") {
     ///   Ok(mut conn) => {
-    ///     assert_eq!(0, conn.close().unwrap_or(-1));
+    ///     assert_eq!(Ok(0), conn.close());
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -496,7 +496,7 @@ impl Connect {
     /// let auth = ConnectAuth::new_default();
     /// match Connect::open_auth("test:///default", &auth, 0) {
     ///   Ok(mut conn) => {
-    ///       assert_eq!(0, conn.close().unwrap_or(-1));
+    ///       assert_eq!(Ok(0), conn.close());
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -672,7 +672,7 @@ impl Connect {
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     assert_eq!(0, conn.close().unwrap_or(-1));
+    ///     assert_eq!(Ok(0), conn.close());
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -708,7 +708,7 @@ impl Connect {
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     assert_eq!(0, conn.close().unwrap_or(-1));
+    ///     assert_eq!(Ok(0), conn.close());
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -744,7 +744,7 @@ impl Connect {
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     assert_eq!(0, conn.close().unwrap_or(-1));
+    ///     assert_eq!(Ok(0), conn.close());
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -812,7 +812,7 @@ impl Connect {
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     assert_eq!(0, conn.close().unwrap_or(-1));
+    ///     assert_eq!(Ok(0), conn.close());
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -988,7 +988,7 @@ impl Connect {
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     assert_eq!(0, conn.close().unwrap_or(-1));
+    ///     assert_eq!(Ok(0), conn.close());
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1024,7 +1024,7 @@ impl Connect {
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     assert_eq!(0, conn.close().unwrap_or(-1));
+    ///     assert_eq!(Ok(0), conn.close());
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1060,7 +1060,7 @@ impl Connect {
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     assert_eq!(0, conn.close().unwrap_or(-1));
+    ///     assert_eq!(Ok(0), conn.close());
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1096,7 +1096,7 @@ impl Connect {
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     assert_eq!(0, conn.close().unwrap_or(-1));
+    ///     assert_eq!(Ok(0), conn.close());
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1130,7 +1130,7 @@ impl Connect {
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     assert_eq!(0, conn.close().unwrap_or(-1));
+    ///     assert_eq!(Ok(0), conn.close());
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1158,7 +1158,7 @@ impl Connect {
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     assert_eq!(0, conn.close().unwrap_or(-1));
+    ///     assert_eq!(Ok(0), conn.close());
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1186,7 +1186,7 @@ impl Connect {
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     assert_eq!(0, conn.close().unwrap_or(-1));
+    ///     assert_eq!(Ok(0), conn.close());
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1214,7 +1214,7 @@ impl Connect {
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     assert_eq!(0, conn.close().unwrap_or(-1));
+    ///     assert_eq!(Ok(0), conn.close());
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1263,7 +1263,7 @@ impl Connect {
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     assert_eq!(0, conn.close().unwrap_or(-1));
+    ///     assert_eq!(Ok(0), conn.close());
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1291,7 +1291,7 @@ impl Connect {
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     assert_eq!(0, conn.close().unwrap_or(-1));
+    ///     assert_eq!(Ok(0), conn.close());
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1319,7 +1319,7 @@ impl Connect {
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     assert_eq!(0, conn.close().unwrap_or(-1));
+    ///     assert_eq!(Ok(0), conn.close());
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1347,7 +1347,7 @@ impl Connect {
     ///       Err(e) => panic!(
     ///         "failed with code {}, message: {}", e.code, e.message)
     ///     }
-    ///     assert_eq!(0, conn.close().unwrap_or(-1));
+    ///     assert_eq!(Ok(0), conn.close());
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
@@ -1378,7 +1378,7 @@ impl Connect {
     ///         Err(e) => panic!(
     ///           "failed with code {}, message: {}", e.code, e.message)
     ///       }
-    ///       assert_eq!(0, conn.close().unwrap_or(-1));
+    ///       assert_eq!(Ok(0), conn.close());
     ///   },
     ///   Err(e) => panic!(
     ///     "failed with code {}, message: {}", e.code, e.message)
