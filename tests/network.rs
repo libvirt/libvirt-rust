@@ -21,26 +21,41 @@ extern crate virt;
 mod common;
 
 use virt::connect::Connect;
-use virt::network::Network;
 
 
 #[test]
-fn exercices() {
-    match Connect::open("test:///default") {
-        Ok(mut conn) => {
-            let nets = conn.list_networks().unwrap_or(vec![]);
-            match Network::lookup_by_name(&conn, &nets[0]) {
-                Ok(network) => {
-                    assert!(0 != network.get_name().unwrap_or(String::new()).len());
-                    assert!(0 != network.get_uuid_string().unwrap_or(String::new()).len());
-                    assert!(0 != network.get_xml_desc(0).unwrap_or(String::new()).len());
-                }
-                Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
-            }
-            assert_eq!(0, conn.close().unwrap_or(-1));
-        }
-        Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
-    }
+fn test_create() {
+    let c = common::conn();
+    let n = common::build_network(&c, "wipes", false);
+    assert_eq!(Ok(0), n.create());
+    assert_eq!(Ok(String::from("libvirt-rs-test-wipes")), n.get_name());
+    assert!(0 != n.get_uuid_string().unwrap_or(String::new()).len());
+    assert!(0 != n.get_xml_desc(0).unwrap_or(String::new()).len());
+    common::clean_net(n);
+    common::close(c);
+}
+
+#[test]
+fn test_active() {
+    let c = common::conn();
+    let n = common::build_network(&c, "active", false);
+    assert_eq!(Ok(false), n.is_active());
+    assert_eq!(Ok(0), n.create());
+    assert_eq!(Ok(true), n.is_active());
+    common::clean_net(n);
+    common::close(c);
+}
+
+#[test]
+fn test_auto_start() {
+    let c = common::conn();
+    let n = common::build_network(&c, "autostart", false);
+    assert_eq!(Ok(0), n.create());
+    assert_eq!(Ok(false), n.get_autostart());
+    assert_eq!(Ok(0), n.set_autostart(true));
+    assert_eq!(Ok(true), n.get_autostart());
+    common::clean_net(n);
+    common::close(c);
 }
 
 #[test]
@@ -48,9 +63,5 @@ fn test_lookup_network_by_name() {
     let c = common::conn();
     let v = c.list_networks().unwrap_or(vec![]);
     assert!(0 < v.len(), "At least one network should exist");
-    match Network::lookup_by_name(&c, &v[0]) {
-        Ok(mut n) => n.free().unwrap_or(()),
-        Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
-    }
     common::close(c);
 }

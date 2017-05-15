@@ -43,7 +43,12 @@ extern "C" {
     fn virNetworkLookupByUUIDString(c: virConnectPtr,
                                     uuid: *const libc::c_char)
                                     -> sys::virNetworkPtr;
-    fn virNetworkCreate(c: virConnectPtr, flags: libc::c_uint) -> sys::virNetworkPtr;
+    fn virNetworkCreate(ptr: sys::virNetworkPtr) -> libc::c_int;
+    fn virNetworkDefineXML(c: virConnectPtr, xml: *const libc::c_char) -> sys::virNetworkPtr;
+    fn virNetworkCreateXML(c: virConnectPtr,
+                           xml: *const libc::c_char,
+                           flags: libc::c_uint)
+                           -> sys::virNetworkPtr;
     fn virNetworkDestroy(ptr: sys::virNetworkPtr) -> libc::c_int;
     fn virNetworkUndefine(ptr: sys::virNetworkPtr) -> libc::c_int;
     fn virNetworkFree(ptr: sys::virNetworkPtr) -> libc::c_int;
@@ -52,7 +57,7 @@ extern "C" {
     fn virNetworkGetUUIDString(ptr: sys::virNetworkPtr, uuiptr: *mut libc::c_char) -> libc::c_int;
     fn virNetworkGetXMLDesc(ptr: sys::virNetworkPtr, flags: libc::c_uint) -> *const libc::c_char;
     fn virNetworkGetBridgeName(ptr: sys::virNetworkPtr) -> *const libc::c_char;
-    fn virNetworkGetAutostart(ptr: sys::virNetworkPtr) -> libc::c_int;
+    fn virNetworkGetAutostart(ptr: sys::virNetworkPtr, autostart: *mut libc::c_int) -> libc::c_int;
     fn virNetworkSetAutostart(ptr: sys::virNetworkPtr, autostart: libc::c_uint) -> libc::c_int;
     fn virNetworkUpdate(ptr: sys::virNetworkPtr,
                         cmptr: libc::c_uint,
@@ -194,15 +199,38 @@ impl Network {
         }
     }
 
-    pub fn create(conn: &Connect, flags: NetworkXMLFlags) -> Result<Network, Error> {
+    pub fn create(&self) -> Result<u32, Error> {
         unsafe {
-            let ptr = virNetworkCreate(conn.as_ptr(), flags);
+            let ret = virNetworkCreate(self.ptr);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn define_xml(conn: &Connect, xml: &str) -> Result<Network, Error> {
+        unsafe {
+            let ptr = virNetworkDefineXML(conn.as_ptr(), string_to_c_chars!(xml));
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Network { ptr: ptr });
+            return Ok(Network::new(ptr));
         }
     }
+
+    pub fn create_xml(conn: &Connect, xml: &str, flags: u32) -> Result<Network, Error> {
+        unsafe {
+            let ptr = virNetworkCreateXML(conn.as_ptr(),
+                                          string_to_c_chars!(xml),
+                                          flags as libc::c_uint);
+            if ptr.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(Network::new(ptr));
+        }
+    }
+
 
     pub fn destroy(&self) -> Result<(), Error> {
         unsafe {
@@ -244,21 +272,22 @@ impl Network {
 
     pub fn get_autostart(&self) -> Result<bool, Error> {
         unsafe {
-            let ret = virNetworkGetAutostart(self.ptr);
+            let mut auto = 0;
+            let ret = virNetworkGetAutostart(self.ptr, &mut auto);
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret == 1);
+            return Ok(auto == 1);
         }
     }
 
-    pub fn set_autostart(&self, autostart: bool) -> Result<bool, Error> {
+    pub fn set_autostart(&self, autostart: bool) -> Result<u32, Error> {
         unsafe {
             let ret = virNetworkSetAutostart(self.ptr, autostart as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret == 1);
+            return Ok(ret as u32);
         }
     }
 

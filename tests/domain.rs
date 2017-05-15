@@ -148,5 +148,3 @@ fn test_pause_resume() {
     common::clean(d);
     common::close(c);
 }
-
-

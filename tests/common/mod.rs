@@ -21,6 +21,9 @@ extern crate virt;
 use virt::connect::Connect;
 use virt::domain::Domain;
 use virt::error::Error;
+use virt::interface::Interface;
+use virt::storage_pool::StoragePool;
+use virt::network::Network;
 
 
 pub fn conn() -> Connect {
@@ -53,6 +56,24 @@ pub fn clean(mut dom: Domain) {
     dom.destroy();
     dom.undefine();
     dom.free();
+}
+
+pub fn clean_iface(mut iface: Interface) {
+    iface.destroy();
+    iface.undefine();
+    iface.free();
+}
+
+pub fn clean_pool(mut pool: StoragePool) {
+    pool.destroy();
+    pool.undefine();
+    pool.free();
+}
+
+pub fn clean_net(mut net: Network) {
+    net.destroy();
+    net.undefine();
+    net.free();
 }
 
 pub fn build_qemu_domain(conn: &Connect, name: &str, transient: bool) -> Domain {
@@ -123,6 +144,118 @@ pub fn build_test_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
         Ok(dom) => dom,
         Err(e) => {
             panic!("Build domain failed with code {}, message: {}",
+                   e.code,
+                   e.message)
+        }
+    }
+}
+
+pub fn build_storage_pool(conn: &Connect, name: &str, transient: bool) -> StoragePool {
+    let name = format!("libvirt-rs-test-{}", name);
+
+    if let Ok(pool) = StoragePool::lookup_by_name(&conn, &name) {
+        clean_pool(pool);
+    }
+
+    let xml = format!("<pool type='dir'>
+                          <name>{}</name>
+                            <target>
+                              <path>/var/lib/libvirt/images</path>
+                            </target>
+                          </pool>",
+                      name);
+
+    let result: Result<StoragePool, Error>;
+    if transient {
+        result = StoragePool::create_xml(&conn, &xml, 0);
+    } else {
+        result = StoragePool::define_xml(&conn, &xml, 0);
+    }
+
+    match result {
+        Ok(pool) => pool,
+        Err(e) => {
+            panic!("Build storage pool failed with code {}, message: {}",
+                   e.code,
+                   e.message)
+        }
+    }
+}
+
+/*
+pub fn build_storage_vol(pool: &StoragePooln, name: &str, size: u64) -> StoragePool {
+    if let Ok(pool) = StoragePool::lookup_by_name(&conn, "default") {
+        return pool;
+    }
+
+    let xml = format!("<pool type='dir'>
+                          <name>{}</name>
+                            <target>
+                              <path>/var/lib/libvirt/images</path>
+                            </target>
+                          </pool>",
+                      "default");
+    match StoragePool::define_xml(&conn, &xml, 0) {
+        Ok(pool) => pool,
+        Err(e) => {
+            panic!("Build domain failed with code {}, message: {}",
+                   e.code,
+                   e.message)
+        }
+    }
+}
+*/
+
+pub fn build_network(conn: &Connect, name: &str, transient: bool) -> Network {
+    let name = format!("libvirt-rs-test-{}", name);
+
+    if let Ok(net) = Network::lookup_by_name(&conn, &name) {
+        clean_net(net);
+    }
+
+    let xml = format!("<network>
+                         <name>{}</name>
+                         <bridge name='testbr0'/>
+                         <forward/>
+                         <ip address='192.168.0.1' netmask='255.255.255.0'></ip>
+                       </network>",
+                      name);
+
+    let result: Result<Network, Error>;
+    if transient {
+        result = Network::create_xml(&conn, &xml, 0);
+    } else {
+        result = Network::define_xml(&conn, &xml);
+    }
+
+    match result {
+        Ok(net) => net,
+        Err(e) => {
+            panic!("Build storage pool failed with code {}, message: {}",
+                   e.code,
+                   e.message)
+        }
+    }
+}
+
+
+pub fn build_interface(conn: &Connect, name: &str) -> Interface {
+    let name = format!("libvirt-rs-test-{}", name);
+
+    if let Ok(iface) = Interface::lookup_by_name(&conn, &name) {
+        clean_iface(iface);
+    }
+
+    let xml = format!("<interface type='ethernet' name='{}'>
+                         <mac address='aa:bb:cc:dd:ee:ff'/>
+                       </interface>",
+                      name);
+
+    let result = Interface::define_xml(&conn, &xml, 0);
+    match result {
+        Ok(iface) => iface,
+        Err(e) => {
+            panic!("Build storage pool failed with code {}, message: {}",
                    e.code,
                    e.message)
         }

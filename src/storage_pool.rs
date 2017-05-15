@@ -38,6 +38,14 @@ pub mod sys {
 
 #[link(name = "virt")]
 extern "C" {
+    fn virStoragePoolDefineXML(c: virConnectPtr,
+                               xml: *const libc::c_char,
+                               flags: libc::c_uint)
+                               -> sys::virStoragePoolPtr;
+    fn virStoragePoolCreateXML(c: virConnectPtr,
+                               xml: *const libc::c_char,
+                               flags: libc::c_uint)
+                               -> sys::virStoragePoolPtr;
     fn virStoragePoolLookupByID(c: virConnectPtr, id: libc::c_int) -> sys::virStoragePoolPtr;
     fn virStoragePoolLookupByName(c: virConnectPtr,
                                   id: *const libc::c_char)
@@ -45,7 +53,8 @@ extern "C" {
     fn virStoragePoolLookupByUUIDString(c: virConnectPtr,
                                         uuid: *const libc::c_char)
                                         -> sys::virStoragePoolPtr;
-    fn virStoragePoolCreate(c: virConnectPtr, flags: libc::c_uint) -> sys::virStoragePoolPtr;
+    fn virStoragePoolCreate(ptr: sys::virStoragePoolPtr, flags: libc::c_uint) -> libc::c_int;
+    fn virStoragePoolBuild(ptr: sys::virStoragePoolPtr, flags: libc::c_uint) -> libc::c_int;
     fn virStoragePoolRefresh(ptr: sys::virStoragePoolPtr, flags: libc::c_uint) -> libc::c_int;
     fn virStoragePoolDestroy(ptr: sys::virStoragePoolPtr) -> libc::c_int;
     fn virStoragePoolUndefine(ptr: sys::virStoragePoolPtr) -> libc::c_int;
@@ -99,6 +108,33 @@ impl StoragePool {
                 return Err(Error::new());
             }
             return Ok(Connect::new(ptr));
+        }
+    }
+
+    pub fn define_xml(conn: &Connect, xml: &str, flags: u32) -> Result<StoragePool, Error> {
+        unsafe {
+            let ptr = virStoragePoolDefineXML(conn.as_ptr(),
+                                              string_to_c_chars!(xml),
+                                              flags as libc::c_uint);
+            if ptr.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(StoragePool::new(ptr));
+        }
+    }
+
+    pub fn create_xml(conn: &Connect,
+                      xml: &str,
+                      flags: StoragePoolCreateFlags)
+                      -> Result<StoragePool, Error> {
+        unsafe {
+            let ptr = virStoragePoolCreateXML(conn.as_ptr(),
+                                              string_to_c_chars!(xml),
+                                              flags as libc::c_uint);
+            if ptr.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(StoragePool::new(ptr));
         }
     }
 
@@ -162,13 +198,23 @@ impl StoragePool {
         }
     }
 
-    pub fn create(conn: &Connect, flags: StoragePoolCreateFlags) -> Result<StoragePool, Error> {
+    pub fn create(&self, flags: StoragePoolCreateFlags) -> Result<u32, Error> {
         unsafe {
-            let ptr = virStoragePoolCreate(conn.as_ptr(), flags);
-            if ptr.is_null() {
+            let ret = virStoragePoolCreate(self.ptr, flags);
+            if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(StoragePool::new(ptr));
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn build(&self, flags: u32) -> Result<u32, Error> {
+        unsafe {
+            let ret = virStoragePoolBuild(self.ptr, flags);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
         }
     }
 

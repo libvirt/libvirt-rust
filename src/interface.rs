@@ -60,9 +60,6 @@ extern "C" {
     fn virInterfaceGetXMLDesc(ptr: sys::virInterfacePtr,
                               flags: libc::c_uint)
                               -> *const libc::c_char;
-    fn virInterfaceGetUUIDString(ptr: sys::virInterfacePtr,
-                                 uuid: *mut libc::c_char)
-                                 -> libc::c_int;
     fn virInterfaceGetConnect(ptr: sys::virInterfacePtr) -> virConnectPtr;
 }
 
@@ -161,16 +158,6 @@ impl Interface {
         }
     }
 
-    pub fn get_uuid_string(&self) -> Result<String, Error> {
-        unsafe {
-            let mut uuid: [libc::c_char; 37] = [0; 37];
-            if virInterfaceGetUUIDString(self.ptr, uuid.as_mut_ptr()) == -1 {
-                return Err(Error::new());
-            }
-            return Ok(c_chars_to_string!(uuid.as_ptr()));
-        }
-    }
-
     pub fn get_mac_string(&self) -> Result<String, Error> {
         unsafe {
             let mac = virInterfaceGetMACString(self.ptr);
@@ -191,12 +178,13 @@ impl Interface {
         }
     }
 
-    pub fn create(&self, flags: InterfaceXMLFlags) -> Result<(), Error> {
+    pub fn create(&self, flags: InterfaceXMLFlags) -> Result<u32, Error> {
         unsafe {
-            if virInterfaceCreate(self.ptr, flags) == -1 {
+            let ret = virInterfaceCreate(self.ptr, flags);
+            if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            return Ok(ret as u32);
         }
     }
 
