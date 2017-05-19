@@ -20,7 +20,7 @@
 
 extern crate libc;
 
-use std::{str, ptr, mem, sync, clone};
+use std::{str, ptr, mem};
 
 use network::sys::virNetworkPtr;
 use interface::sys::virInterfacePtr;
@@ -412,7 +412,7 @@ impl ConnectAuth {
                               cbdata: *mut libc::c_void)
                               -> libc::c_int {
             unsafe {
-                let mut callback: ConnectAuthCallback = mem::transmute(cbdata);
+                let callback: ConnectAuthCallback = mem::transmute(cbdata);
                 let mut rcreds: Vec<ConnectCredential> = Vec::new();
                 for i in 0..ncred as isize {
                     let c = ConnectCredential::from_ptr(ccreds.offset(i));
