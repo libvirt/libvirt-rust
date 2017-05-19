@@ -20,7 +20,7 @@
 
 extern crate libc;
 
-use std::{str, ptr};
+use std::{str, ptr, mem, sync, clone};
 
 use network::sys::virNetworkPtr;
 use interface::sys::virInterfacePtr;
@@ -52,24 +52,30 @@ pub mod sys {
 
     #[allow(non_camel_case_types)]
     #[repr(C)]
-    pub struct virConnectCredential {}
+    pub struct virConnectCredential {
+        pub typed: libc::c_int,
+        pub prompt: *const libc::c_char,
+        pub challenge: *const libc::c_char,
+        pub defresult: *const libc::c_char,
+        pub result: *mut libc::c_char,
+        pub resultlen: libc::c_uint,
+    }
 
     #[allow(non_camel_case_types)]
     pub type virConnectCredentialPtr = *mut virConnectCredential;
 
     #[allow(non_camel_case_types)]
-    #[repr(C)]
-    pub struct virConnectAuthCallback {}
-
-    #[allow(non_camel_case_types)]
-    pub type virConnectAuthCallbackPtr = *mut virConnectAuthCallback;
+    pub type virConnectAuthCallbackPtr = unsafe extern "C" fn(virConnectCredentialPtr,
+                                                              libc::c_uint,
+                                                              *mut libc::c_void)
+                                                              -> i32;
 
     #[allow(non_camel_case_types)]
     #[repr(C)]
     pub struct virConnectAuth {
-        pub credtype: *mut libc::c_uint,
+        pub credtype: *mut libc::c_int,
         pub ncredtype: libc::c_uint,
-        pub cb: unsafe extern "C" fn(*mut virConnectCredential, u32, *mut libc::c_void) -> i32,
+        pub cb: virConnectAuthCallbackPtr,
         pub cbdata: *mut libc::c_void,
     }
 
@@ -102,7 +108,7 @@ extern "C" {
     fn virConnectOpen(uri: *const libc::c_char) -> sys::virConnectPtr;
     fn virConnectOpenReadOnly(uri: *const libc::c_char) -> sys::virConnectPtr;
     fn virConnectOpenAuth(uri: *const libc::c_char,
-                          auth: *mut sys::virConnectAuth,
+                          auth: sys::virConnectAuthPtr,
                           flags: libc::c_uint)
                           -> sys::virConnectPtr;
     fn virConnectClose(ptr: sys::virConnectPtr) -> libc::c_int;
@@ -331,7 +337,7 @@ pub type BaselineCPUFlags = self::libc::c_int;
 pub const VIR_CONNECT_BASELINE_CPU_EXPAND_FEATURES: BaselineCPUFlags = (1 << 0);
 pub const VIR_CONNECT_BASELINE_CPU_MIGRATABLE: BaselineCPUFlags = (1 << 1);
 
-pub type ConnectCredentialType = self::libc::c_uint;
+pub type ConnectCredentialType = self::libc::c_int;
 pub const VIR_CRED_USERNAME: ConnectCredentialType = 1;
 pub const VIR_CRED_AUTHNAME: ConnectCredentialType = 2;
 pub const VIR_CRED_LANGUAGE: ConnectCredentialType = 3;
@@ -353,38 +359,87 @@ pub struct NodeInfo {
     pub threads: u32,
 }
 
-pub struct ConnectAuth {
-    ptr: *mut sys::virConnectAuth,
+// TODO(sahid): should support closure
+pub type ConnectAuthCallback = fn(creds: &mut Vec<ConnectCredential>);
+
+pub struct ConnectCredential {
+    pub typed: i32,
+    pub prompt: String,
+    pub challenge: String,
+    pub def_result: String,
+    pub result: String,
+
+    // TODO(sahid): I would like this field hidden and set
+    // automatically
+    pub result_set: bool,
 }
 
-#[allow(unused_variables)]
-extern "C" fn connect_auth_callback_default(cred: sys::virConnectCredentialPtr,
-                                            ncred: libc::c_uint,
-                                            cbdata: *mut libc::c_void)
-                                            -> libc::c_int {
-    // TODO(sahid): needs to provide what we have in libvirt.
-    return 0;
+impl ConnectCredential {
+    pub fn from_ptr(cred: sys::virConnectCredentialPtr) -> ConnectCredential {
+        unsafe {
+            let mut default: String = String::from("");
+            if !(*cred).defresult.is_null() {
+                default = c_chars_to_string!((*cred).defresult);
+            }
+            ConnectCredential {
+                typed: (*cred).typed,
+                prompt: c_chars_to_string!((*cred).prompt),
+                challenge: c_chars_to_string!((*cred).challenge),
+                def_result: default,
+                result: String::from(""),
+                result_set: false,
+            }
+        }
+    }
+}
+
+pub struct ConnectAuth {
+    creds: Vec<ConnectCredentialType>,
+    callback: ConnectAuthCallback,
 }
 
 impl ConnectAuth {
-    pub fn as_ptr(&self) -> *mut sys::virConnectAuth {
-        self.ptr
+    pub fn new(creds: Vec<ConnectCredentialType>, callback: ConnectAuthCallback) -> ConnectAuth {
+        ConnectAuth {
+            creds: creds,
+            callback: callback,
+        }
     }
 
-    pub fn new_default() -> ConnectAuth {
-        let auth = &mut sys::virConnectAuth {
-                            credtype: [VIR_CRED_AUTHNAME,
-                                       VIR_CRED_ECHOPROMPT,
-                                       VIR_CRED_REALM,
-                                       VIR_CRED_PASSPHRASE,
-                                       VIR_CRED_NOECHOPROMPT,
-                                       VIR_CRED_EXTERNAL]
-                                    .as_mut_ptr(),
-                            ncredtype: 6,
-                            cb: connect_auth_callback_default,
-                            cbdata: ptr::null_mut(),
-                        };
-        ConnectAuth { ptr: auth }
+    fn to_cstruct(&mut self) -> sys::virConnectAuth {
+        extern "C" fn wrapper(ccreds: sys::virConnectCredentialPtr,
+                              ncred: libc::c_uint,
+                              cbdata: *mut libc::c_void)
+                              -> libc::c_int {
+            unsafe {
+                let mut callback: ConnectAuthCallback = mem::transmute(cbdata);
+                let mut rcreds: Vec<ConnectCredential> = Vec::new();
+                for i in 0..ncred as isize {
+                    let c = ConnectCredential::from_ptr(ccreds.offset(i));
+                    rcreds.push(c);
+                }
+                callback(&mut rcreds);
+                for i in 0..ncred as isize {
+                    if rcreds[i as usize].result_set {
+                        (*ccreds.offset(i)).resultlen = rcreds[i as usize].result.len() as
+                                                        libc::c_uint;
+                        (*ccreds.offset(i)).result =
+                            string_to_mut_c_chars!(rcreds[i as usize].result.clone());
+
+                    }
+                }
+            }
+            0
+        }
+
+        unsafe {
+            sys::virConnectAuth {
+                credtype: &mut self.creds[0],
+                ncredtype: self.creds.len() as u32,
+                cb: wrapper,
+                cbdata: mem::transmute(self.callback),
+            }
+        }
     }
 }
 
@@ -487,26 +542,13 @@ impl Connect {
         }
     }
 
-    /// # Examples
-    ///
-    /// ```
-    /// use virt::connect::Connect;
-    /// use virt::connect::ConnectAuth;
-    ///
-    /// let auth = ConnectAuth::new_default();
-    /// match Connect::open_auth("test:///default", &auth, 0) {
-    ///   Ok(mut conn) => {
-    ///       assert_eq!(Ok(0), conn.close());
-    ///   },
-    ///   Err(e) => panic!(
-    ///     "failed with code {}, message: {}", e.code, e.message)
-    /// }
-    /// ```
-    pub fn open_auth(uri: &str, auth: &ConnectAuth, flags: ConnectFlags) -> Result<Connect, Error> {
+    pub fn open_auth(uri: &str,
+                     auth: &mut ConnectAuth,
+                     flags: ConnectFlags)
+                     -> Result<Connect, Error> {
         unsafe {
-            let c = virConnectOpenAuth(string_to_c_chars!(uri),
-                                       auth.as_ptr(),
-                                       flags as libc::c_uint);
+            let mut cauth = auth.to_cstruct();
+            let c = virConnectOpenAuth(string_to_c_chars!(uri), &mut cauth, flags as libc::c_uint);
             if c.is_null() {
                 return Err(Error::new());
             }

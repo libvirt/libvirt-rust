@@ -82,6 +82,10 @@ macro_rules! string_to_c_chars {
     ($x:expr) => (::std::ffi::CString::new($x).unwrap().as_ptr())
 }
 
+macro_rules! string_to_mut_c_chars {
+    ($x:expr) => (::std::ffi::CString::new($x).unwrap().into_raw())
+}
+
 pub mod typedparam;
 pub mod connect;
 pub mod domain;

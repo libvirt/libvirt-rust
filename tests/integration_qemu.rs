@@ -23,6 +23,7 @@ extern crate virt;
 
 mod common;
 
+use virt::connect::{Connect, ConnectAuth, ConnectCredential};
 
 #[test]
 #[ignore]
@@ -41,9 +42,73 @@ fn test_create_domain_with_flags() {
 #[ignore]
 fn test_create_storage_pool() {
     let c = common::qemu_conn();
-    let mut p = common::build_storage_pool(&c, "create", false);
+    let p = common::build_storage_pool(&c, "create", false);
     assert_eq!(Ok(0), p.create(0));
     assert_eq!(Ok(String::from("libvirt-rs-test-create")), p.get_name());
     common::clean_pool(p);
     common::close(c);
+}
+
+#[test]
+#[ignore]
+fn test_connection_with_auth() {
+    fn callback(creds: &mut Vec<ConnectCredential>) {
+        for cred in creds {
+            match cred.typed {
+                ::virt::connect::VIR_CRED_AUTHNAME => {
+                    cred.result = String::from("user");
+                    cred.result_set = true;
+                }
+                ::virt::connect::VIR_CRED_PASSPHRASE => {
+                    cred.result = String::from("pass");
+                    cred.result_set = true;
+                }
+                _ => {
+                    panic!("Should not be here...");
+                }
+            }
+        }
+    };
+
+    let mut auth = ConnectAuth::new(vec![::virt::connect::VIR_CRED_AUTHNAME,
+                                         ::virt::connect::VIR_CRED_PASSPHRASE],
+                                    callback);
+    match Connect::open_auth("test+tcp://127.0.0.1/default", &mut auth, 0) {
+        Ok(c) => common::close(c),
+        Err(e) => {
+            panic!("open_auth did not work: code {}, message: {}",
+                   e.code,
+                   e.message)
+        }
+    }
+}
+
+
+#[test]
+#[ignore]
+fn test_connection_with_auth_wrong() {
+    fn callback(creds: &mut Vec<ConnectCredential>) {
+        for cred in creds {
+            match cred.typed {
+                ::virt::connect::VIR_CRED_AUTHNAME => {
+                    cred.result = String::from("user");
+                    cred.result_set = true;
+                }
+                ::virt::connect::VIR_CRED_PASSPHRASE => {
+                    cred.result = String::from("passwrong");
+                    cred.result_set = true;
+                }
+                _ => {
+                    panic!("Should not be here...");
+                }
+            }
+        }
+    };
+
+    let mut auth = ConnectAuth::new(vec![::virt::connect::VIR_CRED_AUTHNAME,
+                                         ::virt::connect::VIR_CRED_PASSPHRASE],
+                                    callback);
+    if Connect::open_auth("test+tcp://127.0.0.1/default", &mut auth, 0).is_ok() {
+        panic!("open_auth did not work: code {}, message:");
+    }
 }
