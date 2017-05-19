@@ -184,10 +184,10 @@ extern "C" {
                          reason: *mut libc::c_int,
                          flags: libc::c_uint)
                          -> libc::c_int;
-    fn virDomainGetOSType(ptr: sys::virDomainPtr) -> *const libc::c_char;
-    fn virDomainGetHostname(ptr: sys::virDomainPtr, flags: libc::c_uint) -> *const libc::c_char;
+    fn virDomainGetOSType(ptr: sys::virDomainPtr) -> *mut libc::c_char;
+    fn virDomainGetHostname(ptr: sys::virDomainPtr, flags: libc::c_uint) -> *mut libc::c_char;
     fn virDomainGetUUIDString(ptr: sys::virDomainPtr, uuid: *mut libc::c_char) -> libc::c_int;
-    fn virDomainGetXMLDesc(ptr: sys::virDomainPtr, flags: libc::c_uint) -> *const libc::c_char;
+    fn virDomainGetXMLDesc(ptr: sys::virDomainPtr, flags: libc::c_uint) -> *mut libc::c_char;
     fn virDomainGetAutostart(ptr: sys::virDomainPtr) -> libc::c_int;
     fn virDomainSetAutostart(ptr: sys::virDomainPtr, autostart: libc::c_uint) -> libc::c_int;
     fn virDomainGetID(ptr: sys::virDomainPtr) -> libc::c_uint;
@@ -313,7 +313,7 @@ extern "C" {
     fn virDomainSaveImageGetXMLDesc(ptr: virConnectPtr,
                                     file: *const libc::c_char,
                                     flags: libc::c_uint)
-                                    -> *const libc::c_char;
+                                    -> *mut libc::c_char;
     fn virDomainSaveImageDefineXML(ptr: virConnectPtr,
                                    file: *const libc::c_char,
                                    dxml: *const libc::c_char,
@@ -682,7 +682,7 @@ impl Domain {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n));
+            return Ok(c_chars_to_string!(n, nofree));
         }
     }
 
@@ -712,7 +712,7 @@ impl Domain {
             if virDomainGetUUIDString(self.ptr, uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(uuid.as_ptr()));
+            return Ok(c_chars_to_string!(uuid.as_ptr(), nofree));
         }
     }
 

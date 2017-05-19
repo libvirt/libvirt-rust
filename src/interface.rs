@@ -57,9 +57,7 @@ extern "C" {
     fn virInterfaceIsActive(ptr: sys::virInterfacePtr) -> libc::c_int;
     fn virInterfaceGetName(ptr: sys::virInterfacePtr) -> *const libc::c_char;
     fn virInterfaceGetMACString(ptr: sys::virInterfacePtr) -> *const libc::c_char;
-    fn virInterfaceGetXMLDesc(ptr: sys::virInterfacePtr,
-                              flags: libc::c_uint)
-                              -> *const libc::c_char;
+    fn virInterfaceGetXMLDesc(ptr: sys::virInterfacePtr, flags: libc::c_uint) -> *mut libc::c_char;
     fn virInterfaceGetConnect(ptr: sys::virInterfacePtr) -> virConnectPtr;
 }
 
@@ -154,7 +152,7 @@ impl Interface {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n));
+            return Ok(c_chars_to_string!(n, nofree));
         }
     }
 
@@ -164,7 +162,7 @@ impl Interface {
             if mac.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(mac));
+            return Ok(c_chars_to_string!(mac, nofree));
         }
     }
 

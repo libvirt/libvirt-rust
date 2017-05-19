@@ -55,8 +55,8 @@ extern "C" {
     fn virNetworkIsActive(ptr: sys::virNetworkPtr) -> libc::c_int;
     fn virNetworkGetName(ptr: sys::virNetworkPtr) -> *const libc::c_char;
     fn virNetworkGetUUIDString(ptr: sys::virNetworkPtr, uuiptr: *mut libc::c_char) -> libc::c_int;
-    fn virNetworkGetXMLDesc(ptr: sys::virNetworkPtr, flags: libc::c_uint) -> *const libc::c_char;
-    fn virNetworkGetBridgeName(ptr: sys::virNetworkPtr) -> *const libc::c_char;
+    fn virNetworkGetXMLDesc(ptr: sys::virNetworkPtr, flags: libc::c_uint) -> *mut libc::c_char;
+    fn virNetworkGetBridgeName(ptr: sys::virNetworkPtr) -> *mut libc::c_char;
     fn virNetworkGetAutostart(ptr: sys::virNetworkPtr, autostart: *mut libc::c_int) -> libc::c_int;
     fn virNetworkSetAutostart(ptr: sys::virNetworkPtr, autostart: libc::c_uint) -> libc::c_int;
     fn virNetworkUpdate(ptr: sys::virNetworkPtr,
@@ -165,7 +165,7 @@ impl Network {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n));
+            return Ok(c_chars_to_string!(n, nofree));
         }
     }
 
@@ -175,7 +175,7 @@ impl Network {
             if virNetworkGetUUIDString(self.ptr, uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(uuid.as_ptr()));
+            return Ok(c_chars_to_string!(uuid.as_ptr(), nofree));
         }
     }
 

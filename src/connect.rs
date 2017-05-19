@@ -113,12 +113,12 @@ extern "C" {
                           -> sys::virConnectPtr;
     fn virConnectClose(ptr: sys::virConnectPtr) -> libc::c_int;
     fn virConnectGetVersion(ptr: sys::virConnectPtr, hyver: *mut libc::c_ulong) -> libc::c_int;
-    fn virConnectGetHostname(ptr: sys::virConnectPtr) -> *const libc::c_char;
-    fn virConnectGetCapabilities(ptr: sys::virConnectPtr) -> *const libc::c_char;
+    fn virConnectGetHostname(ptr: sys::virConnectPtr) -> *mut libc::c_char;
+    fn virConnectGetCapabilities(ptr: sys::virConnectPtr) -> *mut libc::c_char;
     fn virConnectGetLibVersion(ptr: sys::virConnectPtr, ver: *mut libc::c_ulong) -> libc::c_int;
     fn virConnectGetType(ptr: sys::virConnectPtr) -> *const libc::c_char;
-    fn virConnectGetURI(ptr: sys::virConnectPtr) -> *const libc::c_char;
-    fn virConnectGetSysinfo(ptr: sys::virConnectPtr, flags: libc::c_uint) -> *const libc::c_char;
+    fn virConnectGetURI(ptr: sys::virConnectPtr) -> *mut libc::c_char;
+    fn virConnectGetSysinfo(ptr: sys::virConnectPtr, flags: libc::c_uint) -> *mut libc::c_char;
     fn virConnectIsAlive(ptr: sys::virConnectPtr) -> libc::c_int;
     fn virConnectIsEncrypted(ptr: sys::virConnectPtr) -> libc::c_int;
     fn virConnectIsSecure(ptr: sys::virConnectPtr) -> libc::c_int;
@@ -379,12 +379,12 @@ impl ConnectCredential {
         unsafe {
             let mut default: String = String::from("");
             if !(*cred).defresult.is_null() {
-                default = c_chars_to_string!((*cred).defresult);
+                default = c_chars_to_string!((*cred).defresult, nofree);
             }
             ConnectCredential {
                 typed: (*cred).typed,
-                prompt: c_chars_to_string!((*cred).prompt),
-                challenge: c_chars_to_string!((*cred).challenge),
+                prompt: c_chars_to_string!((*cred).prompt, nofree),
+                challenge: c_chars_to_string!((*cred).challenge, nofree),
                 def_result: default,
                 result: String::from(""),
                 result_set: false,
@@ -615,7 +615,7 @@ impl Connect {
             if t.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(t));
+            return Ok(c_chars_to_string!(t, nofree));
         }
     }
 
@@ -885,6 +885,8 @@ impl Connect {
             if size == -1 {
                 return Err(Error::new());
             }
+
+            mem::forget(domains);
 
             let mut array: Vec<Domain> = Vec::new();
             for x in 0..size as isize {
@@ -1477,7 +1479,7 @@ impl Connect {
                 return Err(Error::new());
             }
             return Ok(NodeInfo {
-                          model: c_chars_to_string!((*pinfo).model.as_ptr()),
+                          model: c_chars_to_string!((*pinfo).model.as_ptr(), nofree),
                           memory: (*pinfo).memory as u64,
                           cpus: (*pinfo).cpus as u32,
                           mhz: (*pinfo).mhz as u32,

@@ -182,11 +182,11 @@ impl Secret {
 
     pub fn get_uuid_string(&self) -> Result<String, Error> {
         unsafe {
-            let uuid: *mut libc::c_char = ptr::null_mut();
-            if virSecretGetUUIDString(self.ptr, uuid) == -1 {
+            let mut uuid: [libc::c_char; 37] = [0; 37];
+            if virSecretGetUUIDString(self.ptr, uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(uuid));
+            return Ok(c_chars_to_string!(uuid.as_ptr(), nofree));
         }
     }
 

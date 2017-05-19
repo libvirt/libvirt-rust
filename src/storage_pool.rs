@@ -64,7 +64,7 @@ extern "C" {
     fn virStoragePoolGetName(ptr: sys::virStoragePoolPtr) -> *const libc::c_char;
     fn virStoragePoolGetXMLDesc(ptr: sys::virStoragePoolPtr,
                                 flags: libc::c_uint)
-                                -> *const libc::c_char;
+                                -> *mut libc::c_char;
     fn virStoragePoolGetUUIDString(ptr: sys::virStoragePoolPtr,
                                    uuid: *mut libc::c_char)
                                    -> libc::c_int;
@@ -174,7 +174,7 @@ impl StoragePool {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n));
+            return Ok(c_chars_to_string!(n, nofree));
         }
     }
 
@@ -184,7 +184,7 @@ impl StoragePool {
             if virStoragePoolGetUUIDString(self.ptr, uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(uuid.as_ptr()));
+            return Ok(c_chars_to_string!(uuid.as_ptr(), nofree));
         }
     }
 
@@ -266,12 +266,13 @@ impl StoragePool {
         }
     }
 
-    pub fn refresh(&self, flags: u32) -> Result<(), Error> {
+    pub fn refresh(&self, flags: u32) -> Result<u32, Error> {
         unsafe {
-            if virStoragePoolRefresh(self.ptr, flags as libc::c_uint) == -1 {
+            let ret = virStoragePoolRefresh(self.ptr, flags as libc::c_uint);
+            if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            return Ok(ret as u32);
         }
     }
 }

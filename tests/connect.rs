@@ -185,14 +185,11 @@ fn test_list_all_domains() {
     let c = common::conn();
     let v = c.list_all_domains(0).unwrap_or(vec![]);
     assert!(0 < v.len(), "At least one domain should exist");
-    for mut dom in v {
-        assert!("" != dom.get_name().unwrap_or(String::new()));
-        dom.free().unwrap_or(());
-    }
+    drop(v);
     common::close(c);
 }
 
-/* Travis is failing on this test 
+/* Travis is failing on this test
 #[test]
 fn test_get_cpu_models_names() {
     let c = common::conn();

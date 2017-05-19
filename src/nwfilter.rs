@@ -48,7 +48,7 @@ extern "C" {
     fn virNWFilterFree(ptr: sys::virNWFilterPtr) -> libc::c_int;
     fn virNWFilterGetName(ptr: sys::virNWFilterPtr) -> *const libc::c_char;
     fn virNWFilterGetUUIDString(ptr: sys::virNWFilterPtr, uuid: *mut libc::c_char) -> libc::c_int;
-    fn virNWFilterGetXMLDesc(ptr: sys::virNWFilterPtr, flags: libc::c_uint) -> *const libc::c_char;
+    fn virNWFilterGetXMLDesc(ptr: sys::virNWFilterPtr, flags: libc::c_uint) -> *mut libc::c_char;
 }
 
 pub struct NWFilter {
@@ -107,7 +107,7 @@ impl NWFilter {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n));
+            return Ok(c_chars_to_string!(n, nofree));
         }
     }
 
@@ -117,7 +117,7 @@ impl NWFilter {
             if virNWFilterGetUUIDString(self.ptr, uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(uuid.as_ptr()));
+            return Ok(c_chars_to_string!(uuid.as_ptr(), nofree));
         }
     }
 

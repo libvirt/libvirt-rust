@@ -48,9 +48,10 @@ extern "C" {
     fn virNodeDeviceDestroy(ptr: sys::virNodeDevicePtr) -> libc::c_int;
     fn virNodeDeviceFree(ptr: sys::virNodeDevicePtr) -> libc::c_int;
     fn virNodeDeviceGetName(ptr: sys::virNodeDevicePtr) -> *const libc::c_char;
+    fn virNodeDeviceGetParent(ptr: sys::virNodeDevicePtr) -> *const libc::c_char;
     fn virNodeDeviceGetXMLDesc(ptr: sys::virNodeDevicePtr,
                                flags: libc::c_uint)
-                               -> *const libc::c_char;
+                               -> *mut libc::c_char;
     fn virNodeDeviceGetUUIDString(ptr: sys::virNodeDevicePtr,
                                   uuid: *mut libc::c_char)
                                   -> libc::c_int;
@@ -112,7 +113,17 @@ impl NodeDevice {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n));
+            return Ok(c_chars_to_string!(n, nofree));
+        }
+    }
+
+    pub fn get_parent(&self) -> Result<String, Error> {
+        unsafe {
+            let n = virNodeDeviceGetParent(self.ptr);
+            if n.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(c_chars_to_string!(n, nofree));
         }
     }
 
@@ -122,7 +133,7 @@ impl NodeDevice {
             if virNodeDeviceGetUUIDString(self.ptr, uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(uuid.as_ptr()));
+            return Ok(c_chars_to_string!(uuid.as_ptr(), nofree));
         }
     }
 

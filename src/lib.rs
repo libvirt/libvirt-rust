@@ -75,7 +75,16 @@
 
 
 macro_rules! c_chars_to_string {
-    ($x:expr) => (::std::ffi::CStr::from_ptr($x).to_string_lossy().into_owned())
+    ($x:expr) => {{
+        let ret = ::std::ffi::CStr::from_ptr($x).to_string_lossy().into_owned();
+        libc::free($x as *mut libc::c_void);
+        ret
+    }};
+
+    ($x:expr, nofree) => {{
+        ::std::ffi::CStr::from_ptr($x).to_string_lossy().into_owned()
+    }};
+
 }
 
 macro_rules! string_to_c_chars {
