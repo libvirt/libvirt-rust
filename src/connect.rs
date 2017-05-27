@@ -443,6 +443,7 @@ impl ConnectAuth {
     }
 }
 
+#[derive(Debug)]
 pub struct Connect {
     pub ptr: sys::virConnectPtr,
 }
