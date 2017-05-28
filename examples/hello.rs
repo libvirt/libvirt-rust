@@ -77,11 +77,17 @@ fn show_domains(conn: &Connect) -> Result<(), Error> {
                     }
                     if let Ok(memtune) = dom.get_memory_parameters(0) {
                         println!("Memory tune:");
-                        println!("    Hard limit: {}", memtune.hard_limit.unwrap_or(0));
-                        println!("    Soft limit: {}", memtune.soft_limit.unwrap_or(0));
-                        println!("    min guarantee: {}", memtune.min_guarantee.unwrap_or(0));
-                        println!("    swap hard limit: {}",
+                        println!("    Hard Limit: {}", memtune.hard_limit.unwrap_or(0));
+                        println!("    Soft Limit: {}", memtune.soft_limit.unwrap_or(0));
+                        println!("    Min Guarantee: {}", memtune.min_guarantee.unwrap_or(0));
+                        println!("    Swap Hard Limit: {}",
                                  memtune.swap_hard_limit.unwrap_or(0));
+                    }
+                    if let Ok(numa) = dom.get_numa_parameters(0) {
+                        println!("NUMA:");
+                        println!("    Node Set: {}",
+                                 numa.node_set.unwrap_or(String::from("")));
+                        println!("    Mode: {}", numa.mode.unwrap_or(0));
                     }
                 }
             }

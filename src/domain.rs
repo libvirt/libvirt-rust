@@ -372,6 +372,16 @@ extern "C" {
                                     nparams: libc::c_int,
                                     flags: libc::c_uint)
                                     -> libc::c_int;
+    fn virDomainGetNumaParameters(ptr: sys::virDomainPtr,
+                                  params: virTypedParameterPtr,
+                                  nparams: *mut libc::c_int,
+                                  flags: libc::c_uint)
+                                  -> libc::c_int;
+    fn virDomainSetNumaParameters(ptr: sys::virDomainPtr,
+                                  params: virTypedParameterPtr,
+                                  nparams: libc::c_int,
+                                  flags: libc::c_uint)
+                                  -> libc::c_int;
     fn virDomainMigrate(ptr: sys::virDomainPtr,
                         dconn: virConnectPtr,
                         flags: libc::c_uint,
@@ -467,7 +477,7 @@ pub const VIR_DOMAIN_SAVE_BYPASS_CACHE: DomainSaveRestoreFlags = 1 << 0;
 pub const VIR_DOMAIN_SAVE_RUNNING: DomainSaveRestoreFlags = 1 << 1;
 pub const VIR_DOMAIN_SAVE_PAUSED: DomainSaveRestoreFlags = 1 << 2;
 
-pub type DomainNumatuneMemMode = self::libc::c_uint;
+pub type DomainNumatuneMemMode = self::libc::c_int;
 pub const VIR_DOMAIN_NUMATUNE_MEM_STRICT: DomainNumatuneMemMode = 0;
 pub const VIR_DOMAIN_NUMATUNE_MEM_PREFERRED: DomainNumatuneMemMode = 1;
 pub const VIR_DOMAIN_NUMATUNE_MEM_INTERLEAVE: DomainNumatuneMemMode = 2;
@@ -552,7 +562,37 @@ impl MemoryParameters {
                     "soft_limit" => ret.soft_limit = Some(param.value as u64),
                     "min_guarantee" => ret.min_guarantee = Some(param.value as u64),
                     "swap_hard_limit" => ret.swap_hard_limit = Some(param.value as u64),
-                    _ => panic!("Field not implemented"),
+                    unknow => panic!("Field not implemented for MemoryParameters, {:?}", unknow),
+                }
+            }
+            ret
+        }
+    }
+}
+
+#[derive(Clone)]
+pub struct NUMAParameters {
+    pub node_set: Option<String>,
+    pub mode: Option<DomainNumatuneMemMode>,
+}
+
+impl NUMAParameters {
+    pub fn new() -> NUMAParameters {
+        NUMAParameters {
+            node_set: None,
+            mode: None,
+        }
+    }
+    pub fn from_vec(vec: Vec<virTypedParameter>) -> NUMAParameters {
+        unsafe {
+            let mut ret = NUMAParameters::new();
+            for param in vec {
+                match str::from_utf8(CStr::from_ptr(param.field.as_ptr()).to_bytes()).unwrap() {
+                    "numa_nodeset" => {
+                        ret.node_set = Some(c_chars_to_string!(param.value as *mut libc::c_char))
+                    }
+                    "numa_mode" => ret.mode = Some(param.value as libc::c_int),
+                    unknow => panic!("Field not implemented for NUMAParameters, {:?}", unknow),
                 }
             }
             ret
@@ -1643,6 +1683,67 @@ impl Domain {
                 return Err(Error::new());
             }
             return Ok(Domain::new(ptr));
+        }
+    }
+
+    pub fn get_numa_parameters(&self, flags: u32) -> Result<NUMAParameters, Error> {
+        unsafe {
+            let mut nparams: libc::c_int = 0;
+            let ret = virDomainGetNumaParameters(self.ptr,
+                                                 ptr::null_mut(),
+                                                 &mut nparams,
+                                                 flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            let mut params: Vec<virTypedParameter> =
+                vec![
+                virTypedParameter::default(); nparams as usize];
+            let ret = virDomainGetNumaParameters(self.ptr,
+                                                 &mut params[0],
+                                                 &mut nparams,
+                                                 flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            Ok(NUMAParameters::from_vec(params))
+        }
+    }
+
+    pub fn set_numa_parameters(&self, params: NUMAParameters, flags: u32) -> Result<u32, Error> {
+        unsafe {
+            fn to_arr(name: &str) -> [libc::c_char; 80] {
+                let mut field: [libc::c_char; 80] = [0; 80];
+                for (a, c) in field.iter_mut().zip(name.as_bytes()) {
+                    *a = *c as i8
+                }
+                field
+            }
+
+            let mut cparams: Vec<virTypedParameter> = Vec::new();
+            if params.node_set.is_some() {
+                cparams.push(virTypedParameter {
+                                 field: to_arr("numa_nodeset\0"),
+                                 typed: ::typedparam::VIR_TYPED_PARAM_STRING,
+                                 value: string_to_mut_c_chars!(params.node_set.unwrap()) as u64,
+                             })
+            }
+            if params.mode.is_some() {
+                cparams.push(virTypedParameter {
+                                 field: to_arr("numa_mode\0"),
+                                 typed: ::typedparam::VIR_TYPED_PARAM_INT,
+                                 value: params.mode.unwrap() as u64,
+                             })
+            }
+
+            let ret = virDomainSetNumaParameters(self.ptr,
+                                                 &mut cparams[0],
+                                                 cparams.len() as libc::c_int,
+                                                 flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            Ok(ret as u32)
         }
     }
 }
