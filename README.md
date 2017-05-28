@@ -58,7 +58,11 @@ and enter "pass" as the password.
 
 ### To execute examples
 
-`cargo run --example hello -- test:///default` # Or an other URI
+```
+# cargo run --example hello
+# cargo run --example migrate -- qemu:///system tcp+qemu://192.168.0.1/system myguest
+
+```
 
 ## Contributing
 
