@@ -57,6 +57,7 @@ pub const VIR_STREAM_EVENT_WRITABLE: StreamEventType = (1 << 1);
 pub const VIR_STREAM_EVENT_ERROR: StreamEventType = (1 << 2);
 pub const VIR_STREAM_EVENT_HANGUP: StreamEventType = (1 << 3);
 
+#[derive(Debug)]
 pub struct Stream {
     ptr: sys::virStreamPtr,
 }

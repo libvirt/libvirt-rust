@@ -99,6 +99,7 @@ pub const VIR_NETWORK_UPDATE_AFFECT_CURRENT: NetworkUpdateFlags = 0;
 pub const VIR_NETWORK_UPDATE_AFFECT_LIVE: NetworkUpdateFlags = 1 << 0;
 pub const VIR_NETWORK_UPDATE_AFFECT_CONFIG: NetworkUpdateFlags = 1 << 1;
 
+#[derive(Debug)]
 pub struct Network {
     ptr: sys::virNetworkPtr,
 }

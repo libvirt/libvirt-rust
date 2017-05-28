@@ -65,6 +65,7 @@ extern "C" {
 pub type NodeDeviceXMLFlags = self::libc::c_uint;
 pub const VIR_INTERFACE_XML_INACTIVE: NodeDeviceXMLFlags = 1 << 0;
 
+#[derive(Debug)]
 pub struct NodeDevice {
     pub ptr: sys::virNodeDevicePtr,
 }

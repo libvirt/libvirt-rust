@@ -80,7 +80,7 @@ pub const STORAGE_POOL_CREATE_WITH_BUILD: StoragePoolCreateFlags = 1 << 0;
 pub const STORAGE_POOL_CREATE_WITH_BUILD_OVERWRITE: StoragePoolCreateFlags = 1 << 1;
 pub const STORAGE_POOL_CREATE_WITH_BUILD_NO_OVERWRITE: StoragePoolCreateFlags = 1 << 2;
 
-
+#[derive(Debug)]
 pub struct StoragePool {
     ptr: sys::virStoragePoolPtr,
 }

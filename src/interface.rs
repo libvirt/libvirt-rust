@@ -64,6 +64,7 @@ extern "C" {
 pub type InterfaceXMLFlags = self::libc::c_uint;
 pub const VIR_INTERFACE_XML_INACTIVE: InterfaceXMLFlags = 1 << 0;
 
+#[derive(Debug)]
 pub struct Interface {
     ptr: sys::virInterfacePtr,
 }

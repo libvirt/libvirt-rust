@@ -348,6 +348,7 @@ pub const VIR_CRED_NOECHOPROMPT: ConnectCredentialType = 7;
 pub const VIR_CRED_REALM: ConnectCredentialType = 8;
 pub const VIR_CRED_EXTERNAL: ConnectCredentialType = 9;
 
+#[derive(Clone, Debug)]
 pub struct NodeInfo {
     pub model: String,
     pub memory: u64,
@@ -362,6 +363,7 @@ pub struct NodeInfo {
 // TODO(sahid): should support closure
 pub type ConnectAuthCallback = fn(creds: &mut Vec<ConnectCredential>);
 
+#[derive(Clone, Debug)]
 pub struct ConnectCredential {
     pub typed: i32,
     pub prompt: String,

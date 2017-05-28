@@ -51,6 +51,7 @@ extern "C" {
     fn virNWFilterGetXMLDesc(ptr: sys::virNWFilterPtr, flags: libc::c_uint) -> *mut libc::c_char;
 }
 
+#[derive(Debug)]
 pub struct NWFilter {
     ptr: sys::virNWFilterPtr,
 }

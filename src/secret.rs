@@ -85,7 +85,7 @@ pub const VIR_CONNECT_LIST_SECRETS_NO_EPHEMERAL: SecretsFlags = 1 << 1;
 pub const VIR_CONNECT_LIST_SECRETS_PRIVATE: SecretsFlags = 1 << 2;
 pub const VIR_CONNECT_LIST_SECRETS_NO_PRIVATE: SecretsFlags = 1 << 3;
 
-
+#[derive(Debug)]
 pub struct Secret {
     ptr: sys::virSecretPtr,
 }

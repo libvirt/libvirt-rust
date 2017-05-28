@@ -492,6 +492,7 @@ pub const VIR_DOMAIN_SHUTOFF: DomainState = 5;
 pub const VIR_DOMAIN_CRASHED: DomainState = 6;
 pub const VIR_DOMAIN_PMSUSPENDED: DomainState = 7;
 
+#[derive(Clone, Debug)]
 pub struct DomainInfo {
     pub state: DomainState,
     pub max_mem: u64,
@@ -519,6 +520,7 @@ pub struct DomainStatsRecord {
     pub ptr: sys::virDomainStatsRecordPtr,
 }
 
+#[derive(Clone, Debug)]
 pub struct BlockInfo {
     pub capacity: u64,
     pub allocation: u64,
@@ -537,6 +539,7 @@ impl BlockInfo {
     }
 }
 
+#[derive(Clone, Debug)]
 pub struct MemoryParameters {
     pub hard_limit: Option<u64>,
     pub soft_limit: Option<u64>,
@@ -570,7 +573,7 @@ impl MemoryParameters {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct NUMAParameters {
     pub node_set: Option<String>,
     pub mode: Option<DomainNumatuneMemMode>,
@@ -600,6 +603,7 @@ impl NUMAParameters {
     }
 }
 
+#[derive(Clone, Debug)]
 pub struct InterfaceStats {
     pub rx_bytes: i64,
     pub rx_packets: i64,
@@ -628,6 +632,7 @@ impl InterfaceStats {
     }
 }
 
+#[derive(Clone, Debug)]
 pub struct MemoryStats {
     pub tag: i32,
     pub val: u64,
@@ -644,6 +649,7 @@ impl MemoryStats {
     }
 }
 
+#[derive(Debug)]
 pub struct Domain {
     ptr: sys::virDomainPtr,
 }
