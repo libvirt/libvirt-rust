@@ -179,6 +179,7 @@ extern "C" {
     fn virDomainIsActive(ptr: sys::virDomainPtr) -> libc::c_int;
     fn virDomainIsUpdated(ptr: sys::virDomainPtr) -> libc::c_int;
     fn virDomainGetName(ptr: sys::virDomainPtr) -> *const libc::c_char;
+    fn virDomainReset(ptr: sys::virDomainPtr, flags: libc::c_uint) -> libc::c_int;
     fn virDomainGetState(ptr: sys::virDomainPtr,
                          state: *mut libc::c_int,
                          reason: *mut libc::c_int,
@@ -860,6 +861,26 @@ impl Domain {
                 return Err(Error::new());
             }
             return Ok(());
+        }
+    }
+
+    //
+    // Reset a domain immediately without any guest OS shutdown.
+    // Reset emulates the power reset button on a machine, where all
+    // hardware sees the RST line set and reinitializes internal state.
+    //
+    // Note that there is a risk of data loss caused by reset without any
+    //  guest OS shutdown.
+    //
+    // Returns 0 in case of success and -1 in case of failure.
+    //
+    pub fn reset(&self) -> Result<u32, Error> {
+        unsafe {
+            let ret = virDomainReset(self.ptr, 0);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
         }
     }
 

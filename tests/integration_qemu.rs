@@ -112,3 +112,16 @@ fn test_connection_with_auth_wrong() {
         panic!("open_auth did not work: code {}, message:");
     }
 }
+
+#[test]
+#[ignore]
+fn test_reset() {
+    let c = common::qemu_conn();
+    let d = common::build_qemu_domain(&c, "reset", false);
+    assert_eq!(Ok(0), d.create_with_flags(0));
+    assert_eq!(Ok((::virt::domain::VIR_DOMAIN_RUNNING, 1)), d.get_state());
+    assert_eq!(Ok(0), d.reset());
+    // TODO assert something showing reset has the intended side effect
+    common::clean(d);
+    common::close(c);
+}
