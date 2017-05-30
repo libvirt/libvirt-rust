@@ -716,6 +716,10 @@ impl Domain {
         }
     }
 
+    /// Extracts domain state.
+    ///
+    /// Each state can be accompanied with a reason (if known) which
+    /// led to the state.
     pub fn get_state(&self) -> Result<(DomainState, i32), Error> {
         unsafe {
             let mut state: libc::c_int = -1;
@@ -728,6 +732,7 @@ impl Domain {
         }
     }
 
+    /// Get the public name of the domain.
     pub fn get_name(&self) -> Result<String, Error> {
         unsafe {
             let n = virDomainGetName(self.as_ptr());
@@ -738,6 +743,7 @@ impl Domain {
         }
     }
 
+    /// Get the type of domain operating system.
     pub fn get_os_type(&self) -> Result<String, Error> {
         unsafe {
             let n = virDomainGetOSType(self.as_ptr());
@@ -748,6 +754,7 @@ impl Domain {
         }
     }
 
+    /// Get the hostname for that domain.
     pub fn get_hostname(&self, flags: u32) -> Result<String, Error> {
         unsafe {
             let n = virDomainGetHostname(self.as_ptr(), flags as libc::c_uint);
@@ -758,6 +765,9 @@ impl Domain {
         }
     }
 
+    /// Get the UUID for a domain as string.
+    ///
+    /// For more information about UUID see RFC4122.
     pub fn get_uuid_string(&self) -> Result<String, Error> {
         unsafe {
             let mut uuid: [libc::c_char; 37] = [0; 37];
@@ -768,6 +778,7 @@ impl Domain {
         }
     }
 
+    /// Get the hypervisor ID number for the domain
     pub fn get_id(&self) -> Option<u32> {
         unsafe {
             let ret = virDomainGetID(self.as_ptr());
@@ -778,6 +789,8 @@ impl Domain {
         }
     }
 
+    /// Provide an XML description of the domain. The description may
+    /// be reused later to relaunch the domain with `create_xml()`.
     pub fn get_xml_desc(&self, flags: DomainCreateFlags) -> Result<String, Error> {
         unsafe {
             let xml = virDomainGetXMLDesc(self.as_ptr(), flags);
@@ -788,6 +801,10 @@ impl Domain {
         }
     }
 
+    /// Launch a defined domain. If the call succeeds the domain moves
+    /// from the defined to the running domains pools. The domain will
+    /// be paused only if restoring from managed state created from a
+    /// paused domain.  For more control, see `create_with_flags()`.
     pub fn create(&self) -> Result<u32, Error> {
         unsafe {
             let ret = virDomainCreate(self.as_ptr());
@@ -798,6 +815,8 @@ impl Domain {
         }
     }
 
+    /// Launch a defined domain. If the call succeeds the domain moves
+    /// from the defined to the running domains pools.
     pub fn create_with_flags(&self, flags: DomainCreateFlags) -> Result<u32, Error> {
         unsafe {
             let res = virDomainCreateWithFlags(self.as_ptr(), flags as libc::c_uint);
@@ -808,6 +827,9 @@ impl Domain {
         }
     }
 
+    /// Extract information about a domain. Note that if the
+    /// connection used to get the domain is limited only a partial
+    /// set of the information can be extracted.
     pub fn get_info(&self) -> Result<DomainInfo, Error> {
         unsafe {
             let pinfo = &mut sys::virDomainInfo::new();
@@ -819,6 +841,14 @@ impl Domain {
         }
     }
 
+    /// Launch a new guest domain, based on an XML description similar
+    /// to the one returned by `get_xml_desc()`.
+    ///
+    /// This function may require privileged access to the hypervisor.
+    ///
+    /// The domain is not persistent, so its definition will disappear
+    /// when it is destroyed, or if the host is restarted (see
+    /// `define_xml()` to define persistent domains).
     pub fn create_xml(conn: &Connect,
                       xml: &str,
                       flags: DomainCreateFlags)
@@ -834,7 +864,17 @@ impl Domain {
         }
     }
 
-
+    /// Define a domain, but does not start it.
+    ///
+    /// This definition is persistent, until explicitly undefined with
+    /// `undefine()`. A previous definition for this domain would be
+    /// overridden if it already exists.
+    ///
+    /// # Note:
+    ///
+    /// Some hypervisors may prevent this operation if there is a
+    /// current block copy operation on a transient domain with the
+    /// same id as the domain being defined.
     pub fn define_xml(conn: &Connect, xml: &str) -> Result<Domain, Error> {
         unsafe {
             let ptr = virDomainDefineXML(conn.as_ptr(), string_to_c_chars!(xml));
@@ -845,6 +885,17 @@ impl Domain {
         }
     }
 
+    /// Define a domain, but does not start it.
+    ///
+    /// This definition is persistent, until explicitly undefined with
+    /// `undefine()`. A previous definition for this domain would be
+    /// overridden if it already exists.
+    ///
+    /// # Note:
+    ///
+    /// Some hypervisors may prevent this operation if there is a
+    /// current block copy operation on a transient domain with the
+    /// same id as the domain being defined.
     pub fn define_xml_flags(conn: &Connect,
                             xml: &str,
                             flags: DomainDefineFlags)
@@ -860,6 +911,11 @@ impl Domain {
         }
     }
 
+
+    /// Destroy the domain. The running instance is shutdown if not
+    /// down already and all resources used by it are given back to
+    /// the hypervisor. This does not free the associated virDomainPtr
+    /// object. This function may require privileged access.
     pub fn destroy(&self) -> Result<(), Error> {
         unsafe {
             if virDomainDestroy(self.as_ptr()) == -1 {
@@ -869,16 +925,13 @@ impl Domain {
         }
     }
 
-    //
-    // Reset a domain immediately without any guest OS shutdown.
-    // Reset emulates the power reset button on a machine, where all
-    // hardware sees the RST line set and reinitializes internal state.
-    //
-    // Note that there is a risk of data loss caused by reset without any
-    //  guest OS shutdown.
-    //
-    // Returns 0 in case of success and -1 in case of failure.
-    //
+    /// Reset a domain immediately without any guest OS shutdown.
+    /// Reset emulates the power reset button on a machine, where all
+    /// hardware sees the RST line set and reinitializes internal
+    /// state.
+    ///
+    /// Note that there is a risk of data loss caused by reset without
+    /// any guest OS shutdown.
     pub fn reset(&self) -> Result<u32, Error> {
         unsafe {
             let ret = virDomainReset(self.as_ptr(), 0);
@@ -889,6 +942,10 @@ impl Domain {
         }
     }
 
+    /// Destroy the domain. The running instance is shutdown if not
+    /// down already and all resources used by it are given back to
+    /// the hypervisor. This does not free the associated virDomainPtr
+    /// object. This function may require privileged access.
     pub fn destroy_flags(&self, flags: DomainDestroyFlags) -> Result<u32, Error> {
         unsafe {
             let ret = virDomainDestroyFlags(self.as_ptr(), flags as libc::c_uint);
@@ -899,6 +956,18 @@ impl Domain {
         }
     }
 
+    /// Shutdown a domain
+    ///
+    /// The domain object is still usable thereafter, but the domain
+    /// OS is being stopped. Note that the guest OS may ignore the
+    /// request. Additionally, the hypervisor may check and support
+    /// the domain 'on_poweroff' XML setting resulting in a domain
+    /// that reboots instead of shutting down. For guests that react
+    /// to a shutdown request, the differences from `destroy()` are
+    /// that the guests disk storage will be in a stable state rather
+    /// than having the (virtual) power cord pulled, and this command
+    /// returns as soon as the shutdown request is issued rather than
+    /// blocking until the guest is no longer running.
     pub fn shutdown(&self) -> Result<u32, Error> {
         unsafe {
             let ret = virDomainShutdown(self.as_ptr());
@@ -909,6 +978,9 @@ impl Domain {
         }
     }
 
+    /// Reboot a domain.
+    ///
+    /// The domain object is still usable thereafter.
     pub fn reboot(&self) -> Result<(), Error> {
         unsafe {
             if virDomainReboot(self.as_ptr()) == -1 {
@@ -918,6 +990,15 @@ impl Domain {
         }
     }
 
+    /// Suspend a domain.
+    ///
+    /// Suspends an active domain, the process is frozen without
+    /// further access to CPU resources and I/O but the memory used by
+    /// the domain at the hypervisor level will stay allocated. Use
+    /// `resume` to reactivate the domain.  This function may
+    /// require privileged access.  Moreover, suspend may not be
+    /// supported if domain is in some special state like
+    /// VIR_DOMAIN_PMSUSPENDED.
     pub fn suspend(&self) -> Result<u32, Error> {
         unsafe {
             let ret = virDomainSuspend(self.as_ptr());
@@ -928,6 +1009,12 @@ impl Domain {
         }
     }
 
+    /// Resume a suspended domain.
+    ///
+    /// the process is restarted from the state where it was frozen by
+    /// calling `suspend()`. This function may require privileged
+    /// access Moreover, resume may not be supported if domain is in
+    /// some special state like VIR_DOMAIN_PMSUSPENDED.
     pub fn resume(&self) -> Result<u32, Error> {
         unsafe {
             let ret = virDomainResume(self.as_ptr());
@@ -938,6 +1025,7 @@ impl Domain {
         }
     }
 
+    /// Determine if the domain is currently running.
     pub fn is_active(&self) -> Result<bool, Error> {
         unsafe {
             let ret = virDomainIsActive(self.as_ptr());
@@ -948,6 +1036,11 @@ impl Domain {
         }
     }
 
+    /// Undefine a domain.
+    ///
+    /// If the domain is running, it's converted to transient domain,
+    /// without stopping it. If the domain is inactive, the domain
+    /// configuration is removed.
     pub fn undefine(&self) -> Result<(), Error> {
         unsafe {
             if virDomainUndefine(self.as_ptr()) == -1 {
@@ -956,7 +1049,11 @@ impl Domain {
             return Ok(());
         }
     }
-
+    
+    /// Free the domain object.
+    ///
+    /// The running instance is kept alive. The data structure is
+    /// freed and should not be used thereafter.
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
             if virDomainFree(self.as_ptr()) == -1 {
