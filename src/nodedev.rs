@@ -20,7 +20,7 @@
 
 extern crate libc;
 
-use std::{str, ptr};
+use std::str;
 
 use connect::sys::virConnectPtr;
 
@@ -67,23 +67,28 @@ pub const VIR_INTERFACE_XML_INACTIVE: NodeDeviceXMLFlags = 1 << 0;
 
 #[derive(Debug)]
 pub struct NodeDevice {
-    pub ptr: sys::virNodeDevicePtr,
+    ptr: Option<sys::virNodeDevicePtr>,
 }
 
 impl Drop for NodeDevice {
     fn drop(&mut self) {
-        if !self.ptr.is_null() {
-            if self.free().is_err() {
-                panic!("Unable to drop memory for NodeDevice")
+        if self.ptr.is_some() {
+            if let Err(e) = self.free() {
+                panic!("Unable to drop memory for NodeDevice, code {}, message: {}",
+                       e.code,
+                       e.message)
             }
-            return;
         }
     }
 }
 
 impl NodeDevice {
     pub fn new(ptr: sys::virNodeDevicePtr) -> NodeDevice {
-        return NodeDevice { ptr: ptr };
+        return NodeDevice { ptr: Some(ptr) };
+    }
+
+    pub fn as_ptr(&self) -> sys::virNodeDevicePtr {
+        self.ptr.unwrap()
     }
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<NodeDevice, Error> {
@@ -110,7 +115,7 @@ impl NodeDevice {
 
     pub fn get_name(&self) -> Result<String, Error> {
         unsafe {
-            let n = virNodeDeviceGetName(self.ptr);
+            let n = virNodeDeviceGetName(self.as_ptr());
             if n.is_null() {
                 return Err(Error::new());
             }
@@ -120,7 +125,7 @@ impl NodeDevice {
 
     pub fn get_parent(&self) -> Result<String, Error> {
         unsafe {
-            let n = virNodeDeviceGetParent(self.ptr);
+            let n = virNodeDeviceGetParent(self.as_ptr());
             if n.is_null() {
                 return Err(Error::new());
             }
@@ -131,7 +136,7 @@ impl NodeDevice {
     pub fn get_uuid_string(&self) -> Result<String, Error> {
         unsafe {
             let mut uuid: [libc::c_char; 37] = [0; 37];
-            if virNodeDeviceGetUUIDString(self.ptr, uuid.as_mut_ptr()) == -1 {
+            if virNodeDeviceGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new());
             }
             return Ok(c_chars_to_string!(uuid.as_ptr(), nofree));
@@ -140,7 +145,7 @@ impl NodeDevice {
 
     pub fn get_xml_desc(&self, flags: u32) -> Result<String, Error> {
         unsafe {
-            let xml = virNodeDeviceGetXMLDesc(self.ptr, flags as libc::c_uint);
+            let xml = virNodeDeviceGetXMLDesc(self.as_ptr(), flags as libc::c_uint);
             if xml.is_null() {
                 return Err(Error::new());
             }
@@ -150,7 +155,7 @@ impl NodeDevice {
 
     pub fn destroy(&self) -> Result<(), Error> {
         unsafe {
-            if virNodeDeviceDestroy(self.ptr) == -1 {
+            if virNodeDeviceDestroy(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -159,17 +164,19 @@ impl NodeDevice {
 
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
-            if virNodeDeviceFree(self.ptr) == -1 {
+            if virNodeDeviceFree(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
-            self.ptr = ptr::null_mut();
+            self.ptr = None;
             return Ok(());
         }
     }
 
     pub fn num_of_devices(&self, cap: &str, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let num = virNodeNumOfDevices(self.ptr, string_to_c_chars!(cap), flags as libc::c_uint);
+            let num = virNodeNumOfDevices(self.as_ptr(),
+                                          string_to_c_chars!(cap),
+                                          flags as libc::c_uint);
             if num == -1 {
                 return Err(Error::new());
             }

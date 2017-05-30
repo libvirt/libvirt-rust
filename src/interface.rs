@@ -20,7 +20,7 @@
 
 extern crate libc;
 
-use std::{str, ptr};
+use std::str;
 
 use connect::sys::virConnectPtr;
 
@@ -66,28 +66,33 @@ pub const VIR_INTERFACE_XML_INACTIVE: InterfaceXMLFlags = 1 << 0;
 
 #[derive(Debug)]
 pub struct Interface {
-    ptr: sys::virInterfacePtr,
+    ptr: Option<sys::virInterfacePtr>,
 }
 
 impl Drop for Interface {
     fn drop(&mut self) {
-        if !self.ptr.is_null() {
-            if self.free().is_err() {
-                panic!("Unable to drop memory for Interface")
+        if self.ptr.is_some() {
+            if let Err(e) = self.free() {
+                panic!("Unable to drop memory for Interface, code {}, message: {}",
+                       e.code,
+                       e.message)
             }
-            return;
         }
     }
 }
 
 impl Interface {
     pub fn new(ptr: sys::virInterfacePtr) -> Interface {
-        return Interface { ptr: ptr };
+        return Interface { ptr: Some(ptr) };
+    }
+
+    pub fn as_ptr(&self) -> sys::virInterfacePtr {
+        self.ptr.unwrap()
     }
 
     pub fn get_connect(&self) -> Result<Connect, Error> {
         unsafe {
-            let ptr = virInterfaceGetConnect(self.ptr);
+            let ptr = virInterfaceGetConnect(self.as_ptr());
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -149,7 +154,7 @@ impl Interface {
 
     pub fn get_name(&self) -> Result<String, Error> {
         unsafe {
-            let n = virInterfaceGetName(self.ptr);
+            let n = virInterfaceGetName(self.as_ptr());
             if n.is_null() {
                 return Err(Error::new());
             }
@@ -159,7 +164,7 @@ impl Interface {
 
     pub fn get_mac_string(&self) -> Result<String, Error> {
         unsafe {
-            let mac = virInterfaceGetMACString(self.ptr);
+            let mac = virInterfaceGetMACString(self.as_ptr());
             if mac.is_null() {
                 return Err(Error::new());
             }
@@ -169,7 +174,7 @@ impl Interface {
 
     pub fn get_xml_desc(&self, flags: InterfaceXMLFlags) -> Result<String, Error> {
         unsafe {
-            let xml = virInterfaceGetXMLDesc(self.ptr, flags);
+            let xml = virInterfaceGetXMLDesc(self.as_ptr(), flags);
             if xml.is_null() {
                 return Err(Error::new());
             }
@@ -179,7 +184,7 @@ impl Interface {
 
     pub fn create(&self, flags: InterfaceXMLFlags) -> Result<u32, Error> {
         unsafe {
-            let ret = virInterfaceCreate(self.ptr, flags);
+            let ret = virInterfaceCreate(self.as_ptr(), flags);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -189,7 +194,7 @@ impl Interface {
 
     pub fn destroy(&self) -> Result<(), Error> {
         unsafe {
-            if virInterfaceDestroy(self.ptr) == -1 {
+            if virInterfaceDestroy(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -198,7 +203,7 @@ impl Interface {
 
     pub fn undefine(&self) -> Result<(), Error> {
         unsafe {
-            if virInterfaceUndefine(self.ptr) == -1 {
+            if virInterfaceUndefine(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -207,17 +212,17 @@ impl Interface {
 
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
-            if virInterfaceFree(self.ptr) == -1 {
+            if virInterfaceFree(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
-            self.ptr = ptr::null_mut();
+            self.ptr = None;
             return Ok(());
         }
     }
 
     pub fn is_active(&self) -> Result<bool, Error> {
         unsafe {
-            let ret = virInterfaceIsActive(self.ptr);
+            let ret = virInterfaceIsActive(self.as_ptr());
             if ret == -1 {
                 return Err(Error::new());
             }

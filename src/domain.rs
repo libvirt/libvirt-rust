@@ -1049,7 +1049,7 @@ impl Domain {
             return Ok(());
         }
     }
-    
+
     /// Free the domain object.
     ///
     /// The running instance is kept alive. The data structure is
@@ -1139,8 +1139,9 @@ impl Domain {
                             flags: DomainMemoryModFlags)
                             -> Result<bool, Error> {
         unsafe {
-            let ret =
-                virDomainSetMemoryFlags(self.as_ptr(), memory as libc::c_ulong, flags as libc::c_uint);
+            let ret = virDomainSetMemoryFlags(self.as_ptr(),
+                                              memory as libc::c_ulong,
+                                              flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -1232,7 +1233,8 @@ impl Domain {
     pub fn migrate_get_max_speed(&self, flags: u32) -> Result<u64, Error> {
         unsafe {
             let mut bandwidth: libc::c_ulong = 0;
-            let ret = virDomainMigrateGetMaxSpeed(self.as_ptr(), &mut bandwidth, flags as libc::c_uint);
+            let ret =
+                virDomainMigrateGetMaxSpeed(self.as_ptr(), &mut bandwidth, flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -1255,8 +1257,9 @@ impl Domain {
     pub fn migrate_get_compression_cache(&self, flags: u32) -> Result<u64, Error> {
         unsafe {
             let mut size: libc::c_ulong = 0;
-            let ret =
-                virDomainMigrateGetCompressionCache(self.as_ptr(), &mut size, flags as libc::c_uint);
+            let ret = virDomainMigrateGetCompressionCache(self.as_ptr(),
+                                                          &mut size,
+                                                          flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -1293,8 +1296,10 @@ impl Domain {
         unsafe {
             let mut seconds: libc::c_long = 0;
             let mut nseconds: libc::c_int = 0;
-            let ret =
-                virDomainGetTime(self.as_ptr(), &mut seconds, &mut nseconds, flags as libc::c_uint);
+            let ret = virDomainGetTime(self.as_ptr(),
+                                       &mut seconds,
+                                       &mut nseconds,
+                                       flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -1409,7 +1414,8 @@ impl Domain {
 
     pub fn open_graphics_fd(&self, idx: u32, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let ret = virDomainOpenGraphicsFD(self.as_ptr(), idx as libc::c_uint, flags as libc::c_uint);
+            let ret =
+                virDomainOpenGraphicsFD(self.as_ptr(), idx as libc::c_uint, flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -1592,7 +1598,8 @@ impl Domain {
 
     pub fn core_dump(&self, to: &str, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let ret = virDomainCoreDump(self.as_ptr(), string_to_c_chars!(to), flags as libc::c_uint);
+            let ret =
+                virDomainCoreDump(self.as_ptr(), string_to_c_chars!(to), flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }

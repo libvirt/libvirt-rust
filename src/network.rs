@@ -20,7 +20,7 @@
 
 extern crate libc;
 
-use std::{str, ptr};
+use std::str;
 
 use connect::sys::virConnectPtr;
 
@@ -101,28 +101,33 @@ pub const VIR_NETWORK_UPDATE_AFFECT_CONFIG: NetworkUpdateFlags = 1 << 1;
 
 #[derive(Debug)]
 pub struct Network {
-    ptr: sys::virNetworkPtr,
+    ptr: Option<sys::virNetworkPtr>,
 }
 
 impl Drop for Network {
     fn drop(&mut self) {
-        if !self.ptr.is_null() {
-            if self.free().is_err() {
-                panic!("Unable to drop memory for Domain")
+        if self.ptr.is_some() {
+            if let Err(e) = self.free() {
+                panic!("Unable to drop memory for Network, code {}, message: {}",
+                       e.code,
+                       e.message)
             }
-            return;
         }
     }
 }
 
 impl Network {
     pub fn new(ptr: sys::virNetworkPtr) -> Network {
-        return Network { ptr: ptr };
+        return Network { ptr: Some(ptr) };
+    }
+
+    pub fn as_ptr(&self) -> sys::virNetworkPtr {
+        self.ptr.unwrap()
     }
 
     pub fn get_connect(&self) -> Result<Connect, Error> {
         unsafe {
-            let ptr = virNetworkGetConnect(self.ptr);
+            let ptr = virNetworkGetConnect(self.as_ptr());
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -162,7 +167,7 @@ impl Network {
 
     pub fn get_name(&self) -> Result<String, Error> {
         unsafe {
-            let n = virNetworkGetName(self.ptr);
+            let n = virNetworkGetName(self.as_ptr());
             if n.is_null() {
                 return Err(Error::new());
             }
@@ -173,7 +178,7 @@ impl Network {
     pub fn get_uuid_string(&self) -> Result<String, Error> {
         unsafe {
             let mut uuid: [libc::c_char; 37] = [0; 37];
-            if virNetworkGetUUIDString(self.ptr, uuid.as_mut_ptr()) == -1 {
+            if virNetworkGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new());
             }
             return Ok(c_chars_to_string!(uuid.as_ptr(), nofree));
@@ -182,7 +187,7 @@ impl Network {
 
     pub fn get_bridge_name(&self) -> Result<String, Error> {
         unsafe {
-            let n = virNetworkGetBridgeName(self.ptr);
+            let n = virNetworkGetBridgeName(self.as_ptr());
             if n.is_null() {
                 return Err(Error::new());
             }
@@ -192,7 +197,7 @@ impl Network {
 
     pub fn get_xml_desc(&self, flags: NetworkXMLFlags) -> Result<String, Error> {
         unsafe {
-            let xml = virNetworkGetXMLDesc(self.ptr, flags);
+            let xml = virNetworkGetXMLDesc(self.as_ptr(), flags);
             if xml.is_null() {
                 return Err(Error::new());
             }
@@ -202,7 +207,7 @@ impl Network {
 
     pub fn create(&self) -> Result<u32, Error> {
         unsafe {
-            let ret = virNetworkCreate(self.ptr);
+            let ret = virNetworkCreate(self.as_ptr());
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -235,7 +240,7 @@ impl Network {
 
     pub fn destroy(&self) -> Result<(), Error> {
         unsafe {
-            if virNetworkDestroy(self.ptr) == -1 {
+            if virNetworkDestroy(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -244,7 +249,7 @@ impl Network {
 
     pub fn undefine(&self) -> Result<(), Error> {
         unsafe {
-            if virNetworkUndefine(self.ptr) == -1 {
+            if virNetworkUndefine(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -253,17 +258,17 @@ impl Network {
 
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
-            if virNetworkFree(self.ptr) == -1 {
+            if virNetworkFree(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
-            self.ptr = ptr::null_mut();
+            self.ptr = None;
             return Ok(());
         }
     }
 
     pub fn is_active(&self) -> Result<bool, Error> {
         unsafe {
-            let ret = virNetworkIsActive(self.ptr);
+            let ret = virNetworkIsActive(self.as_ptr());
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -274,7 +279,7 @@ impl Network {
     pub fn get_autostart(&self) -> Result<bool, Error> {
         unsafe {
             let mut auto = 0;
-            let ret = virNetworkGetAutostart(self.ptr, &mut auto);
+            let ret = virNetworkGetAutostart(self.as_ptr(), &mut auto);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -284,7 +289,7 @@ impl Network {
 
     pub fn set_autostart(&self, autostart: bool) -> Result<u32, Error> {
         unsafe {
-            let ret = virNetworkSetAutostart(self.ptr, autostart as libc::c_uint);
+            let ret = virNetworkSetAutostart(self.as_ptr(), autostart as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -300,7 +305,7 @@ impl Network {
                   flags: NetworkUpdateFlags)
                   -> Result<(), Error> {
         unsafe {
-            let ret = virNetworkUpdate(self.ptr,
+            let ret = virNetworkUpdate(self.as_ptr(),
                                        cmd,
                                        section,
                                        index as libc::c_uint,

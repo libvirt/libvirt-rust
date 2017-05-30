@@ -20,8 +20,6 @@
 
 extern crate libc;
 
-use std::ptr;
-
 use connect::sys::virConnectPtr;
 
 use connect::Connect;
@@ -87,28 +85,33 @@ pub const VIR_CONNECT_LIST_SECRETS_NO_PRIVATE: SecretsFlags = 1 << 3;
 
 #[derive(Debug)]
 pub struct Secret {
-    ptr: sys::virSecretPtr,
+    ptr: Option<sys::virSecretPtr>,
 }
 
 impl Drop for Secret {
     fn drop(&mut self) {
-        if !self.ptr.is_null() {
-            if self.free().is_err() {
-                panic!("Unable to drop memory for Secret")
+        if self.ptr.is_some() {
+            if let Err(e) = self.free() {
+                panic!("Unable to drop memory for Secret, code {}, message: {}",
+                       e.code,
+                       e.message)
             }
-            return;
         }
     }
 }
 
 impl Secret {
     pub fn new(ptr: sys::virSecretPtr) -> Secret {
-        return Secret { ptr: ptr };
+        return Secret { ptr: Some(ptr) };
+    }
+
+    pub fn as_ptr(&self) -> sys::virSecretPtr {
+        self.ptr.unwrap()
     }
 
     pub fn get_connect(&self) -> Result<Connect, Error> {
         unsafe {
-            let ptr = virSecretGetConnect(self.ptr);
+            let ptr = virSecretGetConnect(self.as_ptr());
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -152,7 +155,7 @@ impl Secret {
 
     pub fn get_name(&self) -> Result<String, Error> {
         unsafe {
-            let n = virSecretGetName(self.ptr);
+            let n = virSecretGetName(self.as_ptr());
             if n.is_null() {
                 return Err(Error::new());
             }
@@ -162,7 +165,7 @@ impl Secret {
 
     pub fn get_usage_id(&self) -> Result<String, Error> {
         unsafe {
-            let n = virSecretGetUsageID(self.ptr);
+            let n = virSecretGetUsageID(self.as_ptr());
             if n.is_null() {
                 return Err(Error::new());
             }
@@ -172,7 +175,7 @@ impl Secret {
 
     pub fn get_usage_type(&self) -> Result<u32, Error> {
         unsafe {
-            let t = virSecretGetUsageType(self.ptr);
+            let t = virSecretGetUsageType(self.as_ptr());
             if t == -1 {
                 return Err(Error::new());
             }
@@ -183,7 +186,7 @@ impl Secret {
     pub fn get_uuid_string(&self) -> Result<String, Error> {
         unsafe {
             let mut uuid: [libc::c_char; 37] = [0; 37];
-            if virSecretGetUUIDString(self.ptr, uuid.as_mut_ptr()) == -1 {
+            if virSecretGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new());
             }
             return Ok(c_chars_to_string!(uuid.as_ptr(), nofree));
@@ -192,7 +195,7 @@ impl Secret {
 
     pub fn get_xml_desc(&self, flags: SecretXMLFlags) -> Result<String, Error> {
         unsafe {
-            let xml = virSecretGetXMLDesc(self.ptr, flags);
+            let xml = virSecretGetXMLDesc(self.as_ptr(), flags);
             if xml.is_null() {
                 return Err(Error::new());
             }
@@ -202,8 +205,10 @@ impl Secret {
 
     pub fn set_value(&self, value: &[u8], flags: u32) -> Result<(), Error> {
         unsafe {
-            if virSecretSetValue(self.ptr, value.as_ptr(), value.len() as libc::c_uint, flags) ==
-               -1 {
+            if virSecretSetValue(self.as_ptr(),
+                                 value.as_ptr(),
+                                 value.len() as libc::c_uint,
+                                 flags) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -212,7 +217,7 @@ impl Secret {
 
     pub fn get_value(&self, size: isize, flags: u32) -> Result<Vec<u8>, Error> {
         unsafe {
-            let n = virSecretGetValue(self.ptr, size as libc::c_uint, flags as libc::c_uint);
+            let n = virSecretGetValue(self.as_ptr(), size as libc::c_uint, flags as libc::c_uint);
             if n.is_null() {
                 return Err(Error::new());
             }
@@ -227,7 +232,7 @@ impl Secret {
 
     pub fn undefine(&self) -> Result<(), Error> {
         unsafe {
-            if virSecretUndefine(self.ptr) == -1 {
+            if virSecretUndefine(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -236,10 +241,10 @@ impl Secret {
 
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
-            if virSecretFree(self.ptr) == -1 {
+            if virSecretFree(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
-            self.ptr = ptr::null_mut();
+            self.ptr = None;
             return Ok(());
         }
     }

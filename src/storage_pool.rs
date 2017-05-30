@@ -20,7 +20,7 @@
 
 extern crate libc;
 
-use std::{str, ptr};
+use std::str;
 
 use connect::sys::virConnectPtr;
 
@@ -82,28 +82,33 @@ pub const STORAGE_POOL_CREATE_WITH_BUILD_NO_OVERWRITE: StoragePoolCreateFlags = 
 
 #[derive(Debug)]
 pub struct StoragePool {
-    ptr: sys::virStoragePoolPtr,
+    ptr: Option<sys::virStoragePoolPtr>,
 }
 
 impl Drop for StoragePool {
     fn drop(&mut self) {
-        if !self.ptr.is_null() {
-            if self.free().is_err() {
-                panic!("Unable to drop memory for StoragePool")
+        if self.ptr.is_some() {
+            if let Err(e) = self.free() {
+                panic!("Unable to drop memory for StoragePool, code {}, message: {}",
+                       e.code,
+                       e.message)
             }
-            return;
         }
     }
 }
 
 impl StoragePool {
     pub fn new(ptr: sys::virStoragePoolPtr) -> StoragePool {
-        return StoragePool { ptr: ptr };
+        return StoragePool { ptr: Some(ptr) };
+    }
+
+    pub fn as_ptr(&self) -> sys::virStoragePoolPtr {
+        self.ptr.unwrap()
     }
 
     pub fn get_connect(&self) -> Result<Connect, Error> {
         unsafe {
-            let ptr = virStoragePoolGetConnect(self.ptr);
+            let ptr = virStoragePoolGetConnect(self.as_ptr());
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -170,7 +175,7 @@ impl StoragePool {
 
     pub fn get_name(&self) -> Result<String, Error> {
         unsafe {
-            let n = virStoragePoolGetName(self.ptr);
+            let n = virStoragePoolGetName(self.as_ptr());
             if n.is_null() {
                 return Err(Error::new());
             }
@@ -181,7 +186,7 @@ impl StoragePool {
     pub fn get_uuid_string(&self) -> Result<String, Error> {
         unsafe {
             let mut uuid: [libc::c_char; 37] = [0; 37];
-            if virStoragePoolGetUUIDString(self.ptr, uuid.as_mut_ptr()) == -1 {
+            if virStoragePoolGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new());
             }
             return Ok(c_chars_to_string!(uuid.as_ptr(), nofree));
@@ -190,7 +195,7 @@ impl StoragePool {
 
     pub fn get_xml_desc(&self, flags: StoragePoolXMLFlags) -> Result<String, Error> {
         unsafe {
-            let xml = virStoragePoolGetXMLDesc(self.ptr, flags);
+            let xml = virStoragePoolGetXMLDesc(self.as_ptr(), flags);
             if xml.is_null() {
                 return Err(Error::new());
             }
@@ -200,7 +205,7 @@ impl StoragePool {
 
     pub fn create(&self, flags: StoragePoolCreateFlags) -> Result<u32, Error> {
         unsafe {
-            let ret = virStoragePoolCreate(self.ptr, flags);
+            let ret = virStoragePoolCreate(self.as_ptr(), flags);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -210,7 +215,7 @@ impl StoragePool {
 
     pub fn build(&self, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let ret = virStoragePoolBuild(self.ptr, flags);
+            let ret = virStoragePoolBuild(self.as_ptr(), flags);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -220,7 +225,7 @@ impl StoragePool {
 
     pub fn destroy(&self) -> Result<(), Error> {
         unsafe {
-            if virStoragePoolDestroy(self.ptr) == -1 {
+            if virStoragePoolDestroy(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -229,7 +234,7 @@ impl StoragePool {
 
     pub fn undefine(&self) -> Result<(), Error> {
         unsafe {
-            if virStoragePoolUndefine(self.ptr) == -1 {
+            if virStoragePoolUndefine(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -238,17 +243,17 @@ impl StoragePool {
 
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
-            if virStoragePoolFree(self.ptr) == -1 {
+            if virStoragePoolFree(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
-            self.ptr = ptr::null_mut();
+            self.ptr = None;
             return Ok(());
         }
     }
 
     pub fn is_active(&self) -> Result<bool, Error> {
         unsafe {
-            let ret = virStoragePoolIsActive(self.ptr);
+            let ret = virStoragePoolIsActive(self.as_ptr());
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -258,7 +263,7 @@ impl StoragePool {
 
     pub fn is_persistent(&self) -> Result<bool, Error> {
         unsafe {
-            let ret = virStoragePoolIsPersistent(self.ptr);
+            let ret = virStoragePoolIsPersistent(self.as_ptr());
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -268,7 +273,7 @@ impl StoragePool {
 
     pub fn refresh(&self, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let ret = virStoragePoolRefresh(self.ptr, flags as libc::c_uint);
+            let ret = virStoragePoolRefresh(self.as_ptr(), flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }

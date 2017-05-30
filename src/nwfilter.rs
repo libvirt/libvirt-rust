@@ -20,7 +20,7 @@
 
 extern crate libc;
 
-use std::{str, ptr};
+use std::str;
 
 use connect::sys::virConnectPtr;
 
@@ -53,23 +53,28 @@ extern "C" {
 
 #[derive(Debug)]
 pub struct NWFilter {
-    ptr: sys::virNWFilterPtr,
+    ptr: Option<sys::virNWFilterPtr>,
 }
 
 impl Drop for NWFilter {
     fn drop(&mut self) {
-        if !self.ptr.is_null() {
-            if self.free().is_err() {
-                panic!("Unable to drop memory for NWFilter")
+        if self.ptr.is_some() {
+            if let Err(e) = self.free() {
+                panic!("Unable to drop memory for NWFilter, code {}, message: {}",
+                       e.code,
+                       e.message)
             }
-            return;
         }
     }
 }
 
 impl NWFilter {
     pub fn new(ptr: sys::virNWFilterPtr) -> NWFilter {
-        return NWFilter { ptr: ptr };
+        return NWFilter { ptr: Some(ptr) };
+    }
+
+    pub fn as_ptr(&self) -> sys::virNWFilterPtr {
+        self.ptr.unwrap()
     }
 
     pub fn lookup_by_id(conn: &Connect, id: u32) -> Result<NWFilter, Error> {
@@ -104,7 +109,7 @@ impl NWFilter {
 
     pub fn get_name(&self) -> Result<String, Error> {
         unsafe {
-            let n = virNWFilterGetName(self.ptr);
+            let n = virNWFilterGetName(self.as_ptr());
             if n.is_null() {
                 return Err(Error::new());
             }
@@ -115,7 +120,7 @@ impl NWFilter {
     pub fn get_uuid_string(&self) -> Result<String, Error> {
         unsafe {
             let mut uuid: [libc::c_char; 37] = [0; 37];
-            if virNWFilterGetUUIDString(self.ptr, uuid.as_mut_ptr()) == -1 {
+            if virNWFilterGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new());
             }
             return Ok(c_chars_to_string!(uuid.as_ptr(), nofree));
@@ -124,7 +129,7 @@ impl NWFilter {
 
     pub fn get_xml_desc(&self, flags: u32) -> Result<String, Error> {
         unsafe {
-            let xml = virNWFilterGetXMLDesc(self.ptr, flags as libc::c_uint);
+            let xml = virNWFilterGetXMLDesc(self.as_ptr(), flags as libc::c_uint);
             if xml.is_null() {
                 return Err(Error::new());
             }
@@ -144,7 +149,7 @@ impl NWFilter {
 
     pub fn undefine(&self) -> Result<(), Error> {
         unsafe {
-            if virNWFilterUndefine(self.ptr) == -1 {
+            if virNWFilterUndefine(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -153,10 +158,10 @@ impl NWFilter {
 
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
-            if virNWFilterFree(self.ptr) == -1 {
+            if virNWFilterFree(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
-            self.ptr = ptr::null_mut();
+            self.ptr = None;
             return Ok(());
         }
     }

@@ -20,7 +20,7 @@
 
 extern crate libc;
 
-use std::{str, ptr};
+use std::str;
 
 use error::Error;
 
@@ -59,42 +59,43 @@ pub const VIR_STREAM_EVENT_HANGUP: StreamEventType = (1 << 3);
 
 #[derive(Debug)]
 pub struct Stream {
-    ptr: sys::virStreamPtr,
+    ptr: Option<sys::virStreamPtr>,
 }
 
 impl Drop for Stream {
     fn drop(&mut self) {
-        if !self.ptr.is_null() {
-            if self.free().is_err() {
-                panic!("Unable to drop memory for Stream")
+        if self.ptr.is_some() {
+            if let Err(e) = self.free() {
+                panic!("Unable to drop memory for Stream, code {}, message: {}",
+                       e.code,
+                       e.message)
             }
-            return;
         }
     }
 }
 
 impl Stream {
     pub fn new(ptr: sys::virStreamPtr) -> Stream {
-        Stream { ptr: ptr }
+        Stream { ptr: Some(ptr) }
     }
 
     pub fn as_ptr(&self) -> sys::virStreamPtr {
-        self.ptr
+        self.ptr.unwrap()
     }
 
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
-            if virStreamFree(self.ptr) == -1 {
+            if virStreamFree(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
-            self.ptr = ptr::null_mut();
+            self.ptr = None;
             return Ok(());
         }
     }
 
     pub fn finish(self) -> Result<(), Error> {
         unsafe {
-            if virStreamFinish(self.ptr) == -1 {
+            if virStreamFinish(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -103,7 +104,7 @@ impl Stream {
 
     pub fn abort(self) -> Result<(), Error> {
         unsafe {
-            if virStreamAbort(self.ptr) == -1 {
+            if virStreamAbort(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
@@ -112,7 +113,7 @@ impl Stream {
 
     pub fn send(&self, data: &str) -> Result<u32, Error> {
         unsafe {
-            let ret = virStreamSend(self.ptr,
+            let ret = virStreamSend(self.as_ptr(),
                                     string_to_c_chars!(data),
                                     data.len() as libc::c_uint);
             if ret == -1 {
@@ -125,7 +126,7 @@ impl Stream {
     pub fn recv(&self, size: u32) -> Result<String, Error> {
         unsafe {
             let mut data: [libc::c_char; 2048] = ['\0' as i8; 2048];
-            let ret = virStreamRecv(self.ptr, data.as_mut_ptr(), size as libc::c_uint);
+            let ret = virStreamRecv(self.as_ptr(), data.as_mut_ptr(), size as libc::c_uint);
             if ret == -1 {
                 return Err(Error::new());
             }
