@@ -21,6 +21,12 @@
 //! Libvirt is a portable toolkit to interact with the virtualisation
 //! capabilities of Linux, Solaris and other operating systems.
 //!
+//! The binding tries to be a fairly direct mapping of the underling C
+//! API with some differences to respect Rust conventions. So for
+//! example C functions related to a domain like: `virDomainCreate`
+//! will be mapped in the binding like `dom.create()` or
+//! `virDomainPinVcpu` as `dom.pin_vcpu`.
+//!
 //! The binding uses standard errors handling from Rust. Each method
 //! (there are some exceptions) is returning a type `Option` or
 //! `Result`.
