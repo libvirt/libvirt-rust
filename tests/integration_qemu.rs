@@ -56,12 +56,10 @@ fn test_connection_with_auth() {
         for cred in creds {
             match cred.typed {
                 ::virt::connect::VIR_CRED_AUTHNAME => {
-                    cred.result = String::from("user");
-                    cred.result_set = true;
+                    cred.result = Some(String::from("user"));
                 }
                 ::virt::connect::VIR_CRED_PASSPHRASE => {
-                    cred.result = String::from("pass");
-                    cred.result_set = true;
+                    cred.result = Some(String::from("pass"));
                 }
                 _ => {
                     panic!("Should not be here...");
@@ -91,12 +89,10 @@ fn test_connection_with_auth_wrong() {
         for cred in creds {
             match cred.typed {
                 ::virt::connect::VIR_CRED_AUTHNAME => {
-                    cred.result = String::from("user");
-                    cred.result_set = true;
+                    cred.result = Some(String::from("user"));
                 }
                 ::virt::connect::VIR_CRED_PASSPHRASE => {
-                    cred.result = String::from("passwrong");
-                    cred.result_set = true;
+                    cred.result = Some(String::from("passwrong"));
                 }
                 _ => {
                     panic!("Should not be here...");

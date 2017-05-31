@@ -370,11 +370,8 @@ pub struct ConnectCredential {
     pub prompt: String,
     pub challenge: String,
     pub def_result: String,
-    pub result: String,
 
-    // TODO(sahid): I would like this field hidden and set
-    // automatically
-    pub result_set: bool,
+    pub result: Option<String>,
 }
 
 impl ConnectCredential {
@@ -389,8 +386,7 @@ impl ConnectCredential {
                 prompt: c_chars_to_string!((*cred).prompt, nofree),
                 challenge: c_chars_to_string!((*cred).challenge, nofree),
                 def_result: default,
-                result: String::from(""),
-                result_set: false,
+                result: None,
             }
         }
     }
@@ -423,12 +419,11 @@ impl ConnectAuth {
                 }
                 callback(&mut rcreds);
                 for i in 0..ncred as isize {
-                    if rcreds[i as usize].result_set {
-                        (*ccreds.offset(i)).resultlen = rcreds[i as usize].result.len() as
-                                                        libc::c_uint;
-                        (*ccreds.offset(i)).result =
-                            string_to_mut_c_chars!(rcreds[i as usize].result.clone());
-
+                    if rcreds[i as usize].result.is_some() {
+                        if let Some(ref result) = rcreds[i as usize].result {
+                            (*ccreds.offset(i)).resultlen = result.len() as libc::c_uint;
+                            (*ccreds.offset(i)).result = string_to_mut_c_chars!(result.clone());
+                        }
                     }
                 }
             }
