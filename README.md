@@ -16,12 +16,12 @@ The binding uses standard errors handling from Rust. Each method
 
 ## Documentation
 
-* https://docs.rs/crate/virt/
 * http://libvirt.org/html/libvirt-libvirt.html
+* https://docs.rs/crate/virt/
 
 ## Tests/Exercises
 
-CI is executing tests automatically from libvirt 1.2.0 to 2.5.0. Using
+CI is executing tests automatically from libvirt 1.2.0 to 3.3.0. Using
 Rust from stable, beta to nightly.
 
 * https://travis-ci.org/sahid/libvirt-rs

@@ -17,6 +17,7 @@ env:
   - LIBVIRT=1.2.10 EXT=gz
   - LIBVIRT=1.2.20 EXT=gz
   - LIBVIRT=2.5.0  EXT=xz
+  - LIBVIRT=3.3.0  EXT=xz
 
 install:
   - sudo apt-get -qqy build-dep libvirt
