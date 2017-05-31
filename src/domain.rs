@@ -507,7 +507,7 @@ impl BlockInfo {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct MemoryParameters {
     pub hard_limit: Option<u64>,
     pub soft_limit: Option<u64>,
@@ -516,17 +516,9 @@ pub struct MemoryParameters {
 }
 
 impl MemoryParameters {
-    pub fn new() -> MemoryParameters {
-        MemoryParameters {
-            hard_limit: None,
-            soft_limit: None,
-            min_guarantee: None,
-            swap_hard_limit: None,
-        }
-    }
     pub fn from_vec(vec: Vec<virTypedParameter>) -> MemoryParameters {
         unsafe {
-            let mut ret = MemoryParameters::new();
+            let mut ret = MemoryParameters::default();
             for param in vec {
                 match str::from_utf8(CStr::from_ptr(param.field.as_ptr()).to_bytes()).unwrap() {
                     "hard_limit" => ret.hard_limit = Some(param.value as u64),
@@ -541,22 +533,16 @@ impl MemoryParameters {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct NUMAParameters {
     pub node_set: Option<String>,
     pub mode: Option<DomainNumatuneMemMode>,
 }
 
 impl NUMAParameters {
-    pub fn new() -> NUMAParameters {
-        NUMAParameters {
-            node_set: None,
-            mode: None,
-        }
-    }
     pub fn from_vec(vec: Vec<virTypedParameter>) -> NUMAParameters {
         unsafe {
-            let mut ret = NUMAParameters::new();
+            let mut ret = NUMAParameters::default();
             for param in vec {
                 match str::from_utf8(CStr::from_ptr(param.field.as_ptr()).to_bytes()).unwrap() {
                     "numa_nodeset" => {
