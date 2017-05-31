@@ -34,6 +34,7 @@ use stream::Stream;
 pub mod sys {
     extern crate libc;
 
+    use std;
     use typedparam::sys::virTypedParameterPtr;
 
     #[allow(non_camel_case_types)]
@@ -46,24 +47,13 @@ pub mod sys {
     #[allow(non_camel_case_types)]
     #[allow(non_snake_case)]
     #[repr(C)]
+    #[derive(Default)]
     pub struct virDomainInfo {
         pub state: libc::c_ulong,
         pub maxMem: libc::c_ulong,
         pub memory: libc::c_ulong,
         pub nrVirtCpu: libc::c_uint,
         pub cpuTime: libc::c_ulong,
-    }
-
-    impl virDomainInfo {
-        pub fn new() -> virDomainInfo {
-            virDomainInfo {
-                state: 0,
-                maxMem: 0,
-                memory: 0,
-                nrVirtCpu: 0,
-                cpuTime: 0,
-            }
-        }
     }
 
     #[allow(non_camel_case_types)]
@@ -83,20 +73,11 @@ pub mod sys {
 
     #[allow(non_camel_case_types)]
     #[repr(C)]
+    #[derive(Default)]
     pub struct virDomainBlockInfo {
         pub capacity: libc::c_ulonglong,
         pub allocation: libc::c_ulonglong,
         pub physical: libc::c_ulonglong,
-    }
-
-    impl virDomainBlockInfo {
-        pub fn new() -> virDomainBlockInfo {
-            virDomainBlockInfo {
-                capacity: 0,
-                allocation: 0,
-                physical: 0,
-            }
-        }
     }
 
     #[allow(non_camel_case_types)]
@@ -104,6 +85,7 @@ pub mod sys {
 
     #[allow(non_camel_case_types)]
     #[repr(C)]
+    #[derive(Default)]
     pub struct virDomainInterfaceStats {
         pub rx_bytes: libc::c_longlong,
         pub rx_packets: libc::c_longlong,
@@ -113,21 +95,6 @@ pub mod sys {
         pub tx_packets: libc::c_longlong,
         pub tx_errs: libc::c_longlong,
         pub tx_drop: libc::c_longlong,
-    }
-
-    impl virDomainInterfaceStats {
-        pub fn new() -> virDomainInterfaceStats {
-            virDomainInterfaceStats {
-                rx_bytes: 0,
-                rx_packets: 0,
-                rx_errs: 0,
-                rx_drop: 0,
-                tx_bytes: 0,
-                tx_packets: 0,
-                tx_errs: 0,
-                tx_drop: 0,
-            }
-        }
     }
 
     #[allow(non_camel_case_types)]
@@ -140,9 +107,9 @@ pub mod sys {
         pub val: libc::c_ulonglong,
     }
 
-    impl virDomainMemoryStats {
-        pub fn new() -> virDomainMemoryStats {
-            virDomainMemoryStats { tag: 0, val: 0 }
+    impl std::default::Default for virDomainMemoryStats {
+        fn default() -> Self {
+            unsafe { std::mem::zeroed() }
         }
     }
 
@@ -832,7 +799,7 @@ impl Domain {
     /// set of the information can be extracted.
     pub fn get_info(&self) -> Result<DomainInfo, Error> {
         unsafe {
-            let pinfo = &mut sys::virDomainInfo::new();
+            let pinfo = &mut sys::virDomainInfo::default();
             let res = virDomainGetInfo(self.as_ptr(), pinfo);
             if res == -1 {
                 return Err(Error::new());
@@ -1309,7 +1276,7 @@ impl Domain {
 
     pub fn get_block_info(&self, disk: &str, flags: u32) -> Result<BlockInfo, Error> {
         unsafe {
-            let pinfo = &mut sys::virDomainBlockInfo::new();
+            let pinfo = &mut sys::virDomainBlockInfo::default();
             let ret = virDomainGetBlockInfo(self.as_ptr(),
                                             string_to_c_chars!(disk),
                                             pinfo,
@@ -1451,7 +1418,7 @@ impl Domain {
 
     pub fn interface_stats(&self, path: &str) -> Result<InterfaceStats, Error> {
         unsafe {
-            let pinfo = &mut sys::virDomainInterfaceStats::new();
+            let pinfo = &mut sys::virDomainInterfaceStats::default();
             let ret = virDomainInterfaceStats(self.as_ptr(),
                                               string_to_c_chars!(path),
                                               pinfo,
@@ -1466,7 +1433,7 @@ impl Domain {
 
     pub fn memory_stats(&self, nr_stats: u32, flags: u32) -> Result<MemoryStats, Error> {
         unsafe {
-            let pinfo = &mut sys::virDomainMemoryStats::new();
+            let pinfo = &mut sys::virDomainMemoryStats::default();
             let ret = virDomainMemoryStats(self.as_ptr(),
                                            pinfo,
                                            nr_stats as libc::c_uint,

@@ -84,6 +84,7 @@ pub mod sys {
 
     #[allow(non_camel_case_types)]
     #[repr(C)]
+    #[derive(Default)]
     pub struct virNodeInfo {
         pub model: [libc::c_char; 32],
         pub memory: libc::c_ulong,
@@ -1467,16 +1468,7 @@ impl Connect {
 
     pub fn get_node_info(&self) -> Result<NodeInfo, Error> {
         unsafe {
-            let pinfo = &mut sys::virNodeInfo {
-                                 model: [0i8; 32],
-                                 memory: 0,
-                                 cpus: 0,
-                                 mhz: 0,
-                                 nodes: 0,
-                                 sockets: 0,
-                                 cores: 0,
-                                 threads: 0,
-                             };
+            let pinfo = &mut sys::virNodeInfo::default();
             let res = virNodeGetInfo(self.ptr, pinfo);
             if res == -1 {
                 return Err(Error::new());
