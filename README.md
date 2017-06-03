@@ -1,18 +1,18 @@
 # This crate provides a Rust bindings to the libvirt C library
 
-The binding tries to be a fairly direct mapping of the underling C API
-with some differences to respect Rust conventions.
+The bindings try to be a direct mapping of the underling C API
+with some differences to match Rust conventions.
 
 ## Important considerations
 
-Make sure to have `libvirt-dev` or `libvirt-devel` package (or the
-development files otherwise somewhere in your include path).
+Make sure the `libvirt-dev` or `libvirt-devel` package is installed
+(or that the development files are in your include path).
 
-The binding does not implement all of what the C library is providing
+The bindings do not implement all of what the C library is providing
 but we do consider the current API quite stable.
 
-The binding uses standard errors handling from Rust. Each method
-(there are some exceptions) is returning a type `Option` or `Result`.
+The bindings use standard errors handling from Rust. Each method
+(there are some exceptions) returns a type `Option` or `Result`.
 
 ## Documentation
 
@@ -30,15 +30,15 @@ Rust from stable, beta to nightly.
 
 `cargo test --verbose`
 
-Integration tests are using real connection to libvirtd. For instance
-integration_qemu.rs is using a qemu:///system connection. They are all
+Integration tests use a real connection to libvirtd. For instance
+integration_qemu.rs uses a qemu:///system connection. They are all
 ignored by default.
 
 `cargo test --verbose -- --ignored`
 
-As for `libvirt-go` the integration test also requires that libvirtd
-to listen for TCP connection on localhost with sasl auth. This can be
-setup by editing `/etc/libvirt/libvirtd.conf` to set
+Similar to `libvirt-go`, the integration tests also require that
+libvirtd listens on localhost with sasl auth. This can be setup by
+editing `/etc/libvirt/libvirtd.conf` as follows:
 
 ```
   listen_tls=0
@@ -47,7 +47,7 @@ setup by editing `/etc/libvirt/libvirtd.conf` to set
   listen_addr="127.0.0.1"
 ```
 
-and then start libvirtd with the --listen flag (this can
+and starting libvirtd with the --listen flag (this can
 be set in /etc/sysconfig/libvirtd to make it persistent).
 
 Then create a sasl user
@@ -56,7 +56,7 @@ Then create a sasl user
 
 and enter "pass" as the password.
 
-### To execute examples
+### To run examples
 
 ```
 # cargo run --example hello
@@ -66,8 +66,8 @@ and enter "pass" as the password.
 
 ## Contributing
 
-Any bug fixes and other improvements are welcome at any time. It's
-possible to look at what is missing by running command like:
+Bug fixes and other improvements are welcome. The list of missing bindings can be
+displayed with:
 
 ```
 $ python tools/api_tests.py virDomain
