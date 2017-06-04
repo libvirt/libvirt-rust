@@ -23,9 +23,11 @@ extern crate libc;
 use std::str;
 
 use connect::sys::virConnectPtr;
+use storage_vol::sys::virStorageVolPtr;
 
 use connect::Connect;
 use error::Error;
+use storage_vol::StorageVol;
 
 pub mod sys {
     extern crate libc;
@@ -69,6 +71,7 @@ extern "C" {
     fn virStoragePoolLookupByUUIDString(c: virConnectPtr,
                                         uuid: *const libc::c_char)
                                         -> sys::virStoragePoolPtr;
+    fn virStoragePoolLookupByVolume(v: virStorageVolPtr) -> sys::virStoragePoolPtr;
     fn virStoragePoolCreate(ptr: sys::virStoragePoolPtr, flags: libc::c_uint) -> libc::c_int;
     fn virStoragePoolBuild(ptr: sys::virStoragePoolPtr, flags: libc::c_uint) -> libc::c_int;
     fn virStoragePoolRefresh(ptr: sys::virStoragePoolPtr, flags: libc::c_uint) -> libc::c_int;
@@ -95,7 +98,7 @@ extern "C" {
     fn virStoragePoolGetInfo(ptr: sys::virStoragePoolPtr,
                              info: sys::virStoragePoolInfoPtr)
                              -> libc::c_int;
-
+    fn virStoragePoolNumOfVolumes(ptr: sys::virStoragePoolPtr) -> libc::c_int;
 }
 
 pub type StoragePoolXMLFlags = self::libc::c_uint;
@@ -222,6 +225,16 @@ impl StoragePool {
         }
     }
 
+    pub fn lookup_by_volume(vol: &StorageVol) -> Result<StoragePool, Error> {
+        unsafe {
+            let ptr = virStoragePoolLookupByVolume(vol.as_ptr());
+            if ptr.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(StoragePool::new(ptr));
+        }
+    }
+
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<StoragePool, Error> {
         unsafe {
             let ptr = virStoragePoolLookupByUUIDString(conn.as_ptr(), string_to_c_chars!(uuid));
@@ -239,6 +252,16 @@ impl StoragePool {
                 return Err(Error::new());
             }
             return Ok(c_chars_to_string!(n, nofree));
+        }
+    }
+
+    pub fn num_of_volumes(&self) -> Result<u32, Error> {
+        unsafe {
+            let ret = virStoragePoolNumOfVolumes(self.as_ptr());
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
         }
     }
 

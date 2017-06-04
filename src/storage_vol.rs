@@ -24,10 +24,12 @@ use std::str;
 
 use connect::sys::virConnectPtr;
 use storage_pool::sys::virStoragePoolPtr;
+use stream::sys::virStreamPtr;
 
 use connect::Connect;
 use error::Error;
 use storage_pool::StoragePool;
+use stream::Stream;
 
 pub mod sys {
     extern crate libc;
@@ -100,6 +102,18 @@ extern "C" {
                                  info: sys::virStorageVolInfoPtr,
                                  flags: libc::c_uint)
                                  -> libc::c_int;
+    fn virStorageVolDownload(ptr: sys::virStorageVolPtr,
+                             stream: virStreamPtr,
+                             offset: libc::c_ulonglong,
+                             length: libc::c_ulonglong,
+                             flags: libc::c_uint)
+                             -> libc::c_int;
+    fn virStorageVolUpload(ptr: sys::virStorageVolPtr,
+                           stream: virStreamPtr,
+                           offset: libc::c_ulonglong,
+                           length: libc::c_ulonglong,
+                           flags: libc::c_uint)
+                           -> libc::c_int;
 }
 
 pub type StorageVolCreateFlags = self::libc::c_uint;
@@ -362,6 +376,44 @@ impl StorageVol {
                 return Err(Error::new());
             }
             return Ok(StorageVolInfo::from_ptr(pinfo));
+        }
+    }
+
+    pub fn download(&self,
+                    stream: &Stream,
+                    offset: u64,
+                    length: u64,
+                    flags: u32)
+                    -> Result<(), Error> {
+        unsafe {
+            let ret = virStorageVolDownload(self.as_ptr(),
+                                            stream.as_ptr(),
+                                            offset as libc::c_ulonglong,
+                                            length as libc::c_ulonglong,
+                                            flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(());
+        }
+    }
+
+    pub fn upload(&self,
+                  stream: &Stream,
+                  offset: u64,
+                  length: u64,
+                  flags: u32)
+                  -> Result<(), Error> {
+        unsafe {
+            let ret = virStorageVolUpload(self.as_ptr(),
+                                          stream.as_ptr(),
+                                          offset as libc::c_ulonglong,
+                                          length as libc::c_ulonglong,
+                                          flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(());
         }
     }
 }
