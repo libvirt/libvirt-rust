@@ -462,10 +462,15 @@ pub const VIR_DOMAIN_PMSUSPENDED: DomainState = 7;
 
 #[derive(Clone, Debug)]
 pub struct DomainInfo {
+    /// The running state, one of virDomainState.
     pub state: DomainState,
+    /// The maximum memory in KBytes allowed.
     pub max_mem: u64,
+    /// The memory in KBytes used by the domain.
     pub memory: u64,
+    /// The number of virtual CPUs for the domain.
     pub nr_virt_cpu: u32,
+    /// The CPU time used in nanoseconds.
     pub cpu_time: u64,
 }
 
@@ -490,8 +495,14 @@ pub struct DomainStatsRecord {
 
 #[derive(Clone, Debug)]
 pub struct BlockInfo {
+    /// Logical size in bytes of the image (how much storage the guest
+    /// will see).
     pub capacity: u64,
+    /// Host storage in bytes occupied by the image (such as highest
+    /// allocated extent if there are no holes, similar to 'du').
     pub allocation: u64,
+    /// Host physical size in bytes of the image container (last
+    /// offset, similar to 'ls')
     pub physical: u64,
 }
 
@@ -509,9 +520,15 @@ impl BlockInfo {
 
 #[derive(Clone, Debug, Default)]
 pub struct MemoryParameters {
+    /// Represents the maximum memory the guest can use.
     pub hard_limit: Option<u64>,
+    /// Represents the memory upper limit enforced during memory
+    /// contention.
     pub soft_limit: Option<u64>,
+    /// Represents the minimum memory guaranteed to be reserved for
+    /// the guest.
     pub min_guarantee: Option<u64>,
+    /// Represents the maximum swap plus memory the guest can use.
     pub swap_hard_limit: Option<u64>,
 }
 
@@ -535,7 +552,10 @@ impl MemoryParameters {
 
 #[derive(Clone, Debug, Default)]
 pub struct NUMAParameters {
+    /// Lists the numa nodeset of a domain.
     pub node_set: Option<String>,
+    /// Numa mode of a domain, as an int containing a
+    /// DomainNumatuneMemMode value.
     pub mode: Option<DomainNumatuneMemMode>,
 }
 

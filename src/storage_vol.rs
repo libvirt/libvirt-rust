@@ -133,8 +133,11 @@ pub const VIR_STORAGE_VOL_PLOOP: StorageVolType = 5;
 
 #[derive(Clone, Debug)]
 pub struct StorageVolInfo {
+    /// See: `virStorageVolType` flags
     pub kind: u32,
+    /// Logical size bytes.
     pub capacity: u64,
+    /// Current allocation bytes
     pub allocation: u64,
 }
 

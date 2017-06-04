@@ -351,13 +351,26 @@ pub const VIR_CRED_EXTERNAL: ConnectCredentialType = 9;
 
 #[derive(Clone, Debug)]
 pub struct NodeInfo {
+    /// Indicating the CPU model.
     pub model: String,
+    /// Memory size in kilobytes.
     pub memory: u64,
+    /// The number of active CPUs.
     pub cpus: u32,
+    /// expected CPU frequency, 0 if not known or on unusual
+    /// architectures.
     pub mhz: u32,
+    /// The number of NUMA cell, 1 for unusual NUMA topologies or
+    /// uniform memory access; check capabilities XML for the actual
+    /// NUMA topology
     pub nodes: u32,
+    /// Number of CPU sockets per node if nodes > 1, 1 in case of
+    /// unusual NUMA topology.
     pub sockets: u32,
+    /// Number of cores per socket, total number of processors in case
+    /// of unusual NUMA topology
     pub cores: u32,
+    /// Number of threads per core, 1 in case of unusual numa topology
     pub threads: u32,
 }
 
@@ -366,11 +379,15 @@ pub type ConnectAuthCallback = fn(creds: &mut Vec<ConnectCredential>);
 
 #[derive(Clone, Debug)]
 pub struct ConnectCredential {
+    /// One of `ConnectCredentialType` constants
     pub typed: i32,
+    /// Prompt to show to user.
     pub prompt: String,
+    /// Additional challenge to show.
     pub challenge: String,
+    /// Optional default result.
     pub def_result: String,
-
+    /// Result to be filled with user response (or def_result).
     pub result: Option<String>,
 }
 
@@ -393,7 +410,9 @@ impl ConnectCredential {
 }
 
 pub struct ConnectAuth {
+    /// List of supported `ConnectCredentialType` values.
     creds: Vec<ConnectCredentialType>,
+    /// Callback used to collect credentials.
     callback: ConnectAuthCallback,
 }
 
