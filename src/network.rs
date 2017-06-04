@@ -53,6 +53,7 @@ extern "C" {
     fn virNetworkUndefine(ptr: sys::virNetworkPtr) -> libc::c_int;
     fn virNetworkFree(ptr: sys::virNetworkPtr) -> libc::c_int;
     fn virNetworkIsActive(ptr: sys::virNetworkPtr) -> libc::c_int;
+    fn virNetworkIsPersistent(ptr: sys::virNetworkPtr) -> libc::c_int;
     fn virNetworkGetName(ptr: sys::virNetworkPtr) -> *const libc::c_char;
     fn virNetworkGetUUIDString(ptr: sys::virNetworkPtr, uuiptr: *mut libc::c_char) -> libc::c_int;
     fn virNetworkGetXMLDesc(ptr: sys::virNetworkPtr, flags: libc::c_uint) -> *mut libc::c_char;
@@ -237,7 +238,6 @@ impl Network {
         }
     }
 
-
     pub fn destroy(&self) -> Result<(), Error> {
         unsafe {
             if virNetworkDestroy(self.as_ptr()) == -1 {
@@ -269,6 +269,16 @@ impl Network {
     pub fn is_active(&self) -> Result<bool, Error> {
         unsafe {
             let ret = virNetworkIsActive(self.as_ptr());
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret == 1);
+        }
+    }
+
+    pub fn is_persistent(&self) -> Result<bool, Error> {
+        unsafe {
+            let ret = virNetworkIsPersistent(self.as_ptr());
             if ret == -1 {
                 return Err(Error::new());
             }
