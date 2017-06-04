@@ -20,8 +20,6 @@ extern crate virt;
 
 mod common;
 
-use virt::connect::Connect;
-
 
 #[test]
 fn test_create() {

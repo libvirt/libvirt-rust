@@ -54,32 +54,32 @@ pub fn close(mut conn: Connect) {
 }
 
 pub fn clean(mut dom: Domain) {
-    dom.destroy();
-    dom.undefine();
-    dom.free();
+    if let Err(_) = dom.destroy() {}
+    if let Err(_) = dom.undefine() {}
+    assert_eq!(Ok(()), dom.free())
 }
 
 pub fn clean_iface(mut iface: Interface) {
-    iface.destroy();
-    iface.undefine();
-    iface.free();
+    if let Err(_) = iface.destroy() {}
+    if let Err(_) = iface.undefine() {}
+    assert_eq!(Ok(()), iface.free())
 }
 
 pub fn clean_pool(mut pool: StoragePool) {
-    pool.destroy();
-    pool.undefine();
-    pool.free();
+    if let Err(_) = pool.destroy() {}
+    if let Err(_) = pool.undefine() {}
+    assert_eq!(Ok(()), pool.free())
 }
 
 pub fn clean_net(mut net: Network) {
-    net.destroy();
-    net.undefine();
-    net.free();
+    if let Err(_) = net.destroy() {}
+    if let Err(_) = net.undefine() {}
+    assert_eq!(Ok(()), net.free())
 }
 
 pub fn clean_vol(mut vol: StorageVol) {
-    vol.delete(0);
-    vol.free();
+    if let Err(_) = vol.delete(0) {}
+    assert_eq!(Ok(()), vol.free())
 }
 
 pub fn build_qemu_domain(conn: &Connect, name: &str, transient: bool) -> Domain {

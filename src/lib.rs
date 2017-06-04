@@ -35,7 +35,7 @@
 //! use virt::connect::Connect;
 //!
 //! if let Ok(mut conn) = Connect::open("test://default") {
-//!   conn.close();
+//!   assert_eq!(Ok(0), conn.close());
 //! }
 //! ```
 //!
@@ -52,8 +52,8 @@
 //!
 //! if let Ok(mut conn) = Connect::open("test://default") {
 //!   if let Ok(mut dom) = Domain::lookup_by_name(&conn, "myguest") {
-//!       dom.free();   // Explicitly releases memory at Rust level.
-//!       conn.close();
+//!       assert_eq!(Ok(()), dom.free());   // Explicitly releases memory at Rust level.
+//!       assert_eq!(Ok(0), conn.close());
 //!   }
 //! }
 //! ```
@@ -67,14 +67,14 @@
 //! use virt::domain::Domain;
 //!
 //! if let Ok(mut conn) = Connect::open("test://default") {
-//!   if let Ok(mut dom) = Domain::lookup_by_name(&conn, "myguest") {
+//!   if let Ok(dom) = Domain::lookup_by_name(&conn, "myguest") {
 //!     if let Ok(memp) = dom.get_memory_parameters(0) {
 //!       if memp.hard_limit.is_some() {
 //!         println!("hard limit: {}", memp.hard_limit.unwrap())
 //!       }
 //!     }
 //!   }
-//!   conn.close();
+//!   assert_eq!(Ok(0), conn.close());
 //! }
 //! ```
 
