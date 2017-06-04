@@ -40,11 +40,33 @@ fn test_create_domain_with_flags() {
 
 #[test]
 #[ignore]
-fn test_create_storage_pool() {
+fn test_create_storage_pool_and_vols() {
     let c = common::qemu_conn();
     let p = common::build_storage_pool(&c, "create", false);
     assert_eq!(Ok(0), p.create(0));
     assert_eq!(Ok(String::from("libvirt-rs-test-create")), p.get_name());
+    let v = common::build_storage_vol(&p, "vol1", 8);
+    assert_eq!(Ok(String::from("vol1")), v.get_name());
+    assert_eq!(Ok(String::from("/var/lib/libvirt/images/vol1")),
+               v.get_path());
+    assert_eq!(Ok(String::from("/var/lib/libvirt/images/vol1")),
+               v.get_key());
+    if let Ok(info) = v.get_info() {
+        assert_eq!(0, info.kind);
+        assert_eq!(8192, info.allocation);
+        assert_eq!(8192, info.capacity);
+    } else {
+        panic!("should not be here")
+    }
+    assert_eq!(Ok(0), v.resize(10240, 0));
+    if let Ok(info) = v.get_info() {
+        assert_eq!(0, info.kind);
+        assert_eq!(8192, info.allocation);
+        assert_eq!(10240, info.capacity);
+    } else {
+        panic!("should not be here")
+    }
+    common::clean_vol(v);
     common::clean_pool(p);
     common::close(c);
 }

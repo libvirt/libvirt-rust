@@ -23,6 +23,7 @@ use virt::domain::Domain;
 use virt::error::Error;
 use virt::interface::Interface;
 use virt::storage_pool::StoragePool;
+use virt::storage_vol::StorageVol;
 use virt::network::Network;
 
 
@@ -74,6 +75,11 @@ pub fn clean_net(mut net: Network) {
     net.destroy();
     net.undefine();
     net.free();
+}
+
+pub fn clean_vol(mut vol: StorageVol) {
+    vol.delete(0);
+    vol.free();
 }
 
 pub fn build_qemu_domain(conn: &Connect, name: &str, transient: bool) -> Domain {
@@ -182,29 +188,29 @@ pub fn build_storage_pool(conn: &Connect, name: &str, transient: bool) -> Storag
     }
 }
 
-/*
-pub fn build_storage_vol(pool: &StoragePooln, name: &str, size: u64) -> StoragePool {
-    if let Ok(pool) = StoragePool::lookup_by_name(&conn, "default") {
-        return pool;
+pub fn build_storage_vol(pool: &StoragePool, name: &str, size: u64) -> StorageVol {
+    if let Ok(vol) = StorageVol::lookup_by_name(&pool, name) {
+        return vol;
     }
 
-    let xml = format!("<pool type='dir'>
-                          <name>{}</name>
-                            <target>
-                              <path>/var/lib/libvirt/images</path>
-                            </target>
-                          </pool>",
-                      "default");
-    match StoragePool::define_xml(&conn, &xml, 0) {
-        Ok(pool) => pool,
+    let xml = format!("<volume type='file'>
+                         <name>{}</name>
+                         <allocation unit='Kib'>{}</allocation>
+                         <capacity unit='Kib'>{}</capacity>
+                       </volume>",
+                      name,
+                      size,
+                      size);
+    match StorageVol::create_xml(&pool, &xml, 0) {
+        Ok(vol) => vol,
         Err(e) => {
-            panic!("Build domain failed with code {}, message: {}",
+            panic!("Build vol failed with code {}, message: {}",
                    e.code,
                    e.message)
         }
     }
 }
-*/
+
 
 pub fn build_network(conn: &Connect, name: &str, transient: bool) -> Network {
     let name = format!("libvirt-rs-test-{}", name);

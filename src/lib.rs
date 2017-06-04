@@ -111,4 +111,5 @@ pub mod nwfilter;
 pub mod interface;
 pub mod secret;
 pub mod storage_pool;
+pub mod storage_vol;
 pub mod stream;
