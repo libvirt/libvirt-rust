@@ -56,6 +56,9 @@ fn test_create_storage_pool_and_vols() {
         assert_eq!(8192, info.allocation);
         assert_eq!(8192, info.capacity);
     } else {
+        common::clean_vol(v);
+        common::clean_pool(p);
+        common::close(c);
         panic!("should not be here")
     }
     assert_eq!(Ok(0), v.resize(10240, 0));
@@ -64,6 +67,18 @@ fn test_create_storage_pool_and_vols() {
         assert_eq!(8192, info.allocation);
         assert_eq!(10240, info.capacity);
     } else {
+        common::clean_vol(v);
+        common::clean_pool(p);
+        common::close(c);
+        panic!("should not be here")
+    }
+    if let Ok(info) = p.get_info() {
+        assert_eq!(2, info.state);
+        assert_eq!(0, info.capacity - (info.allocation + info.available));
+    } else {
+        common::clean_vol(v);
+        common::clean_pool(p);
+        common::close(c);
         panic!("should not be here")
     }
     common::clean_vol(v);
