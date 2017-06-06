@@ -425,24 +425,22 @@ impl ConnectAuth {
     }
 
     fn to_cstruct(&mut self) -> sys::virConnectAuth {
-        extern "C" fn wrapper(ccreds: sys::virConnectCredentialPtr,
-                              ncred: libc::c_uint,
-                              cbdata: *mut libc::c_void)
-                              -> libc::c_int {
-            unsafe {
-                let callback: ConnectAuthCallback = mem::transmute(cbdata);
-                let mut rcreds: Vec<ConnectCredential> = Vec::new();
-                for i in 0..ncred as isize {
-                    let c = ConnectCredential::from_ptr(ccreds.offset(i));
-                    rcreds.push(c);
-                }
-                callback(&mut rcreds);
-                for i in 0..ncred as isize {
-                    if rcreds[i as usize].result.is_some() {
-                        if let Some(ref result) = rcreds[i as usize].result {
-                            (*ccreds.offset(i)).resultlen = result.len() as libc::c_uint;
-                            (*ccreds.offset(i)).result = string_to_mut_c_chars!(result.clone());
-                        }
+        unsafe extern "C" fn wrapper(ccreds: sys::virConnectCredentialPtr,
+                                     ncred: libc::c_uint,
+                                     cbdata: *mut libc::c_void)
+                                     -> libc::c_int {
+            let callback: ConnectAuthCallback = mem::transmute(cbdata);
+            let mut rcreds: Vec<ConnectCredential> = Vec::new();
+            for i in 0..ncred as isize {
+                let c = ConnectCredential::from_ptr(ccreds.offset(i));
+                rcreds.push(c);
+            }
+            callback(&mut rcreds);
+            for i in 0..ncred as isize {
+                if rcreds[i as usize].result.is_some() {
+                    if let Some(ref result) = rcreds[i as usize].result {
+                        (*ccreds.offset(i)).resultlen = result.len() as libc::c_uint;
+                        (*ccreds.offset(i)).result = string_to_mut_c_chars!(result.clone());
                     }
                 }
             }
