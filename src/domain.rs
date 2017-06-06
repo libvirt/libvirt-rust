@@ -34,7 +34,6 @@ use stream::Stream;
 pub mod sys {
     extern crate libc;
 
-    use std;
     use typedparam::sys::virTypedParameterPtr;
 
     #[allow(non_camel_case_types)]
@@ -102,15 +101,10 @@ pub mod sys {
 
     #[allow(non_camel_case_types)]
     #[repr(C)]
+    #[derive(Default)]
     pub struct virDomainMemoryStats {
         pub tag: libc::c_int,
         pub val: libc::c_ulonglong,
-    }
-
-    impl std::default::Default for virDomainMemoryStats {
-        fn default() -> Self {
-            unsafe { std::mem::zeroed() }
-        }
     }
 
     #[allow(non_camel_case_types)]
