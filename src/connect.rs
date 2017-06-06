@@ -460,7 +460,7 @@ impl ConnectAuth {
 
 #[derive(Debug)]
 pub struct Connect {
-    pub ptr: sys::virConnectPtr,
+    ptr: sys::virConnectPtr,
 }
 
 impl Connect {
