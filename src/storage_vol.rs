@@ -167,7 +167,9 @@ impl StorageVolInfo {
     }
 }
 
-
+/// Provides APIs for the management of storage volumes.
+///
+/// See http://libvirt.org/html/libvirt-libvirt-storage.html
 #[derive(Debug)]
 pub struct StorageVol {
     ptr: Option<sys::virStorageVolPtr>,

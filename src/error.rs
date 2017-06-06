@@ -36,6 +36,9 @@ extern "C" {
     fn virGetLastError() -> *const virError;
 }
 
+/// Error handling
+///
+/// See: http://libvirt.org/html/libvirt-virterror.html
 #[derive(Debug, PartialEq)]
 pub struct Error {
     pub code: i32,

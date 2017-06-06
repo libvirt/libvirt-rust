@@ -51,6 +51,9 @@ extern "C" {
     fn virNWFilterGetXMLDesc(ptr: sys::virNWFilterPtr, flags: libc::c_uint) -> *mut libc::c_char;
 }
 
+/// Provides APIs for the management for network filters.
+///
+/// See http://libvirt.org/formatnwfilter.html
 #[derive(Debug)]
 pub struct NWFilter {
     ptr: Option<sys::virNWFilterPtr>,

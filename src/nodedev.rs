@@ -65,6 +65,9 @@ extern "C" {
 pub type NodeDeviceXMLFlags = self::libc::c_uint;
 pub const VIR_INTERFACE_XML_INACTIVE: NodeDeviceXMLFlags = 1 << 0;
 
+/// Provides APIs for the management of nodedevs.
+///
+/// See http://libvirt.org/html/libvirt-libvirt-nodedev.html
 #[derive(Debug)]
 pub struct NodeDevice {
     ptr: Option<sys::virNodeDevicePtr>,

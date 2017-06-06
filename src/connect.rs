@@ -458,6 +458,9 @@ impl ConnectAuth {
     }
 }
 
+/// Provides APIs for the management of hosts.
+///
+/// See http://libvirt.org/html/libvirt-libvirt-host.html
 #[derive(Debug)]
 pub struct Connect {
     ptr: sys::virConnectPtr,

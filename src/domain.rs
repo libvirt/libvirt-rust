@@ -623,6 +623,9 @@ impl MemoryStats {
     }
 }
 
+/// Provides APIs for the management of domains.
+///
+/// See http://libvirt.org/html/libvirt-libvirt-domain.html
 #[derive(Debug)]
 pub struct Domain {
     ptr: Option<sys::virDomainPtr>,

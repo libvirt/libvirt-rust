@@ -83,6 +83,9 @@ pub const VIR_CONNECT_LIST_SECRETS_NO_EPHEMERAL: SecretsFlags = 1 << 1;
 pub const VIR_CONNECT_LIST_SECRETS_PRIVATE: SecretsFlags = 1 << 2;
 pub const VIR_CONNECT_LIST_SECRETS_NO_PRIVATE: SecretsFlags = 1 << 3;
 
+/// Provides APIs for the management of secrets.
+///
+/// See http://libvirt.org/html/libvirt-libvirt-secret.html
 #[derive(Debug)]
 pub struct Secret {
     ptr: Option<sys::virSecretPtr>,
