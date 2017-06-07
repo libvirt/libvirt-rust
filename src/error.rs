@@ -18,6 +18,9 @@
 
 extern crate libc;
 
+use std::error::Error as StdError;
+use std::fmt::{Display, Result as FmtResult, Formatter};
+
 pub mod sys {
     extern crate libc;
 
@@ -39,10 +42,22 @@ extern "C" {
     fn virGetLastError() -> sys::virErrorPtr;
 }
 
-pub type ErrorLevel = self::libc::c_uint;
-pub const VIR_ERR_NONE: ErrorLevel = 0;
-pub const VIR_ERR_WARNING: ErrorLevel = 1;
-pub const VIR_ERR_ERROR: ErrorLevel = 2;
+#[derive(Debug, PartialEq)]
+pub enum ErrorLevel {
+    None,
+    Warning,
+    Error,
+}
+
+impl ErrorLevel {
+    pub fn new(level: u32) -> ErrorLevel {
+        match level {
+            0 => ErrorLevel::None,
+            1 => ErrorLevel::Warning,
+            _ => ErrorLevel::Error,
+        }
+    }
+}
 
 /// Error handling
 ///
@@ -63,8 +78,20 @@ impl Error {
                 code: (*ptr).code,
                 domain: (*ptr).domain,
                 message: c_chars_to_string!((*ptr).message, nofree),
-                level: (*ptr).level,
+                level: ErrorLevel::new((*ptr).level as u32),
             }
         }
+    }
+}
+
+impl StdError for Error {
+    fn description(&self) -> &str {
+        self.message.as_str()
+    }
+}
+
+impl Display for Error {
+    fn fmt(&self, f: &mut Formatter) -> FmtResult {
+        write!(f, "{:?}: code: {} domain: {} - {}", self.level, self.code, self.domain, self.message)
     }
 }
