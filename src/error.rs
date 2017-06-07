@@ -18,23 +18,31 @@
 
 extern crate libc;
 
-use std::ffi::CStr;
+pub mod sys {
+    extern crate libc;
 
-#[allow(non_camel_case_types)]
-#[repr(C)]
-struct virError {
-    code: libc::c_int,
-    domain: libc::c_int,
-    message: *const libc::c_char,
-    level: libc::c_int,
+    #[allow(non_camel_case_types)]
+    #[repr(C)]
+    pub struct virError {
+        pub code: libc::c_int,
+        pub domain: libc::c_int,
+        pub message: *mut libc::c_char,
+        pub level: libc::c_uint,
+    }
+
+    #[allow(non_camel_case_types)]
+    pub type virErrorPtr = *mut virError;
 }
-
 
 #[link(name = "virt")]
 extern "C" {
-    //    fn virGetLastErrorMessage() -> *const libc::c_char;
-    fn virGetLastError() -> *const virError;
+    fn virGetLastError() -> sys::virErrorPtr;
 }
+
+pub type ErrorLevel = self::libc::c_uint;
+pub const VIR_ERR_NONE: ErrorLevel = 0;
+pub const VIR_ERR_WARNING: ErrorLevel = 1;
+pub const VIR_ERR_ERROR: ErrorLevel = 2;
 
 /// Error handling
 ///
@@ -44,29 +52,19 @@ pub struct Error {
     pub code: i32,
     pub domain: i32,
     pub message: String,
-    pub level: i32,
+    pub level: ErrorLevel,
 }
 
 impl Error {
     pub fn new() -> Error {
         unsafe {
-            let ptr: *const virError = virGetLastError();
+            let ptr: sys::virErrorPtr = virGetLastError();
             Error {
                 code: (*ptr).code,
                 domain: (*ptr).domain,
-                message: CStr::from_ptr((*ptr).message)
-                    .to_string_lossy()
-                    .into_owned(),
+                message: c_chars_to_string!((*ptr).message, nofree),
                 level: (*ptr).level,
             }
         }
     }
 }
-/*
-pub fn last_error_message() -> String {
-    unsafe {
-        CStr::from_ptr(
-            virGetLastErrorMessage()).to_string_lossy().into_owned()
-    }
-}
-*/
