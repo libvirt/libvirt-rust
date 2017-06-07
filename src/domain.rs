@@ -24,10 +24,12 @@ use std::ffi::CStr;
 use std::{str, ptr, mem};
 
 use connect::sys::virConnectPtr;
+use domain_snapshot::sys::virDomainSnapshotPtr;
 use stream::sys::virStreamPtr;
 use typedparam::sys::{virTypedParameterPtr, virTypedParameter};
 
 use connect::Connect;
+use domain_snapshot::DomainSnapshot;
 use error::Error;
 use stream::Stream;
 
@@ -373,6 +375,10 @@ extern "C" {
                               dname: *const libc::c_char,
                               bandwidth: libc::c_ulong)
                               -> sys::virDomainPtr;
+    fn virDomainListAllSnapshots(ptr: sys::virDomainPtr,
+                                 snaps: *mut *mut virDomainSnapshotPtr,
+                                 flags: libc::c_uint)
+                                 -> libc::c_int;
 }
 
 pub type DomainXMLFlags = self::libc::c_uint;
@@ -1850,6 +1856,26 @@ impl Domain {
                 return Err(Error::new());
             }
             Ok(ret as u32)
+        }
+    }
+
+    pub fn list_all_snapshots(&self, flags: u32) -> Result<Vec<DomainSnapshot>, Error> {
+        unsafe {
+            let mut snaps: *mut virDomainSnapshotPtr = ptr::null_mut();
+            let size = virDomainListAllSnapshots(self.as_ptr(), &mut snaps, flags as libc::c_uint);
+            if size == -1 {
+                return Err(Error::new());
+            }
+
+            mem::forget(snaps);
+
+            let mut array: Vec<DomainSnapshot> = Vec::new();
+            for x in 0..size as isize {
+                array.push(DomainSnapshot::new(*snaps.offset(x)));
+            }
+            libc::free(snaps as *mut libc::c_void);
+
+            return Ok(array);
         }
     }
 }

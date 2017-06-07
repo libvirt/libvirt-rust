@@ -104,6 +104,7 @@ macro_rules! string_to_mut_c_chars {
 pub mod typedparam;
 pub mod connect;
 pub mod domain;
+pub mod domain_snapshot;
 pub mod error;
 pub mod network;
 pub mod nodedev;
