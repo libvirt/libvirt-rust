@@ -92,6 +92,11 @@ impl StdError for Error {
 
 impl Display for Error {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
-        write!(f, "{:?}: code: {} domain: {} - {}", self.level, self.code, self.domain, self.message)
+        write!(f,
+               "{:?}: code: {} domain: {} - {}",
+               self.level,
+               self.code,
+               self.domain,
+               self.message)
     }
 }
