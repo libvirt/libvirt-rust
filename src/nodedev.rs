@@ -20,7 +20,7 @@
 
 extern crate libc;
 
-use std::str;
+use std::{str, ptr};
 
 use connect::sys::virConnectPtr;
 
@@ -41,6 +41,11 @@ extern "C" {
     fn virNodeDeviceLookupByName(c: virConnectPtr,
                                  id: *const libc::c_char)
                                  -> sys::virNodeDevicePtr;
+    fn virNodeDeviceLookupSCSIHostByWWN(c: virConnectPtr,
+                                        wwnn: *const libc::c_char,
+                                        wwpn: *const libc::c_char,
+                                        flags: libc::c_uint)
+                                        -> sys::virNodeDevicePtr;
     fn virNodeDeviceCreateXML(c: virConnectPtr,
                               xml: *const libc::c_char,
                               flags: libc::c_uint)
@@ -60,6 +65,18 @@ extern "C" {
                            cap: *const libc::c_char,
                            flags: libc::c_uint)
                            -> libc::c_int;
+    fn virNodeDeviceReAttach(ptr: sys::virNodeDevicePtr) -> libc::c_int;
+    fn virNodeDeviceReset(ptr: sys::virNodeDevicePtr) -> libc::c_int;
+    fn virNodeDeviceDettach(ptr: sys::virNodeDevicePtr) -> libc::c_int;
+    fn virNodeDeviceNumOfCaps(ptr: sys::virNodeDevicePtr) -> libc::c_int;
+    fn virNodeDeviceDetachFlags(ptr: sys::virNodeDevicePtr,
+                                drivername: *const libc::c_char,
+                                flags: libc::c_uint)
+                                -> libc::c_int;
+    fn virNodeDeviceListCaps(ptr: sys::virNodeDevicePtr,
+                             names: *mut *mut libc::c_char,
+                             maxnames: libc::c_int)
+                             -> libc::c_int;
 }
 
 pub type NodeDeviceXMLFlags = self::libc::c_uint;
@@ -97,6 +114,23 @@ impl NodeDevice {
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<NodeDevice, Error> {
         unsafe {
             let ptr = virNodeDeviceLookupByName(conn.as_ptr(), string_to_c_chars!(id));
+            if ptr.is_null() {
+                return Err(Error::new());
+            }
+            return Ok(NodeDevice::new(ptr));
+        }
+    }
+
+    pub fn lookup_scsi_host_by_www(conn: &Connect,
+                                   wwnn: &str,
+                                   wwpn: &str,
+                                   flags: u32)
+                                   -> Result<NodeDevice, Error> {
+        unsafe {
+            let ptr = virNodeDeviceLookupSCSIHostByWWN(conn.as_ptr(),
+                                                       string_to_c_chars!(wwnn),
+                                                       string_to_c_chars!(wwpn),
+                                                       flags as libc::c_uint);
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -156,12 +190,55 @@ impl NodeDevice {
         }
     }
 
-    pub fn destroy(&self) -> Result<(), Error> {
+    pub fn destroy(&self) -> Result<u32, Error> {
         unsafe {
-            if virNodeDeviceDestroy(self.as_ptr()) == -1 {
+            let ret = virNodeDeviceDestroy(self.as_ptr());
+            if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn detach(&self) -> Result<u32, Error> {
+        unsafe {
+            let ret = virNodeDeviceDettach(self.as_ptr());
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn reset(&self) -> Result<u32, Error> {
+        unsafe {
+            let ret = virNodeDeviceReset(self.as_ptr());
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn reattach(&self) -> Result<u32, Error> {
+        unsafe {
+            let ret = virNodeDeviceReAttach(self.as_ptr());
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
+        }
+    }
+
+    pub fn detach_flags(&self, driver: &str, flags: u32) -> Result<u32, Error> {
+        unsafe {
+            let ret = virNodeDeviceDetachFlags(self.as_ptr(),
+                                               string_to_c_chars!(driver),
+                                               flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            return Ok(ret as u32);
         }
     }
 
@@ -184,6 +261,32 @@ impl NodeDevice {
                 return Err(Error::new());
             }
             return Ok(num as u32);
+        }
+    }
+
+    pub fn num_of_caps(&self) -> Result<u32, Error> {
+        unsafe {
+            let num = virNodeDeviceNumOfCaps(self.as_ptr());
+            if num == -1 {
+                return Err(Error::new());
+            }
+            return Ok(num as u32);
+        }
+    }
+
+    pub fn list_caps(&self) -> Result<Vec<String>, Error> {
+        unsafe {
+            let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
+            let size = virNodeDeviceListCaps(self.as_ptr(), names.as_mut_ptr(), 1024);
+            if size == -1 {
+                return Err(Error::new());
+            }
+
+            let mut array: Vec<String> = Vec::new();
+            for x in 0..size as usize {
+                array.push(c_chars_to_string!(names[x]));
+            }
+            return Ok(array);
         }
     }
 }
