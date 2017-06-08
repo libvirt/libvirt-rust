@@ -44,17 +44,20 @@ extern "C" {
 
 #[derive(Debug, PartialEq)]
 pub enum ErrorLevel {
-    None,
-    Warning,
-    Error,
+    NONE = 0,
+    /// A simple warning.
+    WARNING = 1,
+    /// An error.
+    ERROR = 2,
 }
 
-impl ErrorLevel {
-    pub fn new(level: u32) -> ErrorLevel {
-        match level {
-            0 => ErrorLevel::None,
-            1 => ErrorLevel::Warning,
-            _ => ErrorLevel::Error,
+impl ::std::convert::From<u32> for ErrorLevel {
+    fn from(value: u32) -> ErrorLevel {
+        match value {
+            0 => ErrorLevel::NONE,
+            1 => ErrorLevel::WARNING,
+            2 => ErrorLevel::ERROR,
+            unknow => panic!("Invalid ErrorLevel provided: {:?}", unknow)
         }
     }
 }
@@ -78,7 +81,7 @@ impl Error {
                 code: (*ptr).code,
                 domain: (*ptr).domain,
                 message: c_chars_to_string!((*ptr).message, nofree),
-                level: ErrorLevel::new((*ptr).level as u32),
+                level: ErrorLevel::from((*ptr).level),
             }
         }
     }
