@@ -78,7 +78,13 @@
 //! }
 //! ```
 
+// Some structs imported from libvirt are only pointer.
+#![allow(improper_ctypes)]
 
+// We don't want rustc to warn on this because it's imported from
+// libvirt.
+#![allow(non_camel_case_types)]
+#![allow(non_snake_case)]
 
 macro_rules! c_chars_to_string {
     ($x:expr) => {{

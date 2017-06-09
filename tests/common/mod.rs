@@ -16,6 +16,10 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
+// The rustc is complaining about dead code because only used when
+// ignored tests are executed.
+#![allow(dead_code)]
+
 extern crate virt;
 
 use virt::connect::Connect;

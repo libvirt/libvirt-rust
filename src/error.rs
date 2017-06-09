@@ -24,7 +24,6 @@ use std::fmt::{Display, Result as FmtResult, Formatter};
 pub mod sys {
     extern crate libc;
 
-    #[allow(non_camel_case_types)]
     #[repr(C)]
     pub struct virError {
         pub code: libc::c_int,
@@ -33,7 +32,6 @@ pub mod sys {
         pub level: libc::c_uint,
     }
 
-    #[allow(non_camel_case_types)]
     pub type virErrorPtr = *mut virError;
 }
 
@@ -57,7 +55,7 @@ impl ::std::convert::From<u32> for ErrorLevel {
             0 => ErrorLevel::NONE,
             1 => ErrorLevel::WARNING,
             2 => ErrorLevel::ERROR,
-            unknow => panic!("Invalid ErrorLevel provided: {:?}", unknow)
+            unknow => panic!("Invalid ErrorLevel provided: {:?}", unknow),
         }
     }
 }

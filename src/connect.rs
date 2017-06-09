@@ -16,8 +16,6 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-#![allow(improper_ctypes)]
-
 extern crate libc;
 
 use std::{str, ptr, mem};
@@ -43,14 +41,11 @@ use secret::Secret;
 pub mod sys {
     extern crate libc;
 
-    #[allow(non_camel_case_types)]
     #[repr(C)]
     pub struct virConnect {}
 
-    #[allow(non_camel_case_types)]
     pub type virConnectPtr = *mut virConnect;
 
-    #[allow(non_camel_case_types)]
     #[repr(C)]
     pub struct virConnectCredential {
         pub typed: libc::c_int,
@@ -61,16 +56,13 @@ pub mod sys {
         pub resultlen: libc::c_uint,
     }
 
-    #[allow(non_camel_case_types)]
     pub type virConnectCredentialPtr = *mut virConnectCredential;
 
-    #[allow(non_camel_case_types)]
     pub type virConnectAuthCallbackPtr = unsafe extern "C" fn(virConnectCredentialPtr,
                                                               libc::c_uint,
                                                               *mut libc::c_void)
                                                               -> i32;
 
-    #[allow(non_camel_case_types)]
     #[repr(C)]
     pub struct virConnectAuth {
         pub credtype: *mut libc::c_int,
@@ -79,10 +71,8 @@ pub mod sys {
         pub cbdata: *mut libc::c_void,
     }
 
-    #[allow(non_camel_case_types)]
     pub type virConnectAuthPtr = *mut virConnectAuth;
 
-    #[allow(non_camel_case_types)]
     #[repr(C)]
     #[derive(Default)]
     pub struct virNodeInfo {
@@ -96,7 +86,6 @@ pub mod sys {
         pub threads: libc::c_uint,
     }
 
-    #[allow(non_camel_case_types)]
     pub type virNodeInfoPtr = *mut virNodeInfo;
 }
 

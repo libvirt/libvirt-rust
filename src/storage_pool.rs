@@ -16,8 +16,6 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-#![allow(improper_ctypes)]
-
 extern crate libc;
 
 use std::str;
@@ -32,15 +30,11 @@ use storage_vol::StorageVol;
 pub mod sys {
     extern crate libc;
 
-    #[allow(non_camel_case_types)]
     #[repr(C)]
     pub struct virStoragePool {}
 
-    #[allow(non_camel_case_types)]
     pub type virStoragePoolPtr = *mut virStoragePool;
 
-    #[allow(non_camel_case_types)]
-    #[allow(non_snake_case)]
     #[repr(C)]
     #[derive(Default)]
     pub struct virStoragePoolInfo {
@@ -50,7 +44,6 @@ pub mod sys {
         pub available: libc::c_ulonglong,
     }
 
-    #[allow(non_camel_case_types)]
     pub type virStoragePoolInfoPtr = *mut virStoragePoolInfo;
 }
 

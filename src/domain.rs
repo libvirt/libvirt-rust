@@ -16,8 +16,6 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-#![allow(improper_ctypes)]
-
 extern crate libc;
 
 use std::ffi::CStr;
@@ -38,15 +36,11 @@ pub mod sys {
 
     use typedparam::sys::virTypedParameterPtr;
 
-    #[allow(non_camel_case_types)]
     #[repr(C)]
     pub struct virDomain {}
 
-    #[allow(non_camel_case_types)]
     pub type virDomainPtr = *mut virDomain;
 
-    #[allow(non_camel_case_types)]
-    #[allow(non_snake_case)]
     #[repr(C)]
     #[derive(Default)]
     pub struct virDomainInfo {
@@ -57,11 +51,8 @@ pub mod sys {
         pub cpuTime: libc::c_ulong,
     }
 
-    #[allow(non_camel_case_types)]
     pub type virDomainInfoPtr = *mut virDomainInfo;
 
-    #[allow(non_camel_case_types)]
-    #[allow(non_snake_case)]
     #[repr(C)]
     pub struct virDomainStatsRecord {
         pub dom: virDomainPtr,
@@ -69,10 +60,8 @@ pub mod sys {
         pub nparams: libc::c_uint,
     }
 
-    #[allow(non_camel_case_types)]
     pub type virDomainStatsRecordPtr = *mut virDomainStatsRecord;
 
-    #[allow(non_camel_case_types)]
     #[repr(C)]
     #[derive(Default)]
     pub struct virDomainBlockInfo {
@@ -81,10 +70,8 @@ pub mod sys {
         pub physical: libc::c_ulonglong,
     }
 
-    #[allow(non_camel_case_types)]
     pub type virDomainBlockInfoPtr = *mut virDomainBlockInfo;
 
-    #[allow(non_camel_case_types)]
     #[repr(C)]
     #[derive(Default)]
     pub struct virDomainInterfaceStats {
@@ -98,10 +85,8 @@ pub mod sys {
         pub tx_drop: libc::c_longlong,
     }
 
-    #[allow(non_camel_case_types)]
     pub type virDomainInterfaceStatsPtr = *mut virDomainInterfaceStats;
 
-    #[allow(non_camel_case_types)]
     #[repr(C)]
     #[derive(Default)]
     pub struct virDomainMemoryStats {
@@ -109,7 +94,6 @@ pub mod sys {
         pub val: libc::c_ulonglong,
     }
 
-    #[allow(non_camel_case_types)]
     pub type virDomainMemoryStatsPtr = *mut virDomainMemoryStats;
 }
 

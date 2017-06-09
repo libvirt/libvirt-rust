@@ -16,8 +16,6 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-#![allow(improper_ctypes)]
-
 extern crate libc;
 
 use connect::sys::virConnectPtr;
@@ -26,11 +24,9 @@ use connect::Connect;
 use error::Error;
 
 pub mod sys {
-    #[allow(non_camel_case_types)]
     #[repr(C)]
     pub struct virSecret {}
 
-    #[allow(non_camel_case_types)]
     pub type virSecretPtr = *mut virSecret;
 }
 

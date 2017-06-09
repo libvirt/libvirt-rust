@@ -16,8 +16,6 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-#![allow(improper_ctypes)]
-
 extern crate libc;
 
 use std::str;
@@ -25,14 +23,9 @@ use std::str;
 use error::Error;
 
 pub mod sys {
-    extern crate libc;
-
-    #[allow(non_camel_case_types)]
-    #[allow(non_snake_case)]
     #[repr(C)]
     pub struct virStream {}
 
-    #[allow(non_camel_case_types)]
     pub type virStreamPtr = *mut virStream;
 }
 

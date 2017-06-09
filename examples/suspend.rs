@@ -78,9 +78,17 @@ fn main() {
     };
 
     if name.len() == 0 {
-        fetch_domains(&conn);
+        if let Err(e) = fetch_domains(&conn) {
+            println!("Failed to fetch domains. code {}, message: {}",
+                     e.code,
+                     e.message);
+        }
     } else {
-        suspend_and_resume(&conn, &name, 1);
+        if let Err(e) = suspend_and_resume(&conn, &name, 1) {
+            println!("Failed to suspend/resume. code {}, message: {}",
+                     e.code,
+                     e.message);
+        }
     }
 
     if let Err(e) = conn.close() {

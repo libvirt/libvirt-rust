@@ -16,8 +16,6 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-#![allow(improper_ctypes)]
-
 extern crate libc;
 
 pub mod sys {
@@ -25,8 +23,6 @@ pub mod sys {
 
     use std;
 
-    #[allow(non_camel_case_types)]
-    #[allow(non_snake_case)]
     #[repr(C)]
     #[derive(Copy)]
     pub struct virTypedParameter {
@@ -47,7 +43,6 @@ pub mod sys {
         }
     }
 
-    #[allow(non_camel_case_types)]
     pub type virTypedParameterPtr = *mut virTypedParameter;
 }
 

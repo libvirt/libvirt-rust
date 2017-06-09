@@ -18,9 +18,6 @@
 
 extern crate virt;
 
-use virt::connect::Connect;
-use virt::interface::Interface;
-
 mod common;
 
 #[test]

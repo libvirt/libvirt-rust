@@ -16,8 +16,6 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-#![allow(improper_ctypes)]
-
 extern crate libc;
 
 use std::str;
@@ -28,11 +26,9 @@ use connect::Connect;
 use error::Error;
 
 pub mod sys {
-    #[allow(non_camel_case_types)]
     #[repr(C)]
     pub struct virNWFilter {}
 
-    #[allow(non_camel_case_types)]
     pub type virNWFilterPtr = *mut virNWFilter;
 }
 
