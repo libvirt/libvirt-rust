@@ -41,6 +41,7 @@ extern "C" {
 }
 
 #[derive(Debug, PartialEq)]
+#[repr(C)]
 pub enum ErrorLevel {
     NONE = 0,
     /// A simple warning.
@@ -48,17 +49,7 @@ pub enum ErrorLevel {
     /// An error.
     ERROR = 2,
 }
-
-impl ::std::convert::From<u32> for ErrorLevel {
-    fn from(value: u32) -> ErrorLevel {
-        match value {
-            0 => ErrorLevel::NONE,
-            1 => ErrorLevel::WARNING,
-            2 => ErrorLevel::ERROR,
-            unknow => panic!("Invalid ErrorLevel provided: {:?}", unknow),
-        }
-    }
-}
+impl_from! { u32, ErrorLevel }
 
 /// Error handling
 ///
