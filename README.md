@@ -24,7 +24,7 @@ The bindings use standard errors handling from Rust. Each method
 CI is executing tests automatically from libvirt 1.2.0 to 3.3.0. Using
 Rust from stable, beta to nightly.
 
-* https://travis-ci.org/sahid/libvirt-rs
+* https://travis-ci.org/libvirt/libvirt-rust
 
 ### To execute locally tests and other excerices
 
@@ -66,8 +66,40 @@ and enter "pass" as the password.
 
 ## Contributing
 
-Bug fixes and other improvements are welcome. The list of missing bindings can be
-displayed with:
+The libvirt project aims to add support for new APIs to libvirt-rs as
+soon as they are added to the main libvirt C library. If you are
+submitting changes to the libvirt C library API, please submit a
+libvirt-rs change at the same time.
+
+Bug fixes and other improvements to the libvirt-rs library are welcome
+at any time. The preferred submission method is to use git send-email
+to submit patches to the libvir-list@redhat.com mailing list. eg. to
+send a single patch
+
+   git send-email --to libvir-list@redhat.com --subject-prefix "PATCH rust" \
+       --smtp-server=$HOSTNAME -1
+
+Or to send all patches on the current branch, against master
+
+   git send-email --to libvir-list@redhat.com --subject-prefix "PATCH rust" \
+       --smtp-server=$HOSTNAME --no-chain-reply-to --cover-letter --annotate \
+       master..
+
+Note the master GIT repository is at
+
+* http://libvirt.org/git/?p=libvirt-go.git;a=summary
+
+The following automatic read-only mirrors are available as a
+convenience to allow contributors to "fork" the repository:
+
+* https://gitlab.com/libvirt/libvirt-rust
+* https://github.com/libvirt/libvirt-rust
+
+While you can send pull-requests to these mirrors, they will be
+re-submitted via email to the mailing list for review before being
+merged, unless they are trivial/obvious bug fixes.
+
+The list of missing methods can be displayed with:
 
 ```
 $ python tools/api_tests.py virDomain
