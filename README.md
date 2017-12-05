@@ -16,7 +16,7 @@ The bindings use standard errors handling from Rust. Each method
 
 ## Documentation
 
-* http://libvirt.org/html/libvirt-libvirt.html
+* https://libvirt.org/html/index.html
 * https://docs.rs/crate/virt/
 
 ## Tests/Exercises
@@ -87,7 +87,7 @@ Or to send all patches on the current branch, against master
 
 Note the master GIT repository is at
 
-* http://libvirt.org/git/?p=libvirt-go.git;a=summary
+* https://libvirt.org/git/?p=libvirt-rust.git;a=summary
 
 The following automatic read-only mirrors are available as a
 convenience to allow contributors to "fork" the repository:
