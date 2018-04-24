@@ -40,5 +40,5 @@ install:
   - echo "pass" | sudo saslpasswd2 -p -a libvirt user
 
 script:
-  cargo test --verbose
-  cargo test --verbose -- --ignored
+  - cargo test --verbose
+  - cargo test --verbose -- --ignored
