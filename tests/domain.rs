@@ -91,14 +91,13 @@ fn test_get_vcpus_flags() {
 #[test]
 fn test_lookup_domain_by_id() {
     let c = common::conn();
-    let v = c.list_domains().unwrap_or(vec![]);
-    assert!(0 < v.len(), "At least one domain should exist");
-    for domid in v {
-        match Domain::lookup_by_id(&c, domid) {
-            Ok(mut dom) => dom.free().unwrap_or(()),
-            Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
-        }
+    let d = common::build_test_domain(&c, "by_id", true);
+    let id = d.get_id().unwrap_or(0);
+    match Domain::lookup_by_id(&c, id) {
+        Ok(mut r) => r.free().unwrap_or(()),
+        Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
     }
+    common::clean(d);
     common::close(c);
 }
 
