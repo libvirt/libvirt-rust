@@ -13,11 +13,10 @@ matrix:
     - rust: nightly
 
 env:
-  - LIBVIRT=1.2.0  EXT=gz
-  - LIBVIRT=1.2.10 EXT=gz
-  - LIBVIRT=1.2.20 EXT=gz
   - LIBVIRT=2.5.0  EXT=xz
-  - LIBVIRT=3.3.0  EXT=xz
+  - LIBVIRT=3.10.0  EXT=xz
+  - LIBVIRT=4.10.0  EXT=xz
+  - LIBVIRT=5.5.0  EXT=xz
 
 install:
   - sudo apt-get -qqy build-dep libvirt

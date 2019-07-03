@@ -21,7 +21,7 @@ The bindings use standard errors handling from Rust. Each method
 
 ## Tests/Exercises
 
-CI is executing tests automatically from libvirt 1.2.0 to 3.3.0. Using
+CI is executing tests automatically from libvirt 2.5.0 to 5.5.0. Using
 Rust from stable, beta to nightly.
 
 * https://travis-ci.org/libvirt/libvirt-rust
