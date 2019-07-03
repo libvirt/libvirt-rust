@@ -1,6 +1,6 @@
 language: rust
 os: linux
-dist: trusty
+dist: bionic
 sudo: require
 
 rust:
@@ -33,6 +33,7 @@ install:
   - make
   - sudo make install
   - popd
+  - sudo cp tests/libvirtd.sasl /etc/sasl2/libvirt.conf
   - sudo libvirtd -d -l -f tests/libvirtd.conf
   - sudo virtlogd -d || true
   - sudo chmod a+rwx /var/run/libvirt/libvirt-sock*
