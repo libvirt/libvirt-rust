@@ -41,4 +41,7 @@ install:
 
 script:
   - cargo test --verbose
-  - cargo test --verbose -- --ignored
+  # Due to an issue fixed in master we should not consider running
+  # integration tests in parallel.
+  # see: https://www.redhat.com/archives/libvir-list/2019-July/msg00287.html
+  - cargo test --verbose -- --ignored --test-threads=1
