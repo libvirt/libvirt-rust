@@ -107,10 +107,6 @@ macro_rules! string_to_mut_c_chars {
     ($x:expr) => (::std::ffi::CString::new($x).unwrap().into_raw())
 }
 
-macro_rules! string_to_mut_c_chars {
-    ($x:expr) => (::std::ffi::CString::new($x).unwrap().into_raw())
-}
-
 macro_rules! impl_from {
     // Largely inspired by impl_from! in rust core/num/mod.rs
     ($Small: ty, $Large: ty) => {
