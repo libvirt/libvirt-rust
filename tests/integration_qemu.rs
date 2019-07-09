@@ -108,14 +108,9 @@ fn test_connection_with_auth() {
     let mut auth = ConnectAuth::new(vec![::virt::connect::VIR_CRED_AUTHNAME,
                                          ::virt::connect::VIR_CRED_PASSPHRASE],
                                     callback);
-    match Connect::open_auth("test+tcp://127.0.0.1/default", &mut auth, 0) {
-        Ok(c) => common::close(c),
-        Err(e) => {
-            panic!("open_auth did not work: code {}, message: {}",
-                   e.code,
-                   e.message)
-        }
-    }
+    let c = Connect::open_auth("test+tcp://127.0.0.1/default", &mut auth, 0);
+    assert_eq!(true, c.is_ok());
+    common::close(c.unwrap());
 }
 
 
@@ -141,9 +136,8 @@ fn test_connection_with_auth_wrong() {
     let mut auth = ConnectAuth::new(vec![::virt::connect::VIR_CRED_AUTHNAME,
                                          ::virt::connect::VIR_CRED_PASSPHRASE],
                                     callback);
-    if Connect::open_auth("test+tcp://127.0.0.1/default", &mut auth, 0).is_ok() {
-        panic!("open_auth did not work: code {}, message:");
-    }
+    let c = Connect::open_auth("test+tcp://127.0.0.1/default", &mut auth, 0);
+    assert_eq!(false, c.is_ok());
 }
 
 #[test]

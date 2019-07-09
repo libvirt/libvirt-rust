@@ -240,6 +240,41 @@ extern "C" {
                                         -> *mut libc::c_char;
 }
 
+extern "C" fn connectCallback(ccreds: sys::virConnectCredentialPtr,
+                              ncred: libc::c_uint,
+                              cbdata: *mut libc::c_void)
+                              -> libc::c_int {
+    let callback: ConnectAuthCallback = unsafe {
+        // Safe because connectCallback is private and only used by
+        // Connect::open_auth(). In open_auth() we transmute the
+        // callback allocate in *void.
+        mem::transmute(cbdata)
+    };
+    let mut rcreds: Vec<ConnectCredential> = Vec::new();
+    for i in 0..ncred as isize {
+        unsafe {
+            // Safe because ccreds is allocated.
+            let c = ConnectCredential::from_ptr(ccreds.offset(i));
+            rcreds.push(c);
+        }
+    }
+    callback(&mut rcreds);
+    for i in 0..ncred as isize {
+        if rcreds[i as usize].result.is_some() {
+            if let Some(ref result) = rcreds[i as usize].result {
+                unsafe {
+                    // Safe because ccreds is allocated and the result
+                    // is comming from Rust calls.
+                    (*ccreds.offset(i)).resultlen = result.len() as libc::c_uint;
+                    (*ccreds.offset(i)).result = string_to_mut_c_chars!(result.clone());
+                }
+            }
+        }
+    }
+    0
+}
+
+
 pub type ConnectFlags = self::libc::c_uint;
 pub const VIR_CONNECT_RO: ConnectFlags = 1 << 0;
 pub const VIR_CONNECT_NO_ALIASES: ConnectFlags = 1 << 1;
@@ -412,39 +447,6 @@ impl ConnectAuth {
             callback: callback,
         }
     }
-
-    fn to_cstruct(&mut self) -> sys::virConnectAuth {
-        unsafe extern "C" fn wrapper(ccreds: sys::virConnectCredentialPtr,
-                                     ncred: libc::c_uint,
-                                     cbdata: *mut libc::c_void)
-                                     -> libc::c_int {
-            let callback: ConnectAuthCallback = mem::transmute(cbdata);
-            let mut rcreds: Vec<ConnectCredential> = Vec::new();
-            for i in 0..ncred as isize {
-                let c = ConnectCredential::from_ptr(ccreds.offset(i));
-                rcreds.push(c);
-            }
-            callback(&mut rcreds);
-            for i in 0..ncred as isize {
-                if rcreds[i as usize].result.is_some() {
-                    if let Some(ref result) = rcreds[i as usize].result {
-                        (*ccreds.offset(i)).resultlen = result.len() as libc::c_uint;
-                        (*ccreds.offset(i)).result = string_to_mut_c_chars!(result.clone());
-                    }
-                }
-            }
-            0
-        }
-
-        unsafe {
-            sys::virConnectAuth {
-                credtype: &mut self.creds[0],
-                ncredtype: self.creds.len() as u32,
-                cb: wrapper,
-                cbdata: mem::transmute(self.callback),
-            }
-        }
-    }
 }
 
 /// Provides APIs for the management of hosts.
@@ -554,14 +556,23 @@ impl Connect {
                      auth: &mut ConnectAuth,
                      flags: ConnectFlags)
                      -> Result<Connect, Error> {
-        unsafe {
-            let mut cauth = auth.to_cstruct();
-            let c = virConnectOpenAuth(string_to_c_chars!(uri), &mut cauth, flags as libc::c_uint);
-            if c.is_null() {
-                return Err(Error::new());
+        let mut cauth = unsafe {
+            // Safe because Rust forces to allocate all attributes of
+            // the struct ConnectAuth.
+            sys::virConnectAuth {
+                credtype: &mut auth.creds[0],
+                ncredtype: auth.creds.len() as libc::c_uint,
+                cb: connectCallback,
+                cbdata: mem::transmute(auth.callback),
             }
-            return Ok(Connect::new(c));
+        };
+        let c = unsafe {
+            virConnectOpenAuth(string_to_c_chars!(uri), &mut cauth, flags as libc::c_uint)
+        };
+        if c.is_null() {
+            return Err(Error::new());
         }
+        return Ok(Connect::new(c));
     }
 
 
