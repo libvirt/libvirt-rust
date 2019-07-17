@@ -1,4 +1,5 @@
 [gitpublishprofile "default"]
 base = master
 to = libvir-list@redhat.com
-prefix = rust PATCH
+cc = sahid.ferdjaoui@canonical.com
+prefix = PATCH Rust

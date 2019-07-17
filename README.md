@@ -77,17 +77,19 @@ to submit patches to the libvir-list@redhat.com mailing list. eg. to
 send a single patch
 
 ```
-   git send-email --to libvir-list@redhat.com --subject-prefix "PATCH rust" \
-       --smtp-server=$HOSTNAME -1
+   git send-email --to libvir-list@redhat.com --cc sahid.ferdjaoui@canonical.com \
+       --subject-prefix "PATCH Rust" --smtp-server=$HOSTNAME -1
 ```
 
 Or to send all patches on the current branch, against master
 
 ```
-   git send-email --to libvir-list@redhat.com --subject-prefix "PATCH rust" \
-       --smtp-server=$HOSTNAME --no-chain-reply-to --cover-letter --annotate \
-       master..
+   git send-email --to libvir-list@redhat.com --cc sahid.ferdjaoui@canonical.com \
+       --subject-prefix "PATCH Rust" --smtp-server=$HOSTNAME --no-chain-reply-to \
+       --cover-letter --annotate master..
 ```
+
+It is also possible to use git-publish.
 
 Note the master GIT repository is at
 
