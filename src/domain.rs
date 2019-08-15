@@ -136,7 +136,7 @@ extern "C" {
     fn virDomainGetHostname(ptr: sys::virDomainPtr, flags: libc::c_uint) -> *mut libc::c_char;
     fn virDomainGetUUIDString(ptr: sys::virDomainPtr, uuid: *mut libc::c_char) -> libc::c_int;
     fn virDomainGetXMLDesc(ptr: sys::virDomainPtr, flags: libc::c_uint) -> *mut libc::c_char;
-    fn virDomainGetAutostart(ptr: sys::virDomainPtr) -> libc::c_int;
+    fn virDomainGetAutostart(ptr: sys::virDomainPtr, autostart: *mut libc::c_int) -> libc::c_int;
     fn virDomainSetAutostart(ptr: sys::virDomainPtr, autostart: libc::c_uint) -> libc::c_int;
     fn virDomainGetID(ptr: sys::virDomainPtr) -> libc::c_uint;
     fn virDomainSetMaxMemory(ptr: sys::virDomainPtr, memory: libc::c_ulong) -> libc::c_int;
@@ -1036,11 +1036,12 @@ impl Domain {
 
     pub fn get_autostart(&self) -> Result<bool, Error> {
         unsafe {
-            let ret = virDomainGetAutostart(self.as_ptr());
+            let mut autostart: libc::c_int = 0;
+            let ret = virDomainGetAutostart(self.as_ptr(), &mut autostart);
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret == 1);
+            return Ok(autostart == 1);
         }
     }
 
