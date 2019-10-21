@@ -18,6 +18,7 @@
 
 extern crate libc;
 
+use std::convert::TryFrom;
 use std::str;
 
 use error::Error;
@@ -37,7 +38,7 @@ extern "C" {
                      -> libc::c_int;
     fn virStreamRecv(c: sys::virStreamPtr,
                      data: *mut libc::c_char,
-                     nbytes: libc::c_uint)
+                     nbytes: libc::size_t)
                      -> libc::c_int;
     fn virStreamFree(c: sys::virStreamPtr) -> libc::c_int;
     fn virStreamAbort(c: sys::virStreamPtr) -> libc::c_int;
@@ -116,14 +117,14 @@ impl Stream {
         }
     }
 
-    pub fn recv(&self, size: u32) -> Result<String, Error> {
-        unsafe {
-            let mut data: [libc::c_char; 2048] = ['\0' as i8; 2048];
-            let ret = virStreamRecv(self.as_ptr(), data.as_mut_ptr(), size as libc::c_uint);
-            if ret == -1 {
-                return Err(Error::new());
-            }
-            return Ok(c_chars_to_string!(data.as_ptr()));
-        }
+    pub fn recv(&self, buf: &mut [u8]) -> Result<usize, Error> {
+        let ret = unsafe {
+            virStreamRecv(
+                self.as_ptr(),
+                buf.as_mut_ptr() as *mut libc::c_char,
+                buf.len(),
+            )
+        };
+        usize::try_from(ret).map_err(|_| Error::new())
     }
 }
