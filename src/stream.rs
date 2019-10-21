@@ -34,7 +34,7 @@ pub mod sys {
 extern "C" {
     fn virStreamSend(c: sys::virStreamPtr,
                      data: *const libc::c_char,
-                     nbytes: libc::c_uint)
+                     nbytes: libc::size_t)
                      -> libc::c_int;
     fn virStreamRecv(c: sys::virStreamPtr,
                      data: *mut libc::c_char,
@@ -105,16 +105,15 @@ impl Stream {
         }
     }
 
-    pub fn send(&self, data: &str) -> Result<u32, Error> {
-        unsafe {
-            let ret = virStreamSend(self.as_ptr(),
-                                    string_to_c_chars!(data),
-                                    data.len() as libc::c_uint);
-            if ret == -1 {
-                return Err(Error::new());
-            }
-            return Ok(ret as u32);
-        }
+    pub fn send(&self, data: &[u8]) -> Result<usize, Error> {
+        let ret = unsafe {
+            virStreamSend(
+                self.as_ptr(),
+                data.as_ptr() as *mut libc::c_char,
+                data.len()
+            )
+        };
+        usize::try_from(ret).map_err(|_| Error::new())
     }
 
     pub fn recv(&self, buf: &mut [u8]) -> Result<usize, Error> {
