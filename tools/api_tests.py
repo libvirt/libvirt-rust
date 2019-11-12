@@ -47,10 +47,10 @@ def main():
             else:
                 missing.add(el)
 
-    print "missing: %s, implemented: %s" % (len(missing), len(implemented))
-    print "missing:"
+    print("missing: %s, implemented: %s" % (len(missing), len(implemented)))
+    print("missing:")
     for x in missing:
-        print x.attrib
+        print(x.attrib)
     #print "implemented:"
     #for x in implemented:
     #    print x.attrib
