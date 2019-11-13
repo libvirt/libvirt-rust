@@ -78,14 +78,14 @@ send a single patch
 
 ```
    git send-email --to libvir-list@redhat.com --cc sahid.ferdjaoui@canonical.com \
-       --subject-prefix "PATCH Rust" --smtp-server=$HOSTNAME -1
+       --subject-prefix "rust PATCH" --smtp-server=$HOSTNAME -1
 ```
 
 Or to send all patches on the current branch, against master
 
 ```
    git send-email --to libvir-list@redhat.com --cc sahid.ferdjaoui@canonical.com \
-       --subject-prefix "PATCH Rust" --smtp-server=$HOSTNAME --no-chain-reply-to \
+       --subject-prefix "rust PATCH" --smtp-server=$HOSTNAME --no-chain-reply-to \
        --cover-letter --annotate master..
 ```
 
