@@ -89,6 +89,44 @@ fn show_domains(conn: &Connect) -> Result<(), Error> {
                                  numa.node_set.unwrap_or(String::from("")));
                         println!("    Mode: {}", numa.mode.unwrap_or(0));
                     }
+
+                    if let Ok((sched_type, nparams)) = dom.get_scheduler_type() {
+                        println!("SchedType: {}, nparams: {}",
+                                 sched_type, nparams);
+                    }
+
+                    if let Ok(sched_info) = dom.get_scheduler_parameters() {
+                        println!("Schedule Information:");
+                        println!("\tScheduler\t: {}", sched_info.scheduler_type);
+                        if let Some(shares) =  sched_info.cpu_shares {
+                            println!("\tcpu_shares\t: {}", shares);
+                        }
+                        if let Some(period) = sched_info.vcpu_bw.period {
+                            println!("\tvcpu_period\t: {}", period);
+                        }
+                        if let Some(quota) = sched_info.vcpu_bw.quota {
+                            println!("\tvcpu_quota\t: {}", quota);
+                        }
+                        if let Some(period) = sched_info.emulator_bw.period {
+                            println!("\temulator_period\t: {}", period);
+                        }
+                        if let Some(quota) = sched_info.emulator_bw.quota {
+                            println!("\temulator_quota\t: {}", quota);
+                        }
+                        if let Some(period) = sched_info.global_bw.period {
+                            println!("\tglobal_period\t: {}", period);
+                        }
+                        if let Some(quota) = sched_info.global_bw.quota {
+                            println!("\tglobal_quota\t: {}", quota);
+                        }
+                        if let Some(period) = sched_info.global_bw.period {
+                            println!("\tiothread_period\t: {}", period);
+                        }
+                        if let Some(quota) = sched_info.global_bw.quota {
+                            println!("\tiothread_quota\t: {}", quota);
+                        }
+                    }
+
                 }
             }
             return Ok(());

@@ -363,6 +363,29 @@ extern "C" {
                                  snaps: *mut *mut virDomainSnapshotPtr,
                                  flags: libc::c_uint)
                                  -> libc::c_int;
+
+    fn virDomainGetSchedulerType(ptr: sys::virDomainPtr,
+                                 nparams: *mut libc::c_int)
+                                 -> *mut libc::c_char;
+    fn virDomainGetSchedulerParameters(ptr: sys::virDomainPtr,
+                                       params: virTypedParameterPtr,
+                                       nparams: *mut libc::c_int)
+                                       -> libc::c_int;
+    fn virDomainSetSchedulerParameters(ptr: sys::virDomainPtr,
+                                       params: virTypedParameterPtr,
+                                       nparams: libc::c_int)
+                                       -> libc::c_int;
+    fn virDomainGetSchedulerParametersFlags(ptr: sys::virDomainPtr,
+                                            params: virTypedParameterPtr,
+                                            nparams: *mut libc::c_int,
+                                            flags: libc::c_uint)
+                                            -> libc::c_int;
+    fn virDomainSetSchedulerParametersFlags(ptr: sys::virDomainPtr,
+                                            params: virTypedParameterPtr,
+                                            nparams: libc::c_int,
+                                            flags: libc::c_uint)
+                                            -> libc::c_int;
+
 }
 
 pub type DomainXMLFlags = self::libc::c_uint;
@@ -607,6 +630,124 @@ impl MemoryStats {
     }
 }
 
+/// Structure representing the CFS scheduler cpu bandwidth parameters
+/// see https://www.kernel.org/doc/html/latest/scheduler/sched-bwc.html
+#[derive(Clone, Debug, Default)]
+pub struct SchedBandwidth {
+    pub period: Option<u64>,
+    pub quota: Option<i64>,
+}
+
+#[derive(Clone, Debug, Default)]
+pub struct SchedulerInfo {
+    pub scheduler_type: String,
+    // cpu shares for the domain.
+    pub cpu_shares: Option<u64>,
+    // Bandwidth allocated for the vcpu threads.
+    pub vcpu_bw: SchedBandwidth,
+    // Bandwidth allocated for the emulator threads.
+    pub emulator_bw: SchedBandwidth,
+    // Bandwidth allocated for the Domain.
+    pub global_bw: SchedBandwidth,
+    // Bandwidth allocated for the io threads..
+    pub iothread_bw: SchedBandwidth,
+}
+
+impl SchedulerInfo {
+    pub fn from_vec(vec: Vec<virTypedParameter>, scheduler_type: String) -> SchedulerInfo {
+        unsafe {
+            let mut ret = SchedulerInfo::default();
+            ret.scheduler_type = scheduler_type;
+            for param in vec {
+                match str::from_utf8(CStr::from_ptr(param.field.as_ptr()).to_bytes()).unwrap() {
+                    "cpu_shares" => ret.cpu_shares = Some(param.value as u64),
+                    "vcpu_period" => ret.vcpu_bw.period = Some(param.value as u64),
+                    "vcpu_quota" => ret.vcpu_bw.quota = Some(param.value as i64),
+                    "emulator_period" => ret.emulator_bw.period = Some(param.value as u64),
+                    "emulator_quota" => ret.emulator_bw.quota = Some(param.value as i64),
+                    "global_period" => ret.global_bw.period = Some(param.value as u64),
+                    "global_quota" => ret.global_bw.quota = Some(param.value as i64),
+                    "iothread_period" => ret.iothread_bw.period = Some(param.value as u64),
+                    "iothread_quota" => ret.iothread_bw.quota = Some(param.value as i64),
+                    unknow => panic!("Field not implemented for SchedulerInfo, {:?}", unknow),
+                }
+            }
+            ret
+        }
+    }
+
+    pub fn to_vec(&self) -> Vec<virTypedParameter> {
+        let mut cparams: Vec<virTypedParameter> = Vec::new();
+
+        if let Some(shares) = self.cpu_shares {
+            cparams.push(virTypedParameter {
+                             field: to_arr("cpu_shares\0"),
+                             typed: ::typedparam::VIR_TYPED_PARAM_ULLONG,
+                             value: shares
+                         });
+        }
+
+        if let Some(period) = self.vcpu_bw.period {
+            cparams.push(virTypedParameter {
+                             field: to_arr("vcpu_period\0"),
+                             typed: ::typedparam::VIR_TYPED_PARAM_ULLONG,
+                             value: period,
+                         });
+        }
+        if let Some(quota) = self.vcpu_bw.quota {
+            cparams.push(virTypedParameter {
+                             field: to_arr("vcpu_quota\0"),
+                             typed: ::typedparam::VIR_TYPED_PARAM_LLONG,
+                             value: quota as u64,
+                         });
+        }
+        if let Some(period) = self.emulator_bw.period {
+            cparams.push(virTypedParameter {
+                             field: to_arr("emulator_period\0"),
+                             typed: ::typedparam::VIR_TYPED_PARAM_ULLONG,
+                             value: period,
+                         });
+        }
+        if let Some(quota) = self.emulator_bw.quota {
+            cparams.push(virTypedParameter {
+                             field: to_arr("emulator_quota\0"),
+                             typed: ::typedparam::VIR_TYPED_PARAM_LLONG,
+                             value: quota as u64,
+                         });
+        }
+        if let Some(period) = self.global_bw.period {
+            cparams.push(virTypedParameter {
+                             field: to_arr("global_period\0"),
+                             typed: ::typedparam::VIR_TYPED_PARAM_ULLONG,
+                             value: period,
+                         });
+        }
+        if let Some(quota) = self.global_bw.quota {
+            cparams.push(virTypedParameter {
+                             field: to_arr("global_quota\0"),
+                             typed: ::typedparam::VIR_TYPED_PARAM_LLONG,
+                             value: quota as u64,
+                         });
+        }
+        if let Some(period) = self.iothread_bw.period {
+            cparams.push(virTypedParameter {
+                             field: to_arr("iothread_period\0"),
+                             typed: ::typedparam::VIR_TYPED_PARAM_ULLONG,
+                             value: period,
+                         });
+        }
+        if let Some(quota) = self.iothread_bw.quota {
+            cparams.push(virTypedParameter {
+                             field: to_arr("iothread_quota\0"),
+                             typed: ::typedparam::VIR_TYPED_PARAM_LLONG,
+                             value: quota as u64,
+                         });
+        }
+
+        cparams
+    }
+}
+
 /// Provides APIs for the management of domains.
 ///
 /// See http://libvirt.org/html/libvirt-libvirt-domain.html
@@ -625,6 +766,14 @@ impl Drop for Domain {
             }
         }
     }
+}
+
+fn to_arr(name: &str) -> [libc::c_char; 80] {
+    let mut field: [libc::c_char; 80] = [0; 80];
+    for (a, c) in field.iter_mut().zip(name.as_bytes()) {
+        *a = *c as i8
+    }
+    field
 }
 
 impl Domain {
@@ -1656,14 +1805,6 @@ impl Domain {
                                  flags: u32)
                                  -> Result<u32, Error> {
         unsafe {
-            fn to_arr(name: &str) -> [libc::c_char; 80] {
-                let mut field: [libc::c_char; 80] = [0; 80];
-                for (a, c) in field.iter_mut().zip(name.as_bytes()) {
-                    *a = *c as i8
-                }
-                field
-            }
-
             let mut cparams: Vec<virTypedParameter> = Vec::new();
             if params.hard_limit.is_some() {
                 cparams.push(virTypedParameter {
@@ -1809,13 +1950,6 @@ impl Domain {
 
     pub fn set_numa_parameters(&self, params: NUMAParameters, flags: u32) -> Result<u32, Error> {
         unsafe {
-            fn to_arr(name: &str) -> [libc::c_char; 80] {
-                let mut field: [libc::c_char; 80] = [0; 80];
-                for (a, c) in field.iter_mut().zip(name.as_bytes()) {
-                    *a = *c as i8
-                }
-                field
-            }
 
             let mut cparams: Vec<virTypedParameter> = Vec::new();
             if params.node_set.is_some() {
@@ -1861,6 +1995,102 @@ impl Domain {
             libc::free(snaps as *mut libc::c_void);
 
             return Ok(array);
+        }
+    }
+
+    /// Get the cpu scheduler type for the domain
+    pub fn get_scheduler_type(&self) -> Result<(String, i32), Error>
+    {
+        unsafe {
+            let mut nparams: libc::c_int = -1;
+            let sched_type = virDomainGetSchedulerType(self.as_ptr(),
+                                                       &mut nparams);
+            if sched_type.is_null() {
+                return Err(Error::new());
+            }
+
+            return Ok((c_chars_to_string!(sched_type), nparams));
+        }
+    }
+
+    /// Get the scheduler parameters for the domain.
+    pub fn get_scheduler_parameters(&self) -> Result<SchedulerInfo, Error> {
+
+        let (sched_type, mut nparams) = self.get_scheduler_type()?;
+        unsafe {
+            let mut params: Vec<virTypedParameter> = vec![
+                virTypedParameter::default(); 9];
+            let ret = virDomainGetSchedulerParameters(self.as_ptr(),
+                                                      &mut params[0],
+                                                      &mut nparams);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            Ok(SchedulerInfo::from_vec(params, sched_type))
+        }
+
+    }
+
+    /// Get the scheduler parameters for the domain for the configuration
+    /// as specified by the flags.
+    /// # Arguments
+    ///
+    /// * `flags` - Specifies the Domain Impact: CONFIG, LIVE or CURRENT.
+    pub fn get_scheduler_parameters_flags(&self,
+                                          flags: DomainModImpactFlags)
+                                          -> Result<SchedulerInfo, Error> {
+
+        let (sched_type, mut nparams) = self.get_scheduler_type()?;
+        unsafe {
+            let mut params: Vec<virTypedParameter> = vec![
+                virTypedParameter::default(); 9];
+            let ret = virDomainGetSchedulerParametersFlags(self.as_ptr(),
+                                                           &mut params[0],
+                                                           &mut nparams,
+                                                           flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            Ok(SchedulerInfo::from_vec(params, sched_type))
+        }
+
+    }
+
+    /// Set the scheduler parameters for the domain.
+    pub fn set_scheduler_parameters(&self,
+                                    sched_info: &SchedulerInfo)
+                                    -> Result<i32, Error> {
+        unsafe {
+            let mut params = sched_info.to_vec();
+            let ret = virDomainSetSchedulerParameters(self.as_ptr(),
+                                                      &mut params[0],
+                                                      params.len() as libc::c_int);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            Ok(ret)
+        }
+    }
+
+    /// Set the scheduler parameters for the domain for the configuration
+    /// as specified by the flags.
+    /// # Arguments
+    ///
+    /// * `flags` - Specifies the Domain Impact: CONFIG, LIVE or CURRENT.
+    pub fn set_scheduler_parameters_flags(&self,
+                                          sched_info: &SchedulerInfo,
+                                          flags: DomainModImpactFlags)
+                                          -> Result<i32, Error> {
+        unsafe {
+            let mut params = sched_info.to_vec();
+            let ret = virDomainSetSchedulerParametersFlags(self.as_ptr(),
+                                                           &mut params[0],
+                                                           params.len() as libc::c_int,
+                                                           flags as libc::c_uint);
+            if ret == -1 {
+                return Err(Error::new());
+            }
+            Ok(ret)
         }
     }
 }
