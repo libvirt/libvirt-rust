@@ -19,7 +19,6 @@
 extern crate libc;
 
 use std::convert::TryFrom;
-use std::str;
 
 use error::Error;
 
