@@ -2,4 +2,4 @@
 base = master
 to = libvir-list@redhat.com
 cc = sahid.ferdjaoui@canonical.com
-prefix = rust PATCH
+prefix = libvirt-rust PATCH
