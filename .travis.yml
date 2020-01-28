@@ -39,7 +39,11 @@ install:
   - sudo chmod a+rwx /var/run/libvirt/libvirt-sock*
   - echo "pass" | sudo saslpasswd2 -p -a libvirt user
 
+before_script:
+  - rustup component add rustfmt
+
 script:
+  - cargo fmt -v -- --check;
   - cargo test --verbose
   # Due to an issue fixed in master we should not consider running
   # integration tests in parallel.

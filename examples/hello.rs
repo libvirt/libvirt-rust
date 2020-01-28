@@ -29,7 +29,6 @@ use std::env;
 use virt::connect::Connect;
 use virt::error::Error;
 
-
 fn show_hypervisor_info(conn: &Connect) -> Result<(), Error> {
     if let Ok(hv_type) = conn.get_type() {
         if let Ok(mut hv_ver) = conn.get_hyp_version() {
@@ -37,11 +36,10 @@ fn show_hypervisor_info(conn: &Connect) -> Result<(), Error> {
             hv_ver %= 1000000;
             let minor = hv_ver / 1000;
             let release = hv_ver % 1000;
-            println!("Hypervisor: '{}' version: {}.{}.{}",
-                     hv_type,
-                     major,
-                     minor,
-                     release);
+            println!(
+                "Hypervisor: '{}' version: {}.{}.{}",
+                hv_type, major, minor, release
+            );
             return Ok(());
         }
     }
@@ -49,14 +47,15 @@ fn show_hypervisor_info(conn: &Connect) -> Result<(), Error> {
 }
 
 fn show_domains(conn: &Connect) -> Result<(), Error> {
-    let flags = virt::connect::VIR_CONNECT_LIST_DOMAINS_ACTIVE |
-                virt::connect::VIR_CONNECT_LIST_DOMAINS_INACTIVE;
+    let flags = virt::connect::VIR_CONNECT_LIST_DOMAINS_ACTIVE
+        | virt::connect::VIR_CONNECT_LIST_DOMAINS_INACTIVE;
 
     if let Ok(num_active_domains) = conn.num_of_domains() {
         if let Ok(num_inactive_domains) = conn.num_of_defined_domains() {
-            println!("There are {} active and {} inactive domains",
-                     num_active_domains,
-                     num_inactive_domains);
+            println!(
+                "There are {} active and {} inactive domains",
+                num_active_domains, num_inactive_domains
+            );
             /* Return a list of all active and inactive domains. Using this API
              * instead of virConnectListDomains() and virConnectListDefinedDomains()
              * is preferred since it "solves" an inherit race between separated API
@@ -80,25 +79,28 @@ fn show_domains(conn: &Connect) -> Result<(), Error> {
                         println!("    Hard Limit: {}", memtune.hard_limit.unwrap_or(0));
                         println!("    Soft Limit: {}", memtune.soft_limit.unwrap_or(0));
                         println!("    Min Guarantee: {}", memtune.min_guarantee.unwrap_or(0));
-                        println!("    Swap Hard Limit: {}",
-                                 memtune.swap_hard_limit.unwrap_or(0));
+                        println!(
+                            "    Swap Hard Limit: {}",
+                            memtune.swap_hard_limit.unwrap_or(0)
+                        );
                     }
                     if let Ok(numa) = dom.get_numa_parameters(0) {
                         println!("NUMA:");
-                        println!("    Node Set: {}",
-                                 numa.node_set.unwrap_or(String::from("")));
+                        println!(
+                            "    Node Set: {}",
+                            numa.node_set.unwrap_or(String::from(""))
+                        );
                         println!("    Mode: {}", numa.mode.unwrap_or(0));
                     }
 
                     if let Ok((sched_type, nparams)) = dom.get_scheduler_type() {
-                        println!("SchedType: {}, nparams: {}",
-                                 sched_type, nparams);
+                        println!("SchedType: {}, nparams: {}", sched_type, nparams);
                     }
 
                     if let Ok(sched_info) = dom.get_scheduler_parameters() {
                         println!("Schedule Information:");
                         println!("\tScheduler\t: {}", sched_info.scheduler_type);
-                        if let Some(shares) =  sched_info.cpu_shares {
+                        if let Some(shares) = sched_info.cpu_shares {
                             println!("\tcpu_shares\t: {}", shares);
                         }
                         if let Some(period) = sched_info.vcpu_bw.period {
@@ -126,7 +128,6 @@ fn show_domains(conn: &Connect) -> Result<(), Error> {
                             println!("\tiothread_quota\t: {}", quota);
                         }
                     }
-
                 }
             }
             return Ok(());
@@ -144,42 +145,45 @@ fn main() {
 
     let conn = match Connect::open(&uri) {
         Ok(c) => c,
-        Err(e) => {
-            panic!("No connection to hypervisor: code {}, message: {}",
-                   e.code,
-                   e.message)
-        }
+        Err(e) => panic!(
+            "No connection to hypervisor: code {}, message: {}",
+            e.code, e.message
+        ),
     };
 
     match conn.get_uri() {
         Ok(u) => println!("Connected to hypervisor at '{}'", u),
         Err(e) => {
             disconnect(conn);
-            panic!("Failed to get URI for hypervisor connection: code {}, message: {}",
-                   e.code,
-                   e.message);
+            panic!(
+                "Failed to get URI for hypervisor connection: code {}, message: {}",
+                e.code, e.message
+            );
         }
     };
 
     if let Err(e) = show_hypervisor_info(&conn) {
         disconnect(conn);
-        panic!("Failed to show hypervisor info: code {}, message: {}",
-               e.code,
-               e.message);
+        panic!(
+            "Failed to show hypervisor info: code {}, message: {}",
+            e.code, e.message
+        );
     }
 
     if let Err(e) = show_domains(&conn) {
         disconnect(conn);
-        panic!("Failed to show domains info: code {}, message: {}",
-               e.code,
-               e.message);
+        panic!(
+            "Failed to show domains info: code {}, message: {}",
+            e.code, e.message
+        );
     }
 
     fn disconnect(mut conn: Connect) {
         if let Err(e) = conn.close() {
-            panic!("Failed to disconnect from hypervisor: code {}, message: {}",
-                   e.code,
-                   e.message);
+            panic!(
+                "Failed to disconnect from hypervisor: code {}, message: {}",
+                e.code, e.message
+            );
         }
         println!("Disconnected from hypervisor");
     }

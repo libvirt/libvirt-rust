@@ -20,7 +20,6 @@ extern crate virt;
 
 mod common;
 
-
 #[test]
 fn test_create() {
     let c = common::conn();

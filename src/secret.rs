@@ -32,13 +32,15 @@ pub mod sys {
 
 #[link(name = "virt")]
 extern "C" {
-    fn virSecretLookupByUUIDString(c: virConnectPtr,
-                                   uuid: *const libc::c_char)
-                                   -> sys::virSecretPtr;
-    fn virSecretLookupByUsage(c: virConnectPtr,
-                              usaget: libc::c_int,
-                              usageid: *const libc::c_char)
-                              -> sys::virSecretPtr;
+    fn virSecretLookupByUUIDString(
+        c: virConnectPtr,
+        uuid: *const libc::c_char,
+    ) -> sys::virSecretPtr;
+    fn virSecretLookupByUsage(
+        c: virConnectPtr,
+        usaget: libc::c_int,
+        usageid: *const libc::c_char,
+    ) -> sys::virSecretPtr;
     fn virSecretUndefine(ptr: sys::virSecretPtr) -> libc::c_int;
     fn virSecretFree(ptr: sys::virSecretPtr) -> libc::c_int;
     fn virSecretGetName(ptr: sys::virSecretPtr) -> *const libc::c_char;
@@ -46,21 +48,24 @@ extern "C" {
     fn virSecretGetUsageID(ptr: sys::virSecretPtr) -> *const libc::c_char;
     fn virSecretGetXMLDesc(ptr: sys::virSecretPtr, flags: libc::c_uint) -> *const libc::c_char;
 
-    fn virSecretSetValue(ptr: sys::virSecretPtr,
-                         value: *const libc::c_uchar,
-                         vsize: libc::c_uint,
-                         flags: libc::c_uint)
-                         -> libc::c_int;
-    fn virSecretGetValue(ptr: sys::virSecretPtr,
-                         vsize: libc::c_uint,
-                         flags: libc::c_uint)
-                         -> *const libc::c_uchar;
+    fn virSecretSetValue(
+        ptr: sys::virSecretPtr,
+        value: *const libc::c_uchar,
+        vsize: libc::c_uint,
+        flags: libc::c_uint,
+    ) -> libc::c_int;
+    fn virSecretGetValue(
+        ptr: sys::virSecretPtr,
+        vsize: libc::c_uint,
+        flags: libc::c_uint,
+    ) -> *const libc::c_uchar;
     fn virSecretGetConnect(ptr: sys::virSecretPtr) -> virConnectPtr;
     fn virSecretGetUsageType(ptr: sys::virSecretPtr) -> libc::c_int;
-    fn virSecretDefineXML(c: virConnectPtr,
-                          xml: *const libc::c_char,
-                          flags: libc::c_uint)
-                          -> sys::virSecretPtr;
+    fn virSecretDefineXML(
+        c: virConnectPtr,
+        xml: *const libc::c_char,
+        flags: libc::c_uint,
+    ) -> sys::virSecretPtr;
 }
 
 pub type SecretXMLFlags = self::libc::c_uint;
@@ -91,9 +96,10 @@ impl Drop for Secret {
     fn drop(&mut self) {
         if self.ptr.is_some() {
             if let Err(e) = self.free() {
-                panic!("Unable to drop memory for Secret, code {}, message: {}",
-                       e.code,
-                       e.message)
+                panic!(
+                    "Unable to drop memory for Secret, code {}, message: {}",
+                    e.code, e.message
+                )
             }
         }
     }
@@ -120,9 +126,11 @@ impl Secret {
 
     pub fn define_xml(conn: &Connect, xml: &str, flags: u32) -> Result<Secret, Error> {
         unsafe {
-            let ptr = virSecretDefineXML(conn.as_ptr(),
-                                         string_to_c_chars!(xml),
-                                         flags as libc::c_uint);
+            let ptr = virSecretDefineXML(
+                conn.as_ptr(),
+                string_to_c_chars!(xml),
+                flags as libc::c_uint,
+            );
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -142,9 +150,11 @@ impl Secret {
 
     pub fn lookup_by_usage(conn: &Connect, usagetype: i32, usageid: &str) -> Result<Secret, Error> {
         unsafe {
-            let ptr = virSecretLookupByUsage(conn.as_ptr(),
-                                             usagetype as libc::c_int,
-                                             string_to_c_chars!(usageid));
+            let ptr = virSecretLookupByUsage(
+                conn.as_ptr(),
+                usagetype as libc::c_int,
+                string_to_c_chars!(usageid),
+            );
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -204,10 +214,13 @@ impl Secret {
 
     pub fn set_value(&self, value: &[u8], flags: u32) -> Result<(), Error> {
         unsafe {
-            if virSecretSetValue(self.as_ptr(),
-                                 value.as_ptr(),
-                                 value.len() as libc::c_uint,
-                                 flags) == -1 {
+            if virSecretSetValue(
+                self.as_ptr(),
+                value.as_ptr(),
+                value.len() as libc::c_uint,
+                flags,
+            ) == -1
+            {
                 return Err(Error::new());
             }
             return Ok(());

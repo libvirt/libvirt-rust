@@ -27,40 +27,43 @@ use virt::domain::Domain;
 
 fn main() {
     if env::args().len() < 4 {
-        panic!("Usage: {} <src uri> <dst uri> <domain name>",
-               env::args().nth(0).unwrap());
+        panic!(
+            "Usage: {} <src uri> <dst uri> <domain name>",
+            env::args().nth(0).unwrap()
+        );
     }
 
     let src_uri = env::args().nth(1).unwrap();
     let dst_uri = env::args().nth(2).unwrap();
     let dname = env::args().nth(3).unwrap();
 
-    println!("Attempting to migrate domain '{}' from '{}' to '{}'...",
-             dname,
-             src_uri,
-             dst_uri);
+    println!(
+        "Attempting to migrate domain '{}' from '{}' to '{}'...",
+        dname, src_uri, dst_uri
+    );
 
     let mut conn = match Connect::open(&src_uri) {
         Ok(c) => c,
-        Err(e) => {
-            panic!("No connection to source hypervisor: code {}, message: {}",
-                   e.code,
-                   e.message)
-        }
+        Err(e) => panic!(
+            "No connection to source hypervisor: code {}, message: {}",
+            e.code, e.message
+        ),
     };
 
     if let Ok(dom) = Domain::lookup_by_name(&conn, &dname) {
-        let flags = ::virt::domain::VIR_MIGRATE_LIVE | ::virt::domain::VIR_MIGRATE_PEER2PEER |
-                    ::virt::domain::VIR_MIGRATE_TUNNELLED;
+        let flags = ::virt::domain::VIR_MIGRATE_LIVE
+            | ::virt::domain::VIR_MIGRATE_PEER2PEER
+            | ::virt::domain::VIR_MIGRATE_TUNNELLED;
         if let Ok(_) = dom.migrate(&conn, flags, &dst_uri, 0) {
             println!("Domain migrated");
         }
     }
 
     if let Err(e) = conn.close() {
-        panic!("Failed to disconnect from hypervisor: code {}, message: {}",
-               e.code,
-               e.message);
+        panic!(
+            "Failed to disconnect from hypervisor: code {}, message: {}",
+            e.code, e.message
+        );
     }
     println!("Disconnected from source hypervisor");
 }

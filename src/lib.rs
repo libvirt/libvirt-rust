@@ -80,7 +80,6 @@
 
 // Some structs imported from libvirt are only pointer.
 #![allow(improper_ctypes)]
-
 // We don't want rustc to warn on this because it's imported from
 // libvirt.
 #![allow(non_camel_case_types)]
@@ -88,15 +87,18 @@
 
 macro_rules! c_chars_to_string {
     ($x:expr) => {{
-        let ret = ::std::ffi::CStr::from_ptr($x).to_string_lossy().into_owned();
+        let ret = ::std::ffi::CStr::from_ptr($x)
+            .to_string_lossy()
+            .into_owned();
         libc::free($x as *mut libc::c_void);
         ret
     }};
 
     ($x:expr, nofree) => {{
-        ::std::ffi::CStr::from_ptr($x).to_string_lossy().into_owned()
+        ::std::ffi::CStr::from_ptr($x)
+            .to_string_lossy()
+            .into_owned()
     }};
-
 }
 
 // Those two macros are not completely safe and we should probably
@@ -116,14 +118,16 @@ macro_rules! c_chars_to_string {
 // TODO(sahid): fix code + remove macros.
 
 macro_rules! string_to_c_chars {
-    ($x:expr) => (
-        ::std::ffi::CString::new($x).unwrap().as_ptr() as *const libc::c_char)
+    ($x:expr) => {
+        ::std::ffi::CString::new($x).unwrap().as_ptr() as *const libc::c_char
+    };
 }
 
 macro_rules! string_to_mut_c_chars {
-    ($x:expr) => (
+    ($x:expr) => {
         // Usage of this should ensure deallocation.
-        ::std::ffi::CString::new($x).unwrap().into_raw() as *mut libc::c_char)
+        ::std::ffi::CString::new($x).unwrap().into_raw() as *mut libc::c_char
+    };
 }
 
 macro_rules! impl_from {
@@ -133,25 +137,23 @@ macro_rules! impl_from {
             #[inline]
             fn from(small: $Small) -> $Large {
                 let r: $Large;
-                unsafe {
-                    r = ::std::mem::transmute(small)
-                }
+                unsafe { r = ::std::mem::transmute(small) }
                 r
             }
         }
-    }
+    };
 }
 
-pub mod typedparam;
 pub mod connect;
 pub mod domain;
 pub mod domain_snapshot;
 pub mod error;
+pub mod interface;
 pub mod network;
 pub mod nodedev;
 pub mod nwfilter;
-pub mod interface;
 pub mod secret;
 pub mod storage_pool;
 pub mod storage_vol;
 pub mod stream;
+pub mod typedparam;

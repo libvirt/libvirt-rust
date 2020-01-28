@@ -36,15 +36,17 @@ pub mod sys {
 extern "C" {
     fn virNetworkLookupByID(c: virConnectPtr, id: libc::c_int) -> sys::virNetworkPtr;
     fn virNetworkLookupByName(c: virConnectPtr, id: *const libc::c_char) -> sys::virNetworkPtr;
-    fn virNetworkLookupByUUIDString(c: virConnectPtr,
-                                    uuid: *const libc::c_char)
-                                    -> sys::virNetworkPtr;
+    fn virNetworkLookupByUUIDString(
+        c: virConnectPtr,
+        uuid: *const libc::c_char,
+    ) -> sys::virNetworkPtr;
     fn virNetworkCreate(ptr: sys::virNetworkPtr) -> libc::c_int;
     fn virNetworkDefineXML(c: virConnectPtr, xml: *const libc::c_char) -> sys::virNetworkPtr;
-    fn virNetworkCreateXML(c: virConnectPtr,
-                           xml: *const libc::c_char,
-                           flags: libc::c_uint)
-                           -> sys::virNetworkPtr;
+    fn virNetworkCreateXML(
+        c: virConnectPtr,
+        xml: *const libc::c_char,
+        flags: libc::c_uint,
+    ) -> sys::virNetworkPtr;
     fn virNetworkDestroy(ptr: sys::virNetworkPtr) -> libc::c_int;
     fn virNetworkUndefine(ptr: sys::virNetworkPtr) -> libc::c_int;
     fn virNetworkFree(ptr: sys::virNetworkPtr) -> libc::c_int;
@@ -56,13 +58,14 @@ extern "C" {
     fn virNetworkGetBridgeName(ptr: sys::virNetworkPtr) -> *mut libc::c_char;
     fn virNetworkGetAutostart(ptr: sys::virNetworkPtr, autostart: *mut libc::c_int) -> libc::c_int;
     fn virNetworkSetAutostart(ptr: sys::virNetworkPtr, autostart: libc::c_uint) -> libc::c_int;
-    fn virNetworkUpdate(ptr: sys::virNetworkPtr,
-                        cmptr: libc::c_uint,
-                        section: libc::c_uint,
-                        index: libc::c_uint,
-                        xml: *const libc::c_char,
-                        flags: libc::c_uint)
-                        -> libc::c_int;
+    fn virNetworkUpdate(
+        ptr: sys::virNetworkPtr,
+        cmptr: libc::c_uint,
+        section: libc::c_uint,
+        index: libc::c_uint,
+        xml: *const libc::c_char,
+        flags: libc::c_uint,
+    ) -> libc::c_int;
     fn virNetworkGetConnect(ptr: sys::virNetworkPtr) -> virConnectPtr;
 }
 
@@ -108,9 +111,10 @@ impl Drop for Network {
     fn drop(&mut self) {
         if self.ptr.is_some() {
             if let Err(e) = self.free() {
-                panic!("Unable to drop memory for Network, code {}, message: {}",
-                       e.code,
-                       e.message)
+                panic!(
+                    "Unable to drop memory for Network, code {}, message: {}",
+                    e.code, e.message
+                )
             }
         }
     }
@@ -227,9 +231,11 @@ impl Network {
 
     pub fn create_xml(conn: &Connect, xml: &str, flags: u32) -> Result<Network, Error> {
         unsafe {
-            let ptr = virNetworkCreateXML(conn.as_ptr(),
-                                          string_to_c_chars!(xml),
-                                          flags as libc::c_uint);
+            let ptr = virNetworkCreateXML(
+                conn.as_ptr(),
+                string_to_c_chars!(xml),
+                flags as libc::c_uint,
+            );
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -306,20 +312,23 @@ impl Network {
         }
     }
 
-    pub fn update(&self,
-                  cmd: NetworkUpdateCommand,
-                  section: NetworkUpdateSection,
-                  index: i32,
-                  xml: &str,
-                  flags: NetworkUpdateFlags)
-                  -> Result<(), Error> {
+    pub fn update(
+        &self,
+        cmd: NetworkUpdateCommand,
+        section: NetworkUpdateSection,
+        index: i32,
+        xml: &str,
+        flags: NetworkUpdateFlags,
+    ) -> Result<(), Error> {
         unsafe {
-            let ret = virNetworkUpdate(self.as_ptr(),
-                                       cmd,
-                                       section,
-                                       index as libc::c_uint,
-                                       string_to_c_chars!(xml),
-                                       flags);
+            let ret = virNetworkUpdate(
+                self.as_ptr(),
+                cmd,
+                section,
+                index as libc::c_uint,
+                string_to_c_chars!(xml),
+                flags,
+            );
             if ret == -1 {
                 return Err(Error::new());
             }

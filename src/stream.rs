@@ -31,14 +31,16 @@ pub mod sys {
 
 #[link(name = "virt")]
 extern "C" {
-    fn virStreamSend(c: sys::virStreamPtr,
-                     data: *const libc::c_char,
-                     nbytes: libc::size_t)
-                     -> libc::c_int;
-    fn virStreamRecv(c: sys::virStreamPtr,
-                     data: *mut libc::c_char,
-                     nbytes: libc::size_t)
-                     -> libc::c_int;
+    fn virStreamSend(
+        c: sys::virStreamPtr,
+        data: *const libc::c_char,
+        nbytes: libc::size_t,
+    ) -> libc::c_int;
+    fn virStreamRecv(
+        c: sys::virStreamPtr,
+        data: *mut libc::c_char,
+        nbytes: libc::size_t,
+    ) -> libc::c_int;
     fn virStreamFree(c: sys::virStreamPtr) -> libc::c_int;
     fn virStreamAbort(c: sys::virStreamPtr) -> libc::c_int;
     fn virStreamFinish(c: sys::virStreamPtr) -> libc::c_int;
@@ -59,9 +61,10 @@ impl Drop for Stream {
     fn drop(&mut self) {
         if self.ptr.is_some() {
             if let Err(e) = self.free() {
-                panic!("Unable to drop memory for Stream, code {}, message: {}",
-                       e.code,
-                       e.message)
+                panic!(
+                    "Unable to drop memory for Stream, code {}, message: {}",
+                    e.code, e.message
+                )
             }
         }
     }
@@ -109,7 +112,7 @@ impl Stream {
             virStreamSend(
                 self.as_ptr(),
                 data.as_ptr() as *mut libc::c_char,
-                data.len()
+                data.len(),
             )
         };
         usize::try_from(ret).map_err(|_| Error::new())

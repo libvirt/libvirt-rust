@@ -28,7 +28,6 @@ use virt::connect::Connect;
 use virt::domain::Domain;
 use virt::error::Error;
 
-
 fn suspend_and_resume(conn: &Connect, name: &str, sec: u64) -> Result<(), Error> {
     if let Ok(dom) = Domain::lookup_by_name(conn, name) {
         if dom.suspend().is_ok() {
@@ -70,30 +69,32 @@ fn main() {
     println!("Attempting to connect to hypervisor: '{}'", uri);
     let mut conn = match Connect::open(&uri) {
         Ok(c) => c,
-        Err(e) => {
-            panic!("No connection to hypervisor: code {}, message: {}",
-                   e.code,
-                   e.message)
-        }
+        Err(e) => panic!(
+            "No connection to hypervisor: code {}, message: {}",
+            e.code, e.message
+        ),
     };
 
     if name.len() == 0 {
         if let Err(e) = fetch_domains(&conn) {
-            println!("Failed to fetch domains. code {}, message: {}",
-                     e.code,
-                     e.message);
+            println!(
+                "Failed to fetch domains. code {}, message: {}",
+                e.code, e.message
+            );
         }
     } else {
         if let Err(e) = suspend_and_resume(&conn, &name, 1) {
-            println!("Failed to suspend/resume. code {}, message: {}",
-                     e.code,
-                     e.message);
+            println!(
+                "Failed to suspend/resume. code {}, message: {}",
+                e.code, e.message
+            );
         }
     }
 
     if let Err(e) = conn.close() {
-        panic!("Failed to disconnect from hypervisor: code {}, message: {}",
-               e.code,
-               e.message);
+        panic!(
+            "Failed to disconnect from hypervisor: code {}, message: {}",
+            e.code, e.message
+        );
     }
 }

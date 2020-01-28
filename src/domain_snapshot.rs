@@ -18,7 +18,7 @@
 
 extern crate libc;
 
-use std::{str, ptr, mem};
+use std::{mem, ptr, str};
 
 use connect::sys::virConnectPtr;
 use domain::sys::virDomainPtr;
@@ -39,39 +39,46 @@ extern "C" {
     fn virDomainSnapshotGetName(ptr: sys::virDomainSnapshotPtr) -> *const libc::c_char;
     fn virDomainSnapshotGetDomain(ptr: sys::virDomainSnapshotPtr) -> virDomainPtr;
     fn virDomainSnapshotGetConnect(ptr: sys::virDomainSnapshotPtr) -> virConnectPtr;
-    fn virDomainSnapshotGetXMLDesc(ptr: sys::virDomainSnapshotPtr,
-                                   flags: libc::c_uint)
-                                   -> *mut libc::c_char;
+    fn virDomainSnapshotGetXMLDesc(
+        ptr: sys::virDomainSnapshotPtr,
+        flags: libc::c_uint,
+    ) -> *mut libc::c_char;
     fn virDomainSnapshotDelete(ptr: sys::virDomainSnapshotPtr, flags: libc::c_uint) -> libc::c_int;
-    fn virDomainSnapshotIsCurrent(ptr: sys::virDomainSnapshotPtr,
-                                  flags: libc::c_uint)
-                                  -> libc::c_int;
-    fn virDomainSnapshotHasMetadata(ptr: sys::virDomainSnapshotPtr,
-                                    flags: libc::c_uint)
-                                    -> libc::c_int;
-    fn virDomainSnapshotCreateXML(d: virDomainPtr,
-                                  xml: *const libc::c_char,
-                                  flags: libc::c_uint)
-                                  -> sys::virDomainSnapshotPtr;
+    fn virDomainSnapshotIsCurrent(
+        ptr: sys::virDomainSnapshotPtr,
+        flags: libc::c_uint,
+    ) -> libc::c_int;
+    fn virDomainSnapshotHasMetadata(
+        ptr: sys::virDomainSnapshotPtr,
+        flags: libc::c_uint,
+    ) -> libc::c_int;
+    fn virDomainSnapshotCreateXML(
+        d: virDomainPtr,
+        xml: *const libc::c_char,
+        flags: libc::c_uint,
+    ) -> sys::virDomainSnapshotPtr;
     fn virDomainSnapshotFree(ptr: sys::virDomainSnapshotPtr) -> libc::c_int;
     fn virDomainSnapshotCurrent(d: virDomainPtr, flags: libc::c_uint) -> sys::virDomainSnapshotPtr;
-    fn virDomainSnapshotGetParent(d: virDomainPtr,
-                                  flags: libc::c_uint)
-                                  -> sys::virDomainSnapshotPtr;
-    fn virDomainSnapshotLookupByName(d: virDomainPtr,
-                                     name: *const libc::c_char,
-                                     flags: libc::c_uint)
-                                     -> sys::virDomainSnapshotPtr;
+    fn virDomainSnapshotGetParent(
+        d: virDomainPtr,
+        flags: libc::c_uint,
+    ) -> sys::virDomainSnapshotPtr;
+    fn virDomainSnapshotLookupByName(
+        d: virDomainPtr,
+        name: *const libc::c_char,
+        flags: libc::c_uint,
+    ) -> sys::virDomainSnapshotPtr;
     fn virDomainSnapshotNum(d: virDomainPtr, flags: libc::c_uint) -> libc::c_int;
-    fn virDomainSnapshotNumChildren(ptr: sys::virDomainSnapshotPtr,
-                                    flags: libc::c_uint)
-                                    -> libc::c_int;
-    fn virDomainSnapshotListAllChildren(ptr: sys::virDomainSnapshotPtr,
-                                        snaps: *mut *mut sys::virDomainSnapshotPtr,
-                                        flags: libc::c_uint)
-                                        -> libc::c_int;
+    fn virDomainSnapshotNumChildren(
+        ptr: sys::virDomainSnapshotPtr,
+        flags: libc::c_uint,
+    ) -> libc::c_int;
+    fn virDomainSnapshotListAllChildren(
+        ptr: sys::virDomainSnapshotPtr,
+        snaps: *mut *mut sys::virDomainSnapshotPtr,
+        flags: libc::c_uint,
+    ) -> libc::c_int;
 }
-
 
 /// Provides APIs for the management of domain snapshots.
 ///
@@ -85,9 +92,10 @@ impl Drop for DomainSnapshot {
     fn drop(&mut self) {
         if self.ptr.is_some() {
             if let Err(e) = self.free() {
-                panic!("Unable to drop memory for DomainSnapshot, code {}, message: {}",
-                       e.code,
-                       e.message)
+                panic!(
+                    "Unable to drop memory for DomainSnapshot, code {}, message: {}",
+                    e.code, e.message
+                )
             }
         }
     }
@@ -135,9 +143,11 @@ impl DomainSnapshot {
     /// Get a handle to a named snapshot.
     pub fn lookup_by_name(dom: &Domain, name: &str, flags: u32) -> Result<DomainSnapshot, Error> {
         unsafe {
-            let ptr = virDomainSnapshotLookupByName(dom.as_ptr(),
-                                                    string_to_c_chars!(name),
-                                                    flags as libc::c_uint);
+            let ptr = virDomainSnapshotLookupByName(
+                dom.as_ptr(),
+                string_to_c_chars!(name),
+                flags as libc::c_uint,
+            );
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -158,9 +168,11 @@ impl DomainSnapshot {
 
     pub fn create_xml(dom: &Domain, xml: &str, flags: u32) -> Result<DomainSnapshot, Error> {
         unsafe {
-            let ptr = virDomainSnapshotCreateXML(dom.as_ptr(),
-                                                 string_to_c_chars!(xml),
-                                                 flags as libc::c_uint);
+            let ptr = virDomainSnapshotCreateXML(
+                dom.as_ptr(),
+                string_to_c_chars!(xml),
+                flags as libc::c_uint,
+            );
             if ptr.is_null() {
                 return Err(Error::new());
             }

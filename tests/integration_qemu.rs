@@ -31,8 +31,10 @@ fn test_create_domain_with_flags() {
     let c = common::qemu_conn();
     let d = common::build_qemu_domain(&c, "create", false);
     assert_eq!(Ok(0), d.create_with_flags(0));
-    assert_eq!(Ok((::virt::domain::VIR_DOMAIN_START_PAUSED, 1)),
-               d.get_state());
+    assert_eq!(
+        Ok((::virt::domain::VIR_DOMAIN_START_PAUSED, 1)),
+        d.get_state()
+    );
     assert_eq!(Ok(String::from("libvirt-rs-test-create")), d.get_name());
     common::clean(d);
     common::close(c);
@@ -47,10 +49,14 @@ fn test_create_storage_pool_and_vols() {
     assert_eq!(Ok(String::from("libvirt-rs-test-create")), p.get_name());
     let v = common::build_storage_vol(&p, "vol1", 8);
     assert_eq!(Ok(String::from("vol1")), v.get_name());
-    assert_eq!(Ok(String::from("/var/lib/libvirt/images/vol1")),
-               v.get_path());
-    assert_eq!(Ok(String::from("/var/lib/libvirt/images/vol1")),
-               v.get_key());
+    assert_eq!(
+        Ok(String::from("/var/lib/libvirt/images/vol1")),
+        v.get_path()
+    );
+    assert_eq!(
+        Ok(String::from("/var/lib/libvirt/images/vol1")),
+        v.get_key()
+    );
     if let Ok(info) = v.get_info() {
         assert_eq!(0, info.kind);
         assert_eq!(8192, info.allocation);
@@ -105,14 +111,17 @@ fn test_connection_with_auth() {
         }
     };
 
-    let mut auth = ConnectAuth::new(vec![::virt::connect::VIR_CRED_AUTHNAME,
-                                         ::virt::connect::VIR_CRED_PASSPHRASE],
-                                    callback);
+    let mut auth = ConnectAuth::new(
+        vec![
+            ::virt::connect::VIR_CRED_AUTHNAME,
+            ::virt::connect::VIR_CRED_PASSPHRASE,
+        ],
+        callback,
+    );
     let c = Connect::open_auth("test+tcp://127.0.0.1/default", &mut auth, 0);
     assert_eq!(true, c.is_ok());
     common::close(c.unwrap());
 }
-
 
 #[test]
 #[ignore]
@@ -133,9 +142,13 @@ fn test_connection_with_auth_wrong() {
         }
     };
 
-    let mut auth = ConnectAuth::new(vec![::virt::connect::VIR_CRED_AUTHNAME,
-                                         ::virt::connect::VIR_CRED_PASSPHRASE],
-                                    callback);
+    let mut auth = ConnectAuth::new(
+        vec![
+            ::virt::connect::VIR_CRED_AUTHNAME,
+            ::virt::connect::VIR_CRED_PASSPHRASE,
+        ],
+        callback,
+    );
     let c = Connect::open_auth("test+tcp://127.0.0.1/default", &mut auth, 0);
     assert_eq!(false, c.is_ok());
 }

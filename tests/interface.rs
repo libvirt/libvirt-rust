@@ -32,7 +32,6 @@ fn test_create() {
     common::close(c);
 }
 
-
 #[test]
 fn test_active() {
     let c = common::conn();
@@ -43,7 +42,6 @@ fn test_active() {
     common::clean_iface(n);
     common::close(c);
 }
-
 
 #[test]
 fn test_lookup_interface_by_name() {

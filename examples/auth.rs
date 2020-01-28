@@ -41,7 +41,7 @@ extern crate virt;
 
 use std::{env, io};
 
-use virt::connect::{Connect, ConnectCredential, ConnectAuth};
+use virt::connect::{Connect, ConnectAuth, ConnectCredential};
 
 fn main() {
     let uri = match env::args().nth(1) {
@@ -69,9 +69,13 @@ fn main() {
             }
         }
     };
-    let mut auth = ConnectAuth::new(vec![::virt::connect::VIR_CRED_AUTHNAME,
-                                         ::virt::connect::VIR_CRED_PASSPHRASE],
-                                    callback);
+    let mut auth = ConnectAuth::new(
+        vec![
+            ::virt::connect::VIR_CRED_AUTHNAME,
+            ::virt::connect::VIR_CRED_PASSPHRASE,
+        ],
+        callback,
+    );
 
     println!("Attempting to connect to hypervisor: '{}'...", uri);
     let mut conn = match Connect::open_auth(&uri, &mut auth, 0) {
@@ -82,8 +86,9 @@ fn main() {
         Err(e) => panic!("Not connected, code: {}, message: {}", e.code, e.message),
     };
     if let Err(e) = conn.close() {
-        panic!("Failed to disconnect from hypervisor: code {}, message: {}",
-               e.code,
-               e.message);
+        panic!(
+            "Failed to disconnect from hypervisor: code {}, message: {}",
+            e.code, e.message
+        );
     }
 }

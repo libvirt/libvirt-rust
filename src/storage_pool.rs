@@ -49,21 +49,25 @@ pub mod sys {
 
 #[link(name = "virt")]
 extern "C" {
-    fn virStoragePoolDefineXML(c: virConnectPtr,
-                               xml: *const libc::c_char,
-                               flags: libc::c_uint)
-                               -> sys::virStoragePoolPtr;
-    fn virStoragePoolCreateXML(c: virConnectPtr,
-                               xml: *const libc::c_char,
-                               flags: libc::c_uint)
-                               -> sys::virStoragePoolPtr;
+    fn virStoragePoolDefineXML(
+        c: virConnectPtr,
+        xml: *const libc::c_char,
+        flags: libc::c_uint,
+    ) -> sys::virStoragePoolPtr;
+    fn virStoragePoolCreateXML(
+        c: virConnectPtr,
+        xml: *const libc::c_char,
+        flags: libc::c_uint,
+    ) -> sys::virStoragePoolPtr;
     fn virStoragePoolLookupByID(c: virConnectPtr, id: libc::c_int) -> sys::virStoragePoolPtr;
-    fn virStoragePoolLookupByName(c: virConnectPtr,
-                                  id: *const libc::c_char)
-                                  -> sys::virStoragePoolPtr;
-    fn virStoragePoolLookupByUUIDString(c: virConnectPtr,
-                                        uuid: *const libc::c_char)
-                                        -> sys::virStoragePoolPtr;
+    fn virStoragePoolLookupByName(
+        c: virConnectPtr,
+        id: *const libc::c_char,
+    ) -> sys::virStoragePoolPtr;
+    fn virStoragePoolLookupByUUIDString(
+        c: virConnectPtr,
+        uuid: *const libc::c_char,
+    ) -> sys::virStoragePoolPtr;
     fn virStoragePoolLookupByVolume(v: virStorageVolPtr) -> sys::virStoragePoolPtr;
     fn virStoragePoolCreate(ptr: sys::virStoragePoolPtr, flags: libc::c_uint) -> libc::c_int;
     fn virStoragePoolBuild(ptr: sys::virStoragePoolPtr, flags: libc::c_uint) -> libc::c_int;
@@ -75,22 +79,27 @@ extern "C" {
     fn virStoragePoolIsActive(ptr: sys::virStoragePoolPtr) -> libc::c_int;
     fn virStoragePoolIsPersistent(ptr: sys::virStoragePoolPtr) -> libc::c_int;
     fn virStoragePoolGetName(ptr: sys::virStoragePoolPtr) -> *const libc::c_char;
-    fn virStoragePoolGetXMLDesc(ptr: sys::virStoragePoolPtr,
-                                flags: libc::c_uint)
-                                -> *mut libc::c_char;
-    fn virStoragePoolGetUUIDString(ptr: sys::virStoragePoolPtr,
-                                   uuid: *mut libc::c_char)
-                                   -> libc::c_int;
+    fn virStoragePoolGetXMLDesc(
+        ptr: sys::virStoragePoolPtr,
+        flags: libc::c_uint,
+    ) -> *mut libc::c_char;
+    fn virStoragePoolGetUUIDString(
+        ptr: sys::virStoragePoolPtr,
+        uuid: *mut libc::c_char,
+    ) -> libc::c_int;
     fn virStoragePoolGetConnect(ptr: sys::virStoragePoolPtr) -> virConnectPtr;
-    fn virStoragePoolGetAutostart(ptr: sys::virStoragePoolPtr,
-                                  autostart: *mut libc::c_int)
-                                  -> libc::c_int;
-    fn virStoragePoolSetAutostart(ptr: sys::virStoragePoolPtr,
-                                  autostart: libc::c_uint)
-                                  -> libc::c_int;
-    fn virStoragePoolGetInfo(ptr: sys::virStoragePoolPtr,
-                             info: sys::virStoragePoolInfoPtr)
-                             -> libc::c_int;
+    fn virStoragePoolGetAutostart(
+        ptr: sys::virStoragePoolPtr,
+        autostart: *mut libc::c_int,
+    ) -> libc::c_int;
+    fn virStoragePoolSetAutostart(
+        ptr: sys::virStoragePoolPtr,
+        autostart: libc::c_uint,
+    ) -> libc::c_int;
+    fn virStoragePoolGetInfo(
+        ptr: sys::virStoragePoolPtr,
+        info: sys::virStoragePoolInfoPtr,
+    ) -> libc::c_int;
     fn virStoragePoolNumOfVolumes(ptr: sys::virStoragePoolPtr) -> libc::c_int;
 }
 
@@ -147,9 +156,10 @@ impl Drop for StoragePool {
     fn drop(&mut self) {
         if self.ptr.is_some() {
             if let Err(e) = self.free() {
-                panic!("Unable to drop memory for StoragePool, code {}, message: {}",
-                       e.code,
-                       e.message)
+                panic!(
+                    "Unable to drop memory for StoragePool, code {}, message: {}",
+                    e.code, e.message
+                )
             }
         }
     }
@@ -176,9 +186,11 @@ impl StoragePool {
 
     pub fn define_xml(conn: &Connect, xml: &str, flags: u32) -> Result<StoragePool, Error> {
         unsafe {
-            let ptr = virStoragePoolDefineXML(conn.as_ptr(),
-                                              string_to_c_chars!(xml),
-                                              flags as libc::c_uint);
+            let ptr = virStoragePoolDefineXML(
+                conn.as_ptr(),
+                string_to_c_chars!(xml),
+                flags as libc::c_uint,
+            );
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -186,14 +198,17 @@ impl StoragePool {
         }
     }
 
-    pub fn create_xml(conn: &Connect,
-                      xml: &str,
-                      flags: StoragePoolCreateFlags)
-                      -> Result<StoragePool, Error> {
+    pub fn create_xml(
+        conn: &Connect,
+        xml: &str,
+        flags: StoragePoolCreateFlags,
+    ) -> Result<StoragePool, Error> {
         unsafe {
-            let ptr = virStoragePoolCreateXML(conn.as_ptr(),
-                                              string_to_c_chars!(xml),
-                                              flags as libc::c_uint);
+            let ptr = virStoragePoolCreateXML(
+                conn.as_ptr(),
+                string_to_c_chars!(xml),
+                flags as libc::c_uint,
+            );
             if ptr.is_null() {
                 return Err(Error::new());
             }

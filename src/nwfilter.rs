@@ -36,9 +36,10 @@ pub mod sys {
 extern "C" {
     fn virNWFilterLookupByID(c: virConnectPtr, id: libc::c_int) -> sys::virNWFilterPtr;
     fn virNWFilterLookupByName(c: virConnectPtr, id: *const libc::c_char) -> sys::virNWFilterPtr;
-    fn virNWFilterLookupByUUIDString(c: virConnectPtr,
-                                     uuid: *const libc::c_char)
-                                     -> sys::virNWFilterPtr;
+    fn virNWFilterLookupByUUIDString(
+        c: virConnectPtr,
+        uuid: *const libc::c_char,
+    ) -> sys::virNWFilterPtr;
     fn virNWFilterDefineXML(c: virConnectPtr, xml: *const libc::c_char) -> sys::virNWFilterPtr;
     fn virNWFilterUndefine(ptr: sys::virNWFilterPtr) -> libc::c_int;
     fn virNWFilterFree(ptr: sys::virNWFilterPtr) -> libc::c_int;
@@ -59,9 +60,10 @@ impl Drop for NWFilter {
     fn drop(&mut self) {
         if self.ptr.is_some() {
             if let Err(e) = self.free() {
-                panic!("Unable to drop memory for NWFilter, code {}, message: {}",
-                       e.code,
-                       e.message)
+                panic!(
+                    "Unable to drop memory for NWFilter, code {}, message: {}",
+                    e.code, e.message
+                )
             }
         }
     }

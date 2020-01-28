@@ -22,7 +22,6 @@ mod common;
 
 use virt::connect::Connect;
 
-
 #[test]
 fn test_version() {
     let version = Connect::get_version().unwrap_or(0);
@@ -32,11 +31,10 @@ fn test_version() {
 #[test]
 fn test_connection() {
     match Connect::open("test:///default") {
-        Err(e) => {
-            panic!("Build connection failed with code {}, message: {}",
-                   e.code,
-                   e.message)
-        }
+        Err(e) => panic!(
+            "Build connection failed with code {}, message: {}",
+            e.code, e.message
+        ),
         Ok(conn) => common::close(conn),
     }
 }
@@ -44,11 +42,10 @@ fn test_connection() {
 #[test]
 fn test_read_only_connection() {
     match Connect::open_read_only("test:///default") {
-        Err(e) => {
-            panic!("Build connection failed with code {}, message: {}",
-                   e.code,
-                   e.message)
-        }
+        Err(e) => panic!(
+            "Build connection failed with code {}, message: {}",
+            e.code, e.message
+        ),
         Ok(conn) => common::close(conn),
     }
 }
@@ -57,11 +54,10 @@ fn test_read_only_connection() {
 #[should_panic]
 fn test_connection_invalid() {
     match Connect::open_read_only("invalid") {
-        Err(e) => {
-            panic!("Build connection failed with code {}, message: {}",
-                   e.code,
-                   e.message)
-        }
+        Err(e) => panic!(
+            "Build connection failed with code {}, message: {}",
+            e.code, e.message
+        ),
         Ok(conn) => common::close(conn),
     }
 }
@@ -90,26 +86,32 @@ fn test_is_alive() {
 #[test]
 fn test_is_encrypted() {
     let c = common::conn();
-    assert_eq!(false,
-               c.is_encrypted().unwrap_or(true),
-               "Test driver should not be encrypted");
+    assert_eq!(
+        false,
+        c.is_encrypted().unwrap_or(true),
+        "Test driver should not be encrypted"
+    );
     common::close(c);
 }
 
 #[test]
 fn test_is_secure() {
     let c = common::conn();
-    assert_eq!(true,
-               c.is_secure().unwrap_or(false),
-               "Test driver should be secure");
+    assert_eq!(
+        true,
+        c.is_secure().unwrap_or(false),
+        "Test driver should be secure"
+    );
     common::close(c);
 }
 
 #[test]
 fn test_capabilities() {
     let c = common::conn();
-    assert!("" != c.get_capabilities().unwrap_or(String::new()),
-            "Capabilities should not be empty");
+    assert!(
+        "" != c.get_capabilities().unwrap_or(String::new()),
+        "Capabilities should not be empty"
+    );
     common::close(c);
 }
 
@@ -151,32 +153,40 @@ fn test_lib_version() {
 #[test]
 fn test_list_domains() {
     let c = common::conn();
-    assert!(0 < c.list_domains().unwrap_or(vec![]).len(),
-            "At least one domain should exist");
+    assert!(
+        0 < c.list_domains().unwrap_or(vec![]).len(),
+        "At least one domain should exist"
+    );
     common::close(c);
 }
 
 #[test]
 fn test_list_interfaces() {
     let c = common::conn();
-    assert!(0 < c.list_interfaces().unwrap_or(vec![]).len(),
-            "At least one interface should exist");
+    assert!(
+        0 < c.list_interfaces().unwrap_or(vec![]).len(),
+        "At least one interface should exist"
+    );
     common::close(c);
 }
 
 #[test]
 fn test_list_networks() {
     let c = common::conn();
-    assert!(0 < c.list_networks().unwrap_or(vec![]).len(),
-            "At least one networks should exist");
+    assert!(
+        0 < c.list_networks().unwrap_or(vec![]).len(),
+        "At least one networks should exist"
+    );
     common::close(c);
 }
 
 #[test]
 fn test_list_storage_pools() {
     let c = common::conn();
-    assert!(0 < c.list_storage_pools().unwrap_or(vec![]).len(),
-            "At least one storage pool should exist");
+    assert!(
+        0 < c.list_storage_pools().unwrap_or(vec![]).len(),
+        "At least one storage pool should exist"
+    );
     common::close(c);
 }
 

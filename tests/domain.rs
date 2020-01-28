@@ -22,7 +22,6 @@ mod common;
 
 use virt::domain::Domain;
 
-
 fn tdom(exec_test: fn(dom: Domain)) {
     let c = common::conn();
     match Domain::lookup_by_name(&c, "test") {
@@ -33,7 +32,6 @@ fn tdom(exec_test: fn(dom: Domain)) {
         Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
     }
 }
-
 
 #[test]
 fn test_name() {
@@ -46,8 +44,10 @@ fn test_name() {
 #[test]
 fn test_uuid_string() {
     fn t(dom: Domain) {
-        assert_eq!("6695eb01-f6a4-8304-79aa-97f2502e193f",
-                   dom.get_uuid_string().unwrap_or(String::new()));
+        assert_eq!(
+            "6695eb01-f6a4-8304-79aa-97f2502e193f",
+            dom.get_uuid_string().unwrap_or(String::new())
+        );
     }
     tdom(t);
 }
@@ -63,8 +63,10 @@ fn test_id() {
 #[test]
 fn test_get_xml_desc() {
     fn t(dom: Domain) {
-        assert!("" != dom.get_xml_desc(0).unwrap_or(String::new()),
-                "Should not be empty");
+        assert!(
+            "" != dom.get_xml_desc(0).unwrap_or(String::new()),
+            "Should not be empty"
+        );
     }
     tdom(t);
 }

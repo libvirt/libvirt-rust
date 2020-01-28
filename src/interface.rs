@@ -36,16 +36,19 @@ pub mod sys {
 extern "C" {
     fn virInterfaceLookupByID(c: virConnectPtr, id: libc::c_int) -> sys::virInterfacePtr;
     fn virInterfaceLookupByName(c: virConnectPtr, id: *const libc::c_char) -> sys::virInterfacePtr;
-    fn virInterfaceLookupByMACString(c: virConnectPtr,
-                                     id: *const libc::c_char)
-                                     -> sys::virInterfacePtr;
-    fn virInterfaceLookupByUUIDString(c: virConnectPtr,
-                                      uuid: *const libc::c_char)
-                                      -> sys::virInterfacePtr;
-    fn virInterfaceDefineXML(c: virConnectPtr,
-                             xml: *const libc::c_char,
-                             flags: libc::c_uint)
-                             -> sys::virInterfacePtr;
+    fn virInterfaceLookupByMACString(
+        c: virConnectPtr,
+        id: *const libc::c_char,
+    ) -> sys::virInterfacePtr;
+    fn virInterfaceLookupByUUIDString(
+        c: virConnectPtr,
+        uuid: *const libc::c_char,
+    ) -> sys::virInterfacePtr;
+    fn virInterfaceDefineXML(
+        c: virConnectPtr,
+        xml: *const libc::c_char,
+        flags: libc::c_uint,
+    ) -> sys::virInterfacePtr;
     fn virInterfaceCreate(ptr: sys::virInterfacePtr, flags: libc::c_uint) -> libc::c_int;
     fn virInterfaceDestroy(ptr: sys::virInterfacePtr) -> libc::c_int;
     fn virInterfaceUndefine(ptr: sys::virInterfacePtr) -> libc::c_int;
@@ -72,9 +75,10 @@ impl Drop for Interface {
     fn drop(&mut self) {
         if self.ptr.is_some() {
             if let Err(e) = self.free() {
-                panic!("Unable to drop memory for Interface, code {}, message: {}",
-                       e.code,
-                       e.message)
+                panic!(
+                    "Unable to drop memory for Interface, code {}, message: {}",
+                    e.code, e.message
+                )
             }
         }
     }
@@ -121,9 +125,11 @@ impl Interface {
 
     pub fn define_xml(conn: &Connect, xml: &str, flags: u32) -> Result<Interface, Error> {
         unsafe {
-            let ptr = virInterfaceDefineXML(conn.as_ptr(),
-                                            string_to_c_chars!(xml),
-                                            flags as libc::c_uint);
+            let ptr = virInterfaceDefineXML(
+                conn.as_ptr(),
+                string_to_c_chars!(xml),
+                flags as libc::c_uint,
+            );
             if ptr.is_null() {
                 return Err(Error::new());
             }

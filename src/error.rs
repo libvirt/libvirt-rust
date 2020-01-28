@@ -19,7 +19,7 @@
 extern crate libc;
 
 use std::error::Error as StdError;
-use std::fmt::{Display, Result as FmtResult, Formatter};
+use std::fmt::{Display, Formatter, Result as FmtResult};
 
 pub mod sys {
     extern crate libc;
@@ -84,11 +84,10 @@ impl StdError for Error {
 
 impl Display for Error {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
-        write!(f,
-               "{:?}: code: {} domain: {} - {}",
-               self.level,
-               self.code,
-               self.domain,
-               self.message)
+        write!(
+            f,
+            "{:?}: code: {} domain: {} - {}",
+            self.level, self.code, self.domain, self.message
+        )
     }
 }

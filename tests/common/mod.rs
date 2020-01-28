@@ -26,29 +26,26 @@ use virt::connect::Connect;
 use virt::domain::Domain;
 use virt::error::Error;
 use virt::interface::Interface;
+use virt::network::Network;
 use virt::storage_pool::StoragePool;
 use virt::storage_vol::StorageVol;
-use virt::network::Network;
-
 
 pub fn conn() -> Connect {
     match Connect::open("test:///default") {
-        Err(e) => {
-            panic!("Build connection failed with code {}, message: {}",
-                   e.code,
-                   e.message)
-        }
+        Err(e) => panic!(
+            "Build connection failed with code {}, message: {}",
+            e.code, e.message
+        ),
         Ok(conn) => conn,
     }
 }
 
 pub fn qemu_conn() -> Connect {
     match Connect::open("qemu:///system") {
-        Err(e) => {
-            panic!("Build connection failed with code {}, message: {}",
-                   e.code,
-                   e.message)
-        }
+        Err(e) => panic!(
+            "Build connection failed with code {}, message: {}",
+            e.code, e.message
+        ),
         Ok(conn) => conn,
     }
 }
@@ -93,7 +90,8 @@ pub fn build_qemu_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
         clean(dom);
     }
 
-    let xml = format!("<domain type=\"qemu\">
+    let xml = format!(
+        "<domain type=\"qemu\">
 		         <name>{}</name>
                          <memory unit=\"KiB\">128</memory>
                          <features>
@@ -104,7 +102,8 @@ pub fn build_qemu_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
                            <type>hvm</type>
                          </os>
                        </domain>",
-                      name);
+        name
+    );
 
     let result: Result<Domain, Error>;
     if transient {
@@ -115,11 +114,10 @@ pub fn build_qemu_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
 
     match result {
         Ok(dom) => dom,
-        Err(e) => {
-            panic!("Build domain failed with code {}, message: {}",
-                   e.code,
-                   e.message)
-        }
+        Err(e) => panic!(
+            "Build domain failed with code {}, message: {}",
+            e.code, e.message
+        ),
     }
 }
 
@@ -130,7 +128,8 @@ pub fn build_test_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
         clean(dom);
     }
 
-    let xml = format!("<domain type=\"test\">
+    let xml = format!(
+        "<domain type=\"test\">
 		         <name>{}</name>
                          <memory unit=\"KiB\">128</memory>
                          <features>
@@ -141,7 +140,8 @@ pub fn build_test_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
                            <type>hvm</type>
                          </os>
                        </domain>",
-                      name);
+        name
+    );
 
     let result: Result<Domain, Error>;
     if transient {
@@ -152,11 +152,10 @@ pub fn build_test_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
 
     match result {
         Ok(dom) => dom,
-        Err(e) => {
-            panic!("Build domain failed with code {}, message: {}",
-                   e.code,
-                   e.message)
-        }
+        Err(e) => panic!(
+            "Build domain failed with code {}, message: {}",
+            e.code, e.message
+        ),
     }
 }
 
@@ -167,13 +166,15 @@ pub fn build_storage_pool(conn: &Connect, name: &str, transient: bool) -> Storag
         clean_pool(pool);
     }
 
-    let xml = format!("<pool type='dir'>
+    let xml = format!(
+        "<pool type='dir'>
                           <name>{}</name>
                             <target>
                               <path>/var/lib/libvirt/images</path>
                             </target>
                           </pool>",
-                      name);
+        name
+    );
 
     let result: Result<StoragePool, Error>;
     if transient {
@@ -184,11 +185,10 @@ pub fn build_storage_pool(conn: &Connect, name: &str, transient: bool) -> Storag
 
     match result {
         Ok(pool) => pool,
-        Err(e) => {
-            panic!("Build storage pool failed with code {}, message: {}",
-                   e.code,
-                   e.message)
-        }
+        Err(e) => panic!(
+            "Build storage pool failed with code {}, message: {}",
+            e.code, e.message
+        ),
     }
 }
 
@@ -197,24 +197,22 @@ pub fn build_storage_vol(pool: &StoragePool, name: &str, size: u64) -> StorageVo
         return vol;
     }
 
-    let xml = format!("<volume type='file'>
+    let xml = format!(
+        "<volume type='file'>
                          <name>{}</name>
                          <allocation unit='Kib'>{}</allocation>
                          <capacity unit='Kib'>{}</capacity>
                        </volume>",
-                      name,
-                      size,
-                      size);
+        name, size, size
+    );
     match StorageVol::create_xml(&pool, &xml, 0) {
         Ok(vol) => vol,
-        Err(e) => {
-            panic!("Build vol failed with code {}, message: {}",
-                   e.code,
-                   e.message)
-        }
+        Err(e) => panic!(
+            "Build vol failed with code {}, message: {}",
+            e.code, e.message
+        ),
     }
 }
-
 
 pub fn build_network(conn: &Connect, name: &str, transient: bool) -> Network {
     let name = format!("libvirt-rs-test-{}", name);
@@ -223,13 +221,15 @@ pub fn build_network(conn: &Connect, name: &str, transient: bool) -> Network {
         clean_net(net);
     }
 
-    let xml = format!("<network>
+    let xml = format!(
+        "<network>
                          <name>{}</name>
                          <bridge name='testbr0'/>
                          <forward/>
                          <ip address='192.168.0.1' netmask='255.255.255.0'></ip>
                        </network>",
-                      name);
+        name
+    );
 
     let result: Result<Network, Error>;
     if transient {
@@ -240,14 +240,12 @@ pub fn build_network(conn: &Connect, name: &str, transient: bool) -> Network {
 
     match result {
         Ok(net) => net,
-        Err(e) => {
-            panic!("Build storage pool failed with code {}, message: {}",
-                   e.code,
-                   e.message)
-        }
+        Err(e) => panic!(
+            "Build storage pool failed with code {}, message: {}",
+            e.code, e.message
+        ),
     }
 }
-
 
 pub fn build_interface(conn: &Connect, name: &str) -> Interface {
     let name = format!("libvirt-rs-test-{}", name);
@@ -256,18 +254,19 @@ pub fn build_interface(conn: &Connect, name: &str) -> Interface {
         clean_iface(iface);
     }
 
-    let xml = format!("<interface type='ethernet' name='{}'>
+    let xml = format!(
+        "<interface type='ethernet' name='{}'>
                          <mac address='aa:bb:cc:dd:ee:ff'/>
                        </interface>",
-                      name);
+        name
+    );
 
     let result = Interface::define_xml(&conn, &xml, 0);
     match result {
         Ok(iface) => iface,
-        Err(e) => {
-            panic!("Build storage pool failed with code {}, message: {}",
-                   e.code,
-                   e.message)
-        }
+        Err(e) => panic!(
+            "Build storage pool failed with code {}, message: {}",
+            e.code, e.message
+        ),
     }
 }

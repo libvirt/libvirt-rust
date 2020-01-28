@@ -28,6 +28,12 @@ Rust from stable, beta to nightly.
 
 ### To execute locally tests and other excerices
 
+`cargo fmt -v -- --check`
+
+The code is formatted using `rustfmt`, you should ensure that the
+check is passing before to submit your patch(es). It may be required
+to execute `rustup component add rustfmt` in your environment.
+
 `cargo test --verbose`
 
 Integration tests use a real connection to libvirtd. For instance

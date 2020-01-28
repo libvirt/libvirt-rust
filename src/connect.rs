@@ -18,25 +18,24 @@
 
 extern crate libc;
 
-use std::{str, ptr, mem};
+use std::{mem, ptr, str};
 
-use network::sys::virNetworkPtr;
-use interface::sys::virInterfacePtr;
-use secret::sys::virSecretPtr;
-use nwfilter::sys::virNWFilterPtr;
-use nodedev::sys::virNodeDevicePtr;
-use storage_pool::sys::virStoragePoolPtr;
 use domain::sys::{virDomainPtr, virDomainStatsRecordPtr};
+use interface::sys::virInterfacePtr;
+use network::sys::virNetworkPtr;
+use nodedev::sys::virNodeDevicePtr;
+use nwfilter::sys::virNWFilterPtr;
+use secret::sys::virSecretPtr;
+use storage_pool::sys::virStoragePoolPtr;
 
 use domain::{Domain, DomainStatsRecord};
 use error::Error;
+use interface::Interface;
 use network::Network;
 use nodedev::NodeDevice;
 use nwfilter::NWFilter;
-use interface::Interface;
-use storage_pool::StoragePool;
 use secret::Secret;
-
+use storage_pool::StoragePool;
 
 pub mod sys {
     extern crate libc;
@@ -58,10 +57,8 @@ pub mod sys {
 
     pub type virConnectCredentialPtr = *mut virConnectCredential;
 
-    pub type virConnectAuthCallbackPtr = unsafe extern "C" fn(virConnectCredentialPtr,
-                                                              libc::c_uint,
-                                                              *mut libc::c_void)
-                                                              -> i32;
+    pub type virConnectAuthCallbackPtr =
+        unsafe extern "C" fn(virConnectCredentialPtr, libc::c_uint, *mut libc::c_void) -> i32;
 
     #[repr(C)]
     pub struct virConnectAuth {
@@ -89,18 +86,20 @@ pub mod sys {
     pub type virNodeInfoPtr = *mut virNodeInfo;
 }
 
-#[link(name="virt")]
+#[link(name = "virt")]
 extern "C" {
-    fn virGetVersion(hyver: *const libc::c_ulong,
-                     ctype: *const libc::c_char,
-                     typever: *const libc::c_ulong)
-                     -> libc::c_int;
+    fn virGetVersion(
+        hyver: *const libc::c_ulong,
+        ctype: *const libc::c_char,
+        typever: *const libc::c_ulong,
+    ) -> libc::c_int;
     fn virConnectOpen(uri: *const libc::c_char) -> sys::virConnectPtr;
     fn virConnectOpenReadOnly(uri: *const libc::c_char) -> sys::virConnectPtr;
-    fn virConnectOpenAuth(uri: *const libc::c_char,
-                          auth: sys::virConnectAuthPtr,
-                          flags: libc::c_uint)
-                          -> sys::virConnectPtr;
+    fn virConnectOpenAuth(
+        uri: *const libc::c_char,
+        auth: sys::virConnectAuthPtr,
+        flags: libc::c_uint,
+    ) -> sys::virConnectPtr;
     fn virConnectClose(ptr: sys::virConnectPtr) -> libc::c_int;
     fn virConnectGetVersion(ptr: sys::virConnectPtr, hyver: *mut libc::c_ulong) -> libc::c_int;
     fn virConnectGetHostname(ptr: sys::virConnectPtr) -> *mut libc::c_char;
@@ -112,74 +111,91 @@ extern "C" {
     fn virConnectIsAlive(ptr: sys::virConnectPtr) -> libc::c_int;
     fn virConnectIsEncrypted(ptr: sys::virConnectPtr) -> libc::c_int;
     fn virConnectIsSecure(ptr: sys::virConnectPtr) -> libc::c_int;
-    fn virConnectListDomains(ptr: sys::virConnectPtr,
-                             ids: *mut libc::c_int,
-                             maxids: libc::c_int)
-                             -> libc::c_int;
-    fn virConnectListDefinedDomains(ptr: sys::virConnectPtr,
-                                    names: *mut *mut libc::c_char,
-                                    maxnames: libc::c_int)
-                                    -> libc::c_int;
-    fn virConnectListInterfaces(ptr: sys::virConnectPtr,
-                                names: *mut *mut libc::c_char,
-                                maxnames: libc::c_int)
-                                -> libc::c_int;
-    fn virConnectListNetworks(ptr: sys::virConnectPtr,
-                              names: *mut *mut libc::c_char,
-                              maxnames: libc::c_int)
-                              -> libc::c_int;
-    fn virConnectListNWFilters(ptr: sys::virConnectPtr,
-                               names: *mut *mut libc::c_char,
-                               maxnames: libc::c_int)
-                               -> libc::c_int;
-    fn virConnectListStoragePools(ptr: sys::virConnectPtr,
-                                  names: *mut *mut libc::c_char,
-                                  maxnames: libc::c_int)
-                                  -> libc::c_int;
-    fn virConnectListSecrets(ptr: sys::virConnectPtr,
-                             names: *mut *mut libc::c_char,
-                             maxnames: libc::c_int)
-                             -> libc::c_int;
-    fn virConnectListDefinedInterfaces(ptr: sys::virConnectPtr,
-                                       names: *mut *mut libc::c_char,
-                                       maxifaces: libc::c_int)
-                                       -> libc::c_int;
-    fn virConnectListDefinedNetworks(ptr: sys::virConnectPtr,
-                                     names: *mut *mut libc::c_char,
-                                     maxnets: libc::c_int)
-                                     -> libc::c_int;
-    fn virConnectListDefinedStoragePools(ptr: sys::virConnectPtr,
-                                         names: *mut *mut libc::c_char,
-                                         maxpools: libc::c_int)
-                                         -> libc::c_int;
-    fn virConnectListAllDomains(ptr: sys::virConnectPtr,
-                                domains: *mut *mut virDomainPtr,
-                                flags: libc::c_uint)
-                                -> libc::c_int;
-    fn virConnectListAllNetworks(ptr: sys::virConnectPtr,
-                                 networks: *mut *mut virNetworkPtr,
-                                 flags: libc::c_uint)
-                                 -> libc::c_int;
-    fn virConnectListAllInterfaces(ptr: sys::virConnectPtr,
-                                   interfaces: *mut *mut virInterfacePtr,
-                                   flags: libc::c_uint)
-                                   -> libc::c_int;
-    fn virConnectListAllNodeDevices(ptr: sys::virConnectPtr,
-                                    devices: *mut *mut virNodeDevicePtr,
-                                    flags: libc::c_uint)
-                                    -> libc::c_int;
-    fn virConnectListAllSecrets(ptr: sys::virConnectPtr,
-                                secrets: *mut *mut virSecretPtr,
-                                flags: libc::c_uint)
-                                -> libc::c_int;
-    fn virConnectListAllNWFilters(ptr: sys::virConnectPtr,
-                                  nwfilters: *mut *mut virNWFilterPtr,
-                                  flags: libc::c_uint)
-                                  -> libc::c_int;
-    fn virConnectListAllStoragePools(ptr: sys::virConnectPtr,
-                                     storages: *mut *mut virStoragePoolPtr,
-                                     flags: libc::c_uint)
-                                     -> libc::c_int;
+    fn virConnectListDomains(
+        ptr: sys::virConnectPtr,
+        ids: *mut libc::c_int,
+        maxids: libc::c_int,
+    ) -> libc::c_int;
+    fn virConnectListDefinedDomains(
+        ptr: sys::virConnectPtr,
+        names: *mut *mut libc::c_char,
+        maxnames: libc::c_int,
+    ) -> libc::c_int;
+    fn virConnectListInterfaces(
+        ptr: sys::virConnectPtr,
+        names: *mut *mut libc::c_char,
+        maxnames: libc::c_int,
+    ) -> libc::c_int;
+    fn virConnectListNetworks(
+        ptr: sys::virConnectPtr,
+        names: *mut *mut libc::c_char,
+        maxnames: libc::c_int,
+    ) -> libc::c_int;
+    fn virConnectListNWFilters(
+        ptr: sys::virConnectPtr,
+        names: *mut *mut libc::c_char,
+        maxnames: libc::c_int,
+    ) -> libc::c_int;
+    fn virConnectListStoragePools(
+        ptr: sys::virConnectPtr,
+        names: *mut *mut libc::c_char,
+        maxnames: libc::c_int,
+    ) -> libc::c_int;
+    fn virConnectListSecrets(
+        ptr: sys::virConnectPtr,
+        names: *mut *mut libc::c_char,
+        maxnames: libc::c_int,
+    ) -> libc::c_int;
+    fn virConnectListDefinedInterfaces(
+        ptr: sys::virConnectPtr,
+        names: *mut *mut libc::c_char,
+        maxifaces: libc::c_int,
+    ) -> libc::c_int;
+    fn virConnectListDefinedNetworks(
+        ptr: sys::virConnectPtr,
+        names: *mut *mut libc::c_char,
+        maxnets: libc::c_int,
+    ) -> libc::c_int;
+    fn virConnectListDefinedStoragePools(
+        ptr: sys::virConnectPtr,
+        names: *mut *mut libc::c_char,
+        maxpools: libc::c_int,
+    ) -> libc::c_int;
+    fn virConnectListAllDomains(
+        ptr: sys::virConnectPtr,
+        domains: *mut *mut virDomainPtr,
+        flags: libc::c_uint,
+    ) -> libc::c_int;
+    fn virConnectListAllNetworks(
+        ptr: sys::virConnectPtr,
+        networks: *mut *mut virNetworkPtr,
+        flags: libc::c_uint,
+    ) -> libc::c_int;
+    fn virConnectListAllInterfaces(
+        ptr: sys::virConnectPtr,
+        interfaces: *mut *mut virInterfacePtr,
+        flags: libc::c_uint,
+    ) -> libc::c_int;
+    fn virConnectListAllNodeDevices(
+        ptr: sys::virConnectPtr,
+        devices: *mut *mut virNodeDevicePtr,
+        flags: libc::c_uint,
+    ) -> libc::c_int;
+    fn virConnectListAllSecrets(
+        ptr: sys::virConnectPtr,
+        secrets: *mut *mut virSecretPtr,
+        flags: libc::c_uint,
+    ) -> libc::c_int;
+    fn virConnectListAllNWFilters(
+        ptr: sys::virConnectPtr,
+        nwfilters: *mut *mut virNWFilterPtr,
+        flags: libc::c_uint,
+    ) -> libc::c_int;
+    fn virConnectListAllStoragePools(
+        ptr: sys::virConnectPtr,
+        storages: *mut *mut virStoragePoolPtr,
+        flags: libc::c_uint,
+    ) -> libc::c_int;
     fn virConnectNumOfDomains(ptr: sys::virConnectPtr) -> libc::c_int;
     fn virConnectNumOfInterfaces(ptr: sys::virConnectPtr) -> libc::c_int;
     fn virConnectNumOfNetworks(ptr: sys::virConnectPtr) -> libc::c_int;
@@ -190,60 +206,70 @@ extern "C" {
     fn virConnectNumOfDefinedInterfaces(ptr: sys::virConnectPtr) -> libc::c_int;
     fn virConnectNumOfDefinedNetworks(ptr: sys::virConnectPtr) -> libc::c_int;
     fn virConnectNumOfDefinedStoragePools(ptr: sys::virConnectPtr) -> libc::c_int;
-    fn virConnectGetCPUModelNames(ptr: sys::virConnectPtr,
-                                  arch: *const libc::c_char,
-                                  mcpus: *mut *mut *mut libc::c_char,
-                                  flags: libc::c_uint)
-                                  -> libc::c_int;
+    fn virConnectGetCPUModelNames(
+        ptr: sys::virConnectPtr,
+        arch: *const libc::c_char,
+        mcpus: *mut *mut *mut libc::c_char,
+        flags: libc::c_uint,
+    ) -> libc::c_int;
     fn virConnectGetMaxVcpus(ptr: sys::virConnectPtr, attr: *const libc::c_char) -> libc::c_int;
-    fn virConnectCompareCPU(ptr: sys::virConnectPtr,
-                            xml: *const libc::c_char,
-                            flags: libc::c_uint)
-                            -> libc::c_int;
+    fn virConnectCompareCPU(
+        ptr: sys::virConnectPtr,
+        xml: *const libc::c_char,
+        flags: libc::c_uint,
+    ) -> libc::c_int;
     fn virNodeGetInfo(ptr: sys::virConnectPtr, ninfo: sys::virNodeInfoPtr) -> libc::c_int;
     fn virNodeGetFreeMemory(ptr: sys::virConnectPtr) -> libc::c_long;
-    fn virConnectSetKeepAlive(ptr: sys::virConnectPtr,
-                              interval: libc::c_int,
-                              count: libc::c_uint)
-                              -> libc::c_int;
-    fn virConnectDomainXMLFromNative(ptr: sys::virConnectPtr,
-                                     nformat: *const libc::c_char,
-                                     nconfig: *const libc::c_char,
-                                     flags: libc::c_uint)
-                                     -> *mut libc::c_char;
-    fn virConnectDomainXMLToNative(ptr: sys::virConnectPtr,
-                                   nformat: *const libc::c_char,
-                                   dxml: *const libc::c_char,
-                                   flags: libc::c_uint)
-                                   -> *mut libc::c_char;
-    fn virConnectGetDomainCapabilities(ptr: sys::virConnectPtr,
-                                       emulatorbin: *const libc::c_char,
-                                       arch: *const libc::c_char,
-                                       machine: *const libc::c_char,
-                                       virttype: *const libc::c_char,
-                                       flags: libc::c_uint)
-                                       -> *mut libc::c_char;
-    fn virConnectGetAllDomainStats(ptr: sys::virConnectPtr,
-                                   stats: libc::c_uint,
-                                   ret: *mut *mut virDomainStatsRecordPtr,
-                                   flags: libc::c_uint)
-                                   -> libc::c_int;
-    fn virConnectBaselineCPU(ptr: sys::virConnectPtr,
-                             xmlcpus: *const *const libc::c_char,
-                             ncpus: libc::c_uint,
-                             flags: libc::c_uint)
-                             -> *mut libc::c_char;
-    fn virConnectFindStoragePoolSources(ptr: sys::virConnectPtr,
-                                        kind: *const libc::c_char,
-                                        spec: *const libc::c_char,
-                                        flags: libc::c_uint)
-                                        -> *mut libc::c_char;
+    fn virConnectSetKeepAlive(
+        ptr: sys::virConnectPtr,
+        interval: libc::c_int,
+        count: libc::c_uint,
+    ) -> libc::c_int;
+    fn virConnectDomainXMLFromNative(
+        ptr: sys::virConnectPtr,
+        nformat: *const libc::c_char,
+        nconfig: *const libc::c_char,
+        flags: libc::c_uint,
+    ) -> *mut libc::c_char;
+    fn virConnectDomainXMLToNative(
+        ptr: sys::virConnectPtr,
+        nformat: *const libc::c_char,
+        dxml: *const libc::c_char,
+        flags: libc::c_uint,
+    ) -> *mut libc::c_char;
+    fn virConnectGetDomainCapabilities(
+        ptr: sys::virConnectPtr,
+        emulatorbin: *const libc::c_char,
+        arch: *const libc::c_char,
+        machine: *const libc::c_char,
+        virttype: *const libc::c_char,
+        flags: libc::c_uint,
+    ) -> *mut libc::c_char;
+    fn virConnectGetAllDomainStats(
+        ptr: sys::virConnectPtr,
+        stats: libc::c_uint,
+        ret: *mut *mut virDomainStatsRecordPtr,
+        flags: libc::c_uint,
+    ) -> libc::c_int;
+    fn virConnectBaselineCPU(
+        ptr: sys::virConnectPtr,
+        xmlcpus: *const *const libc::c_char,
+        ncpus: libc::c_uint,
+        flags: libc::c_uint,
+    ) -> *mut libc::c_char;
+    fn virConnectFindStoragePoolSources(
+        ptr: sys::virConnectPtr,
+        kind: *const libc::c_char,
+        spec: *const libc::c_char,
+        flags: libc::c_uint,
+    ) -> *mut libc::c_char;
 }
 
-extern "C" fn connectCallback(ccreds: sys::virConnectCredentialPtr,
-                              ncred: libc::c_uint,
-                              cbdata: *mut libc::c_void)
-                              -> libc::c_int {
+extern "C" fn connectCallback(
+    ccreds: sys::virConnectCredentialPtr,
+    ncred: libc::c_uint,
+    cbdata: *mut libc::c_void,
+) -> libc::c_int {
     let callback: ConnectAuthCallback = unsafe {
         // Safe because connectCallback is private and only used by
         // Connect::open_auth(). In open_auth() we transmute the
@@ -273,7 +299,6 @@ extern "C" fn connectCallback(ccreds: sys::virConnectCredentialPtr,
     }
     0
 }
-
 
 pub type ConnectFlags = self::libc::c_uint;
 pub const VIR_CONNECT_RO: ConnectFlags = 1 << 0;
@@ -552,10 +577,11 @@ impl Connect {
         }
     }
 
-    pub fn open_auth(uri: &str,
-                     auth: &mut ConnectAuth,
-                     flags: ConnectFlags)
-                     -> Result<Connect, Error> {
+    pub fn open_auth(
+        uri: &str,
+        auth: &mut ConnectAuth,
+        flags: ConnectFlags,
+    ) -> Result<Connect, Error> {
         let mut cauth = unsafe {
             // Safe because Rust forces to allocate all attributes of
             // the struct ConnectAuth.
@@ -574,7 +600,6 @@ impl Connect {
         }
         return Ok(Connect::new(c));
     }
-
 
     /// This function closes the connection to the hypervisor. This
     /// should not be called if further interaction with the
@@ -671,10 +696,12 @@ impl Connect {
     pub fn get_cpu_models_names(&self, arch: &str, flags: u32) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: *mut *mut libc::c_char = ptr::null_mut();
-            let size = virConnectGetCPUModelNames(self.as_ptr(),
-                                                  string_to_c_chars!(arch),
-                                                  &mut names,
-                                                  flags as libc::c_uint);
+            let size = virConnectGetCPUModelNames(
+                self.as_ptr(),
+                string_to_c_chars!(arch),
+                &mut names,
+                flags as libc::c_uint,
+            );
             if size == -1 {
                 return Err(Error::new());
             }
@@ -895,9 +922,10 @@ impl Connect {
         }
     }
 
-    pub fn list_all_domains(&self,
-                            flags: ConnectListAllDomainsFlags)
-                            -> Result<Vec<Domain>, Error> {
+    pub fn list_all_domains(
+        &self,
+        flags: ConnectListAllDomainsFlags,
+    ) -> Result<Vec<Domain>, Error> {
         unsafe {
             let mut domains: *mut virDomainPtr = ptr::null_mut();
             let size = virConnectListAllDomains(self.as_ptr(), &mut domains, flags as libc::c_uint);
@@ -917,9 +945,10 @@ impl Connect {
         }
     }
 
-    pub fn list_all_networks(&self,
-                             flags: ConnectListAllNetworksFlags)
-                             -> Result<Vec<Network>, Error> {
+    pub fn list_all_networks(
+        &self,
+        flags: ConnectListAllNetworksFlags,
+    ) -> Result<Vec<Network>, Error> {
         unsafe {
             let mut networks: *mut virNetworkPtr = ptr::null_mut();
             let size =
@@ -938,9 +967,10 @@ impl Connect {
         }
     }
 
-    pub fn list_all_interfaces(&self,
-                               flags: ConnectListAllInterfacesFlags)
-                               -> Result<Vec<Interface>, Error> {
+    pub fn list_all_interfaces(
+        &self,
+        flags: ConnectListAllInterfacesFlags,
+    ) -> Result<Vec<Interface>, Error> {
         unsafe {
             let mut interfaces: *mut virInterfacePtr = ptr::null_mut();
             let size =
@@ -959,9 +989,10 @@ impl Connect {
         }
     }
 
-    pub fn list_all_node_devices(&self,
-                                 flags: ConnectListAllNodeDeviceFlags)
-                                 -> Result<Vec<NodeDevice>, Error> {
+    pub fn list_all_node_devices(
+        &self,
+        flags: ConnectListAllNodeDeviceFlags,
+    ) -> Result<Vec<NodeDevice>, Error> {
         unsafe {
             let mut nodedevs: *mut virNodeDevicePtr = ptr::null_mut();
             let size =
@@ -980,9 +1011,10 @@ impl Connect {
         }
     }
 
-    pub fn list_all_secrets(&self,
-                            flags: ConnectListAllSecretsFlags)
-                            -> Result<Vec<Secret>, Error> {
+    pub fn list_all_secrets(
+        &self,
+        flags: ConnectListAllSecretsFlags,
+    ) -> Result<Vec<Secret>, Error> {
         unsafe {
             let mut secrets: *mut virSecretPtr = ptr::null_mut();
             let size = virConnectListAllSecrets(self.as_ptr(), &mut secrets, flags as libc::c_uint);
@@ -1000,9 +1032,10 @@ impl Connect {
         }
     }
 
-    pub fn list_all_storage_pools(&self,
-                                  flags: ConnectListAllStoragePoolsFlags)
-                                  -> Result<Vec<StoragePool>, Error> {
+    pub fn list_all_storage_pools(
+        &self,
+        flags: ConnectListAllStoragePoolsFlags,
+    ) -> Result<Vec<StoragePool>, Error> {
         unsafe {
             let mut storages: *mut virStoragePoolPtr = ptr::null_mut();
             let size =
@@ -1316,7 +1349,6 @@ impl Connect {
         }
     }
 
-
     /// # Examples
     ///
     /// ```
@@ -1460,14 +1492,17 @@ impl Connect {
         }
     }
 
-    pub fn compare_cpu(&self,
-                       xml: &str,
-                       flags: ConnectCompareCPUFlags)
-                       -> Result<CPUCompareResult, Error> {
+    pub fn compare_cpu(
+        &self,
+        xml: &str,
+        flags: ConnectCompareCPUFlags,
+    ) -> Result<CPUCompareResult, Error> {
         unsafe {
-            let res = virConnectCompareCPU(self.as_ptr(),
-                                           string_to_c_chars!(xml),
-                                           flags as libc::c_uint);
+            let res = virConnectCompareCPU(
+                self.as_ptr(),
+                string_to_c_chars!(xml),
+                flags as libc::c_uint,
+            );
             if res == VIR_CPU_COMPARE_ERROR {
                 return Err(Error::new());
             }
@@ -1493,23 +1528,25 @@ impl Connect {
                 return Err(Error::new());
             }
             return Ok(NodeInfo {
-                          model: c_chars_to_string!((*pinfo).model.as_ptr(), nofree),
-                          memory: (*pinfo).memory as u64,
-                          cpus: (*pinfo).cpus as u32,
-                          mhz: (*pinfo).mhz as u32,
-                          nodes: (*pinfo).nodes as u32,
-                          sockets: (*pinfo).sockets as u32,
-                          cores: (*pinfo).cores as u32,
-                          threads: (*pinfo).threads as u32,
-                      });
+                model: c_chars_to_string!((*pinfo).model.as_ptr(), nofree),
+                memory: (*pinfo).memory as u64,
+                cpus: (*pinfo).cpus as u32,
+                mhz: (*pinfo).mhz as u32,
+                nodes: (*pinfo).nodes as u32,
+                sockets: (*pinfo).sockets as u32,
+                cores: (*pinfo).cores as u32,
+                threads: (*pinfo).threads as u32,
+            });
         }
     }
 
     pub fn set_keep_alive(&self, interval: i32, count: u32) -> Result<i32, Error> {
         unsafe {
-            let ret = virConnectSetKeepAlive(self.as_ptr(),
-                                             interval as libc::c_int,
-                                             count as libc::c_uint);
+            let ret = virConnectSetKeepAlive(
+                self.as_ptr(),
+                interval as libc::c_int,
+                count as libc::c_uint,
+            );
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -1517,16 +1554,19 @@ impl Connect {
         }
     }
 
-    pub fn domain_xml_from_native(&self,
-                                  nformat: &str,
-                                  nconfig: &str,
-                                  flags: u32)
-                                  -> Result<String, Error> {
+    pub fn domain_xml_from_native(
+        &self,
+        nformat: &str,
+        nconfig: &str,
+        flags: u32,
+    ) -> Result<String, Error> {
         unsafe {
-            let ret = virConnectDomainXMLFromNative(self.as_ptr(),
-                                                    string_to_c_chars!(nformat),
-                                                    string_to_c_chars!(nconfig),
-                                                    flags as libc::c_uint);
+            let ret = virConnectDomainXMLFromNative(
+                self.as_ptr(),
+                string_to_c_chars!(nformat),
+                string_to_c_chars!(nconfig),
+                flags as libc::c_uint,
+            );
             if ret.is_null() {
                 return Err(Error::new());
             }
@@ -1534,16 +1574,19 @@ impl Connect {
         }
     }
 
-    pub fn domain_xml_to_native(&self,
-                                nformat: &str,
-                                dxml: &str,
-                                flags: u32)
-                                -> Result<String, Error> {
+    pub fn domain_xml_to_native(
+        &self,
+        nformat: &str,
+        dxml: &str,
+        flags: u32,
+    ) -> Result<String, Error> {
         unsafe {
-            let ret = virConnectDomainXMLToNative(self.as_ptr(),
-                                                  string_to_c_chars!(nformat),
-                                                  string_to_c_chars!(dxml),
-                                                  flags as libc::c_uint);
+            let ret = virConnectDomainXMLToNative(
+                self.as_ptr(),
+                string_to_c_chars!(nformat),
+                string_to_c_chars!(dxml),
+                flags as libc::c_uint,
+            );
             if ret.is_null() {
                 return Err(Error::new());
             }
@@ -1551,20 +1594,23 @@ impl Connect {
         }
     }
 
-    pub fn get_domain_capabilities(&self,
-                                   emulatorbin: &str,
-                                   arch: &str,
-                                   machine: &str,
-                                   virttype: &str,
-                                   flags: u32)
-                                   -> Result<String, Error> {
+    pub fn get_domain_capabilities(
+        &self,
+        emulatorbin: &str,
+        arch: &str,
+        machine: &str,
+        virttype: &str,
+        flags: u32,
+    ) -> Result<String, Error> {
         unsafe {
-            let ret = virConnectGetDomainCapabilities(self.as_ptr(),
-                                                      string_to_c_chars!(emulatorbin),
-                                                      string_to_c_chars!(arch),
-                                                      string_to_c_chars!(machine),
-                                                      string_to_c_chars!(virttype),
-                                                      flags as libc::c_uint);
+            let ret = virConnectGetDomainCapabilities(
+                self.as_ptr(),
+                string_to_c_chars!(emulatorbin),
+                string_to_c_chars!(arch),
+                string_to_c_chars!(machine),
+                string_to_c_chars!(virttype),
+                flags as libc::c_uint,
+            );
             if ret.is_null() {
                 return Err(Error::new());
             }
@@ -1572,23 +1618,28 @@ impl Connect {
         }
     }
 
-    pub fn get_all_domain_stats(&self,
-                                stats: u32,
-                                flags: u32)
-                                -> Result<Vec<DomainStatsRecord>, Error> {
+    pub fn get_all_domain_stats(
+        &self,
+        stats: u32,
+        flags: u32,
+    ) -> Result<Vec<DomainStatsRecord>, Error> {
         unsafe {
             let mut record: *mut virDomainStatsRecordPtr = ptr::null_mut();
-            let size = virConnectGetAllDomainStats(self.as_ptr(),
-                                                   stats as libc::c_uint,
-                                                   &mut record,
-                                                   flags as libc::c_uint);
+            let size = virConnectGetAllDomainStats(
+                self.as_ptr(),
+                stats as libc::c_uint,
+                &mut record,
+                flags as libc::c_uint,
+            );
             if size == -1 {
                 return Err(Error::new());
             }
 
             let mut array: Vec<DomainStatsRecord> = Vec::new();
             for x in 0..size as isize {
-                array.push(DomainStatsRecord { ptr: *record.offset(x) });
+                array.push(DomainStatsRecord {
+                    ptr: *record.offset(x),
+                });
             }
             libc::free(record as *mut libc::c_void);
 
@@ -1602,10 +1653,12 @@ impl Connect {
             for x in 0..xmlcpus.len() {
                 xcpus[x] = string_to_c_chars!(xmlcpus[x]);
             }
-            let ret = virConnectBaselineCPU(self.as_ptr(),
-                                            xcpus.as_ptr(),
-                                            xmlcpus.len() as libc::c_uint,
-                                            flags as libc::c_uint);
+            let ret = virConnectBaselineCPU(
+                self.as_ptr(),
+                xcpus.as_ptr(),
+                xmlcpus.len() as libc::c_uint,
+                flags as libc::c_uint,
+            );
             if ret.is_null() {
                 return Err(Error::new());
             }
@@ -1613,16 +1666,19 @@ impl Connect {
         }
     }
 
-    pub fn find_storage_pool_sources(&self,
-                                     kind: &str,
-                                     spec: &str,
-                                     flags: u32)
-                                     -> Result<String, Error> {
+    pub fn find_storage_pool_sources(
+        &self,
+        kind: &str,
+        spec: &str,
+        flags: u32,
+    ) -> Result<String, Error> {
         unsafe {
-            let n = virConnectFindStoragePoolSources(self.as_ptr(),
-                                                     string_to_c_chars!(kind),
-                                                     string_to_c_chars!(spec),
-                                                     flags as libc::c_uint);
+            let n = virConnectFindStoragePoolSources(
+                self.as_ptr(),
+                string_to_c_chars!(kind),
+                string_to_c_chars!(spec),
+                flags as libc::c_uint,
+            );
             if n.is_null() {
                 return Err(Error::new());
             }
