@@ -114,16 +114,14 @@ impl Drop for Stream {
 
 impl Stream {
     pub fn new(conn: &Connect, flags: StreamFlags) -> Result<Stream, Error> {
-        unsafe {
-            let ptr = virStreamNew(conn.as_ptr(), flags as libc::c_uint);
-            if ptr.is_null() {
-                return Err(Error::new());
-            }
-            return Ok(Stream::from_ptr(ptr));
+        let ptr = unsafe { virStreamNew(conn.as_ptr(), flags as libc::c_uint) };
+        if ptr.is_null() {
+            return Err(Error::new());
         }
+        return Ok(Stream::from_ptr(ptr));
     }
 
-    pub fn from_ptr(ptr: sys::virStreamPtr) -> Stream {
+    fn from_ptr(ptr: sys::virStreamPtr) -> Stream {
         Stream {
             ptr: Some(ptr),
             callback: None,
@@ -139,9 +137,9 @@ impl Stream {
             if virStreamFree(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
-            self.ptr = None;
-            return Ok(());
         }
+        self.ptr = None;
+        return Ok(());
     }
 
     pub fn finish(self) -> Result<(), Error> {
