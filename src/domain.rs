@@ -1644,7 +1644,7 @@ impl Domain {
         }
     }
 
-    pub fn open_console(&self, name: &str, stream: Stream, flags: u32) -> Result<u32, Error> {
+    pub fn open_console(&self, name: &str, stream: &Stream, flags: u32) -> Result<u32, Error> {
         unsafe {
             let ret = virDomainOpenConsole(
                 self.as_ptr(),
