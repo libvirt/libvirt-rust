@@ -40,12 +40,23 @@ install:
   - echo "pass" | sudo saslpasswd2 -p -a libvirt user
 
 before_script:
-  - rustup component add rustfmt
+  - bash -c 'if [[ "$TRAVIS_RUST_VERSION" == "stable" ]]; then
+      rustup component add rustfmt
+      ;
+    fi'
 
 script:
-  - cargo fmt -v -- --check
-  - cargo test --verbose
   # Due to an issue fixed in master we should not consider running
   # integration tests in parallel.
   # see: https://www.redhat.com/archives/libvir-list/2019-July/msg00287.html
-  - cargo test --verbose -- --ignored --test-threads=1
+  
+  - bash -c 'if [[ "$TRAVIS_RUST_VERSION" == "stable" ]]; then
+      cargo fmt -v -- --check &&
+      cargo test --verbose &&
+      cargo test --verbose -- --ignored --test-threads=1
+      ;
+    else
+      cargo test --verbose &&
+      cargo test --verbose -- --ignored --test-threads=1
+      ;
+    fi'
