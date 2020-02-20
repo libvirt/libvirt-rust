@@ -83,14 +83,14 @@ to submit patches to the libvir-list@redhat.com mailing list. eg. to
 send a single patch
 
 ```
-   git send-email --to libvir-list@redhat.com --cc sahid.ferdjaoui@canonical.com \
+   git send-email --to libvir-list@redhat.com --cc sahid.ferdjaoui@libremel.fr \
        --subject-prefix "rust PATCH" --smtp-server=$HOSTNAME -1
 ```
 
 Or to send all patches on the current branch, against master
 
 ```
-   git send-email --to libvir-list@redhat.com --cc sahid.ferdjaoui@canonical.com \
+   git send-email --to libvir-list@redhat.com --cc sahid.ferdjaoui@libremel.fr \
        --subject-prefix "rust PATCH" --smtp-server=$HOSTNAME --no-chain-reply-to \
        --cover-letter --annotate master..
 ```

@@ -1,7 +1,7 @@
 [package]
 name = "virt"
 version = "0.2.11"
-authors = ["Sahid Orentino Ferdjaoui <sahid.ferdjaoui@canonical.com>",]
+authors = ["Sahid Orentino Ferdjaoui <sahid.ferdjaoui@libremel.fr>",]
 license = "LGPL-2.1"
 readme = "README.md"
 description = "Rust bindings to the libvirt C library"
