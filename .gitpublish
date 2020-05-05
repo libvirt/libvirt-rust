@@ -1,5 +1,0 @@
-[gitpublishprofile "default"]
-base = master
-to = libvir-list@redhat.com
-cc = sahid.ferdjaoui@canonical.com
-prefix = libvirt-rust PATCH
