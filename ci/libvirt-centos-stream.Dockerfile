@@ -1,7 +1,8 @@
 FROM centos:8
 
-RUN dnf install 'dnf-command(config-manager)' -y && \
-    dnf config-manager --set-enabled -y PowerTools && \
+RUN dnf install -y centos-release-stream && \
+    dnf install 'dnf-command(config-manager)' -y && \
+    dnf config-manager --set-enabled -y Stream-PowerTools && \
     dnf install -y epel-release && \
     dnf update -y && \
     dnf install -y \
@@ -18,17 +19,10 @@ RUN dnf install 'dnf-command(config-manager)' -y && \
         gettext \
         gettext-devel \
         git \
-        glib2-devel \
         glibc-devel \
         glibc-langpack-en \
-        gnutls-devel \
-        libnl3-devel \
-        libtirpc-devel \
         libtool \
         libvirt-devel \
-        libxml2 \
-        libxml2-devel \
-        libxslt \
         lsof \
         make \
         net-tools \
@@ -38,11 +32,9 @@ RUN dnf install 'dnf-command(config-manager)' -y && \
         perl-App-cpanminus \
         pkgconfig \
         python3 \
-        python3-docutils \
         python3-pip \
         python3-setuptools \
         python3-wheel \
-        rpcgen \
         rpm-build \
         rust \
         screen \

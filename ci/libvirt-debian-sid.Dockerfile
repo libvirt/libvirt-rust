@@ -13,6 +13,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
             cargo \
             ccache \
             chrony \
+            cpanminus \
             gcc \
             gdb \
             gettext \
@@ -31,13 +32,15 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
             perl \
             pkgconf \
             python3 \
+            python3-pip \
             python3-setuptools \
             python3-wheel \
             rustc \
             screen \
             strace \
             sudo \
-            vim && \
+            vim \
+            xz-utils && \
     apt-get autoremove -y && \
     apt-get autoclean -y && \
     sed -Ei 's,^# (en_US\.UTF-8 .*)$,\1,' /etc/locale.gen && \
