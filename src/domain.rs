@@ -123,7 +123,7 @@ extern "C" {
     fn virDomainUndefine(ptr: sys::virDomainPtr) -> libc::c_int;
     fn virDomainFree(ptr: sys::virDomainPtr) -> libc::c_int;
     fn virDomainShutdown(ptr: sys::virDomainPtr) -> libc::c_int;
-    fn virDomainReboot(ptr: sys::virDomainPtr) -> libc::c_int;
+    fn virDomainReboot(ptr: sys::virDomainPtr, flags: libc::c_uint) -> libc::c_int;
     fn virDomainSuspend(ptr: sys::virDomainPtr) -> libc::c_int;
     fn virDomainResume(ptr: sys::virDomainPtr) -> libc::c_int;
     fn virDomainIsActive(ptr: sys::virDomainPtr) -> libc::c_int;
@@ -519,6 +519,13 @@ pub const VIR_DOMAIN_SHUTOFF: DomainState = 5;
 pub const VIR_DOMAIN_CRASHED: DomainState = 6;
 pub const VIR_DOMAIN_PMSUSPENDED: DomainState = 7;
 
+pub type DomainRebootFlags = self::libc::c_uint;
+pub const VIR_DOMAIN_REBOOT_DEFAULT: DomainRebootFlags = 0;
+pub const VIR_DOMAIN_REBOOT_ACPI_POWER_BTN: DomainRebootFlags = 1 << 0;
+pub const VIR_DOMAIN_REBOOT_GUEST_AGENT: DomainRebootFlags = 1 << 1;
+pub const VIR_DOMAIN_REBOOT_INITCTL: DomainRebootFlags = 1 << 2;
+pub const VIR_DOMAIN_REBOOT_SIGNAL: DomainRebootFlags = 1 << 3;
+pub const VIR_DOMAIN_REBOOT_PARAVIRT: DomainRebootFlags = 1 << 4;
 #[derive(Clone, Debug)]
 pub struct DomainInfo {
     /// The running state, one of virDomainState.
@@ -1148,9 +1155,9 @@ impl Domain {
     /// Reboot a domain.
     ///
     /// The domain object is still usable thereafter.
-    pub fn reboot(&self) -> Result<(), Error> {
+    pub fn reboot(&self, flags: DomainRebootFlags) -> Result<(), Error> {
         unsafe {
-            if virDomainReboot(self.as_ptr()) == -1 {
+            if virDomainReboot(self.as_ptr(), flags) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
