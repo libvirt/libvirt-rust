@@ -18,7 +18,7 @@
 
 extern crate libc;
 
-use std::{ptr, str};
+use std::{mem, ptr, str};
 
 use connect::sys::virConnectPtr;
 use storage_vol::sys::virStorageVolPtr;
@@ -106,6 +106,11 @@ extern "C" {
         names: *mut *mut libc::c_char,
         maxnames: libc::c_int,
     ) -> libc::c_int;
+    fn virStoragePoolListAllVolumes(
+        ptr: sys::virStoragePoolPtr,
+        volumes: *mut *mut virStorageVolPtr,
+        flags: libc::c_uint
+    ) -> libc::c_int;
 }
 
 pub type StoragePoolXMLFlags = self::libc::c_uint;
@@ -123,6 +128,9 @@ pub const VIR_STORAGE_POOL_BUILDING: StoragePoolState = 1;
 pub const VIR_STORAGE_POOL_RUNNING: StoragePoolState = 2;
 pub const VIR_STORAGE_POOL_DEGRADED: StoragePoolState = 3;
 pub const VIR_STORAGE_POOL_INACCESSIBLE: StoragePoolState = 4;
+
+pub type StoragePoolListAllVolumesFlags = self::libc::c_uint;
+pub const VIR_STORAGE_POOL_DEFAULT: StoragePoolListAllVolumesFlags = 0;
 
 #[derive(Clone, Debug)]
 pub struct StoragePoolInfo {
@@ -293,6 +301,26 @@ impl StoragePool {
             for x in 0..size as usize {
                 array.push(c_chars_to_string!(names[x]));
             }
+            return Ok(array);
+        }
+    }
+
+    pub fn list_all_volumes(&self, flags: StoragePoolListAllVolumesFlags) -> Result<Vec<StorageVol>, Error> {
+        unsafe {
+            let mut volumes: *mut virStorageVolPtr = ptr::null_mut();
+            let size = virStoragePoolListAllVolumes(self.as_ptr(), &mut volumes, flags as libc::c_uint);
+            if size == -1 {
+                return Err(Error::new());
+            }
+
+            mem::forget(volumes);
+
+            let mut array: Vec<StorageVol> = Vec::new();
+            for x in 0..size as isize {
+                array.push(StorageVol::new(*volumes.offset(x)));
+            }
+            libc::free(volumes as *mut libc::c_void);
+
             return Ok(array);
         }
     }
