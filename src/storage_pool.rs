@@ -18,7 +18,7 @@
 
 extern crate libc;
 
-use std::str;
+use std::{ptr, str};
 
 use connect::sys::virConnectPtr;
 use storage_vol::sys::virStorageVolPtr;
@@ -101,6 +101,11 @@ extern "C" {
         info: sys::virStoragePoolInfoPtr,
     ) -> libc::c_int;
     fn virStoragePoolNumOfVolumes(ptr: sys::virStoragePoolPtr) -> libc::c_int;
+    fn virStoragePoolListVolumes(
+        ptr: sys::virStoragePoolPtr,
+        names: *mut *mut libc::c_char,
+        maxnames: libc::c_int,
+    ) -> libc::c_int;
 }
 
 pub type StoragePoolXMLFlags = self::libc::c_uint;
@@ -273,6 +278,22 @@ impl StoragePool {
                 return Err(Error::new());
             }
             return Ok(ret as u32);
+        }
+    }
+
+    pub fn list_volumes(&self) -> Result<Vec<String>, Error> {
+        unsafe {
+            let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
+            let size = virStoragePoolListVolumes(self.as_ptr(), names.as_mut_ptr(), 1024);
+            if size == -1 {
+                return Err(Error::new());
+            }
+
+            let mut array: Vec<String> = Vec::new();
+            for x in 0..size as usize {
+                array.push(c_chars_to_string!(names[x]));
+            }
+            return Ok(array);
         }
     }
 
