@@ -437,7 +437,14 @@ extern "C" {
         nparams: libc::c_int,
         flags: libc::c_uint,
     ) -> libc::c_int;
-
+    fn virDomainSendKey(
+        ptr: sys::virDomainPtr,
+        codeset: libc::c_uint,
+        holdtime: libc::c_uint,
+        keycodes: *mut libc::c_uint,
+        nkeycodes: libc::c_int,
+        flags: libc::c_uint
+    ) -> libc::c_int;
 }
 
 pub type DomainXMLFlags = self::libc::c_uint;
@@ -526,6 +533,20 @@ pub const VIR_DOMAIN_REBOOT_GUEST_AGENT: DomainRebootFlags = 1 << 1;
 pub const VIR_DOMAIN_REBOOT_INITCTL: DomainRebootFlags = 1 << 2;
 pub const VIR_DOMAIN_REBOOT_SIGNAL: DomainRebootFlags = 1 << 3;
 pub const VIR_DOMAIN_REBOOT_PARAVIRT: DomainRebootFlags = 1 << 4;
+
+pub type KeycodeSet = self::libc::c_uint;
+pub const VIR_KEYCODE_SET_LINUX: KeycodeSet = 0;
+pub const VIR_KEYCODE_SET_XT: KeycodeSet = 1;
+pub const VIR_KEYCODE_SET_ATSET1: KeycodeSet = 2;
+pub const VIR_KEYCODE_SET_ATSET2: KeycodeSet = 3;
+pub const VIR_KEYCODE_SET_ATSET3: KeycodeSet = 4;
+pub const VIR_KEYCODE_SET_OSX: KeycodeSet = 5;
+pub const VIR_KEYCODE_SET_XT_KBD: KeycodeSet = 6;
+pub const VIR_KEYCODE_SET_USB: KeycodeSet = 7;
+pub const VIR_KEYCODE_SET_WIN32: KeycodeSet = 8;
+pub const VIR_KEYCODE_SET_QNUM: KeycodeSet = 9;
+pub const VIR_KEYCODE_SET_LAST: KeycodeSet = 10;
+
 #[derive(Clone, Debug)]
 pub struct DomainInfo {
     /// The running state, one of virDomainState.
@@ -2239,6 +2260,37 @@ impl Domain {
                 return Err(Error::new());
             }
             Ok(ret)
+        }
+    }
+
+    /// Send key(s) to the guest.
+    /// # Arguments
+    ///
+    /// * `codeset` - Specifies the code set of keycodes.
+    /// * `holdtime` - Specifies the duration (in milliseconds) that the keys will be held.
+    /// * `keycodes` - Specifies the array of keycodes.
+    /// * `nkeycodes` - Specifies the number of keycodes.
+    /// * `flags` - Extra flags; not used yet, so callers should always pass 0..
+    pub fn send_key(
+        &self,
+        codeset: KeycodeSet,
+        holdtime: u32,
+        keycodes: *mut u32,
+        nkeycodes: i32,
+        flags: u32
+    ) -> Result<(), Error> {
+        unsafe {
+            if virDomainSendKey(
+                self.as_ptr(),
+                codeset as libc::c_uint,
+                holdtime as libc::c_uint,
+                keycodes as *mut libc::c_uint,
+                nkeycodes as libc::c_int,
+                flags as libc::c_uint
+            ) == -1 {
+                return Err(Error::new());
+            }
+            Ok(())
         }
     }
 }
