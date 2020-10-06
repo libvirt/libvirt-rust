@@ -121,6 +121,7 @@ extern "C" {
     fn virDomainDestroy(ptr: sys::virDomainPtr) -> libc::c_int;
     fn virDomainDestroyFlags(ptr: sys::virDomainPtr, flags: libc::c_uint) -> libc::c_int;
     fn virDomainUndefine(ptr: sys::virDomainPtr) -> libc::c_int;
+    fn virDomainUndefineFlags(ptr: sys::virDomainPtr, flags: libc::c_uint) -> libc::c_int;
     fn virDomainFree(ptr: sys::virDomainPtr) -> libc::c_int;
     fn virDomainShutdown(ptr: sys::virDomainPtr) -> libc::c_int;
     fn virDomainReboot(ptr: sys::virDomainPtr, flags: libc::c_uint) -> libc::c_int;
@@ -505,6 +506,13 @@ pub const VIR_MIGRATE_TLS: DomainMigrateFlags = 1 << 16;
 
 pub type DomainDefineFlags = self::libc::c_uint;
 pub const VIR_DOMAIN_DEFINE_VALIDATE: DomainDefineFlags = 1 << 0;
+
+pub type DomainUndefineFlags = self::libc::c_uint;
+pub const VIR_DOMAIN_UNDEFINE_MANAGED_SAVE: DomainUndefineFlags = 1;
+pub const VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA: DomainUndefineFlags = 2;
+pub const VIR_DOMAIN_UNDEFINE_NVRAM: DomainUndefineFlags = 4;
+pub const VIR_DOMAIN_UNDEFINE_KEEP_NVRAM: DomainUndefineFlags = 8;
+pub const VIR_DOMAIN_UNDEFINE_CHECKPOINTS_METADATA: DomainUndefineFlags = 16;
 
 pub type DomainSaveRestoreFlags = self::libc::c_uint;
 pub const VIR_DOMAIN_SAVE_BYPASS_CACHE: DomainSaveRestoreFlags = 1 << 0;
@@ -1239,6 +1247,20 @@ impl Domain {
     pub fn undefine(&self) -> Result<(), Error> {
         unsafe {
             if virDomainUndefine(self.as_ptr()) == -1 {
+                return Err(Error::new());
+            }
+            return Ok(());
+        }
+    }
+
+    /// Undefine a domain.
+    ///
+    /// If the domain is running, it's converted to transient domain,
+    /// without stopping it. If the domain is inactive, the domain
+    /// configuration is removed.
+    pub fn undefine_flags(&self, flags: DomainUndefineFlags) -> Result<(), Error> {
+        unsafe {
+            if virDomainUndefineFlags(self.as_ptr(), flags) == -1 {
                 return Err(Error::new());
             }
             return Ok(());
