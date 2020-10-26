@@ -73,6 +73,25 @@ pub mod sys {
     pub type virDomainBlockInfoPtr = *mut virDomainBlockInfo;
 
     #[repr(C)]
+    pub struct virDomainIPAddress {
+        pub typed: libc::c_int,
+        pub addr: *mut libc::c_char,
+        pub prefix: libc::c_uint,
+    }
+
+    pub type virDomainIPAddressPtr = *mut virDomainIPAddress;
+  
+    #[repr(C)]
+    pub struct virDomainInterface {
+        pub name: *mut libc::c_char,
+        pub hwaddr: *mut libc::c_char,
+        pub naddrs: libc::c_uint,	
+        pub addrs: virDomainIPAddressPtr,	
+    }
+
+    pub type virDomainInterfacePtr = *mut virDomainInterface;
+
+    #[repr(C)]
     #[derive(Default)]
     pub struct virDomainInterfaceStats {
         pub rx_bytes: libc::c_longlong,
@@ -273,6 +292,12 @@ extern "C" {
         ptr: sys::virDomainPtr,
         dev_name: *const libc::c_char,
         st: virStreamPtr,
+        flags: libc::c_uint,
+    ) -> libc::c_int;
+    fn virDomainInterfaceAddresses(
+        dom: sys::virDomainPtr,
+        ifaces: *mut *mut sys::virDomainInterfacePtr,
+        source: libc::c_uint,
         flags: libc::c_uint,
     ) -> libc::c_int;
     fn virDomainInterfaceStats(
@@ -555,6 +580,12 @@ pub const VIR_KEYCODE_SET_WIN32: KeycodeSet = 8;
 pub const VIR_KEYCODE_SET_QNUM: KeycodeSet = 9;
 pub const VIR_KEYCODE_SET_LAST: KeycodeSet = 10;
 
+pub type DomainInterfaceAddressesSource = self::libc::c_uint;
+pub const VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_LEASE: DomainInterfaceAddressesSource = 0;
+pub const VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT: DomainInterfaceAddressesSource = 1;
+pub const VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_ARP: DomainInterfaceAddressesSource = 2;
+pub const VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_LAST: DomainInterfaceAddressesSource = 3;
+
 #[derive(Clone, Debug)]
 pub struct DomainInfo {
     /// The running state, one of virDomainState.
@@ -668,6 +699,51 @@ impl NUMAParameters {
                 }
             }
             ret
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct IPAddress {
+    pub typed: i64,
+    pub addr: String,
+    pub prefix: u64,
+}
+
+impl IPAddress {
+    pub fn from_ptr(ptr: sys::virDomainIPAddressPtr) -> IPAddress {
+        unsafe {
+            IPAddress {
+                typed: (*ptr).typed as i64,
+                addr: c_chars_to_string!((*ptr).addr),
+                prefix: (*ptr).prefix as u64,
+            }
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct Interface {
+    pub name: String,
+    pub hwaddr: String,
+    pub naddrs: u64,
+    pub addrs: Vec<IPAddress>,
+}
+
+impl Interface {
+    pub fn from_ptr(ptr: sys::virDomainInterfacePtr) -> Interface {
+        unsafe {
+            let naddrs = (*ptr).naddrs;
+            let mut addrs = vec!();
+            for x in 0..naddrs as isize {
+                addrs.push(IPAddress::from_ptr((*ptr).addrs.offset(x)));
+            }
+            Interface {
+                name: c_chars_to_string!((*ptr).name),
+                hwaddr: c_chars_to_string!((*ptr).hwaddr),
+                naddrs: naddrs as u64,
+                addrs: addrs,
+            }
         }
     }
 }
@@ -1706,6 +1782,26 @@ impl Domain {
                 return Err(Error::new());
             }
             return Ok(ret as u32);
+        }
+    }
+
+    pub fn interface_addresses(&self, source: DomainInterfaceAddressesSource, flags: u32) -> Result<Vec<Interface>, Error> {
+        unsafe {
+            let mut addresses: *mut sys::virDomainInterfacePtr = ptr::null_mut();
+            let size = virDomainInterfaceAddresses(self.as_ptr(), &mut addresses, source, flags);
+            if size == -1 {
+                return Err(Error::new());
+            }
+
+            mem::forget(addresses);
+
+            let mut array: Vec<Interface> = Vec::new();
+            for x in 0..size as isize {
+                array.push(Interface::from_ptr(*addresses.offset(x)));
+            }
+            libc::free(addresses as *mut libc::c_void);
+
+            return Ok(array);
         }
     }
 
