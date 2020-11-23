@@ -1,33 +1,21 @@
-FROM debian:sid
+FROM docker.io/library/debian:sid
 
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
     apt-get dist-upgrade -y && \
     apt-get install --no-install-recommends -y \
-            autoconf \
-            automake \
-            autopoint \
             bash \
             bash-completion \
             ca-certificates \
             cargo \
             ccache \
-            chrony \
             cpanminus \
             gcc \
-            gdb \
             gettext \
             git \
             libc6-dev \
-            libtool \
-            libtool-bin \
             libvirt-dev \
             locales \
-            lsof \
-            make \
-            meson \
-            net-tools \
-            ninja-build \
             patch \
             perl \
             pkgconf \
@@ -35,12 +23,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
             python3-pip \
             python3-setuptools \
             python3-wheel \
-            rustc \
-            screen \
-            strace \
-            sudo \
-            vim \
-            xz-utils && \
+            rustc && \
     apt-get autoremove -y && \
     apt-get autoclean -y && \
     sed -Ei 's,^# (en_US\.UTF-8 .*)$,\1,' /etc/locale.gen && \
