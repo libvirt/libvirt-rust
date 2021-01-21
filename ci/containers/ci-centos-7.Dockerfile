@@ -2,8 +2,8 @@
 #
 #  $ lcitool dockerfile centos-7 libvirt+dist,libvirt-rust
 #
-# https://gitlab.com/libvirt/libvirt-ci/-/commit/b098ec6631a85880f818f2dd25c437d509e53680
-FROM registry.centos.org/centos:7
+# https://gitlab.com/libvirt/libvirt-ci/-/commit/740f5254f607de914a92d664196d045149edb45a
+FROM docker.io/library/centos:7
 
 RUN yum update -y && \
     echo 'skip_missing_names_on_install=0' >> /etc/yum.conf && \
