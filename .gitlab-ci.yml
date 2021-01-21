@@ -107,6 +107,11 @@ opensuse-151-container:
   variables:
     NAME: opensuse-151
 
+opensuse-152-container:
+  <<: *container_job_definition
+  variables:
+    NAME: opensuse-152
+
 ubuntu-1804-container:
   <<: *container_job_definition
   variables:
@@ -168,6 +173,11 @@ opensuse-151-dist-build:
   <<: *dist_build_job_definition
   variables:
     NAME: opensuse-151
+
+opensuse-152-dist-build:
+  <<: *dist_build_job_definition
+  variables:
+    NAME: opensuse-152
 
 ubuntu-1804-dist-build:
   <<: *dist_build_job_definition
