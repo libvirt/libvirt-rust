@@ -384,8 +384,8 @@ pub const VIR_CPU_COMPARE_IDENTICAL: CPUCompareResult = 1;
 pub const VIR_CPU_COMPARE_SUPERSET: CPUCompareResult = 2;
 
 pub type BaselineCPUFlags = self::libc::c_int;
-pub const VIR_CONNECT_BASELINE_CPU_EXPAND_FEATURES: BaselineCPUFlags = (1 << 0);
-pub const VIR_CONNECT_BASELINE_CPU_MIGRATABLE: BaselineCPUFlags = (1 << 1);
+pub const VIR_CONNECT_BASELINE_CPU_EXPAND_FEATURES: BaselineCPUFlags = 1 << 0;
+pub const VIR_CONNECT_BASELINE_CPU_MIGRATABLE: BaselineCPUFlags = 1 << 1;
 
 pub type ConnectCredentialType = self::libc::c_int;
 pub const VIR_CRED_USERNAME: ConnectCredentialType = 1;

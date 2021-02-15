@@ -59,13 +59,13 @@ extern "C" {
 }
 
 pub type StreamEventType = self::libc::c_uint;
-pub const VIR_STREAM_EVENT_READABLE: StreamEventType = (1 << 0);
-pub const VIR_STREAM_EVENT_WRITABLE: StreamEventType = (1 << 1);
-pub const VIR_STREAM_EVENT_ERROR: StreamEventType = (1 << 2);
-pub const VIR_STREAM_EVENT_HANGUP: StreamEventType = (1 << 3);
+pub const VIR_STREAM_EVENT_READABLE: StreamEventType = 1 << 0;
+pub const VIR_STREAM_EVENT_WRITABLE: StreamEventType = 1 << 1;
+pub const VIR_STREAM_EVENT_ERROR: StreamEventType = 1 << 2;
+pub const VIR_STREAM_EVENT_HANGUP: StreamEventType = 1 << 3;
 
 pub type StreamFlags = self::libc::c_uint;
-pub const VIR_STREAM_NONBLOCK: StreamFlags = (1 << 0);
+pub const VIR_STREAM_NONBLOCK: StreamFlags = 1 << 0;
 
 pub type StreamEventCallback = extern "C" fn(sys::virStreamPtr, libc::c_int, *const libc::c_void);
 pub type FreeCallback = extern "C" fn(*mut libc::c_void);
