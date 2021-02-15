@@ -32,6 +32,7 @@ stages:
     - export LD_LIBRARY_PATH="$LIBDIR"
     - export PATH="$VROOT/bin:$PATH"
     - export PKG_CONFIG_PATH="$LIBDIR/pkgconfig"
+    - export RUSTFLAGS="-D warnings"
   script:
     - pushd "$PWD"
     - mkdir -p "$SCRATCH_DIR"
@@ -46,6 +47,8 @@ stages:
 .dist_build_job_template: &dist_build_job_definition
   image: $CI_REGISTRY_IMAGE/ci-$NAME:latest
   stage: builds
+  before_script:
+    - export RUSTFLAGS="-D warnings"
   script:
     - cargo test --verbose
 
