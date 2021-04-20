@@ -68,7 +68,7 @@ fn main() {
                 }
             }
         }
-    };
+    }
     let mut auth = ConnectAuth::new(
         vec![
             ::virt::connect::VIR_CRED_AUTHNAME,
