@@ -109,7 +109,7 @@ fn test_connection_with_auth() {
                 }
             }
         }
-    };
+    }
 
     let mut auth = ConnectAuth::new(
         vec![
@@ -140,7 +140,7 @@ fn test_connection_with_auth_wrong() {
                 }
             }
         }
-    };
+    }
 
     let mut auth = ConnectAuth::new(
         vec![
