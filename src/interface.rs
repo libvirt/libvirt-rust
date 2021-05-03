@@ -34,15 +34,10 @@ pub mod sys {
 
 #[link(name = "virt")]
 extern "C" {
-    fn virInterfaceLookupByID(c: virConnectPtr, id: libc::c_int) -> sys::virInterfacePtr;
     fn virInterfaceLookupByName(c: virConnectPtr, id: *const libc::c_char) -> sys::virInterfacePtr;
     fn virInterfaceLookupByMACString(
         c: virConnectPtr,
         id: *const libc::c_char,
-    ) -> sys::virInterfacePtr;
-    fn virInterfaceLookupByUUIDString(
-        c: virConnectPtr,
-        uuid: *const libc::c_char,
     ) -> sys::virInterfacePtr;
     fn virInterfaceDefineXML(
         c: virConnectPtr,
@@ -103,16 +98,6 @@ impl Interface {
         }
     }
 
-    pub fn lookup_by_id(conn: &Connect, id: u32) -> Result<Interface, Error> {
-        unsafe {
-            let ptr = virInterfaceLookupByID(conn.as_ptr(), id as libc::c_int);
-            if ptr.is_null() {
-                return Err(Error::new());
-            }
-            return Ok(Interface::new(ptr));
-        }
-    }
-
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<Interface, Error> {
         unsafe {
             let ptr = virInterfaceLookupByName(conn.as_ptr(), string_to_c_chars!(id));
@@ -140,16 +125,6 @@ impl Interface {
     pub fn lookup_by_mac_string(conn: &Connect, id: &str) -> Result<Interface, Error> {
         unsafe {
             let ptr = virInterfaceLookupByMACString(conn.as_ptr(), string_to_c_chars!(id));
-            if ptr.is_null() {
-                return Err(Error::new());
-            }
-            return Ok(Interface::new(ptr));
-        }
-    }
-
-    pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Interface, Error> {
-        unsafe {
-            let ptr = virInterfaceLookupByUUIDString(conn.as_ptr(), string_to_c_chars!(uuid));
             if ptr.is_null() {
                 return Err(Error::new());
             }

@@ -43,7 +43,6 @@ extern "C" {
     ) -> sys::virSecretPtr;
     fn virSecretUndefine(ptr: sys::virSecretPtr) -> libc::c_int;
     fn virSecretFree(ptr: sys::virSecretPtr) -> libc::c_int;
-    fn virSecretGetName(ptr: sys::virSecretPtr) -> *const libc::c_char;
     fn virSecretGetUUIDString(ptr: sys::virSecretPtr, uuid: *mut libc::c_char) -> libc::c_int;
     fn virSecretGetUsageID(ptr: sys::virSecretPtr) -> *const libc::c_char;
     fn virSecretGetXMLDesc(ptr: sys::virSecretPtr, flags: libc::c_uint) -> *const libc::c_char;
@@ -159,16 +158,6 @@ impl Secret {
                 return Err(Error::new());
             }
             return Ok(Secret::new(ptr));
-        }
-    }
-
-    pub fn get_name(&self) -> Result<String, Error> {
-        unsafe {
-            let n = virSecretGetName(self.as_ptr());
-            if n.is_null() {
-                return Err(Error::new());
-            }
-            return Ok(c_chars_to_string!(n));
         }
     }
 

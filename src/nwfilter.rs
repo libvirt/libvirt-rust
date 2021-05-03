@@ -34,7 +34,6 @@ pub mod sys {
 
 #[link(name = "virt")]
 extern "C" {
-    fn virNWFilterLookupByID(c: virConnectPtr, id: libc::c_int) -> sys::virNWFilterPtr;
     fn virNWFilterLookupByName(c: virConnectPtr, id: *const libc::c_char) -> sys::virNWFilterPtr;
     fn virNWFilterLookupByUUIDString(
         c: virConnectPtr,
@@ -76,16 +75,6 @@ impl NWFilter {
 
     pub fn as_ptr(&self) -> sys::virNWFilterPtr {
         self.ptr.unwrap()
-    }
-
-    pub fn lookup_by_id(conn: &Connect, id: u32) -> Result<NWFilter, Error> {
-        unsafe {
-            let ptr = virNWFilterLookupByID(conn.as_ptr(), id as libc::c_int);
-            if ptr.is_null() {
-                return Err(Error::new());
-            }
-            return Ok(NWFilter::new(ptr));
-        }
     }
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<NWFilter, Error> {

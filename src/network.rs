@@ -34,7 +34,6 @@ pub mod sys {
 
 #[link(name = "virt")]
 extern "C" {
-    fn virNetworkLookupByID(c: virConnectPtr, id: libc::c_int) -> sys::virNetworkPtr;
     fn virNetworkLookupByName(c: virConnectPtr, id: *const libc::c_char) -> sys::virNetworkPtr;
     fn virNetworkLookupByUUIDString(
         c: virConnectPtr,
@@ -136,16 +135,6 @@ impl Network {
                 return Err(Error::new());
             }
             return Ok(Connect::new(ptr));
-        }
-    }
-
-    pub fn lookup_by_id(conn: &Connect, id: u32) -> Result<Network, Error> {
-        unsafe {
-            let ptr = virNetworkLookupByID(conn.as_ptr(), id as libc::c_int);
-            if ptr.is_null() {
-                return Err(Error::new());
-            }
-            return Ok(Network::new(ptr));
         }
     }
 

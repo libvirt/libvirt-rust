@@ -57,10 +57,6 @@ extern "C" {
         ptr: sys::virNodeDevicePtr,
         flags: libc::c_uint,
     ) -> *mut libc::c_char;
-    fn virNodeDeviceGetUUIDString(
-        ptr: sys::virNodeDevicePtr,
-        uuid: *mut libc::c_char,
-    ) -> libc::c_int;
 
     fn virNodeNumOfDevices(
         ptr: sys::virNodeDevicePtr,
@@ -177,16 +173,6 @@ impl NodeDevice {
                 return Err(Error::new());
             }
             return Ok(c_chars_to_string!(n, nofree));
-        }
-    }
-
-    pub fn get_uuid_string(&self) -> Result<String, Error> {
-        unsafe {
-            let mut uuid: [libc::c_char; 37] = [0; 37];
-            if virNodeDeviceGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) == -1 {
-                return Err(Error::new());
-            }
-            return Ok(c_chars_to_string!(uuid.as_ptr(), nofree));
         }
     }
 
