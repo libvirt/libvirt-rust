@@ -3,8 +3,12 @@ name = "symbols"
 version = "0.1.0"
 authors = ["Jacob Halsey <jacob@jhalsey.com>"]
 edition = "2018"
+description = "Utility crate for testing linking / valid symbols"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 virt = { path = "../../" }
+
+[lib]
+crate-type = ["staticlib"]
