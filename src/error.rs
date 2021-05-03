@@ -33,11 +33,14 @@ pub mod sys {
     }
 
     pub type virErrorPtr = *mut virError;
+
+    pub type virErrorFunc = fn(userData: *mut libc::c_void, error: virErrorPtr);
 }
 
 #[link(name = "virt")]
 extern "C" {
     fn virGetLastError() -> sys::virErrorPtr;
+    fn virSetErrorFunc(userData: *mut libc::c_void, handler: sys::virErrorFunc);
 }
 
 #[derive(Debug, PartialEq)]
@@ -72,6 +75,14 @@ impl Error {
                 message: c_chars_to_string!((*ptr).message, nofree),
                 level: ErrorLevel::from((*ptr).level),
             }
+        }
+    }
+
+    /// Removes the current virt error function
+    /// Use this to disable the default printing to stdout of all errors by virt
+    pub fn clear_error_func() {
+        unsafe {
+            virSetErrorFunc(0 as *mut libc::c_void, |_, _| {});
         }
     }
 }
