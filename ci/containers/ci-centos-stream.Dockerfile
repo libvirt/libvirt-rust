@@ -1,13 +1,12 @@
 # THIS FILE WAS AUTO-GENERATED
 #
-#  $ lcitool dockerfile centos-stream libvirt+dist,libvirt-rust
+#  $ lcitool dockerfile centos-stream-8 libvirt+dist,libvirt-rust
 #
-# https://gitlab.com/libvirt/libvirt-ci/-/commit/740f5254f607de914a92d664196d045149edb45a
-FROM docker.io/library/centos:8
+# https://gitlab.com/libvirt/libvirt-ci/-/commit/6cd723b4affb2ee67e7d462dac480191c4b97598
 
-RUN dnf install -y centos-release-stream && \
-    dnf install -y centos-stream-release && \
-    dnf update -y && \
+FROM quay.io/centos/centos:stream8
+
+RUN dnf update -y && \
     dnf install 'dnf-command(config-manager)' -y && \
     dnf config-manager --set-enabled -y powertools && \
     dnf install -y centos-release-advanced-virtualization && \
@@ -26,7 +25,7 @@ RUN dnf install -y centos-release-stream && \
     rpm -qa | sort > /packages.txt && \
     mkdir -p /usr/libexec/ccache-wrappers && \
     ln -s /usr/bin/ccache /usr/libexec/ccache-wrappers/cc && \
-    ln -s /usr/bin/ccache /usr/libexec/ccache-wrappers/$(basename /usr/bin/gcc)
+    ln -s /usr/bin/ccache /usr/libexec/ccache-wrappers/gcc
 
 ENV LANG "en_US.UTF-8"
 ENV CCACHE_WRAPPERSDIR "/usr/libexec/ccache-wrappers"
