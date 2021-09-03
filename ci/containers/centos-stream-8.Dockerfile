@@ -1,8 +1,8 @@
 # THIS FILE WAS AUTO-GENERATED
 #
-#  $ lcitool dockerfile centos-stream-8 libvirt+dist,libvirt-rust
+#  $ lcitool manifest ci/manifest.yml
 #
-# https://gitlab.com/libvirt/libvirt-ci/-/commit/6cd723b4affb2ee67e7d462dac480191c4b97598
+# https://gitlab.com/libvirt/libvirt-ci
 
 FROM quay.io/centos/centos:stream8
 
