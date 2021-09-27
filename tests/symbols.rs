@@ -18,6 +18,7 @@ fn link(directory: &str) -> Result<(), String> {
     let output = Command::new("gcc")
         .arg("-lsymbols")
         .arg("-lvirt")
+        .arg("-lm")
         .arg("-ldl")
         .arg("-lpthread")
         .arg("-L")
