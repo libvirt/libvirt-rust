@@ -23,7 +23,6 @@ use std::{mem, ptr, str};
 use crate::domain::sys::{virDomainPtr, virDomainStatsRecordPtr};
 use crate::network::sys::virNetworkPtr;
 use crate::nodedev::sys::virNodeDevicePtr;
-use crate::nwfilter::sys::virNWFilterPtr;
 use crate::secret::sys::virSecretPtr;
 use crate::storage_pool::sys::virStoragePoolPtr;
 
@@ -185,7 +184,7 @@ extern "C" {
     ) -> libc::c_int;
     fn virConnectListAllNWFilters(
         ptr: sys::virConnectPtr,
-        nwfilters: *mut *mut virNWFilterPtr,
+        nwfilters: *mut *mut virt_sys::virNWFilterPtr,
         flags: libc::c_uint,
     ) -> libc::c_int;
     fn virConnectListAllStoragePools(
@@ -1054,7 +1053,7 @@ impl Connect {
 
     pub fn list_all_nw_filters(&self, flags: u32) -> Result<Vec<NWFilter>, Error> {
         unsafe {
-            let mut filters: *mut virNWFilterPtr = ptr::null_mut();
+            let mut filters: *mut virt_sys::virNWFilterPtr = ptr::null_mut();
             let size =
                 virConnectListAllNWFilters(self.as_ptr(), &mut filters, flags as libc::c_uint);
             if size == -1 {

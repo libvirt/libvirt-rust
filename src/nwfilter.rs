@@ -17,35 +17,12 @@
  */
 
 extern crate libc;
+extern crate virt_sys as sys;
 
 use std::str;
 
-use crate::connect::sys::virConnectPtr;
-
 use crate::connect::Connect;
 use crate::error::Error;
-
-pub mod sys {
-    #[repr(C)]
-    pub struct virNWFilter {}
-
-    pub type virNWFilterPtr = *mut virNWFilter;
-}
-
-#[link(name = "virt")]
-extern "C" {
-    fn virNWFilterLookupByName(c: virConnectPtr, id: *const libc::c_char) -> sys::virNWFilterPtr;
-    fn virNWFilterLookupByUUIDString(
-        c: virConnectPtr,
-        uuid: *const libc::c_char,
-    ) -> sys::virNWFilterPtr;
-    fn virNWFilterDefineXML(c: virConnectPtr, xml: *const libc::c_char) -> sys::virNWFilterPtr;
-    fn virNWFilterUndefine(ptr: sys::virNWFilterPtr) -> libc::c_int;
-    fn virNWFilterFree(ptr: sys::virNWFilterPtr) -> libc::c_int;
-    fn virNWFilterGetName(ptr: sys::virNWFilterPtr) -> *const libc::c_char;
-    fn virNWFilterGetUUIDString(ptr: sys::virNWFilterPtr, uuid: *mut libc::c_char) -> libc::c_int;
-    fn virNWFilterGetXMLDesc(ptr: sys::virNWFilterPtr, flags: libc::c_uint) -> *mut libc::c_char;
-}
 
 /// Provides APIs for the management for network filters.
 ///
@@ -79,7 +56,7 @@ impl NWFilter {
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<NWFilter, Error> {
         unsafe {
-            let ptr = virNWFilterLookupByName(conn.as_ptr(), string_to_c_chars!(id));
+            let ptr = sys::virNWFilterLookupByName(conn.as_ptr(), string_to_c_chars!(id));
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -89,7 +66,7 @@ impl NWFilter {
 
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<NWFilter, Error> {
         unsafe {
-            let ptr = virNWFilterLookupByUUIDString(conn.as_ptr(), string_to_c_chars!(uuid));
+            let ptr = sys::virNWFilterLookupByUUIDString(conn.as_ptr(), string_to_c_chars!(uuid));
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -99,7 +76,7 @@ impl NWFilter {
 
     pub fn get_name(&self) -> Result<String, Error> {
         unsafe {
-            let n = virNWFilterGetName(self.as_ptr());
+            let n = sys::virNWFilterGetName(self.as_ptr());
             if n.is_null() {
                 return Err(Error::new());
             }
@@ -110,7 +87,7 @@ impl NWFilter {
     pub fn get_uuid_string(&self) -> Result<String, Error> {
         unsafe {
             let mut uuid: [libc::c_char; 37] = [0; 37];
-            if virNWFilterGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) == -1 {
+            if sys::virNWFilterGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new());
             }
             Ok(c_chars_to_string!(uuid.as_ptr(), nofree))
@@ -119,7 +96,7 @@ impl NWFilter {
 
     pub fn get_xml_desc(&self, flags: u32) -> Result<String, Error> {
         unsafe {
-            let xml = virNWFilterGetXMLDesc(self.as_ptr(), flags as libc::c_uint);
+            let xml = sys::virNWFilterGetXMLDesc(self.as_ptr(), flags as libc::c_uint);
             if xml.is_null() {
                 return Err(Error::new());
             }
@@ -129,7 +106,7 @@ impl NWFilter {
 
     pub fn define_xml(conn: &Connect, xml: &str) -> Result<NWFilter, Error> {
         unsafe {
-            let ptr = virNWFilterDefineXML(conn.as_ptr(), string_to_c_chars!(xml));
+            let ptr = sys::virNWFilterDefineXML(conn.as_ptr(), string_to_c_chars!(xml));
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -139,7 +116,7 @@ impl NWFilter {
 
     pub fn undefine(&self) -> Result<(), Error> {
         unsafe {
-            if virNWFilterUndefine(self.as_ptr()) == -1 {
+            if sys::virNWFilterUndefine(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
             Ok(())
@@ -148,7 +125,7 @@ impl NWFilter {
 
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
-            if virNWFilterFree(self.as_ptr()) == -1 {
+            if sys::virNWFilterFree(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
             self.ptr = None;
