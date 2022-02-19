@@ -39,11 +39,9 @@ use crate::storage_pool::StoragePool;
 
 pub mod sys {
     extern crate libc;
+    extern crate virt_sys;
 
-    #[repr(C)]
-    pub struct virConnect {}
-
-    pub type virConnectPtr = *mut virConnect;
+    pub type virConnectPtr = virt_sys::virConnectPtr;
 
     #[repr(C)]
     pub struct virConnectCredential {
