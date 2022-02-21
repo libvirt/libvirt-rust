@@ -64,11 +64,25 @@ x86_64-centos-stream-8-container:
     NAME: centos-stream-8
 
 
+x86_64-centos-stream-9-container:
+  extends: .container_job
+  allow_failure: false
+  variables:
+    NAME: centos-stream-9
+
+
 x86_64-debian-10-container:
   extends: .container_job
   allow_failure: true
   variables:
     NAME: debian-10
+
+
+x86_64-debian-11-container:
+  extends: .container_job
+  allow_failure: false
+  variables:
+    NAME: debian-11
 
 
 x86_64-debian-sid-container:
@@ -156,6 +170,15 @@ x86_64-centos-stream-8:
     NAME: centos-stream-8
 
 
+x86_64-centos-stream-9:
+  extends: .native_build_job
+  needs:
+    - x86_64-centos-stream-9-container
+  allow_failure: false
+  variables:
+    NAME: centos-stream-9
+
+
 x86_64-debian-10:
   extends: .native_build_job
   needs:
@@ -163,6 +186,15 @@ x86_64-debian-10:
   allow_failure: true
   variables:
     NAME: debian-10
+
+
+x86_64-debian-11:
+  extends: .native_build_job
+  needs:
+    - x86_64-debian-11-container
+  allow_failure: false
+  variables:
+    NAME: debian-11
 
 
 x86_64-debian-sid:
