@@ -42,9 +42,11 @@ ignored by default.
 
 `cargo test --verbose -- --ignored`
 
-Similar to `libvirt-go`, the integration tests also require that
-libvirtd listens on localhost with sasl auth. This can be setup by
-editing `/etc/libvirt/libvirtd.conf` as follows:
+Similar to
+[libvirt-go-module](https://gitlab.com/libvirt/libvirt-go-module),
+the integration tests also require that libvirtd listens on localhost
+with sasl auth. This can be setup by editing
+`/etc/libvirt/libvirtd.conf` as follows:
 
 ```
   listen_tls=0
