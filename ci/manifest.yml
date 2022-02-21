@@ -8,7 +8,7 @@ gitlab:
 
 targets:
 
-  centos-8:
+  almalinux-8:
     projects:
       - libvirt-rust
       - libvirt+minimal
@@ -30,9 +30,9 @@ targets:
 
   debian-sid: x86_64
 
-  fedora-33: x86_64
-
   fedora-34: x86_64
+
+  fedora-35: x86_64
 
   fedora-rawhide: x86_64
 

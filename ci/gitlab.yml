@@ -50,11 +50,11 @@ check-dco:
 
 # Native container jobs
 
-x86_64-centos-8-container:
+x86_64-almalinux-8-container:
   extends: .container_job
   allow_failure: false
   variables:
-    NAME: centos-8
+    NAME: almalinux-8
 
 
 x86_64-centos-stream-8-container:
@@ -78,18 +78,18 @@ x86_64-debian-sid-container:
     NAME: debian-sid
 
 
-x86_64-fedora-33-container:
-  extends: .container_job
-  allow_failure: false
-  variables:
-    NAME: fedora-33
-
-
 x86_64-fedora-34-container:
   extends: .container_job
   allow_failure: false
   variables:
     NAME: fedora-34
+
+
+x86_64-fedora-35-container:
+  extends: .container_job
+  allow_failure: false
+  variables:
+    NAME: fedora-35
 
 
 x86_64-fedora-rawhide-container:
@@ -129,22 +129,22 @@ x86_64-ubuntu-2004-container:
 
 # Native build jobs
 
-x86_64-centos-8:
+x86_64-almalinux-8:
   extends: .native_build_job
   needs:
-    - x86_64-centos-8-container
+    - x86_64-almalinux-8-container
   allow_failure: false
   variables:
-    NAME: centos-8
+    NAME: almalinux-8
 
 
-x86_64-centos-8-git:
+x86_64-almalinux-8-git:
   extends: .native_git_build_job
   needs:
-    - x86_64-centos-8-container
+    - x86_64-almalinux-8-container
   allow_failure: false
   variables:
-    NAME: centos-8
+    NAME: almalinux-8
 
 
 x86_64-centos-stream-8:
@@ -174,15 +174,6 @@ x86_64-debian-sid:
     NAME: debian-sid
 
 
-x86_64-fedora-33:
-  extends: .native_build_job
-  needs:
-    - x86_64-fedora-33-container
-  allow_failure: false
-  variables:
-    NAME: fedora-33
-
-
 x86_64-fedora-34:
   extends: .native_build_job
   needs:
@@ -190,6 +181,15 @@ x86_64-fedora-34:
   allow_failure: false
   variables:
     NAME: fedora-34
+
+
+x86_64-fedora-35:
+  extends: .native_build_job
+  needs:
+    - x86_64-fedora-35-container
+  allow_failure: false
+  variables:
+    NAME: fedora-35
 
 
 x86_64-fedora-rawhide:

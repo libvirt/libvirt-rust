@@ -4,7 +4,7 @@
 #
 # https://gitlab.com/libvirt/libvirt-ci
 
-FROM docker.io/library/centos:8
+FROM docker.io/library/almalinux:8
 
 RUN dnf update -y && \
     dnf install 'dnf-command(config-manager)' -y && \
@@ -30,14 +30,12 @@ RUN dnf update -y && \
         libxml2-devel \
         libxslt \
         make \
+        meson \
         ninja-build \
         perl \
         pkgconfig \
         python3 \
         python3-docutils \
-        python3-pip \
-        python3-setuptools \
-        python3-wheel \
         rpcgen \
         rust && \
     dnf autoremove -y && \
@@ -46,9 +44,6 @@ RUN dnf update -y && \
     mkdir -p /usr/libexec/ccache-wrappers && \
     ln -s /usr/bin/ccache /usr/libexec/ccache-wrappers/cc && \
     ln -s /usr/bin/ccache /usr/libexec/ccache-wrappers/gcc
-
-RUN pip3 install \
-         meson==0.56.0
 
 ENV LANG "en_US.UTF-8"
 ENV MAKE "/usr/bin/make"
