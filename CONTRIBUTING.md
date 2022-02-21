@@ -1,6 +1,4 @@
-============================
-Contributing to libvirt-rust
-============================
+# Contributing to libvirt-rust
 
 The libvirt Rust API binding accepts code contributions via merge requests
 on the GitLab project:
@@ -8,7 +6,7 @@ on the GitLab project:
 https://gitlab.com/libvirt/libvirt-rust/-/merge_requests
 
 It is required that automated CI pipelines succeed before a merge request
-will be accepted. The global pipeline status for the ``master`` branch is
+will be accepted. The global pipeline status for the `master` branch is
 visible at:
 
 https://gitlab.com/libvirt/libvirt-rust/pipelines
@@ -25,4 +23,4 @@ https://developercertificate.org/
 
 To indicate compliance, each commit in a series must have a "Signed-off-by"
 tag with the submitter's name and email address. This can be added by passing
-the ``-s`` flag to ``git commit`` when creating the patches.
+the `-s` flag to `git commit` when creating the patches.
