@@ -24,11 +24,7 @@ targets:
 
   centos-stream-9: x86_64
 
-  debian-10:
-    jobs:
-      - arch: x86_64
-        # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=998232
-        allow-failure: true
+  debian-10: x86_64
 
   debian-11: x86_64
 
