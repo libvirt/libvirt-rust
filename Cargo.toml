@@ -8,7 +8,7 @@ description = "Rust bindings to the libvirt C library"
 documentation = "http://docs.rs/virt"
 keywords = ["libvirt", "virtualization", "KVM", "QEMU", "Xen",]
 categories = ["api-bindings", "external-ffi-bindings", "emulators",]
-repository = "http://libvirt.org/git/?p=libvirt-rust.git;a=summary"
+repository = "https://gitlab.com/libvirt/libvirt-rust"
 homepage  = "https://libvirt.org/"
 
 [dependencies]
