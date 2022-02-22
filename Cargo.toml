@@ -8,9 +8,10 @@ readme = "README.md"
 description = "Rust bindings to the libvirt C library"
 documentation = "https://docs.rs/virt"
 keywords = ["libvirt", "virtualization", "KVM", "QEMU", "Xen",]
-categories = ["api-bindings", "external-ffi-bindings", "emulators",]
+categories = ["api-bindings", "emulators",]
 repository = "https://gitlab.com/libvirt/libvirt-rust"
 homepage  = "https://libvirt.org/"
 
 [dependencies]
 libc = "0.2.0"
+virt-sys = { path = "virt-sys" }

@@ -25,6 +25,7 @@ stages:
     - ninja -C build install
     - popd
     - cargo test --verbose
+    - cargo test --verbose --manifest-path=virt-sys/Cargo.toml
 
 .native_build_job:
   extends: .gitlab_native_build_job
@@ -32,5 +33,6 @@ stages:
     - export RUSTFLAGS="-D warnings"
   script:
     - cargo test --verbose
+    - cargo test --verbose --manifest-path=virt-sys/Cargo.toml
 
 include: '/ci/gitlab.yml'
