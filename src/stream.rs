@@ -18,10 +18,11 @@
 
 extern crate libc;
 
-use crate::connect::sys::virConnectPtr;
-use crate::connect::Connect;
 use std::convert::TryFrom;
 
+use crate::connect::sys::virConnectPtr;
+
+use crate::connect::Connect;
 use crate::error::Error;
 
 pub mod sys {
