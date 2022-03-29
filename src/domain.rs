@@ -21,20 +21,20 @@ extern crate libc;
 use std::ffi::CStr;
 use std::{mem, ptr, str};
 
-use connect::sys::virConnectPtr;
-use domain_snapshot::sys::virDomainSnapshotPtr;
-use stream::sys::virStreamPtr;
-use typedparam::sys::{virTypedParameter, virTypedParameterPtr};
+use crate::connect::sys::virConnectPtr;
+use crate::domain_snapshot::sys::virDomainSnapshotPtr;
+use crate::stream::sys::virStreamPtr;
+use crate::typedparam::sys::{virTypedParameter, virTypedParameterPtr};
 
-use connect::Connect;
-use domain_snapshot::DomainSnapshot;
-use error::Error;
-use stream::Stream;
+use crate::connect::Connect;
+use crate::domain_snapshot::DomainSnapshot;
+use crate::error::Error;
+use crate::stream::Stream;
 
 pub mod sys {
     extern crate libc;
 
-    use typedparam::sys::virTypedParameterPtr;
+    use crate::typedparam::sys::virTypedParameterPtr;
 
     #[repr(C)]
     pub struct virDomain {}
@@ -846,7 +846,7 @@ impl SchedulerInfo {
         if let Some(shares) = self.cpu_shares {
             cparams.push(virTypedParameter {
                 field: to_arr("cpu_shares\0"),
-                typed: ::typedparam::VIR_TYPED_PARAM_ULLONG,
+                typed: crate::typedparam::VIR_TYPED_PARAM_ULLONG,
                 value: shares,
             });
         }
@@ -854,56 +854,56 @@ impl SchedulerInfo {
         if let Some(period) = self.vcpu_bw.period {
             cparams.push(virTypedParameter {
                 field: to_arr("vcpu_period\0"),
-                typed: ::typedparam::VIR_TYPED_PARAM_ULLONG,
+                typed: crate::typedparam::VIR_TYPED_PARAM_ULLONG,
                 value: period,
             });
         }
         if let Some(quota) = self.vcpu_bw.quota {
             cparams.push(virTypedParameter {
                 field: to_arr("vcpu_quota\0"),
-                typed: ::typedparam::VIR_TYPED_PARAM_LLONG,
+                typed: crate::typedparam::VIR_TYPED_PARAM_LLONG,
                 value: quota as u64,
             });
         }
         if let Some(period) = self.emulator_bw.period {
             cparams.push(virTypedParameter {
                 field: to_arr("emulator_period\0"),
-                typed: ::typedparam::VIR_TYPED_PARAM_ULLONG,
+                typed: crate::typedparam::VIR_TYPED_PARAM_ULLONG,
                 value: period,
             });
         }
         if let Some(quota) = self.emulator_bw.quota {
             cparams.push(virTypedParameter {
                 field: to_arr("emulator_quota\0"),
-                typed: ::typedparam::VIR_TYPED_PARAM_LLONG,
+                typed: crate::typedparam::VIR_TYPED_PARAM_LLONG,
                 value: quota as u64,
             });
         }
         if let Some(period) = self.global_bw.period {
             cparams.push(virTypedParameter {
                 field: to_arr("global_period\0"),
-                typed: ::typedparam::VIR_TYPED_PARAM_ULLONG,
+                typed: crate::typedparam::VIR_TYPED_PARAM_ULLONG,
                 value: period,
             });
         }
         if let Some(quota) = self.global_bw.quota {
             cparams.push(virTypedParameter {
                 field: to_arr("global_quota\0"),
-                typed: ::typedparam::VIR_TYPED_PARAM_LLONG,
+                typed: crate::typedparam::VIR_TYPED_PARAM_LLONG,
                 value: quota as u64,
             });
         }
         if let Some(period) = self.iothread_bw.period {
             cparams.push(virTypedParameter {
                 field: to_arr("iothread_period\0"),
-                typed: ::typedparam::VIR_TYPED_PARAM_ULLONG,
+                typed: crate::typedparam::VIR_TYPED_PARAM_ULLONG,
                 value: period,
             });
         }
         if let Some(quota) = self.iothread_bw.quota {
             cparams.push(virTypedParameter {
                 field: to_arr("iothread_quota\0"),
-                typed: ::typedparam::VIR_TYPED_PARAM_LLONG,
+                typed: crate::typedparam::VIR_TYPED_PARAM_LLONG,
                 value: quota as u64,
             });
         }
@@ -2083,28 +2083,28 @@ impl Domain {
             if params.hard_limit.is_some() {
                 cparams.push(virTypedParameter {
                     field: to_arr("hard_limit\0"),
-                    typed: ::typedparam::VIR_TYPED_PARAM_ULLONG,
+                    typed: crate::typedparam::VIR_TYPED_PARAM_ULLONG,
                     value: params.hard_limit.unwrap(),
                 })
             }
             if params.soft_limit.is_some() {
                 cparams.push(virTypedParameter {
                     field: to_arr("soft_limit\0"),
-                    typed: ::typedparam::VIR_TYPED_PARAM_ULLONG,
+                    typed: crate::typedparam::VIR_TYPED_PARAM_ULLONG,
                     value: params.soft_limit.unwrap(),
                 })
             }
             if params.min_guarantee.is_some() {
                 cparams.push(virTypedParameter {
                     field: to_arr("min_guarantee\0"),
-                    typed: ::typedparam::VIR_TYPED_PARAM_ULLONG,
+                    typed: crate::typedparam::VIR_TYPED_PARAM_ULLONG,
                     value: params.min_guarantee.unwrap(),
                 })
             }
             if params.swap_hard_limit.is_some() {
                 cparams.push(virTypedParameter {
                     field: to_arr("swap_hard_limit\0"),
-                    typed: ::typedparam::VIR_TYPED_PARAM_ULLONG,
+                    typed: crate::typedparam::VIR_TYPED_PARAM_ULLONG,
                     value: params.swap_hard_limit.unwrap(),
                 })
             }
@@ -2244,14 +2244,14 @@ impl Domain {
             if params.node_set.is_some() {
                 cparams.push(virTypedParameter {
                     field: to_arr("numa_nodeset\0"),
-                    typed: ::typedparam::VIR_TYPED_PARAM_STRING,
+                    typed: crate::typedparam::VIR_TYPED_PARAM_STRING,
                     value: string_to_mut_c_chars!(params.node_set.unwrap()) as u64,
                 })
             }
             if params.mode.is_some() {
                 cparams.push(virTypedParameter {
                     field: to_arr("numa_mode\0"),
-                    typed: ::typedparam::VIR_TYPED_PARAM_INT,
+                    typed: crate::typedparam::VIR_TYPED_PARAM_INT,
                     value: params.mode.unwrap() as u64,
                 })
             }

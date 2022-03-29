@@ -20,10 +20,10 @@ extern crate libc;
 
 use std::str;
 
-use connect::sys::virConnectPtr;
+use crate::connect::sys::virConnectPtr;
 
-use connect::Connect;
-use error::Error;
+use crate::connect::Connect;
+use crate::error::Error;
 
 pub mod sys {
     #[repr(C)]

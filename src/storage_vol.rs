@@ -20,14 +20,14 @@ extern crate libc;
 
 use std::str;
 
-use connect::sys::virConnectPtr;
-use storage_pool::sys::virStoragePoolPtr;
-use stream::sys::virStreamPtr;
+use crate::connect::sys::virConnectPtr;
+use crate::storage_pool::sys::virStoragePoolPtr;
+use crate::stream::sys::virStreamPtr;
 
-use connect::Connect;
-use error::Error;
-use storage_pool::StoragePool;
-use stream::Stream;
+use crate::connect::Connect;
+use crate::error::Error;
+use crate::storage_pool::StoragePool;
+use crate::stream::Stream;
 
 pub mod sys {
     extern crate libc;

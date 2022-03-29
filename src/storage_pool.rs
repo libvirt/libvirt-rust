@@ -20,12 +20,12 @@ extern crate libc;
 
 use std::{mem, ptr, str};
 
-use connect::sys::virConnectPtr;
-use storage_vol::sys::virStorageVolPtr;
+use crate::connect::sys::virConnectPtr;
+use crate::storage_vol::sys::virStorageVolPtr;
 
-use connect::Connect;
-use error::Error;
-use storage_vol::StorageVol;
+use crate::connect::Connect;
+use crate::error::Error;
+use crate::storage_vol::StorageVol;
 
 pub mod sys {
     extern crate libc;

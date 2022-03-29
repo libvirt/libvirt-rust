@@ -20,12 +20,12 @@ extern crate libc;
 
 use std::{mem, ptr, str};
 
-use connect::sys::virConnectPtr;
-use domain::sys::virDomainPtr;
+use crate::connect::sys::virConnectPtr;
+use crate::domain::sys::virDomainPtr;
 
-use connect::Connect;
-use domain::Domain;
-use error::Error;
+use crate::connect::Connect;
+use crate::domain::Domain;
+use crate::error::Error;
 
 pub mod sys {
     #[repr(C)]

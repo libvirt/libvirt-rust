@@ -20,22 +20,22 @@ extern crate libc;
 
 use std::{mem, ptr, str};
 
-use domain::sys::{virDomainPtr, virDomainStatsRecordPtr};
-use interface::sys::virInterfacePtr;
-use network::sys::virNetworkPtr;
-use nodedev::sys::virNodeDevicePtr;
-use nwfilter::sys::virNWFilterPtr;
-use secret::sys::virSecretPtr;
-use storage_pool::sys::virStoragePoolPtr;
+use crate::domain::sys::{virDomainPtr, virDomainStatsRecordPtr};
+use crate::interface::sys::virInterfacePtr;
+use crate::network::sys::virNetworkPtr;
+use crate::nodedev::sys::virNodeDevicePtr;
+use crate::nwfilter::sys::virNWFilterPtr;
+use crate::secret::sys::virSecretPtr;
+use crate::storage_pool::sys::virStoragePoolPtr;
 
-use domain::{Domain, DomainStatsRecord};
-use error::Error;
-use interface::Interface;
-use network::Network;
-use nodedev::NodeDevice;
-use nwfilter::NWFilter;
-use secret::Secret;
-use storage_pool::StoragePool;
+use crate::domain::{Domain, DomainStatsRecord};
+use crate::error::Error;
+use crate::interface::Interface;
+use crate::network::Network;
+use crate::nodedev::NodeDevice;
+use crate::nwfilter::NWFilter;
+use crate::secret::Secret;
+use crate::storage_pool::StoragePool;
 
 pub mod sys {
     extern crate libc;
