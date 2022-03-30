@@ -179,7 +179,7 @@ impl Drop for StoragePool {
 
 impl StoragePool {
     pub fn new(ptr: sys::virStoragePoolPtr) -> StoragePool {
-        return StoragePool { ptr: Some(ptr) };
+        StoragePool { ptr: Some(ptr) }
     }
 
     pub fn as_ptr(&self) -> sys::virStoragePoolPtr {
@@ -192,7 +192,7 @@ impl StoragePool {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Connect::new(ptr));
+            Ok(Connect::new(ptr))
         }
     }
 
@@ -206,7 +206,7 @@ impl StoragePool {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(StoragePool::new(ptr));
+            Ok(StoragePool::new(ptr))
         }
     }
 
@@ -224,7 +224,7 @@ impl StoragePool {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(StoragePool::new(ptr));
+            Ok(StoragePool::new(ptr))
         }
     }
 
@@ -234,7 +234,7 @@ impl StoragePool {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(StoragePool::new(ptr));
+            Ok(StoragePool::new(ptr))
         }
     }
 
@@ -244,7 +244,7 @@ impl StoragePool {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(StoragePool::new(ptr));
+            Ok(StoragePool::new(ptr))
         }
     }
 
@@ -254,7 +254,7 @@ impl StoragePool {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(StoragePool::new(ptr));
+            Ok(StoragePool::new(ptr))
         }
     }
 
@@ -264,7 +264,7 @@ impl StoragePool {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n, nofree));
+            Ok(c_chars_to_string!(n, nofree))
         }
     }
 
@@ -274,7 +274,7 @@ impl StoragePool {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -290,7 +290,7 @@ impl StoragePool {
             for x in 0..size as usize {
                 array.push(c_chars_to_string!(names[x]));
             }
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -314,7 +314,7 @@ impl StoragePool {
             }
             libc::free(volumes as *mut libc::c_void);
 
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -324,7 +324,7 @@ impl StoragePool {
             if virStoragePoolGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(uuid.as_ptr(), nofree));
+            Ok(c_chars_to_string!(uuid.as_ptr(), nofree))
         }
     }
 
@@ -334,7 +334,7 @@ impl StoragePool {
             if xml.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(xml));
+            Ok(c_chars_to_string!(xml))
         }
     }
 
@@ -344,7 +344,7 @@ impl StoragePool {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -354,7 +354,7 @@ impl StoragePool {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -363,7 +363,7 @@ impl StoragePool {
             if virStoragePoolDestroy(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -372,7 +372,7 @@ impl StoragePool {
             if virStoragePoolDelete(self.as_ptr(), flags as libc::c_uint) == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -381,7 +381,7 @@ impl StoragePool {
             if virStoragePoolUndefine(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -391,7 +391,7 @@ impl StoragePool {
                 return Err(Error::new());
             }
             self.ptr = None;
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -401,7 +401,7 @@ impl StoragePool {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret == 1);
+            Ok(ret == 1)
         }
     }
 
@@ -411,7 +411,7 @@ impl StoragePool {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret == 1);
+            Ok(ret == 1)
         }
     }
 
@@ -421,7 +421,7 @@ impl StoragePool {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
     pub fn get_autostart(&self) -> Result<bool, Error> {
@@ -431,7 +431,7 @@ impl StoragePool {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(auto == 1);
+            Ok(auto == 1)
         }
     }
 
@@ -441,7 +441,7 @@ impl StoragePool {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -452,7 +452,7 @@ impl StoragePool {
             if res == -1 {
                 return Err(Error::new());
             }
-            return Ok(StoragePoolInfo::from_ptr(pinfo));
+            Ok(StoragePoolInfo::from_ptr(pinfo))
         }
     }
 }

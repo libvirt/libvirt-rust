@@ -103,7 +103,7 @@ impl Drop for DomainSnapshot {
 
 impl DomainSnapshot {
     pub fn new(ptr: sys::virDomainSnapshotPtr) -> DomainSnapshot {
-        return DomainSnapshot { ptr: Some(ptr) };
+        DomainSnapshot { ptr: Some(ptr) }
     }
 
     pub fn as_ptr(&self) -> sys::virDomainSnapshotPtr {
@@ -116,7 +116,7 @@ impl DomainSnapshot {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Connect::new(ptr));
+            Ok(Connect::new(ptr))
         }
     }
 
@@ -126,7 +126,7 @@ impl DomainSnapshot {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Domain::new(ptr));
+            Ok(Domain::new(ptr))
         }
     }
 
@@ -136,7 +136,7 @@ impl DomainSnapshot {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n, nofree));
+            Ok(c_chars_to_string!(n, nofree))
         }
     }
 
@@ -151,7 +151,7 @@ impl DomainSnapshot {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(DomainSnapshot::new(ptr));
+            Ok(DomainSnapshot::new(ptr))
         }
     }
 
@@ -162,7 +162,7 @@ impl DomainSnapshot {
             if xml.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(xml));
+            Ok(c_chars_to_string!(xml))
         }
     }
 
@@ -176,7 +176,7 @@ impl DomainSnapshot {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(DomainSnapshot::new(ptr));
+            Ok(DomainSnapshot::new(ptr))
         }
     }
 
@@ -187,7 +187,7 @@ impl DomainSnapshot {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(DomainSnapshot::new(ptr));
+            Ok(DomainSnapshot::new(ptr))
         }
     }
 
@@ -198,7 +198,7 @@ impl DomainSnapshot {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(DomainSnapshot::new(ptr));
+            Ok(DomainSnapshot::new(ptr))
         }
     }
 
@@ -209,7 +209,7 @@ impl DomainSnapshot {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -220,7 +220,7 @@ impl DomainSnapshot {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -231,7 +231,7 @@ impl DomainSnapshot {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -242,7 +242,7 @@ impl DomainSnapshot {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret == 1);
+            Ok(ret == 1)
         }
     }
 
@@ -254,7 +254,7 @@ impl DomainSnapshot {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret == 1);
+            Ok(ret == 1)
         }
     }
 
@@ -276,7 +276,7 @@ impl DomainSnapshot {
             }
             libc::free(snaps as *mut libc::c_void);
 
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -286,7 +286,7 @@ impl DomainSnapshot {
                 return Err(Error::new());
             }
             self.ptr = None;
-            return Ok(());
+            Ok(())
         }
     }
 }

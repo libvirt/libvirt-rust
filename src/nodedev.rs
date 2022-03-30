@@ -105,7 +105,7 @@ impl Drop for NodeDevice {
 
 impl NodeDevice {
     pub fn new(ptr: sys::virNodeDevicePtr) -> NodeDevice {
-        return NodeDevice { ptr: Some(ptr) };
+        NodeDevice { ptr: Some(ptr) }
     }
 
     pub fn as_ptr(&self) -> sys::virNodeDevicePtr {
@@ -118,7 +118,7 @@ impl NodeDevice {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(NodeDevice::new(ptr));
+            Ok(NodeDevice::new(ptr))
         }
     }
 
@@ -138,7 +138,7 @@ impl NodeDevice {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(NodeDevice::new(ptr));
+            Ok(NodeDevice::new(ptr))
         }
     }
 
@@ -152,7 +152,7 @@ impl NodeDevice {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(NodeDevice::new(ptr));
+            Ok(NodeDevice::new(ptr))
         }
     }
 
@@ -162,7 +162,7 @@ impl NodeDevice {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n, nofree));
+            Ok(c_chars_to_string!(n, nofree))
         }
     }
 
@@ -172,7 +172,7 @@ impl NodeDevice {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n, nofree));
+            Ok(c_chars_to_string!(n, nofree))
         }
     }
 
@@ -182,7 +182,7 @@ impl NodeDevice {
             if xml.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(xml));
+            Ok(c_chars_to_string!(xml))
         }
     }
 
@@ -192,7 +192,7 @@ impl NodeDevice {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -202,7 +202,7 @@ impl NodeDevice {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -212,7 +212,7 @@ impl NodeDevice {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -222,7 +222,7 @@ impl NodeDevice {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -236,7 +236,7 @@ impl NodeDevice {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -246,7 +246,7 @@ impl NodeDevice {
                 return Err(Error::new());
             }
             self.ptr = None;
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -260,7 +260,7 @@ impl NodeDevice {
             if num == -1 {
                 return Err(Error::new());
             }
-            return Ok(num as u32);
+            Ok(num as u32)
         }
     }
 
@@ -270,7 +270,7 @@ impl NodeDevice {
             if num == -1 {
                 return Err(Error::new());
             }
-            return Ok(num as u32);
+            Ok(num as u32)
         }
     }
 
@@ -286,7 +286,7 @@ impl NodeDevice {
             for x in 0..size as usize {
                 array.push(c_chars_to_string!(names[x]));
             }
-            return Ok(array);
+            Ok(array)
         }
     }
 }

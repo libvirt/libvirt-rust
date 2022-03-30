@@ -192,7 +192,7 @@ impl Drop for StorageVol {
 
 impl StorageVol {
     pub fn new(ptr: sys::virStorageVolPtr) -> StorageVol {
-        return StorageVol { ptr: Some(ptr) };
+        StorageVol { ptr: Some(ptr) }
     }
 
     pub fn as_ptr(&self) -> sys::virStorageVolPtr {
@@ -205,7 +205,7 @@ impl StorageVol {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Connect::new(ptr));
+            Ok(Connect::new(ptr))
         }
     }
 
@@ -223,7 +223,7 @@ impl StorageVol {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(StorageVol::new(ptr));
+            Ok(StorageVol::new(ptr))
         }
     }
 
@@ -243,7 +243,7 @@ impl StorageVol {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(StorageVol::new(ptr));
+            Ok(StorageVol::new(ptr))
         }
     }
 
@@ -253,7 +253,7 @@ impl StorageVol {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(StorageVol::new(ptr));
+            Ok(StorageVol::new(ptr))
         }
     }
 
@@ -263,7 +263,7 @@ impl StorageVol {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(StorageVol::new(ptr));
+            Ok(StorageVol::new(ptr))
         }
     }
 
@@ -273,7 +273,7 @@ impl StorageVol {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(StorageVol::new(ptr));
+            Ok(StorageVol::new(ptr))
         }
     }
 
@@ -283,7 +283,7 @@ impl StorageVol {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n, nofree));
+            Ok(c_chars_to_string!(n, nofree))
         }
     }
 
@@ -293,7 +293,7 @@ impl StorageVol {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n, nofree));
+            Ok(c_chars_to_string!(n, nofree))
         }
     }
 
@@ -303,7 +303,7 @@ impl StorageVol {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n));
+            Ok(c_chars_to_string!(n))
         }
     }
 
@@ -313,7 +313,7 @@ impl StorageVol {
             if xml.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(xml));
+            Ok(c_chars_to_string!(xml))
         }
     }
 
@@ -322,7 +322,7 @@ impl StorageVol {
             if virStorageVolDelete(self.as_ptr(), flags as libc::c_uint) == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -331,7 +331,7 @@ impl StorageVol {
             if virStorageVolWipe(self.as_ptr(), flags as libc::c_uint) == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -342,7 +342,7 @@ impl StorageVol {
             {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -352,7 +352,7 @@ impl StorageVol {
                 return Err(Error::new());
             }
             self.ptr = None;
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -366,7 +366,7 @@ impl StorageVol {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -377,7 +377,7 @@ impl StorageVol {
             if res == -1 {
                 return Err(Error::new());
             }
-            return Ok(StorageVolInfo::from_ptr(pinfo));
+            Ok(StorageVolInfo::from_ptr(pinfo))
         }
     }
 
@@ -388,7 +388,7 @@ impl StorageVol {
             if res == -1 {
                 return Err(Error::new());
             }
-            return Ok(StorageVolInfo::from_ptr(pinfo));
+            Ok(StorageVolInfo::from_ptr(pinfo))
         }
     }
 
@@ -410,7 +410,7 @@ impl StorageVol {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -432,7 +432,7 @@ impl StorageVol {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 }

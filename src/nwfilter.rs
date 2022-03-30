@@ -70,7 +70,7 @@ impl Drop for NWFilter {
 
 impl NWFilter {
     pub fn new(ptr: sys::virNWFilterPtr) -> NWFilter {
-        return NWFilter { ptr: Some(ptr) };
+        NWFilter { ptr: Some(ptr) }
     }
 
     pub fn as_ptr(&self) -> sys::virNWFilterPtr {
@@ -83,7 +83,7 @@ impl NWFilter {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(NWFilter::new(ptr));
+            Ok(NWFilter::new(ptr))
         }
     }
 
@@ -93,7 +93,7 @@ impl NWFilter {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(NWFilter::new(ptr));
+            Ok(NWFilter::new(ptr))
         }
     }
 
@@ -103,7 +103,7 @@ impl NWFilter {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n, nofree));
+            Ok(c_chars_to_string!(n, nofree))
         }
     }
 
@@ -113,7 +113,7 @@ impl NWFilter {
             if virNWFilterGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(uuid.as_ptr(), nofree));
+            Ok(c_chars_to_string!(uuid.as_ptr(), nofree))
         }
     }
 
@@ -123,7 +123,7 @@ impl NWFilter {
             if xml.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(xml));
+            Ok(c_chars_to_string!(xml))
         }
     }
 
@@ -133,7 +133,7 @@ impl NWFilter {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(NWFilter::new(ptr));
+            Ok(NWFilter::new(ptr))
         }
     }
 
@@ -142,7 +142,7 @@ impl NWFilter {
             if virNWFilterUndefine(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -152,7 +152,7 @@ impl NWFilter {
                 return Err(Error::new());
             }
             self.ptr = None;
-            return Ok(());
+            Ok(())
         }
     }
 }

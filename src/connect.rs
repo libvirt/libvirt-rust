@@ -488,7 +488,7 @@ impl Connect {
     }
 
     pub fn new(ptr: sys::virConnectPtr) -> Connect {
-        return Connect { ptr: Some(ptr) };
+        Connect { ptr: Some(ptr) }
     }
 
     pub fn get_version() -> Result<u32, Error> {
@@ -497,7 +497,7 @@ impl Connect {
             if virGetVersion(&ver, ptr::null(), ptr::null()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(ver as u32);
+            Ok(ver as u32)
         }
     }
 
@@ -541,7 +541,7 @@ impl Connect {
             if c.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Connect::new(c));
+            Ok(Connect::new(c))
         }
     }
 
@@ -573,7 +573,7 @@ impl Connect {
             if c.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Connect::new(c));
+            Ok(Connect::new(c))
         }
     }
 
@@ -598,7 +598,7 @@ impl Connect {
         if c.is_null() {
             return Err(Error::new());
         }
-        return Ok(Connect::new(c));
+        Ok(Connect::new(c))
     }
 
     /// This function closes the connection to the hypervisor. This
@@ -629,7 +629,7 @@ impl Connect {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n));
+            Ok(c_chars_to_string!(n))
         }
     }
 
@@ -639,7 +639,7 @@ impl Connect {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n));
+            Ok(c_chars_to_string!(n))
         }
     }
 
@@ -649,7 +649,7 @@ impl Connect {
             if virConnectGetLibVersion(self.as_ptr(), &mut ver) == -1 {
                 return Err(Error::new());
             }
-            return Ok(ver as u32);
+            Ok(ver as u32)
         }
     }
 
@@ -659,7 +659,7 @@ impl Connect {
             if t.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(t, nofree));
+            Ok(c_chars_to_string!(t, nofree))
         }
     }
 
@@ -669,7 +669,7 @@ impl Connect {
             if t.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(t));
+            Ok(c_chars_to_string!(t))
         }
     }
 
@@ -679,7 +679,7 @@ impl Connect {
             if sys.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(sys));
+            Ok(c_chars_to_string!(sys))
         }
     }
 
@@ -689,7 +689,7 @@ impl Connect {
             if max == -1 {
                 return Err(Error::new());
             }
-            return Ok(max as u32);
+            Ok(max as u32)
         }
     }
 
@@ -712,7 +712,7 @@ impl Connect {
             }
             libc::free(names as *mut libc::c_void);
 
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -722,7 +722,7 @@ impl Connect {
             if t == -1 {
                 return Err(Error::new());
             }
-            return Ok(t == 1);
+            Ok(t == 1)
         }
     }
 
@@ -732,7 +732,7 @@ impl Connect {
             if t == -1 {
                 return Err(Error::new());
             }
-            return Ok(t == 1);
+            Ok(t == 1)
         }
     }
 
@@ -742,7 +742,7 @@ impl Connect {
             if t == -1 {
                 return Err(Error::new());
             }
-            return Ok(t == 1);
+            Ok(t == 1)
         }
     }
 
@@ -778,7 +778,7 @@ impl Connect {
             for x in 0..size as usize {
                 array.push(ids[x] as u32);
             }
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -814,7 +814,7 @@ impl Connect {
             for x in 0..size as usize {
                 array.push(c_chars_to_string!(names[x]));
             }
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -850,7 +850,7 @@ impl Connect {
             for x in 0..size as usize {
                 array.push(c_chars_to_string!(names[x]));
             }
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -866,7 +866,7 @@ impl Connect {
             for x in 0..size as usize {
                 array.push(c_chars_to_string!(names[x]));
             }
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -882,7 +882,7 @@ impl Connect {
             for x in 0..size as usize {
                 array.push(c_chars_to_string!(names[x]));
             }
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -918,7 +918,7 @@ impl Connect {
             for x in 0..size as usize {
                 array.push(c_chars_to_string!(names[x]));
             }
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -941,7 +941,7 @@ impl Connect {
             }
             libc::free(domains as *mut libc::c_void);
 
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -963,7 +963,7 @@ impl Connect {
             }
             libc::free(networks as *mut libc::c_void);
 
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -985,7 +985,7 @@ impl Connect {
             }
             libc::free(interfaces as *mut libc::c_void);
 
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -1007,7 +1007,7 @@ impl Connect {
             }
             libc::free(nodedevs as *mut libc::c_void);
 
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -1028,7 +1028,7 @@ impl Connect {
             }
             libc::free(secrets as *mut libc::c_void);
 
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -1050,7 +1050,7 @@ impl Connect {
             }
             libc::free(storages as *mut libc::c_void);
 
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -1069,7 +1069,7 @@ impl Connect {
             }
             libc::free(filters as *mut libc::c_void);
 
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -1105,7 +1105,7 @@ impl Connect {
             for x in 0..size as usize {
                 array.push(c_chars_to_string!(names[x]));
             }
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -1141,7 +1141,7 @@ impl Connect {
             for x in 0..size as usize {
                 array.push(c_chars_to_string!(names[x]));
             }
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -1177,7 +1177,7 @@ impl Connect {
             for x in 0..size as usize {
                 array.push(c_chars_to_string!(names[x]));
             }
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -1213,7 +1213,7 @@ impl Connect {
             for x in 0..size as usize {
                 array.push(c_chars_to_string!(names[x]));
             }
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -1241,7 +1241,7 @@ impl Connect {
             if num == -1 {
                 return Err(Error::new());
             }
-            return Ok(num as u32);
+            Ok(num as u32)
         }
     }
 
@@ -1269,7 +1269,7 @@ impl Connect {
             if num == -1 {
                 return Err(Error::new());
             }
-            return Ok(num as u32);
+            Ok(num as u32)
         }
     }
 
@@ -1297,7 +1297,7 @@ impl Connect {
             if num == -1 {
                 return Err(Error::new());
             }
-            return Ok(num as u32);
+            Ok(num as u32)
         }
     }
 
@@ -1325,7 +1325,7 @@ impl Connect {
             if num == -1 {
                 return Err(Error::new());
             }
-            return Ok(num as u32);
+            Ok(num as u32)
         }
     }
 
@@ -1335,7 +1335,7 @@ impl Connect {
             if num == -1 {
                 return Err(Error::new());
             }
-            return Ok(num as u32);
+            Ok(num as u32)
         }
     }
 
@@ -1345,7 +1345,7 @@ impl Connect {
             if num == -1 {
                 return Err(Error::new());
             }
-            return Ok(num as u32);
+            Ok(num as u32)
         }
     }
 
@@ -1373,7 +1373,7 @@ impl Connect {
             if num == -1 {
                 return Err(Error::new());
             }
-            return Ok(num as u32);
+            Ok(num as u32)
         }
     }
 
@@ -1401,7 +1401,7 @@ impl Connect {
             if num == -1 {
                 return Err(Error::new());
             }
-            return Ok(num as u32);
+            Ok(num as u32)
         }
     }
 
@@ -1429,7 +1429,7 @@ impl Connect {
             if num == -1 {
                 return Err(Error::new());
             }
-            return Ok(num as u32);
+            Ok(num as u32)
         }
     }
 
@@ -1457,7 +1457,7 @@ impl Connect {
             if num == -1 {
                 return Err(Error::new());
             }
-            return Ok(num as u32);
+            Ok(num as u32)
         }
     }
 
@@ -1488,7 +1488,7 @@ impl Connect {
             if virConnectGetVersion(self.as_ptr(), &mut hyver) == -1 {
                 return Err(Error::new());
             }
-            return Ok(hyver as u32);
+            Ok(hyver as u32)
         }
     }
 
@@ -1506,7 +1506,7 @@ impl Connect {
             if res == VIR_CPU_COMPARE_ERROR {
                 return Err(Error::new());
             }
-            return Ok(res as CPUCompareResult);
+            Ok(res as CPUCompareResult)
         }
     }
 
@@ -1516,7 +1516,7 @@ impl Connect {
             if res == -1 {
                 return Err(Error::new());
             }
-            return Ok(res as u64);
+            Ok(res as u64)
         }
     }
 
@@ -1527,7 +1527,7 @@ impl Connect {
             if res == -1 {
                 return Err(Error::new());
             }
-            return Ok(NodeInfo {
+            Ok(NodeInfo {
                 model: c_chars_to_string!((*pinfo).model.as_ptr(), nofree),
                 memory: (*pinfo).memory as u64,
                 cpus: (*pinfo).cpus as u32,
@@ -1536,7 +1536,7 @@ impl Connect {
                 sockets: (*pinfo).sockets as u32,
                 cores: (*pinfo).cores as u32,
                 threads: (*pinfo).threads as u32,
-            });
+            })
         }
     }
 
@@ -1643,7 +1643,7 @@ impl Connect {
             }
             libc::free(record as *mut libc::c_void);
 
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -1682,7 +1682,7 @@ impl Connect {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n));
+            Ok(c_chars_to_string!(n))
         }
     }
 }

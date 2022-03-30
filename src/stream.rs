@@ -119,7 +119,7 @@ impl Stream {
         if ptr.is_null() {
             return Err(Error::new());
         }
-        return Ok(Stream::from_ptr(ptr));
+        Ok(Stream::from_ptr(ptr))
     }
 
     fn from_ptr(ptr: sys::virStreamPtr) -> Stream {
@@ -140,7 +140,7 @@ impl Stream {
             }
         }
         self.ptr = None;
-        return Ok(());
+        Ok(())
     }
 
     pub fn finish(self) -> Result<(), Error> {
@@ -148,7 +148,7 @@ impl Stream {
             if virStreamFinish(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -157,7 +157,7 @@ impl Stream {
             if virStreamAbort(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -202,7 +202,7 @@ impl Stream {
             return Err(Error::new());
         }
         self.callback = Some(Box::new(cb));
-        return Ok(());
+        Ok(())
     }
 
     pub fn event_update_callback(&self, events: StreamEventType) -> Result<(), Error> {
@@ -210,7 +210,7 @@ impl Stream {
         if ret == -1 {
             return Err(Error::new());
         }
-        return Ok(());
+        Ok(())
     }
 
     pub fn event_remove_callback(&self) -> Result<(), Error> {
@@ -218,7 +218,7 @@ impl Stream {
             if virStreamEventRemoveCallback(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 }

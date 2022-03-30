@@ -81,7 +81,7 @@ impl Drop for Interface {
 
 impl Interface {
     pub fn new(ptr: sys::virInterfacePtr) -> Interface {
-        return Interface { ptr: Some(ptr) };
+        Interface { ptr: Some(ptr) }
     }
 
     pub fn as_ptr(&self) -> sys::virInterfacePtr {
@@ -94,7 +94,7 @@ impl Interface {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Connect::new(ptr));
+            Ok(Connect::new(ptr))
         }
     }
 
@@ -104,7 +104,7 @@ impl Interface {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Interface::new(ptr));
+            Ok(Interface::new(ptr))
         }
     }
 
@@ -118,7 +118,7 @@ impl Interface {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Interface::new(ptr));
+            Ok(Interface::new(ptr))
         }
     }
 
@@ -128,7 +128,7 @@ impl Interface {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Interface::new(ptr));
+            Ok(Interface::new(ptr))
         }
     }
 
@@ -138,7 +138,7 @@ impl Interface {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n, nofree));
+            Ok(c_chars_to_string!(n, nofree))
         }
     }
 
@@ -148,7 +148,7 @@ impl Interface {
             if mac.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(mac, nofree));
+            Ok(c_chars_to_string!(mac, nofree))
         }
     }
 
@@ -158,7 +158,7 @@ impl Interface {
             if xml.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(xml));
+            Ok(c_chars_to_string!(xml))
         }
     }
 
@@ -168,7 +168,7 @@ impl Interface {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -177,7 +177,7 @@ impl Interface {
             if virInterfaceDestroy(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -186,7 +186,7 @@ impl Interface {
             if virInterfaceUndefine(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -196,7 +196,7 @@ impl Interface {
                 return Err(Error::new());
             }
             self.ptr = None;
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -206,7 +206,7 @@ impl Interface {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret == 1);
+            Ok(ret == 1)
         }
     }
 }

@@ -106,7 +106,7 @@ impl Drop for Secret {
 
 impl Secret {
     pub fn new(ptr: sys::virSecretPtr) -> Secret {
-        return Secret { ptr: Some(ptr) };
+        Secret { ptr: Some(ptr) }
     }
 
     pub fn as_ptr(&self) -> sys::virSecretPtr {
@@ -119,7 +119,7 @@ impl Secret {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Connect::new(ptr));
+            Ok(Connect::new(ptr))
         }
     }
 
@@ -133,7 +133,7 @@ impl Secret {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Secret::new(ptr));
+            Ok(Secret::new(ptr))
         }
     }
 
@@ -143,7 +143,7 @@ impl Secret {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Secret::new(ptr));
+            Ok(Secret::new(ptr))
         }
     }
 
@@ -157,7 +157,7 @@ impl Secret {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Secret::new(ptr));
+            Ok(Secret::new(ptr))
         }
     }
 
@@ -167,7 +167,7 @@ impl Secret {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n));
+            Ok(c_chars_to_string!(n))
         }
     }
 
@@ -177,7 +177,7 @@ impl Secret {
             if t == -1 {
                 return Err(Error::new());
             }
-            return Ok(t as u32);
+            Ok(t as u32)
         }
     }
 
@@ -187,7 +187,7 @@ impl Secret {
             if virSecretGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(uuid.as_ptr(), nofree));
+            Ok(c_chars_to_string!(uuid.as_ptr(), nofree))
         }
     }
 
@@ -197,7 +197,7 @@ impl Secret {
             if xml.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(xml));
+            Ok(c_chars_to_string!(xml))
         }
     }
 
@@ -212,7 +212,7 @@ impl Secret {
             {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -227,7 +227,7 @@ impl Secret {
             for x in 0..size {
                 array.push(*n.offset(x))
             }
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -236,7 +236,7 @@ impl Secret {
             if virSecretUndefine(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -246,7 +246,7 @@ impl Secret {
                 return Err(Error::new());
             }
             self.ptr = None;
-            return Ok(());
+            Ok(())
         }
     }
 }

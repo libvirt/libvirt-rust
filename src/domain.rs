@@ -943,7 +943,7 @@ fn to_arr(name: &str) -> [libc::c_char; 80] {
 
 impl Domain {
     pub fn new(ptr: sys::virDomainPtr) -> Domain {
-        return Domain { ptr: Some(ptr) };
+        Domain { ptr: Some(ptr) }
     }
 
     pub fn as_ptr(&self) -> sys::virDomainPtr {
@@ -956,7 +956,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Connect::new(ptr));
+            Ok(Connect::new(ptr))
         }
     }
 
@@ -966,7 +966,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Domain::new(ptr));
+            Ok(Domain::new(ptr))
         }
     }
 
@@ -976,7 +976,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Domain::new(ptr));
+            Ok(Domain::new(ptr))
         }
     }
 
@@ -986,7 +986,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Domain::new(ptr));
+            Ok(Domain::new(ptr))
         }
     }
 
@@ -1002,7 +1002,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok((state as DomainState, reason as i32));
+            Ok((state as DomainState, reason as i32))
         }
     }
 
@@ -1013,7 +1013,7 @@ impl Domain {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n, nofree));
+            Ok(c_chars_to_string!(n, nofree))
         }
     }
 
@@ -1024,7 +1024,7 @@ impl Domain {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n));
+            Ok(c_chars_to_string!(n))
         }
     }
 
@@ -1035,7 +1035,7 @@ impl Domain {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n));
+            Ok(c_chars_to_string!(n))
         }
     }
 
@@ -1048,7 +1048,7 @@ impl Domain {
             if virDomainGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(uuid.as_ptr(), nofree));
+            Ok(c_chars_to_string!(uuid.as_ptr(), nofree))
         }
     }
 
@@ -1071,7 +1071,7 @@ impl Domain {
             if xml.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(xml));
+            Ok(c_chars_to_string!(xml))
         }
     }
 
@@ -1085,7 +1085,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1097,7 +1097,7 @@ impl Domain {
             if res == -1 {
                 return Err(Error::new());
             }
-            return Ok(res as u32);
+            Ok(res as u32)
         }
     }
 
@@ -1111,7 +1111,7 @@ impl Domain {
             if res == -1 {
                 return Err(Error::new());
             }
-            return Ok(DomainInfo::from_ptr(pinfo));
+            Ok(DomainInfo::from_ptr(pinfo))
         }
     }
 
@@ -1137,7 +1137,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Domain::new(ptr));
+            Ok(Domain::new(ptr))
         }
     }
 
@@ -1158,7 +1158,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Domain::new(ptr));
+            Ok(Domain::new(ptr))
         }
     }
 
@@ -1187,7 +1187,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Domain::new(ptr));
+            Ok(Domain::new(ptr))
         }
     }
 
@@ -1200,7 +1200,7 @@ impl Domain {
             if virDomainDestroy(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -1217,7 +1217,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1231,7 +1231,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1253,7 +1253,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1265,7 +1265,7 @@ impl Domain {
             if virDomainReboot(self.as_ptr(), flags) == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -1284,7 +1284,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1300,7 +1300,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1311,7 +1311,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret == 1);
+            Ok(ret == 1)
         }
     }
 
@@ -1325,7 +1325,7 @@ impl Domain {
             if virDomainUndefine(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -1339,7 +1339,7 @@ impl Domain {
             if virDomainUndefineFlags(self.as_ptr(), flags) == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -1353,7 +1353,7 @@ impl Domain {
                 return Err(Error::new());
             }
             self.ptr = None;
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -1363,7 +1363,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret == 1);
+            Ok(ret == 1)
         }
     }
 
@@ -1374,7 +1374,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(autostart == 1);
+            Ok(autostart == 1)
         }
     }
 
@@ -1384,7 +1384,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret == 1);
+            Ok(ret == 1)
         }
     }
 
@@ -1394,7 +1394,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret == 1);
+            Ok(ret == 1)
         }
     }
 
@@ -1404,7 +1404,7 @@ impl Domain {
             if ret == 0 {
                 return Err(Error::new());
             }
-            return Ok(ret as u64);
+            Ok(ret as u64)
         }
     }
 
@@ -1414,7 +1414,7 @@ impl Domain {
             if ret == 0 {
                 return Err(Error::new());
             }
-            return Ok(ret as u64);
+            Ok(ret as u64)
         }
     }
 
@@ -1424,7 +1424,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret == 1);
+            Ok(ret == 1)
         }
     }
 
@@ -1442,7 +1442,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret == 1);
+            Ok(ret == 1)
         }
     }
 
@@ -1460,7 +1460,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret == 1);
+            Ok(ret == 1)
         }
     }
 
@@ -1470,7 +1470,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret == 1);
+            Ok(ret == 1)
         }
     }
 
@@ -1481,7 +1481,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret == 1);
+            Ok(ret == 1)
         }
     }
 
@@ -1490,7 +1490,7 @@ impl Domain {
             if virDomainRestore(conn.as_ptr(), string_to_c_chars!(path)) == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -1508,7 +1508,7 @@ impl Domain {
             {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -1518,7 +1518,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1532,7 +1532,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1544,7 +1544,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(bandwidth as u64);
+            Ok(bandwidth as u64)
         }
     }
 
@@ -1558,7 +1558,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1573,7 +1573,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(size as u64);
+            Ok(size as u64)
         }
     }
 
@@ -1587,7 +1587,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1602,7 +1602,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1619,7 +1619,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok((seconds as i64, nseconds as i32));
+            Ok((seconds as i64, nseconds as i32))
         }
     }
 
@@ -1635,7 +1635,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(BlockInfo::from_ptr(pinfo));
+            Ok(BlockInfo::from_ptr(pinfo))
         }
     }
 
@@ -1650,7 +1650,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1666,7 +1666,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1681,7 +1681,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1695,7 +1695,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1710,7 +1710,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1725,7 +1725,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1740,7 +1740,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1751,7 +1751,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1766,7 +1766,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1781,7 +1781,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1805,7 +1805,7 @@ impl Domain {
             }
             libc::free(addresses as *mut libc::c_void);
 
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -1821,7 +1821,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(InterfaceStats::from_ptr(pinfo));
+            Ok(InterfaceStats::from_ptr(pinfo))
         }
     }
 
@@ -1837,7 +1837,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(MemoryStats::from_ptr(pinfo));
+            Ok(MemoryStats::from_ptr(pinfo))
         }
     }
 
@@ -1855,7 +1855,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(ptr));
+            Ok(c_chars_to_string!(ptr))
         }
     }
 
@@ -1875,7 +1875,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1885,7 +1885,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1899,7 +1899,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1909,7 +1909,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1923,7 +1923,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1937,7 +1937,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1947,7 +1947,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1957,7 +1957,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret == 1);
+            Ok(ret == 1)
         }
     }
 
@@ -1967,7 +1967,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1978,7 +1978,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -1993,7 +1993,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -2017,7 +2017,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -2032,7 +2032,7 @@ impl Domain {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n));
+            Ok(c_chars_to_string!(n))
         }
     }
 
@@ -2047,7 +2047,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -2145,7 +2145,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Domain::new(ptr));
+            Ok(Domain::new(ptr))
         }
     }
 
@@ -2170,7 +2170,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Domain::new(ptr));
+            Ok(Domain::new(ptr))
         }
     }
 
@@ -2186,7 +2186,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Domain::new(ptr));
+            Ok(Domain::new(ptr))
         }
     }
 
@@ -2211,7 +2211,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Domain::new(ptr));
+            Ok(Domain::new(ptr))
         }
     }
 
@@ -2289,7 +2289,7 @@ impl Domain {
             }
             libc::free(snaps as *mut libc::c_void);
 
-            return Ok(array);
+            Ok(array)
         }
     }
 
@@ -2302,7 +2302,7 @@ impl Domain {
                 return Err(Error::new());
             }
 
-            return Ok((c_chars_to_string!(sched_type), nparams));
+            Ok((c_chars_to_string!(sched_type), nparams))
         }
     }
 

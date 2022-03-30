@@ -121,7 +121,7 @@ impl Drop for Network {
 
 impl Network {
     pub fn new(ptr: sys::virNetworkPtr) -> Network {
-        return Network { ptr: Some(ptr) };
+        Network { ptr: Some(ptr) }
     }
 
     pub fn as_ptr(&self) -> sys::virNetworkPtr {
@@ -134,7 +134,7 @@ impl Network {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Connect::new(ptr));
+            Ok(Connect::new(ptr))
         }
     }
 
@@ -144,7 +144,7 @@ impl Network {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Network::new(ptr));
+            Ok(Network::new(ptr))
         }
     }
 
@@ -154,7 +154,7 @@ impl Network {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Network::new(ptr));
+            Ok(Network::new(ptr))
         }
     }
 
@@ -164,7 +164,7 @@ impl Network {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n, nofree));
+            Ok(c_chars_to_string!(n, nofree))
         }
     }
 
@@ -174,7 +174,7 @@ impl Network {
             if virNetworkGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(uuid.as_ptr(), nofree));
+            Ok(c_chars_to_string!(uuid.as_ptr(), nofree))
         }
     }
 
@@ -184,7 +184,7 @@ impl Network {
             if n.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(n));
+            Ok(c_chars_to_string!(n))
         }
     }
 
@@ -194,7 +194,7 @@ impl Network {
             if xml.is_null() {
                 return Err(Error::new());
             }
-            return Ok(c_chars_to_string!(xml));
+            Ok(c_chars_to_string!(xml))
         }
     }
 
@@ -204,7 +204,7 @@ impl Network {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -214,7 +214,7 @@ impl Network {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Network::new(ptr));
+            Ok(Network::new(ptr))
         }
     }
 
@@ -228,7 +228,7 @@ impl Network {
             if ptr.is_null() {
                 return Err(Error::new());
             }
-            return Ok(Network::new(ptr));
+            Ok(Network::new(ptr))
         }
     }
 
@@ -237,7 +237,7 @@ impl Network {
             if virNetworkDestroy(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -246,7 +246,7 @@ impl Network {
             if virNetworkUndefine(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -256,7 +256,7 @@ impl Network {
                 return Err(Error::new());
             }
             self.ptr = None;
-            return Ok(());
+            Ok(())
         }
     }
 
@@ -266,7 +266,7 @@ impl Network {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret == 1);
+            Ok(ret == 1)
         }
     }
 
@@ -276,7 +276,7 @@ impl Network {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret == 1);
+            Ok(ret == 1)
         }
     }
 
@@ -287,7 +287,7 @@ impl Network {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(auto == 1);
+            Ok(auto == 1)
         }
     }
 
@@ -297,7 +297,7 @@ impl Network {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(ret as u32);
+            Ok(ret as u32)
         }
     }
 
@@ -321,7 +321,7 @@ impl Network {
             if ret == -1 {
                 return Err(Error::new());
             }
-            return Ok(());
+            Ok(())
         }
     }
 }
