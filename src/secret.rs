@@ -50,7 +50,7 @@ extern "C" {
     fn virSecretSetValue(
         ptr: sys::virSecretPtr,
         value: *const libc::c_uchar,
-        vsize: libc::c_uint,
+        vsize: libc::size_t,
         flags: libc::c_uint,
     ) -> libc::c_int;
     fn virSecretGetValue(
@@ -203,13 +203,7 @@ impl Secret {
 
     pub fn set_value(&self, value: &[u8], flags: u32) -> Result<(), Error> {
         unsafe {
-            if virSecretSetValue(
-                self.as_ptr(),
-                value.as_ptr(),
-                value.len() as libc::c_uint,
-                flags,
-            ) == -1
-            {
+            if virSecretSetValue(self.as_ptr(), value.as_ptr(), value.len(), flags) == -1 {
                 return Err(Error::new());
             }
             Ok(())
