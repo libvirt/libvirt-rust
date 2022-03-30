@@ -17,64 +17,16 @@
  */
 
 extern crate libc;
+extern crate virt_sys as sys;
 
 use std::convert::TryFrom;
-
-use crate::connect::sys::virConnectPtr;
 
 use crate::connect::Connect;
 use crate::error::Error;
 
-pub mod sys {
-    #[repr(C)]
-    pub struct virStream {}
-
-    pub type virStreamPtr = *mut virStream;
-}
-
-#[link(name = "virt")]
-extern "C" {
-    fn virStreamNew(c: virConnectPtr, flags: libc::c_uint) -> sys::virStreamPtr;
-    fn virStreamSend(
-        c: sys::virStreamPtr,
-        data: *const libc::c_char,
-        nbytes: libc::size_t,
-    ) -> libc::c_int;
-    fn virStreamRecv(
-        c: sys::virStreamPtr,
-        data: *mut libc::c_char,
-        nbytes: libc::size_t,
-    ) -> libc::c_int;
-    fn virStreamFree(c: sys::virStreamPtr) -> libc::c_int;
-    fn virStreamAbort(c: sys::virStreamPtr) -> libc::c_int;
-    fn virStreamFinish(c: sys::virStreamPtr) -> libc::c_int;
-    fn virStreamEventAddCallback(
-        c: sys::virStreamPtr,
-        event: libc::c_int,
-        callback: StreamEventCallback,
-        opaque: *mut libc::c_void,
-        ff: FreeCallback,
-    ) -> libc::c_int;
-    fn virStreamEventUpdateCallback(c: sys::virStreamPtr, events: libc::c_int) -> libc::c_int;
-    fn virStreamEventRemoveCallback(c: sys::virStreamPtr) -> libc::c_int;
-}
-
-pub type StreamEventType = self::libc::c_uint;
-pub const VIR_STREAM_EVENT_READABLE: StreamEventType = 1 << 0;
-pub const VIR_STREAM_EVENT_WRITABLE: StreamEventType = 1 << 1;
-pub const VIR_STREAM_EVENT_ERROR: StreamEventType = 1 << 2;
-pub const VIR_STREAM_EVENT_HANGUP: StreamEventType = 1 << 3;
-
-pub type StreamFlags = self::libc::c_uint;
-pub const VIR_STREAM_NONBLOCK: StreamFlags = 1 << 0;
-
-pub type StreamEventCallback =
-    Option<extern "C" fn(sys::virStreamPtr, libc::c_int, *mut libc::c_void)>;
-pub type FreeCallback = Option<extern "C" fn(*mut libc::c_void)>;
-
 // wrapper for callbacks
 extern "C" fn event_callback(c: sys::virStreamPtr, flags: libc::c_int, opaque: *mut libc::c_void) {
-    let flags = flags as StreamFlags;
+    let flags = flags as sys::virStreamFlags;
     let shadow_self = unsafe { &mut *(opaque as *mut Stream) };
     if let Some(callback) = &mut shadow_self.callback {
         callback(&Stream::from_ptr(c), flags);
@@ -86,7 +38,7 @@ extern "C" fn event_free(_opaque: *mut libc::c_void) {}
 // #[derive(Debug)]
 pub struct Stream {
     ptr: Option<sys::virStreamPtr>,
-    callback: Option<Box<dyn FnMut(&Stream, StreamEventType)>>,
+    callback: Option<Box<dyn FnMut(&Stream, sys::virStreamEventType)>>,
 }
 
 impl Drop for Stream {
@@ -111,8 +63,8 @@ impl Drop for Stream {
 }
 
 impl Stream {
-    pub fn new(conn: &Connect, flags: StreamFlags) -> Result<Stream, Error> {
-        let ptr = unsafe { virStreamNew(conn.as_ptr(), flags as libc::c_uint) };
+    pub fn new(conn: &Connect, flags: sys::virStreamFlags) -> Result<Stream, Error> {
+        let ptr = unsafe { sys::virStreamNew(conn.as_ptr(), flags as libc::c_uint) };
         if ptr.is_null() {
             return Err(Error::new());
         }
@@ -132,7 +84,7 @@ impl Stream {
 
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
-            if virStreamFree(self.as_ptr()) == -1 {
+            if sys::virStreamFree(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
         }
@@ -142,7 +94,7 @@ impl Stream {
 
     pub fn finish(self) -> Result<(), Error> {
         unsafe {
-            if virStreamFinish(self.as_ptr()) == -1 {
+            if sys::virStreamFinish(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
             Ok(())
@@ -151,7 +103,7 @@ impl Stream {
 
     pub fn abort(self) -> Result<(), Error> {
         unsafe {
-            if virStreamAbort(self.as_ptr()) == -1 {
+            if sys::virStreamAbort(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
             Ok(())
@@ -160,7 +112,7 @@ impl Stream {
 
     pub fn send(&self, data: &[u8]) -> Result<usize, Error> {
         let ret = unsafe {
-            virStreamSend(
+            sys::virStreamSend(
                 self.as_ptr(),
                 data.as_ptr() as *mut libc::c_char,
                 data.len(),
@@ -171,7 +123,7 @@ impl Stream {
 
     pub fn recv(&self, buf: &mut [u8]) -> Result<usize, Error> {
         let ret = unsafe {
-            virStreamRecv(
+            sys::virStreamRecv(
                 self.as_ptr(),
                 buf.as_mut_ptr() as *mut libc::c_char,
                 buf.len(),
@@ -180,14 +132,14 @@ impl Stream {
         usize::try_from(ret).map_err(|_| Error::new())
     }
 
-    pub fn event_add_callback<F: 'static + FnMut(&Stream, StreamEventType)>(
+    pub fn event_add_callback<F: 'static + FnMut(&Stream, sys::virStreamEventType)>(
         &mut self,
-        events: StreamEventType,
+        events: sys::virStreamEventType,
         cb: F,
     ) -> Result<(), Error> {
         let ret = unsafe {
             let ptr = self as *mut _ as *mut _;
-            virStreamEventAddCallback(
+            sys::virStreamEventAddCallback(
                 self.as_ptr(),
                 events as libc::c_int,
                 Some(event_callback),
@@ -202,8 +154,9 @@ impl Stream {
         Ok(())
     }
 
-    pub fn event_update_callback(&self, events: StreamEventType) -> Result<(), Error> {
-        let ret = unsafe { virStreamEventUpdateCallback(self.as_ptr(), events as libc::c_int) };
+    pub fn event_update_callback(&self, events: sys::virStreamEventType) -> Result<(), Error> {
+        let ret =
+            unsafe { sys::virStreamEventUpdateCallback(self.as_ptr(), events as libc::c_int) };
         if ret == -1 {
             return Err(Error::new());
         }
@@ -212,7 +165,7 @@ impl Stream {
 
     pub fn event_remove_callback(&self) -> Result<(), Error> {
         unsafe {
-            if virStreamEventRemoveCallback(self.as_ptr()) == -1 {
+            if sys::virStreamEventRemoveCallback(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
             Ok(())

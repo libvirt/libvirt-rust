@@ -23,7 +23,6 @@ use std::{mem, ptr, str};
 
 use crate::connect::sys::virConnectPtr;
 use crate::domain_snapshot::sys::virDomainSnapshotPtr;
-use crate::stream::sys::virStreamPtr;
 use crate::typedparam::sys::{_virTypedParameterValue, virTypedParameter, virTypedParameterPtr};
 
 use crate::connect::Connect;
@@ -282,13 +281,13 @@ extern "C" {
     fn virDomainOpenChannel(
         ptr: sys::virDomainPtr,
         name: *const libc::c_char,
-        st: virStreamPtr,
+        st: virt_sys::virStreamPtr,
         flags: libc::c_uint,
     ) -> libc::c_int;
     fn virDomainOpenConsole(
         ptr: sys::virDomainPtr,
         dev_name: *const libc::c_char,
-        st: virStreamPtr,
+        st: virt_sys::virStreamPtr,
         flags: libc::c_uint,
     ) -> libc::c_int;
     fn virDomainInterfaceAddresses(

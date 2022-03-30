@@ -17,11 +17,11 @@
  */
 
 extern crate virt;
+extern crate virt_sys as sys;
 
 mod common;
 
 use virt::stream::Stream;
-use virt::stream::VIR_STREAM_NONBLOCK;
 
 #[test]
 fn test_create_blocking() {
@@ -34,7 +34,7 @@ fn test_create_blocking() {
 #[test]
 fn test_create_non_blocking() {
     let c = common::conn();
-    let s = Stream::new(&c, VIR_STREAM_NONBLOCK).unwrap();
+    let s = Stream::new(&c, sys::VIR_STREAM_NONBLOCK).unwrap();
     drop(s);
     common::close(c);
 }

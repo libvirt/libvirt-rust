@@ -22,7 +22,6 @@ use std::{mem, str};
 
 use crate::connect::sys::virConnectPtr;
 use crate::storage_pool::sys::virStoragePoolPtr;
-use crate::stream::sys::virStreamPtr;
 
 use crate::connect::Connect;
 use crate::error::Error;
@@ -103,14 +102,14 @@ extern "C" {
     ) -> libc::c_int;
     fn virStorageVolDownload(
         ptr: sys::virStorageVolPtr,
-        stream: virStreamPtr,
+        stream: virt_sys::virStreamPtr,
         offset: libc::c_ulonglong,
         length: libc::c_ulonglong,
         flags: libc::c_uint,
     ) -> libc::c_int;
     fn virStorageVolUpload(
         ptr: sys::virStorageVolPtr,
-        stream: virStreamPtr,
+        stream: virt_sys::virStreamPtr,
         offset: libc::c_ulonglong,
         length: libc::c_ulonglong,
         flags: libc::c_uint,
