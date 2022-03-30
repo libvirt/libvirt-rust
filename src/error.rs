@@ -34,7 +34,7 @@ pub mod sys {
 
     pub type virErrorPtr = *mut virError;
 
-    pub type virErrorFunc = fn(userData: *mut libc::c_void, error: virErrorPtr);
+    pub type virErrorFunc = Option<extern "C" fn(userData: *mut libc::c_void, error: virErrorPtr)>;
 }
 
 #[link(name = "virt")]
@@ -65,6 +65,8 @@ pub struct Error {
     pub level: ErrorLevel,
 }
 
+extern "C" fn noop(_data: *mut libc::c_void, _error: sys::virErrorPtr) {}
+
 impl Error {
     pub fn new() -> Error {
         unsafe {
@@ -82,7 +84,7 @@ impl Error {
     /// Use this to disable the default printing to stdout of all errors by virt
     pub fn clear_error_func() {
         unsafe {
-            virSetErrorFunc(std::ptr::null_mut(), |_, _| {});
+            virSetErrorFunc(std::ptr::null_mut(), Some(noop));
         }
     }
 }
