@@ -47,6 +47,19 @@ check-dco:
     GIT_DEPTH: 1000
 
 
+cargo-fmt:
+  stage: sanity_checks
+  image: registry.gitlab.com/libvirt/libvirt-ci/cargo-fmt:master
+  needs: []
+  script:
+    - /cargo-fmt
+  artifacts:
+    paths:
+      - cargo-fmt.patch
+    expire_in: 1 week
+    when: on_failure
+
+
 # Native container jobs
 
 x86_64-almalinux-8-container:

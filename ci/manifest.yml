@@ -5,6 +5,8 @@ projects:
 gitlab:
   namespace: libvirt
   project: libvirt-rust
+  jobs:
+    cargo-fmt: true
 
 targets:
 
