@@ -21,7 +21,6 @@ extern crate libc;
 use std::{mem, ptr, str};
 
 use crate::domain::sys::{virDomainPtr, virDomainStatsRecordPtr};
-use crate::storage_pool::sys::virStoragePoolPtr;
 
 use crate::domain::{Domain, DomainStatsRecord};
 use crate::error::Error;
@@ -186,7 +185,7 @@ extern "C" {
     ) -> libc::c_int;
     fn virConnectListAllStoragePools(
         ptr: sys::virConnectPtr,
-        storages: *mut *mut virStoragePoolPtr,
+        storages: *mut *mut virt_sys::virStoragePoolPtr,
         flags: libc::c_uint,
     ) -> libc::c_int;
     fn virConnectNumOfDomains(ptr: sys::virConnectPtr) -> libc::c_int;
@@ -1031,7 +1030,7 @@ impl Connect {
         flags: ConnectListAllStoragePoolsFlags,
     ) -> Result<Vec<StoragePool>, Error> {
         unsafe {
-            let mut storages: *mut virStoragePoolPtr = ptr::null_mut();
+            let mut storages: *mut virt_sys::virStoragePoolPtr = ptr::null_mut();
             let size =
                 virConnectListAllStoragePools(self.as_ptr(), &mut storages, flags as libc::c_uint);
             if size == -1 {

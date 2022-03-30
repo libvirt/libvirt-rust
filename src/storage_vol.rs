@@ -17,133 +17,14 @@
  */
 
 extern crate libc;
+extern crate virt_sys as sys;
 
 use std::{mem, str};
-
-use crate::connect::sys::virConnectPtr;
-use crate::storage_pool::sys::virStoragePoolPtr;
 
 use crate::connect::Connect;
 use crate::error::Error;
 use crate::storage_pool::StoragePool;
 use crate::stream::Stream;
-
-pub mod sys {
-    extern crate libc;
-
-    #[repr(C)]
-    pub struct virStorageVol {}
-
-    pub type virStorageVolPtr = *mut virStorageVol;
-
-    #[repr(C)]
-    pub struct virStorageVolInfo {
-        pub kind: libc::c_int,
-        pub capacity: libc::c_ulonglong,
-        pub allocation: libc::c_ulonglong,
-    }
-
-    pub type virStorageVolInfoPtr = *mut virStorageVolInfo;
-}
-
-#[link(name = "virt")]
-extern "C" {
-    fn virStorageVolCreateXML(
-        p: virStoragePoolPtr,
-        xml: *const libc::c_char,
-        flags: libc::c_uint,
-    ) -> sys::virStorageVolPtr;
-    fn virStorageVolCreateXMLFrom(
-        p: virStoragePoolPtr,
-        xml: *const libc::c_char,
-        from: sys::virStorageVolPtr,
-        flags: libc::c_uint,
-    ) -> sys::virStorageVolPtr;
-    fn virStorageVolLookupByName(
-        p: virStoragePoolPtr,
-        id: *const libc::c_char,
-    ) -> sys::virStorageVolPtr;
-    fn virStorageVolLookupByKey(c: virConnectPtr, id: *const libc::c_char)
-        -> sys::virStorageVolPtr;
-    fn virStorageVolLookupByPath(
-        c: virConnectPtr,
-        id: *const libc::c_char,
-    ) -> sys::virStorageVolPtr;
-    fn virStorageVolGetName(ptr: sys::virStorageVolPtr) -> *const libc::c_char;
-    fn virStorageVolGetKey(ptr: sys::virStorageVolPtr) -> *const libc::c_char;
-    fn virStorageVolGetPath(ptr: sys::virStorageVolPtr) -> *mut libc::c_char;
-    fn virStorageVolDelete(ptr: sys::virStorageVolPtr, flags: libc::c_uint) -> libc::c_int;
-    fn virStorageVolWipe(ptr: sys::virStorageVolPtr, flags: libc::c_uint) -> libc::c_int;
-    fn virStorageVolWipePattern(
-        ptr: sys::virStorageVolPtr,
-        algo: libc::c_uint,
-        flags: libc::c_uint,
-    ) -> libc::c_int;
-    fn virStorageVolFree(ptr: sys::virStorageVolPtr) -> libc::c_int;
-    fn virStorageVolGetXMLDesc(
-        ptr: sys::virStorageVolPtr,
-        flags: libc::c_uint,
-    ) -> *mut libc::c_char;
-    fn virStorageVolGetConnect(ptr: sys::virStorageVolPtr) -> virConnectPtr;
-    fn virStorageVolResize(
-        ptr: sys::virStorageVolPtr,
-        capacity: libc::c_ulonglong,
-        flags: libc::c_uint,
-    ) -> libc::c_int;
-
-    fn virStorageVolGetInfo(
-        ptr: sys::virStorageVolPtr,
-        info: sys::virStorageVolInfoPtr,
-    ) -> libc::c_int;
-    fn virStorageVolGetInfoFlags(
-        ptr: sys::virStorageVolPtr,
-        info: sys::virStorageVolInfoPtr,
-        flags: libc::c_uint,
-    ) -> libc::c_int;
-    fn virStorageVolDownload(
-        ptr: sys::virStorageVolPtr,
-        stream: virt_sys::virStreamPtr,
-        offset: libc::c_ulonglong,
-        length: libc::c_ulonglong,
-        flags: libc::c_uint,
-    ) -> libc::c_int;
-    fn virStorageVolUpload(
-        ptr: sys::virStorageVolPtr,
-        stream: virt_sys::virStreamPtr,
-        offset: libc::c_ulonglong,
-        length: libc::c_ulonglong,
-        flags: libc::c_uint,
-    ) -> libc::c_int;
-}
-
-pub type StorageVolCreateFlags = self::libc::c_uint;
-pub const VIR_STORAGE_VOL_CREATE_PREALLOC_METADATA: StorageVolCreateFlags = 1 << 0;
-pub const VIR_STORAGE_VOL_CREATE_REFLINK: StorageVolCreateFlags = 1 << 1;
-
-pub type StorageVolResizeFlags = self::libc::c_uint;
-pub const VIR_STORAGE_VOL_RESIZE_ALLOCATE: StorageVolResizeFlags = 1 << 0;
-pub const VIR_STORAGE_VOL_RESIZE_DELTA: StorageVolResizeFlags = 1 << 1;
-pub const VIR_STORAGE_VOL_RESIZE_SHRINK: StorageVolResizeFlags = 1 << 2;
-
-pub type StorageVolWipeAlgorithm = self::libc::c_uint;
-pub const VIR_STORAGE_VOL_WIPE_ALG_ZERO: StorageVolWipeAlgorithm = 0;
-pub const VIR_STORAGE_VOL_WIPE_ALG_NNSA: StorageVolWipeAlgorithm = 1;
-pub const VIR_STORAGE_VOL_WIPE_ALG_DOD: StorageVolWipeAlgorithm = 2;
-pub const VIR_STORAGE_VOL_WIPE_ALG_BSI: StorageVolWipeAlgorithm = 3;
-pub const VIR_STORAGE_VOL_WIPE_ALG_GUTMANN: StorageVolWipeAlgorithm = 4;
-pub const VIR_STORAGE_VOL_WIPE_ALG_SCHNEIER: StorageVolWipeAlgorithm = 5;
-pub const VIR_STORAGE_VOL_WIPE_ALG_PFITZNER7: StorageVolWipeAlgorithm = 6;
-pub const VIR_STORAGE_VOL_WIPE_ALG_PFITZNER33: StorageVolWipeAlgorithm = 7;
-pub const VIR_STORAGE_VOL_WIPE_ALG_RANDOM: StorageVolWipeAlgorithm = 8;
-pub const VIR_STORAGE_VOL_WIPE_ALG_TRIM: StorageVolWipeAlgorithm = 9;
-
-pub type StorageVolType = self::libc::c_uint;
-pub const VIR_STORAGE_VOL_FILE: StorageVolType = 0;
-pub const VIR_STORAGE_VOL_BLOCK: StorageVolType = 1;
-pub const VIR_STORAGE_VOL_DIR: StorageVolType = 2;
-pub const VIR_STORAGE_VOL_NETWORK: StorageVolType = 3;
-pub const VIR_STORAGE_VOL_NETDIR: StorageVolType = 4;
-pub const VIR_STORAGE_VOL_PLOOP: StorageVolType = 5;
 
 #[derive(Clone, Debug)]
 pub struct StorageVolInfo {
@@ -161,7 +42,7 @@ impl StorageVolInfo {
     /// The caller must ensure that the pointer is valid.
     pub unsafe fn from_ptr(ptr: sys::virStorageVolInfoPtr) -> StorageVolInfo {
         StorageVolInfo {
-            kind: (*ptr).kind as StorageVolType,
+            kind: (*ptr).type_ as sys::virStorageVolType,
             capacity: (*ptr).capacity as u64,
             allocation: (*ptr).allocation as u64,
         }
@@ -200,7 +81,7 @@ impl StorageVol {
 
     pub fn get_connect(&self) -> Result<Connect, Error> {
         unsafe {
-            let ptr = virStorageVolGetConnect(self.as_ptr());
+            let ptr = sys::virStorageVolGetConnect(self.as_ptr());
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -211,10 +92,10 @@ impl StorageVol {
     pub fn create_xml(
         pool: &StoragePool,
         xml: &str,
-        flags: StorageVolCreateFlags,
+        flags: sys::virStorageVolCreateFlags,
     ) -> Result<StorageVol, Error> {
         unsafe {
-            let ptr = virStorageVolCreateXML(
+            let ptr = sys::virStorageVolCreateXML(
                 pool.as_ptr(),
                 string_to_c_chars!(xml),
                 flags as libc::c_uint,
@@ -230,10 +111,10 @@ impl StorageVol {
         pool: &StoragePool,
         xml: &str,
         vol: &StorageVol,
-        flags: StorageVolCreateFlags,
+        flags: sys::virStorageVolCreateFlags,
     ) -> Result<StorageVol, Error> {
         unsafe {
-            let ptr = virStorageVolCreateXMLFrom(
+            let ptr = sys::virStorageVolCreateXMLFrom(
                 pool.as_ptr(),
                 string_to_c_chars!(xml),
                 vol.as_ptr(),
@@ -248,7 +129,7 @@ impl StorageVol {
 
     pub fn lookup_by_name(pool: &StoragePool, name: &str) -> Result<StorageVol, Error> {
         unsafe {
-            let ptr = virStorageVolLookupByName(pool.as_ptr(), string_to_c_chars!(name));
+            let ptr = sys::virStorageVolLookupByName(pool.as_ptr(), string_to_c_chars!(name));
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -258,7 +139,7 @@ impl StorageVol {
 
     pub fn lookup_by_key(conn: &Connect, key: &str) -> Result<StorageVol, Error> {
         unsafe {
-            let ptr = virStorageVolLookupByKey(conn.as_ptr(), string_to_c_chars!(key));
+            let ptr = sys::virStorageVolLookupByKey(conn.as_ptr(), string_to_c_chars!(key));
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -268,7 +149,7 @@ impl StorageVol {
 
     pub fn lookup_by_path(conn: &Connect, path: &str) -> Result<StorageVol, Error> {
         unsafe {
-            let ptr = virStorageVolLookupByPath(conn.as_ptr(), string_to_c_chars!(path));
+            let ptr = sys::virStorageVolLookupByPath(conn.as_ptr(), string_to_c_chars!(path));
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -278,7 +159,7 @@ impl StorageVol {
 
     pub fn get_name(&self) -> Result<String, Error> {
         unsafe {
-            let n = virStorageVolGetName(self.as_ptr());
+            let n = sys::virStorageVolGetName(self.as_ptr());
             if n.is_null() {
                 return Err(Error::new());
             }
@@ -288,7 +169,7 @@ impl StorageVol {
 
     pub fn get_key(&self) -> Result<String, Error> {
         unsafe {
-            let n = virStorageVolGetKey(self.as_ptr());
+            let n = sys::virStorageVolGetKey(self.as_ptr());
             if n.is_null() {
                 return Err(Error::new());
             }
@@ -298,7 +179,7 @@ impl StorageVol {
 
     pub fn get_path(&self) -> Result<String, Error> {
         unsafe {
-            let n = virStorageVolGetPath(self.as_ptr());
+            let n = sys::virStorageVolGetPath(self.as_ptr());
             if n.is_null() {
                 return Err(Error::new());
             }
@@ -308,7 +189,7 @@ impl StorageVol {
 
     pub fn get_xml_desc(&self, flags: u32) -> Result<String, Error> {
         unsafe {
-            let xml = virStorageVolGetXMLDesc(self.as_ptr(), flags);
+            let xml = sys::virStorageVolGetXMLDesc(self.as_ptr(), flags);
             if xml.is_null() {
                 return Err(Error::new());
             }
@@ -318,7 +199,7 @@ impl StorageVol {
 
     pub fn delete(&self, flags: u32) -> Result<(), Error> {
         unsafe {
-            if virStorageVolDelete(self.as_ptr(), flags as libc::c_uint) == -1 {
+            if sys::virStorageVolDelete(self.as_ptr(), flags as libc::c_uint) == -1 {
                 return Err(Error::new());
             }
             Ok(())
@@ -327,17 +208,24 @@ impl StorageVol {
 
     pub fn wipe(&self, flags: u32) -> Result<(), Error> {
         unsafe {
-            if virStorageVolWipe(self.as_ptr(), flags as libc::c_uint) == -1 {
+            if sys::virStorageVolWipe(self.as_ptr(), flags as libc::c_uint) == -1 {
                 return Err(Error::new());
             }
             Ok(())
         }
     }
 
-    pub fn wipe_pattern(&self, algo: StorageVolWipeAlgorithm, flags: u32) -> Result<(), Error> {
+    pub fn wipe_pattern(
+        &self,
+        algo: sys::virStorageVolWipeAlgorithm,
+        flags: u32,
+    ) -> Result<(), Error> {
         unsafe {
-            if virStorageVolWipePattern(self.as_ptr(), algo as libc::c_uint, flags as libc::c_uint)
-                == -1
+            if sys::virStorageVolWipePattern(
+                self.as_ptr(),
+                algo as libc::c_uint,
+                flags as libc::c_uint,
+            ) == -1
             {
                 return Err(Error::new());
             }
@@ -347,7 +235,7 @@ impl StorageVol {
 
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
-            if virStorageVolFree(self.as_ptr()) == -1 {
+            if sys::virStorageVolFree(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
             self.ptr = None;
@@ -357,7 +245,7 @@ impl StorageVol {
 
     pub fn resize(&self, capacity: u64, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let ret = virStorageVolResize(
+            let ret = sys::virStorageVolResize(
                 self.as_ptr(),
                 capacity as libc::c_ulonglong,
                 flags as libc::c_uint,
@@ -372,7 +260,7 @@ impl StorageVol {
     pub fn get_info(&self) -> Result<StorageVolInfo, Error> {
         unsafe {
             let mut pinfo = mem::MaybeUninit::uninit();
-            let res = virStorageVolGetInfo(self.as_ptr(), pinfo.as_mut_ptr());
+            let res = sys::virStorageVolGetInfo(self.as_ptr(), pinfo.as_mut_ptr());
             if res == -1 {
                 return Err(Error::new());
             }
@@ -383,8 +271,11 @@ impl StorageVol {
     pub fn get_info_flags(&self, flags: u32) -> Result<StorageVolInfo, Error> {
         unsafe {
             let mut pinfo = mem::MaybeUninit::uninit();
-            let res =
-                virStorageVolGetInfoFlags(self.as_ptr(), pinfo.as_mut_ptr(), flags as libc::c_uint);
+            let res = sys::virStorageVolGetInfoFlags(
+                self.as_ptr(),
+                pinfo.as_mut_ptr(),
+                flags as libc::c_uint,
+            );
             if res == -1 {
                 return Err(Error::new());
             }
@@ -400,7 +291,7 @@ impl StorageVol {
         flags: u32,
     ) -> Result<(), Error> {
         unsafe {
-            let ret = virStorageVolDownload(
+            let ret = sys::virStorageVolDownload(
                 self.as_ptr(),
                 stream.as_ptr(),
                 offset as libc::c_ulonglong,
@@ -422,7 +313,7 @@ impl StorageVol {
         flags: u32,
     ) -> Result<(), Error> {
         unsafe {
-            let ret = virStorageVolUpload(
+            let ret = sys::virStorageVolUpload(
                 self.as_ptr(),
                 stream.as_ptr(),
                 offset as libc::c_ulonglong,
