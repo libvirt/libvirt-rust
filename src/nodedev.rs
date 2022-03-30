@@ -17,70 +17,12 @@
  */
 
 extern crate libc;
+extern crate virt_sys as sys;
 
 use std::{ptr, str};
 
-use crate::connect::sys::virConnectPtr;
-
 use crate::connect::Connect;
 use crate::error::Error;
-
-pub mod sys {
-    #[repr(C)]
-    pub struct virNodeDevice {}
-
-    pub type virNodeDevicePtr = *mut virNodeDevice;
-}
-
-#[link(name = "virt")]
-extern "C" {
-    fn virNodeDeviceLookupByName(
-        c: virConnectPtr,
-        id: *const libc::c_char,
-    ) -> sys::virNodeDevicePtr;
-    fn virNodeDeviceLookupSCSIHostByWWN(
-        c: virConnectPtr,
-        wwnn: *const libc::c_char,
-        wwpn: *const libc::c_char,
-        flags: libc::c_uint,
-    ) -> sys::virNodeDevicePtr;
-    fn virNodeDeviceCreateXML(
-        c: virConnectPtr,
-        xml: *const libc::c_char,
-        flags: libc::c_uint,
-    ) -> sys::virNodeDevicePtr;
-    fn virNodeDeviceDestroy(ptr: sys::virNodeDevicePtr) -> libc::c_int;
-    fn virNodeDeviceFree(ptr: sys::virNodeDevicePtr) -> libc::c_int;
-    fn virNodeDeviceGetName(ptr: sys::virNodeDevicePtr) -> *const libc::c_char;
-    fn virNodeDeviceGetParent(ptr: sys::virNodeDevicePtr) -> *const libc::c_char;
-    fn virNodeDeviceGetXMLDesc(
-        ptr: sys::virNodeDevicePtr,
-        flags: libc::c_uint,
-    ) -> *mut libc::c_char;
-
-    fn virNodeNumOfDevices(
-        ptr: virConnectPtr,
-        cap: *const libc::c_char,
-        flags: libc::c_uint,
-    ) -> libc::c_int;
-    fn virNodeDeviceReAttach(ptr: sys::virNodeDevicePtr) -> libc::c_int;
-    fn virNodeDeviceReset(ptr: sys::virNodeDevicePtr) -> libc::c_int;
-    fn virNodeDeviceDettach(ptr: sys::virNodeDevicePtr) -> libc::c_int;
-    fn virNodeDeviceNumOfCaps(ptr: sys::virNodeDevicePtr) -> libc::c_int;
-    fn virNodeDeviceDetachFlags(
-        ptr: sys::virNodeDevicePtr,
-        drivername: *const libc::c_char,
-        flags: libc::c_uint,
-    ) -> libc::c_int;
-    fn virNodeDeviceListCaps(
-        ptr: sys::virNodeDevicePtr,
-        names: *mut *mut libc::c_char,
-        maxnames: libc::c_int,
-    ) -> libc::c_int;
-}
-
-pub type NodeDeviceXMLFlags = self::libc::c_uint;
-pub const VIR_INTERFACE_XML_INACTIVE: NodeDeviceXMLFlags = 1 << 0;
 
 /// Provides APIs for the management of nodedevs.
 ///
@@ -114,7 +56,7 @@ impl NodeDevice {
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<NodeDevice, Error> {
         unsafe {
-            let ptr = virNodeDeviceLookupByName(conn.as_ptr(), string_to_c_chars!(id));
+            let ptr = sys::virNodeDeviceLookupByName(conn.as_ptr(), string_to_c_chars!(id));
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -129,7 +71,7 @@ impl NodeDevice {
         flags: u32,
     ) -> Result<NodeDevice, Error> {
         unsafe {
-            let ptr = virNodeDeviceLookupSCSIHostByWWN(
+            let ptr = sys::virNodeDeviceLookupSCSIHostByWWN(
                 conn.as_ptr(),
                 string_to_c_chars!(wwnn),
                 string_to_c_chars!(wwpn),
@@ -144,7 +86,7 @@ impl NodeDevice {
 
     pub fn create_xml(conn: &Connect, xml: &str, flags: u32) -> Result<NodeDevice, Error> {
         unsafe {
-            let ptr = virNodeDeviceCreateXML(
+            let ptr = sys::virNodeDeviceCreateXML(
                 conn.as_ptr(),
                 string_to_c_chars!(xml),
                 flags as libc::c_uint,
@@ -158,7 +100,7 @@ impl NodeDevice {
 
     pub fn get_name(&self) -> Result<String, Error> {
         unsafe {
-            let n = virNodeDeviceGetName(self.as_ptr());
+            let n = sys::virNodeDeviceGetName(self.as_ptr());
             if n.is_null() {
                 return Err(Error::new());
             }
@@ -168,7 +110,7 @@ impl NodeDevice {
 
     pub fn get_parent(&self) -> Result<String, Error> {
         unsafe {
-            let n = virNodeDeviceGetParent(self.as_ptr());
+            let n = sys::virNodeDeviceGetParent(self.as_ptr());
             if n.is_null() {
                 return Err(Error::new());
             }
@@ -178,7 +120,7 @@ impl NodeDevice {
 
     pub fn get_xml_desc(&self, flags: u32) -> Result<String, Error> {
         unsafe {
-            let xml = virNodeDeviceGetXMLDesc(self.as_ptr(), flags as libc::c_uint);
+            let xml = sys::virNodeDeviceGetXMLDesc(self.as_ptr(), flags as libc::c_uint);
             if xml.is_null() {
                 return Err(Error::new());
             }
@@ -188,7 +130,7 @@ impl NodeDevice {
 
     pub fn destroy(&self) -> Result<u32, Error> {
         unsafe {
-            let ret = virNodeDeviceDestroy(self.as_ptr());
+            let ret = sys::virNodeDeviceDestroy(self.as_ptr());
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -198,7 +140,7 @@ impl NodeDevice {
 
     pub fn detach(&self) -> Result<u32, Error> {
         unsafe {
-            let ret = virNodeDeviceDettach(self.as_ptr());
+            let ret = sys::virNodeDeviceDettach(self.as_ptr());
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -208,7 +150,7 @@ impl NodeDevice {
 
     pub fn reset(&self) -> Result<u32, Error> {
         unsafe {
-            let ret = virNodeDeviceReset(self.as_ptr());
+            let ret = sys::virNodeDeviceReset(self.as_ptr());
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -218,7 +160,7 @@ impl NodeDevice {
 
     pub fn reattach(&self) -> Result<u32, Error> {
         unsafe {
-            let ret = virNodeDeviceReAttach(self.as_ptr());
+            let ret = sys::virNodeDeviceReAttach(self.as_ptr());
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -228,7 +170,7 @@ impl NodeDevice {
 
     pub fn detach_flags(&self, driver: &str, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let ret = virNodeDeviceDetachFlags(
+            let ret = sys::virNodeDeviceDetachFlags(
                 self.as_ptr(),
                 string_to_c_chars!(driver),
                 flags as libc::c_uint,
@@ -242,7 +184,7 @@ impl NodeDevice {
 
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
-            if virNodeDeviceFree(self.as_ptr()) == -1 {
+            if sys::virNodeDeviceFree(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
             self.ptr = None;
@@ -252,7 +194,7 @@ impl NodeDevice {
 
     pub fn num_of_devices(conn: &Connect, cap: &str, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let num = virNodeNumOfDevices(
+            let num = sys::virNodeNumOfDevices(
                 conn.as_ptr(),
                 string_to_c_chars!(cap),
                 flags as libc::c_uint,
@@ -266,7 +208,7 @@ impl NodeDevice {
 
     pub fn num_of_caps(&self) -> Result<u32, Error> {
         unsafe {
-            let num = virNodeDeviceNumOfCaps(self.as_ptr());
+            let num = sys::virNodeDeviceNumOfCaps(self.as_ptr());
             if num == -1 {
                 return Err(Error::new());
             }
@@ -278,7 +220,7 @@ impl NodeDevice {
     pub fn list_caps(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
-            let size = virNodeDeviceListCaps(self.as_ptr(), names.as_mut_ptr(), 1024);
+            let size = sys::virNodeDeviceListCaps(self.as_ptr(), names.as_mut_ptr(), 1024);
             if size == -1 {
                 return Err(Error::new());
             }
