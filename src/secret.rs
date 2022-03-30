@@ -55,7 +55,7 @@ extern "C" {
     ) -> libc::c_int;
     fn virSecretGetValue(
         ptr: sys::virSecretPtr,
-        vsize: libc::c_uint,
+        vsize: *mut libc::size_t,
         flags: libc::c_uint,
     ) -> *const libc::c_uchar;
     fn virSecretGetConnect(ptr: sys::virSecretPtr) -> virConnectPtr;
@@ -210,16 +210,17 @@ impl Secret {
         }
     }
 
-    pub fn get_value(&self, size: isize, flags: u32) -> Result<Vec<u8>, Error> {
+    pub fn get_value(&self, flags: u32) -> Result<Vec<u8>, Error> {
         unsafe {
-            let n = virSecretGetValue(self.as_ptr(), size as libc::c_uint, flags as libc::c_uint);
+            let mut size: usize = 0;
+            let n = virSecretGetValue(self.as_ptr(), &mut size, flags as libc::c_uint);
             if n.is_null() {
                 return Err(Error::new());
             }
 
             let mut array: Vec<u8> = Vec::new();
             for x in 0..size {
-                array.push(*n.offset(x))
+                array.push(*n.add(x))
             }
             Ok(array)
         }
