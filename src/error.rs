@@ -17,31 +17,10 @@
  */
 
 extern crate libc;
+extern crate virt_sys as sys;
 
 use std::error::Error as StdError;
 use std::fmt::{Display, Formatter, Result as FmtResult};
-
-pub mod sys {
-    extern crate libc;
-
-    #[repr(C)]
-    pub struct virError {
-        pub code: libc::c_int,
-        pub domain: libc::c_int,
-        pub message: *mut libc::c_char,
-        pub level: libc::c_uint,
-    }
-
-    pub type virErrorPtr = *mut virError;
-
-    pub type virErrorFunc = Option<extern "C" fn(userData: *mut libc::c_void, error: virErrorPtr)>;
-}
-
-#[link(name = "virt")]
-extern "C" {
-    fn virGetLastError() -> sys::virErrorPtr;
-    fn virSetErrorFunc(userData: *mut libc::c_void, handler: sys::virErrorFunc);
-}
 
 #[derive(Debug, PartialEq)]
 #[repr(C)]
@@ -70,7 +49,7 @@ extern "C" fn noop(_data: *mut libc::c_void, _error: sys::virErrorPtr) {}
 impl Error {
     pub fn new() -> Error {
         unsafe {
-            let ptr: sys::virErrorPtr = virGetLastError();
+            let ptr: sys::virErrorPtr = sys::virGetLastError();
             Error {
                 code: (*ptr).code,
                 domain: (*ptr).domain,
@@ -84,7 +63,7 @@ impl Error {
     /// Use this to disable the default printing to stdout of all errors by virt
     pub fn clear_error_func() {
         unsafe {
-            virSetErrorFunc(std::ptr::null_mut(), Some(noop));
+            sys::virSetErrorFunc(std::ptr::null_mut(), Some(noop));
         }
     }
 }
