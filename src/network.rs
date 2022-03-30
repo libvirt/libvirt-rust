@@ -56,12 +56,12 @@ extern "C" {
     fn virNetworkGetXMLDesc(ptr: sys::virNetworkPtr, flags: libc::c_uint) -> *mut libc::c_char;
     fn virNetworkGetBridgeName(ptr: sys::virNetworkPtr) -> *mut libc::c_char;
     fn virNetworkGetAutostart(ptr: sys::virNetworkPtr, autostart: *mut libc::c_int) -> libc::c_int;
-    fn virNetworkSetAutostart(ptr: sys::virNetworkPtr, autostart: libc::c_uint) -> libc::c_int;
+    fn virNetworkSetAutostart(ptr: sys::virNetworkPtr, autostart: libc::c_int) -> libc::c_int;
     fn virNetworkUpdate(
         ptr: sys::virNetworkPtr,
         cmptr: libc::c_uint,
         section: libc::c_uint,
-        index: libc::c_uint,
+        index: libc::c_int,
         xml: *const libc::c_char,
         flags: libc::c_uint,
     ) -> libc::c_int;
@@ -293,7 +293,7 @@ impl Network {
 
     pub fn set_autostart(&self, autostart: bool) -> Result<u32, Error> {
         unsafe {
-            let ret = virNetworkSetAutostart(self.as_ptr(), autostart as libc::c_uint);
+            let ret = virNetworkSetAutostart(self.as_ptr(), autostart as libc::c_int);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -314,7 +314,7 @@ impl Network {
                 self.as_ptr(),
                 cmd,
                 section,
-                index as libc::c_uint,
+                index as libc::c_int,
                 string_to_c_chars!(xml),
                 flags,
             );
