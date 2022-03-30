@@ -59,7 +59,7 @@ extern "C" {
     ) -> *mut libc::c_char;
 
     fn virNodeNumOfDevices(
-        ptr: sys::virNodeDevicePtr,
+        ptr: virConnectPtr,
         cap: *const libc::c_char,
         flags: libc::c_uint,
     ) -> libc::c_int;
@@ -250,10 +250,10 @@ impl NodeDevice {
         }
     }
 
-    pub fn num_of_devices(&self, cap: &str, flags: u32) -> Result<u32, Error> {
+    pub fn num_of_devices(conn: &Connect, cap: &str, flags: u32) -> Result<u32, Error> {
         unsafe {
             let num = virNodeNumOfDevices(
-                self.as_ptr(),
+                conn.as_ptr(),
                 string_to_c_chars!(cap),
                 flags as libc::c_uint,
             );
