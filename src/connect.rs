@@ -21,7 +21,6 @@ extern crate libc;
 use std::{mem, ptr, str};
 
 use crate::domain::sys::{virDomainPtr, virDomainStatsRecordPtr};
-use crate::network::sys::virNetworkPtr;
 use crate::nodedev::sys::virNodeDevicePtr;
 use crate::secret::sys::virSecretPtr;
 use crate::storage_pool::sys::virStoragePoolPtr;
@@ -164,7 +163,7 @@ extern "C" {
     ) -> libc::c_int;
     fn virConnectListAllNetworks(
         ptr: sys::virConnectPtr,
-        networks: *mut *mut virNetworkPtr,
+        networks: *mut *mut virt_sys::virNetworkPtr,
         flags: libc::c_uint,
     ) -> libc::c_int;
     fn virConnectListAllInterfaces(
@@ -947,7 +946,7 @@ impl Connect {
         flags: ConnectListAllNetworksFlags,
     ) -> Result<Vec<Network>, Error> {
         unsafe {
-            let mut networks: *mut virNetworkPtr = ptr::null_mut();
+            let mut networks: *mut virt_sys::virNetworkPtr = ptr::null_mut();
             let size =
                 virConnectListAllNetworks(self.as_ptr(), &mut networks, flags as libc::c_uint);
             if size == -1 {
