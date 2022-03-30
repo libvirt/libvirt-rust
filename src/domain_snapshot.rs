@@ -60,7 +60,7 @@ extern "C" {
     fn virDomainSnapshotFree(ptr: sys::virDomainSnapshotPtr) -> libc::c_int;
     fn virDomainSnapshotCurrent(d: virDomainPtr, flags: libc::c_uint) -> sys::virDomainSnapshotPtr;
     fn virDomainSnapshotGetParent(
-        d: virDomainPtr,
+        d: sys::virDomainSnapshotPtr,
         flags: libc::c_uint,
     ) -> sys::virDomainSnapshotPtr;
     fn virDomainSnapshotLookupByName(
@@ -192,9 +192,9 @@ impl DomainSnapshot {
     }
 
     /// Get a handle to the parent snapshot, if one exists.
-    pub fn get_parent(dom: &Domain, flags: u32) -> Result<DomainSnapshot, Error> {
+    pub fn get_parent(&self, flags: u32) -> Result<DomainSnapshot, Error> {
         unsafe {
-            let ptr = virDomainSnapshotGetParent(dom.as_ptr(), flags as libc::c_uint);
+            let ptr = virDomainSnapshotGetParent(self.as_ptr(), flags as libc::c_uint);
             if ptr.is_null() {
                 return Err(Error::new());
             }
