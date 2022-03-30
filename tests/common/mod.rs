@@ -61,7 +61,7 @@ pub fn clean(mut dom: Domain) {
 }
 
 pub fn clean_iface(mut iface: Interface) {
-    if let Err(_) = iface.destroy() {}
+    if let Err(_) = iface.destroy(0) {}
     if let Err(_) = iface.undefine() {}
     assert_eq!(Ok(()), iface.free())
 }

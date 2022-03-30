@@ -45,7 +45,7 @@ extern "C" {
         flags: libc::c_uint,
     ) -> sys::virInterfacePtr;
     fn virInterfaceCreate(ptr: sys::virInterfacePtr, flags: libc::c_uint) -> libc::c_int;
-    fn virInterfaceDestroy(ptr: sys::virInterfacePtr) -> libc::c_int;
+    fn virInterfaceDestroy(ptr: sys::virInterfacePtr, flags: libc::c_uint) -> libc::c_int;
     fn virInterfaceUndefine(ptr: sys::virInterfacePtr) -> libc::c_int;
     fn virInterfaceFree(ptr: sys::virInterfacePtr) -> libc::c_int;
     fn virInterfaceIsActive(ptr: sys::virInterfacePtr) -> libc::c_int;
@@ -172,9 +172,9 @@ impl Interface {
         }
     }
 
-    pub fn destroy(&self) -> Result<(), Error> {
+    pub fn destroy(&self, flags: u32) -> Result<(), Error> {
         unsafe {
-            if virInterfaceDestroy(self.as_ptr()) == -1 {
+            if virInterfaceDestroy(self.as_ptr(), flags) == -1 {
                 return Err(Error::new());
             }
             Ok(())
