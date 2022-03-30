@@ -80,13 +80,13 @@ pub mod sys {
     }
 
     pub type virDomainIPAddressPtr = *mut virDomainIPAddress;
-  
+
     #[repr(C)]
     pub struct virDomainInterface {
         pub name: *mut libc::c_char,
         pub hwaddr: *mut libc::c_char,
-        pub naddrs: libc::c_uint,	
-        pub addrs: virDomainIPAddressPtr,	
+        pub naddrs: libc::c_uint,
+        pub addrs: virDomainIPAddressPtr,
     }
 
     pub type virDomainInterfacePtr = *mut virDomainInterface;
@@ -469,7 +469,7 @@ extern "C" {
         holdtime: libc::c_uint,
         keycodes: *mut libc::c_uint,
         nkeycodes: libc::c_int,
-        flags: libc::c_uint
+        flags: libc::c_uint,
     ) -> libc::c_int;
 }
 
@@ -734,7 +734,7 @@ impl Interface {
     pub fn from_ptr(ptr: sys::virDomainInterfacePtr) -> Interface {
         unsafe {
             let naddrs = (*ptr).naddrs;
-            let mut addrs = vec!();
+            let mut addrs = vec![];
             for x in 0..naddrs as isize {
                 addrs.push(IPAddress::from_ptr((*ptr).addrs.offset(x)));
             }
@@ -1785,7 +1785,11 @@ impl Domain {
         }
     }
 
-    pub fn interface_addresses(&self, source: DomainInterfaceAddressesSource, flags: u32) -> Result<Vec<Interface>, Error> {
+    pub fn interface_addresses(
+        &self,
+        source: DomainInterfaceAddressesSource,
+        flags: u32,
+    ) -> Result<Vec<Interface>, Error> {
         unsafe {
             let mut addresses: *mut sys::virDomainInterfacePtr = ptr::null_mut();
             let size = virDomainInterfaceAddresses(self.as_ptr(), &mut addresses, source, flags);
@@ -2395,7 +2399,7 @@ impl Domain {
         holdtime: u32,
         keycodes: *mut u32,
         nkeycodes: i32,
-        flags: u32
+        flags: u32,
     ) -> Result<(), Error> {
         unsafe {
             if virDomainSendKey(
@@ -2404,8 +2408,9 @@ impl Domain {
                 holdtime as libc::c_uint,
                 keycodes as *mut libc::c_uint,
                 nkeycodes as libc::c_int,
-                flags as libc::c_uint
-            ) == -1 {
+                flags as libc::c_uint,
+            ) == -1
+            {
                 return Err(Error::new());
             }
             Ok(())

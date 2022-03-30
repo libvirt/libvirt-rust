@@ -1,5 +1,5 @@
-use std::process::Command;
 use std::path::PathBuf;
+use std::process::Command;
 
 fn cargo_build(directory: &str) -> Result<(), String> {
     let output = Command::new("cargo")
@@ -9,7 +9,7 @@ fn cargo_build(directory: &str) -> Result<(), String> {
         .map_err(|e| e.to_string())?;
     if !output.status.success() {
         let std_err = std::string::String::from_utf8(output.stderr).unwrap();
-        return Err(std_err)
+        return Err(std_err);
     }
     Ok(())
 }
@@ -27,7 +27,7 @@ fn link(directory: &str) -> Result<(), String> {
         .map_err(|e| e.to_string())?;
     if !output.status.success() {
         let std_err = std::string::String::from_utf8(output.stderr).unwrap();
-        return Err(std_err)
+        return Err(std_err);
     }
     Ok(())
 }

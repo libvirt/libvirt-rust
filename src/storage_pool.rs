@@ -108,7 +108,7 @@ extern "C" {
     fn virStoragePoolListAllVolumes(
         ptr: sys::virStoragePoolPtr,
         volumes: *mut *mut virStorageVolPtr,
-        flags: libc::c_uint
+        flags: libc::c_uint,
     ) -> libc::c_int;
 }
 
@@ -294,10 +294,14 @@ impl StoragePool {
         }
     }
 
-    pub fn list_all_volumes(&self, flags: StoragePoolListAllVolumesFlags) -> Result<Vec<StorageVol>, Error> {
+    pub fn list_all_volumes(
+        &self,
+        flags: StoragePoolListAllVolumesFlags,
+    ) -> Result<Vec<StorageVol>, Error> {
         unsafe {
             let mut volumes: *mut virStorageVolPtr = ptr::null_mut();
-            let size = virStoragePoolListAllVolumes(self.as_ptr(), &mut volumes, flags as libc::c_uint);
+            let size =
+                virStoragePoolListAllVolumes(self.as_ptr(), &mut volumes, flags as libc::c_uint);
             if size == -1 {
                 return Err(Error::new());
             }
