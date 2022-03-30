@@ -72,7 +72,6 @@ pub mod sys {
     pub type virConnectAuthPtr = *mut virConnectAuth;
 
     #[repr(C)]
-    #[derive(Default)]
     pub struct virNodeInfo {
         pub model: [libc::c_char; 32],
         pub memory: libc::c_ulong,
@@ -1528,20 +1527,21 @@ impl Connect {
 
     pub fn get_node_info(&self) -> Result<NodeInfo, Error> {
         unsafe {
-            let pinfo = &mut sys::virNodeInfo::default();
-            let res = virNodeGetInfo(self.as_ptr(), pinfo);
+            let mut pinfo = mem::MaybeUninit::uninit();
+            let res = virNodeGetInfo(self.as_ptr(), pinfo.as_mut_ptr());
             if res == -1 {
                 return Err(Error::new());
             }
+            let pinfo = pinfo.assume_init();
             Ok(NodeInfo {
-                model: c_chars_to_string!((*pinfo).model.as_ptr(), nofree),
-                memory: (*pinfo).memory as u64,
-                cpus: (*pinfo).cpus as u32,
-                mhz: (*pinfo).mhz as u32,
-                nodes: (*pinfo).nodes as u32,
-                sockets: (*pinfo).sockets as u32,
-                cores: (*pinfo).cores as u32,
-                threads: (*pinfo).threads as u32,
+                model: c_chars_to_string!(pinfo.model.as_ptr(), nofree),
+                memory: pinfo.memory as u64,
+                cpus: pinfo.cpus as u32,
+                mhz: pinfo.mhz as u32,
+                nodes: pinfo.nodes as u32,
+                sockets: pinfo.sockets as u32,
+                cores: pinfo.cores as u32,
+                threads: pinfo.threads as u32,
             })
         }
     }
