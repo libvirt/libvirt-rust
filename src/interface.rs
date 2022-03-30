@@ -17,46 +17,12 @@
  */
 
 extern crate libc;
+extern crate virt_sys as sys;
 
 use std::str;
 
-use crate::connect::sys::virConnectPtr;
-
 use crate::connect::Connect;
 use crate::error::Error;
-
-pub mod sys {
-    #[repr(C)]
-    pub struct virInterface {}
-
-    pub type virInterfacePtr = *mut virInterface;
-}
-
-#[link(name = "virt")]
-extern "C" {
-    fn virInterfaceLookupByName(c: virConnectPtr, id: *const libc::c_char) -> sys::virInterfacePtr;
-    fn virInterfaceLookupByMACString(
-        c: virConnectPtr,
-        id: *const libc::c_char,
-    ) -> sys::virInterfacePtr;
-    fn virInterfaceDefineXML(
-        c: virConnectPtr,
-        xml: *const libc::c_char,
-        flags: libc::c_uint,
-    ) -> sys::virInterfacePtr;
-    fn virInterfaceCreate(ptr: sys::virInterfacePtr, flags: libc::c_uint) -> libc::c_int;
-    fn virInterfaceDestroy(ptr: sys::virInterfacePtr, flags: libc::c_uint) -> libc::c_int;
-    fn virInterfaceUndefine(ptr: sys::virInterfacePtr) -> libc::c_int;
-    fn virInterfaceFree(ptr: sys::virInterfacePtr) -> libc::c_int;
-    fn virInterfaceIsActive(ptr: sys::virInterfacePtr) -> libc::c_int;
-    fn virInterfaceGetName(ptr: sys::virInterfacePtr) -> *const libc::c_char;
-    fn virInterfaceGetMACString(ptr: sys::virInterfacePtr) -> *const libc::c_char;
-    fn virInterfaceGetXMLDesc(ptr: sys::virInterfacePtr, flags: libc::c_uint) -> *mut libc::c_char;
-    fn virInterfaceGetConnect(ptr: sys::virInterfacePtr) -> virConnectPtr;
-}
-
-pub type InterfaceXMLFlags = self::libc::c_uint;
-pub const VIR_INTERFACE_XML_INACTIVE: InterfaceXMLFlags = 1 << 0;
 
 /// Provides APIs for the management of interfaces.
 ///
@@ -90,7 +56,7 @@ impl Interface {
 
     pub fn get_connect(&self) -> Result<Connect, Error> {
         unsafe {
-            let ptr = virInterfaceGetConnect(self.as_ptr());
+            let ptr = sys::virInterfaceGetConnect(self.as_ptr());
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -100,7 +66,7 @@ impl Interface {
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<Interface, Error> {
         unsafe {
-            let ptr = virInterfaceLookupByName(conn.as_ptr(), string_to_c_chars!(id));
+            let ptr = sys::virInterfaceLookupByName(conn.as_ptr(), string_to_c_chars!(id));
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -110,7 +76,7 @@ impl Interface {
 
     pub fn define_xml(conn: &Connect, xml: &str, flags: u32) -> Result<Interface, Error> {
         unsafe {
-            let ptr = virInterfaceDefineXML(
+            let ptr = sys::virInterfaceDefineXML(
                 conn.as_ptr(),
                 string_to_c_chars!(xml),
                 flags as libc::c_uint,
@@ -124,7 +90,7 @@ impl Interface {
 
     pub fn lookup_by_mac_string(conn: &Connect, id: &str) -> Result<Interface, Error> {
         unsafe {
-            let ptr = virInterfaceLookupByMACString(conn.as_ptr(), string_to_c_chars!(id));
+            let ptr = sys::virInterfaceLookupByMACString(conn.as_ptr(), string_to_c_chars!(id));
             if ptr.is_null() {
                 return Err(Error::new());
             }
@@ -134,7 +100,7 @@ impl Interface {
 
     pub fn get_name(&self) -> Result<String, Error> {
         unsafe {
-            let n = virInterfaceGetName(self.as_ptr());
+            let n = sys::virInterfaceGetName(self.as_ptr());
             if n.is_null() {
                 return Err(Error::new());
             }
@@ -144,7 +110,7 @@ impl Interface {
 
     pub fn get_mac_string(&self) -> Result<String, Error> {
         unsafe {
-            let mac = virInterfaceGetMACString(self.as_ptr());
+            let mac = sys::virInterfaceGetMACString(self.as_ptr());
             if mac.is_null() {
                 return Err(Error::new());
             }
@@ -152,9 +118,9 @@ impl Interface {
         }
     }
 
-    pub fn get_xml_desc(&self, flags: InterfaceXMLFlags) -> Result<String, Error> {
+    pub fn get_xml_desc(&self, flags: sys::virInterfaceXMLFlags) -> Result<String, Error> {
         unsafe {
-            let xml = virInterfaceGetXMLDesc(self.as_ptr(), flags);
+            let xml = sys::virInterfaceGetXMLDesc(self.as_ptr(), flags);
             if xml.is_null() {
                 return Err(Error::new());
             }
@@ -162,9 +128,9 @@ impl Interface {
         }
     }
 
-    pub fn create(&self, flags: InterfaceXMLFlags) -> Result<u32, Error> {
+    pub fn create(&self, flags: sys::virInterfaceXMLFlags) -> Result<u32, Error> {
         unsafe {
-            let ret = virInterfaceCreate(self.as_ptr(), flags);
+            let ret = sys::virInterfaceCreate(self.as_ptr(), flags);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -174,7 +140,7 @@ impl Interface {
 
     pub fn destroy(&self, flags: u32) -> Result<(), Error> {
         unsafe {
-            if virInterfaceDestroy(self.as_ptr(), flags) == -1 {
+            if sys::virInterfaceDestroy(self.as_ptr(), flags) == -1 {
                 return Err(Error::new());
             }
             Ok(())
@@ -183,7 +149,7 @@ impl Interface {
 
     pub fn undefine(&self) -> Result<(), Error> {
         unsafe {
-            if virInterfaceUndefine(self.as_ptr()) == -1 {
+            if sys::virInterfaceUndefine(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
             Ok(())
@@ -192,7 +158,7 @@ impl Interface {
 
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
-            if virInterfaceFree(self.as_ptr()) == -1 {
+            if sys::virInterfaceFree(self.as_ptr()) == -1 {
                 return Err(Error::new());
             }
             self.ptr = None;
@@ -202,7 +168,7 @@ impl Interface {
 
     pub fn is_active(&self) -> Result<bool, Error> {
         unsafe {
-            let ret = virInterfaceIsActive(self.as_ptr());
+            let ret = sys::virInterfaceIsActive(self.as_ptr());
             if ret == -1 {
                 return Err(Error::new());
             }
