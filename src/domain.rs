@@ -42,7 +42,6 @@ pub mod sys {
     pub type virDomainPtr = *mut virDomain;
 
     #[repr(C)]
-    #[derive(Default)]
     pub struct virDomainInfo {
         pub state: libc::c_ulong,
         pub maxMem: libc::c_ulong,
@@ -63,7 +62,6 @@ pub mod sys {
     pub type virDomainStatsRecordPtr = *mut virDomainStatsRecord;
 
     #[repr(C)]
-    #[derive(Default)]
     pub struct virDomainBlockInfo {
         pub capacity: libc::c_ulonglong,
         pub allocation: libc::c_ulonglong,
@@ -92,7 +90,6 @@ pub mod sys {
     pub type virDomainInterfacePtr = *mut virDomainInterface;
 
     #[repr(C)]
-    #[derive(Default)]
     pub struct virDomainInterfaceStats {
         pub rx_bytes: libc::c_longlong,
         pub rx_packets: libc::c_longlong,
@@ -107,7 +104,6 @@ pub mod sys {
     pub type virDomainInterfaceStatsPtr = *mut virDomainInterfaceStats;
 
     #[repr(C)]
-    #[derive(Default)]
     pub struct virDomainMemoryStats {
         pub tag: libc::c_int,
         pub val: libc::c_ulonglong,
@@ -1113,12 +1109,12 @@ impl Domain {
     /// set of the information can be extracted.
     pub fn get_info(&self) -> Result<DomainInfo, Error> {
         unsafe {
-            let pinfo = &mut sys::virDomainInfo::default();
-            let res = virDomainGetInfo(self.as_ptr(), pinfo);
+            let mut pinfo = mem::MaybeUninit::uninit();
+            let res = virDomainGetInfo(self.as_ptr(), pinfo.as_mut_ptr());
             if res == -1 {
                 return Err(Error::new());
             }
-            Ok(DomainInfo::from_ptr(pinfo))
+            Ok(DomainInfo::from_ptr(&mut pinfo.assume_init()))
         }
     }
 
@@ -1630,17 +1626,17 @@ impl Domain {
 
     pub fn get_block_info(&self, disk: &str, flags: u32) -> Result<BlockInfo, Error> {
         unsafe {
-            let pinfo = &mut sys::virDomainBlockInfo::default();
+            let mut pinfo = mem::MaybeUninit::uninit();
             let ret = virDomainGetBlockInfo(
                 self.as_ptr(),
                 string_to_c_chars!(disk),
-                pinfo,
+                pinfo.as_mut_ptr(),
                 flags as libc::c_uint,
             );
             if ret == -1 {
                 return Err(Error::new());
             }
-            Ok(BlockInfo::from_ptr(pinfo))
+            Ok(BlockInfo::from_ptr(&mut pinfo.assume_init()))
         }
     }
 
@@ -1814,33 +1810,33 @@ impl Domain {
 
     pub fn interface_stats(&self, path: &str) -> Result<InterfaceStats, Error> {
         unsafe {
-            let pinfo = &mut sys::virDomainInterfaceStats::default();
+            let mut pinfo = mem::MaybeUninit::uninit();
             let ret = virDomainInterfaceStats(
                 self.as_ptr(),
                 string_to_c_chars!(path),
-                pinfo,
+                pinfo.as_mut_ptr(),
                 mem::size_of::<sys::virDomainInterfaceStats>(),
             );
             if ret == -1 {
                 return Err(Error::new());
             }
-            Ok(InterfaceStats::from_ptr(pinfo))
+            Ok(InterfaceStats::from_ptr(&mut pinfo.assume_init()))
         }
     }
 
     pub fn memory_stats(&self, nr_stats: u32, flags: u32) -> Result<MemoryStats, Error> {
         unsafe {
-            let pinfo = &mut sys::virDomainMemoryStats::default();
+            let mut pinfo = mem::MaybeUninit::uninit();
             let ret = virDomainMemoryStats(
                 self.as_ptr(),
-                pinfo,
+                pinfo.as_mut_ptr(),
                 nr_stats as libc::c_uint,
                 flags as libc::c_uint,
             );
             if ret == -1 {
                 return Err(Error::new());
             }
-            Ok(MemoryStats::from_ptr(pinfo))
+            Ok(MemoryStats::from_ptr(&mut pinfo.assume_init()))
         }
     }
 
