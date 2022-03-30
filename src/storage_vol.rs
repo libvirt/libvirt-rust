@@ -18,7 +18,7 @@
 
 extern crate libc;
 
-use std::str;
+use std::{mem, str};
 
 use crate::connect::sys::virConnectPtr;
 use crate::storage_pool::sys::virStoragePoolPtr;
@@ -38,7 +38,6 @@ pub mod sys {
     pub type virStorageVolPtr = *mut virStorageVol;
 
     #[repr(C)]
-    #[derive(Default)]
     pub struct virStorageVolInfo {
         pub kind: libc::c_int,
         pub capacity: libc::c_ulonglong,
@@ -373,23 +372,24 @@ impl StorageVol {
 
     pub fn get_info(&self) -> Result<StorageVolInfo, Error> {
         unsafe {
-            let pinfo = &mut sys::virStorageVolInfo::default();
-            let res = virStorageVolGetInfo(self.as_ptr(), pinfo);
+            let mut pinfo = mem::MaybeUninit::uninit();
+            let res = virStorageVolGetInfo(self.as_ptr(), pinfo.as_mut_ptr());
             if res == -1 {
                 return Err(Error::new());
             }
-            Ok(StorageVolInfo::from_ptr(pinfo))
+            Ok(StorageVolInfo::from_ptr(&mut pinfo.assume_init()))
         }
     }
 
     pub fn get_info_flags(&self, flags: u32) -> Result<StorageVolInfo, Error> {
         unsafe {
-            let pinfo = &mut sys::virStorageVolInfo::default();
-            let res = virStorageVolGetInfoFlags(self.as_ptr(), pinfo, flags as libc::c_uint);
+            let mut pinfo = mem::MaybeUninit::uninit();
+            let res =
+                virStorageVolGetInfoFlags(self.as_ptr(), pinfo.as_mut_ptr(), flags as libc::c_uint);
             if res == -1 {
                 return Err(Error::new());
             }
-            Ok(StorageVolInfo::from_ptr(pinfo))
+            Ok(StorageVolInfo::from_ptr(&mut pinfo.assume_init()))
         }
     }
 

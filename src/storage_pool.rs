@@ -18,7 +18,7 @@
 
 extern crate libc;
 
-use std::{ptr, str};
+use std::{mem, ptr, str};
 
 use crate::connect::sys::virConnectPtr;
 use crate::storage_vol::sys::virStorageVolPtr;
@@ -36,7 +36,6 @@ pub mod sys {
     pub type virStoragePoolPtr = *mut virStoragePool;
 
     #[repr(C)]
-    #[derive(Default)]
     pub struct virStoragePoolInfo {
         pub state: libc::c_int,
         pub capacity: libc::c_ulonglong,
@@ -447,12 +446,12 @@ impl StoragePool {
 
     pub fn get_info(&self) -> Result<StoragePoolInfo, Error> {
         unsafe {
-            let pinfo = &mut sys::virStoragePoolInfo::default();
-            let res = virStoragePoolGetInfo(self.as_ptr(), pinfo);
+            let mut pinfo = mem::MaybeUninit::uninit();
+            let res = virStoragePoolGetInfo(self.as_ptr(), pinfo.as_mut_ptr());
             if res == -1 {
                 return Err(Error::new());
             }
-            Ok(StoragePoolInfo::from_ptr(pinfo))
+            Ok(StoragePoolInfo::from_ptr(&mut pinfo.assume_init()))
         }
     }
 }
