@@ -6,7 +6,7 @@
 
 FROM quay.io/centos/centos:stream9
 
-RUN dnf update -y && \
+RUN dnf distro-sync -y && \
     dnf install 'dnf-command(config-manager)' -y && \
     dnf config-manager --set-enabled -y crb && \
     dnf install -y \
