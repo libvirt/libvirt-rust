@@ -278,6 +278,7 @@ impl StoragePool {
         }
     }
 
+    #[allow(clippy::needless_range_loop)]
     pub fn list_volumes(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];

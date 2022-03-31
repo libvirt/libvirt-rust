@@ -274,6 +274,7 @@ impl NodeDevice {
         }
     }
 
+    #[allow(clippy::needless_range_loop)]
     pub fn list_caps(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];

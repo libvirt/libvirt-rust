@@ -762,6 +762,7 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
+    #[allow(clippy::needless_range_loop)]
     pub fn list_domains(&self) -> Result<Vec<u32>, Error> {
         unsafe {
             let mut ids: [libc::c_int; 512] = [0; 512];
@@ -798,6 +799,7 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
+    #[allow(clippy::needless_range_loop)]
     pub fn list_interfaces(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
@@ -834,6 +836,7 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
+    #[allow(clippy::needless_range_loop)]
     pub fn list_networks(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
@@ -850,6 +853,7 @@ impl Connect {
         }
     }
 
+    #[allow(clippy::needless_range_loop)]
     pub fn list_nw_filters(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
@@ -866,6 +870,7 @@ impl Connect {
         }
     }
 
+    #[allow(clippy::needless_range_loop)]
     pub fn list_secrets(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
@@ -902,6 +907,7 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
+    #[allow(clippy::needless_range_loop)]
     pub fn list_storage_pools(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
@@ -1087,6 +1093,7 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
+    #[allow(clippy::needless_range_loop)]
     pub fn list_defined_domains(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
@@ -1123,6 +1130,7 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
+    #[allow(clippy::needless_range_loop)]
     pub fn list_defined_interfaces(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
@@ -1159,6 +1167,7 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
+    #[allow(clippy::needless_range_loop)]
     pub fn list_defined_storage_pools(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
@@ -1195,6 +1204,7 @@ impl Connect {
     ///     "failed with code {}, message: {}", e.code, e.message)
     ///   }
     /// ```
+    #[allow(clippy::needless_range_loop)]
     pub fn list_defined_networks(&self) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
