@@ -820,8 +820,10 @@ pub struct SchedulerInfo {
 impl SchedulerInfo {
     pub fn from_vec(vec: Vec<virTypedParameter>, scheduler_type: String) -> SchedulerInfo {
         unsafe {
-            let mut ret = SchedulerInfo::default();
-            ret.scheduler_type = scheduler_type;
+            let mut ret = SchedulerInfo {
+                scheduler_type,
+                ..Default::default()
+            };
             for param in vec {
                 match str::from_utf8(CStr::from_ptr(param.field.as_ptr()).to_bytes()).unwrap() {
                     "cpu_shares" => ret.cpu_shares = Some(param.value as u64),
