@@ -82,7 +82,7 @@ impl Error {
     /// Use this to disable the default printing to stdout of all errors by virt
     pub fn clear_error_func() {
         unsafe {
-            virSetErrorFunc(0 as *mut libc::c_void, |_, _| {});
+            virSetErrorFunc(std::ptr::null_mut(), |_, _| {});
         }
     }
 }
