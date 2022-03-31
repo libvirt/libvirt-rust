@@ -742,7 +742,7 @@ impl Interface {
                 name: c_chars_to_string!((*ptr).name),
                 hwaddr: c_chars_to_string!((*ptr).hwaddr),
                 naddrs: naddrs as u64,
-                addrs: addrs,
+                addrs,
             }
         }
     }

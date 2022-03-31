@@ -467,10 +467,7 @@ pub struct ConnectAuth {
 
 impl ConnectAuth {
     pub fn new(creds: Vec<ConnectCredentialType>, callback: ConnectAuthCallback) -> ConnectAuth {
-        ConnectAuth {
-            creds: creds,
-            callback: callback,
-        }
+        ConnectAuth { creds, callback }
     }
 }
 
