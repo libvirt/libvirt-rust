@@ -102,3 +102,9 @@ impl Display for Error {
         )
     }
 }
+
+impl Default for Error {
+    fn default() -> Self {
+        Self::new()
+    }
+}
