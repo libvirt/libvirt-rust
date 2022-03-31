@@ -579,15 +579,14 @@ impl Connect {
         auth: &mut ConnectAuth,
         flags: ConnectFlags,
     ) -> Result<Connect, Error> {
-        let mut cauth = unsafe {
+        let mut cauth =
             // Safe because Rust forces to allocate all attributes of
             // the struct ConnectAuth.
             sys::virConnectAuth {
                 credtype: &mut auth.creds[0],
                 ncredtype: auth.creds.len() as libc::c_uint,
                 cb: connectCallback,
-                cbdata: mem::transmute(auth.callback),
-            }
+                cbdata: auth.callback as *mut _,
         };
         let c = unsafe {
             virConnectOpenAuth(string_to_c_chars!(uri), &mut cauth, flags as libc::c_uint)
