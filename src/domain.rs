@@ -1797,8 +1797,6 @@ impl Domain {
                 return Err(Error::new());
             }
 
-            mem::forget(addresses);
-
             let mut array: Vec<Interface> = Vec::new();
             for x in 0..size as isize {
                 array.push(Interface::from_ptr(*addresses.offset(x)));
@@ -2280,8 +2278,6 @@ impl Domain {
             if size == -1 {
                 return Err(Error::new());
             }
-
-            mem::forget(snaps);
 
             let mut array: Vec<DomainSnapshot> = Vec::new();
             for x in 0..size as isize {

@@ -18,7 +18,7 @@
 
 extern crate libc;
 
-use std::{mem, ptr, str};
+use std::{ptr, str};
 
 use crate::connect::sys::virConnectPtr;
 use crate::domain::sys::virDomainPtr;
@@ -267,8 +267,6 @@ impl DomainSnapshot {
             if size == -1 {
                 return Err(Error::new());
             }
-
-            mem::forget(snaps);
 
             let mut array: Vec<DomainSnapshot> = Vec::new();
             for x in 0..size as isize {

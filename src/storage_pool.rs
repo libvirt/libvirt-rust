@@ -18,7 +18,7 @@
 
 extern crate libc;
 
-use std::{mem, ptr, str};
+use std::{ptr, str};
 
 use crate::connect::sys::virConnectPtr;
 use crate::storage_vol::sys::virStorageVolPtr;
@@ -305,8 +305,6 @@ impl StoragePool {
             if size == -1 {
                 return Err(Error::new());
             }
-
-            mem::forget(volumes);
 
             let mut array: Vec<StorageVol> = Vec::new();
             for x in 0..size as isize {

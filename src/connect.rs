@@ -930,8 +930,6 @@ impl Connect {
                 return Err(Error::new());
             }
 
-            mem::forget(domains);
-
             let mut array: Vec<Domain> = Vec::new();
             for x in 0..size as isize {
                 array.push(Domain::new(*domains.offset(x)));
