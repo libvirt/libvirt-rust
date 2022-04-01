@@ -38,6 +38,7 @@
 //! ```
 
 extern crate virt;
+extern crate virt_sys as sys;
 
 use std::{env, io};
 
@@ -55,11 +56,11 @@ fn main() {
 
             println!("{}:", cred.prompt);
             match cred.typed as u32 {
-                ::virt::connect::VIR_CRED_AUTHNAME => {
+                sys::VIR_CRED_AUTHNAME => {
                     io::stdin().read_line(&mut input).expect("");
                     cred.result = Some(String::from(input.trim()));
                 }
-                ::virt::connect::VIR_CRED_PASSPHRASE => {
+                sys::VIR_CRED_PASSPHRASE => {
                     io::stdin().read_line(&mut input).expect("");
                     cred.result = Some(String::from(input.trim()));
                 }
@@ -70,10 +71,7 @@ fn main() {
         }
     }
     let mut auth = ConnectAuth::new(
-        vec![
-            ::virt::connect::VIR_CRED_AUTHNAME,
-            ::virt::connect::VIR_CRED_PASSPHRASE,
-        ],
+        vec![sys::VIR_CRED_AUTHNAME, sys::VIR_CRED_PASSPHRASE],
         callback,
     );
 

@@ -21,6 +21,7 @@
 //! Largely inspired by libvirt/examples/suspend.c
 
 extern crate virt;
+extern crate virt_sys as sys;
 
 use std::{env, thread, time};
 
@@ -44,7 +45,7 @@ fn suspend_and_resume(conn: &Connect, name: &str, sec: u64) -> Result<(), Error>
 }
 
 fn fetch_domains(conn: &Connect) -> Result<(), Error> {
-    let flags = virt::connect::VIR_CONNECT_LIST_DOMAINS_ACTIVE;
+    let flags = sys::VIR_CONNECT_LIST_DOMAINS_ACTIVE;
     if let Ok(doms) = conn.list_all_domains(flags) {
         println!("Running domains:");
         println!("----------------");

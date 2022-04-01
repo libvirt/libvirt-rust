@@ -23,6 +23,7 @@
 //! Largely inspired by hellolibvirt.c
 
 extern crate virt;
+extern crate virt_sys as sys;
 
 use std::env;
 
@@ -47,8 +48,7 @@ fn show_hypervisor_info(conn: &Connect) -> Result<(), Error> {
 }
 
 fn show_domains(conn: &Connect) -> Result<(), Error> {
-    let flags = virt::connect::VIR_CONNECT_LIST_DOMAINS_ACTIVE
-        | virt::connect::VIR_CONNECT_LIST_DOMAINS_INACTIVE;
+    let flags = sys::VIR_CONNECT_LIST_DOMAINS_ACTIVE | sys::VIR_CONNECT_LIST_DOMAINS_INACTIVE;
 
     if let Ok(num_active_domains) = conn.num_of_domains() {
         if let Ok(num_inactive_domains) = conn.num_of_defined_domains() {

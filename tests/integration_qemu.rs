@@ -96,10 +96,10 @@ fn test_connection_with_auth() {
     fn callback(creds: &mut Vec<ConnectCredential>) {
         for cred in creds {
             match cred.typed as u32 {
-                ::virt::connect::VIR_CRED_AUTHNAME => {
+                sys::VIR_CRED_AUTHNAME => {
                     cred.result = Some(String::from("user"));
                 }
-                ::virt::connect::VIR_CRED_PASSPHRASE => {
+                sys::VIR_CRED_PASSPHRASE => {
                     cred.result = Some(String::from("pass"));
                 }
                 _ => {
@@ -110,10 +110,7 @@ fn test_connection_with_auth() {
     }
 
     let mut auth = ConnectAuth::new(
-        vec![
-            ::virt::connect::VIR_CRED_AUTHNAME,
-            ::virt::connect::VIR_CRED_PASSPHRASE,
-        ],
+        vec![sys::VIR_CRED_AUTHNAME, sys::VIR_CRED_PASSPHRASE],
         callback,
     );
     let c = Connect::open_auth("test+tcp://127.0.0.1/default", &mut auth, 0);
@@ -127,10 +124,10 @@ fn test_connection_with_auth_wrong() {
     fn callback(creds: &mut Vec<ConnectCredential>) {
         for cred in creds {
             match cred.typed as u32 {
-                ::virt::connect::VIR_CRED_AUTHNAME => {
+                sys::VIR_CRED_AUTHNAME => {
                     cred.result = Some(String::from("user"));
                 }
-                ::virt::connect::VIR_CRED_PASSPHRASE => {
+                sys::VIR_CRED_PASSPHRASE => {
                     cred.result = Some(String::from("passwrong"));
                 }
                 _ => {
@@ -141,10 +138,7 @@ fn test_connection_with_auth_wrong() {
     }
 
     let mut auth = ConnectAuth::new(
-        vec![
-            ::virt::connect::VIR_CRED_AUTHNAME,
-            ::virt::connect::VIR_CRED_PASSPHRASE,
-        ],
+        vec![sys::VIR_CRED_AUTHNAME, sys::VIR_CRED_PASSPHRASE],
         callback,
     );
     let c = Connect::open_auth("test+tcp://127.0.0.1/default", &mut auth, 0);
