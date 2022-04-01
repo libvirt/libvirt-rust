@@ -238,19 +238,19 @@ extern "C" {
     fn virDomainPinVcpu(
         ptr: sys::virDomainPtr,
         vcpu: libc::c_uint,
-        vcpumap: *const libc::c_uchar,
+        vcpumap: *mut libc::c_uchar,
         maplen: libc::c_uint,
     ) -> libc::c_int;
     fn virDomainPinVcpuFlags(
         ptr: sys::virDomainPtr,
         vcpu: libc::c_uint,
-        vcpumap: *const libc::c_uchar,
+        vcpumap: *mut libc::c_uchar,
         maplen: libc::c_uint,
         flags: libc::c_uint,
     ) -> libc::c_int;
     fn virDomainPinEmulator(
         ptr: sys::virDomainPtr,
-        vcpumap: *const libc::c_uchar,
+        vcpumap: *mut libc::c_uchar,
         maplen: libc::c_uint,
         flags: libc::c_uint,
     ) -> libc::c_int;
@@ -1650,7 +1650,7 @@ impl Domain {
             let ret = virDomainPinVcpu(
                 self.as_ptr(),
                 vcpu as libc::c_uint,
-                cpumap.as_ptr(),
+                cpumap.as_ptr() as *mut _,
                 cpumap.len() as libc::c_uint,
             );
             if ret == -1 {
@@ -1665,7 +1665,7 @@ impl Domain {
             let ret = virDomainPinVcpuFlags(
                 self.as_ptr(),
                 vcpu as libc::c_uint,
-                cpumap.as_ptr(),
+                cpumap.as_ptr() as *mut _,
                 cpumap.len() as libc::c_uint,
                 flags as libc::c_uint,
             );
@@ -1680,7 +1680,7 @@ impl Domain {
         unsafe {
             let ret = virDomainPinEmulator(
                 self.as_ptr(),
-                cpumap.as_ptr(),
+                cpumap.as_ptr() as *mut _,
                 cpumap.len() as libc::c_uint,
                 flags as libc::c_uint,
             );
