@@ -49,12 +49,6 @@ pub mod sys {
         }
     }
 
-    impl std::default::Default for virTypedParameter {
-        fn default() -> Self {
-            unsafe { std::mem::zeroed() }
-        }
-    }
-
     pub type virTypedParameterPtr = *mut virTypedParameter;
 }
 

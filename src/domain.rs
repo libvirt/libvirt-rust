@@ -2067,7 +2067,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            let mut params: Vec<virTypedParameter> = vec![virTypedParameter::default(); 3];
+            let mut params: Vec<virTypedParameter> = Vec::with_capacity(nparams as usize);
             let ret = virDomainGetMemoryParameters(
                 self.as_ptr(),
                 &mut params[0],
@@ -2077,6 +2077,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
+            params.set_len(nparams as usize);
             Ok(MemoryParameters::from_vec(params))
         }
     }
@@ -2239,8 +2240,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
-            let mut params: Vec<virTypedParameter> =
-                vec![virTypedParameter::default(); nparams as usize];
+            let mut params: Vec<virTypedParameter> = Vec::with_capacity(nparams as usize);
             let ret = virDomainGetNumaParameters(
                 self.as_ptr(),
                 &mut params[0],
@@ -2250,6 +2250,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
+            params.set_len(nparams as usize);
             Ok(NUMAParameters::from_vec(params))
         }
     }
@@ -2324,11 +2325,12 @@ impl Domain {
     pub fn get_scheduler_parameters(&self) -> Result<SchedulerInfo, Error> {
         let (sched_type, mut nparams) = self.get_scheduler_type()?;
         unsafe {
-            let mut params: Vec<virTypedParameter> = vec![virTypedParameter::default(); 9];
+            let mut params: Vec<virTypedParameter> = Vec::with_capacity(nparams as usize);
             let ret = virDomainGetSchedulerParameters(self.as_ptr(), &mut params[0], &mut nparams);
             if ret == -1 {
                 return Err(Error::new());
             }
+            params.set_len(nparams as usize);
             Ok(SchedulerInfo::from_vec(params, sched_type))
         }
     }
@@ -2344,7 +2346,7 @@ impl Domain {
     ) -> Result<SchedulerInfo, Error> {
         let (sched_type, mut nparams) = self.get_scheduler_type()?;
         unsafe {
-            let mut params: Vec<virTypedParameter> = vec![virTypedParameter::default(); 9];
+            let mut params: Vec<virTypedParameter> = Vec::with_capacity(nparams as usize);
             let ret = virDomainGetSchedulerParametersFlags(
                 self.as_ptr(),
                 &mut params[0],
@@ -2354,6 +2356,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::new());
             }
+            params.set_len(nparams as usize);
             Ok(SchedulerInfo::from_vec(params, sched_type))
         }
     }
