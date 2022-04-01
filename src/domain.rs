@@ -161,7 +161,7 @@ extern "C" {
     fn virDomainGetUUIDString(ptr: sys::virDomainPtr, uuid: *mut libc::c_char) -> libc::c_int;
     fn virDomainGetXMLDesc(ptr: sys::virDomainPtr, flags: libc::c_uint) -> *mut libc::c_char;
     fn virDomainGetAutostart(ptr: sys::virDomainPtr, autostart: *mut libc::c_int) -> libc::c_int;
-    fn virDomainSetAutostart(ptr: sys::virDomainPtr, autostart: libc::c_uint) -> libc::c_int;
+    fn virDomainSetAutostart(ptr: sys::virDomainPtr, autostart: libc::c_int) -> libc::c_int;
     fn virDomainGetID(ptr: sys::virDomainPtr) -> libc::c_uint;
     fn virDomainSetMaxMemory(ptr: sys::virDomainPtr, memory: libc::c_ulong) -> libc::c_int;
     fn virDomainGetMaxMemory(ptr: sys::virDomainPtr) -> libc::c_ulong;
@@ -220,13 +220,13 @@ extern "C" {
     fn virDomainGetTime(
         ptr: sys::virDomainPtr,
         seconds: *mut libc::c_long,
-        nseconds: *mut libc::c_int,
+        nseconds: *mut libc::c_uint,
         flags: libc::c_uint,
     ) -> libc::c_int;
     fn virDomainSetTime(
         ptr: sys::virDomainPtr,
         seconds: libc::c_long,
-        nseconds: libc::c_int,
+        nseconds: libc::c_uint,
         flags: libc::c_uint,
     ) -> libc::c_int;
     fn virDomainGetBlockInfo(
@@ -239,19 +239,19 @@ extern "C" {
         ptr: sys::virDomainPtr,
         vcpu: libc::c_uint,
         vcpumap: *mut libc::c_uchar,
-        maplen: libc::c_uint,
+        maplen: libc::c_int,
     ) -> libc::c_int;
     fn virDomainPinVcpuFlags(
         ptr: sys::virDomainPtr,
         vcpu: libc::c_uint,
         vcpumap: *mut libc::c_uchar,
-        maplen: libc::c_uint,
+        maplen: libc::c_int,
         flags: libc::c_uint,
     ) -> libc::c_int;
     fn virDomainPinEmulator(
         ptr: sys::virDomainPtr,
         vcpumap: *mut libc::c_uchar,
-        maplen: libc::c_uint,
+        maplen: libc::c_int,
         flags: libc::c_uint,
     ) -> libc::c_int;
     fn virDomainRename(
@@ -304,7 +304,7 @@ extern "C" {
         ptr: sys::virDomainPtr,
         path: *const libc::c_char,
         stats: sys::virDomainInterfaceStatsPtr,
-        size: libc::c_uint,
+        size: libc::size_t,
     ) -> libc::c_int;
     fn virDomainMemoryStats(
         ptr: sys::virDomainPtr,
@@ -401,7 +401,7 @@ extern "C" {
     fn virDomainMigrate(
         ptr: sys::virDomainPtr,
         dconn: virConnectPtr,
-        flags: libc::c_uint,
+        flags: libc::c_ulong,
         dname: *const libc::c_char,
         uri: *const libc::c_char,
         bandwidth: libc::c_ulong,
@@ -410,7 +410,7 @@ extern "C" {
         ptr: sys::virDomainPtr,
         dconn: virConnectPtr,
         dxml: *const libc::c_char,
-        flags: libc::c_uint,
+        flags: libc::c_ulong,
         dname: *const libc::c_char,
         uri: *const libc::c_char,
         bandwidth: libc::c_ulong,
@@ -418,7 +418,7 @@ extern "C" {
     fn virDomainMigrateToURI(
         ptr: sys::virDomainPtr,
         duri: *const libc::c_char,
-        flags: libc::c_uint,
+        flags: libc::c_ulong,
         dname: *const libc::c_char,
         bandwidth: libc::c_ulong,
     ) -> sys::virDomainPtr;
@@ -427,7 +427,7 @@ extern "C" {
         dconnuri: *const libc::c_char,
         miguri: *const libc::c_char,
         dxml: *const libc::c_char,
-        flags: libc::c_uint,
+        flags: libc::c_ulong,
         dname: *const libc::c_char,
         bandwidth: libc::c_ulong,
     ) -> sys::virDomainPtr;
@@ -544,7 +544,7 @@ pub const VIR_DOMAIN_SAVE_BYPASS_CACHE: DomainSaveRestoreFlags = 1 << 0;
 pub const VIR_DOMAIN_SAVE_RUNNING: DomainSaveRestoreFlags = 1 << 1;
 pub const VIR_DOMAIN_SAVE_PAUSED: DomainSaveRestoreFlags = 1 << 2;
 
-pub type DomainNumatuneMemMode = self::libc::c_int;
+pub type DomainNumatuneMemMode = self::libc::c_uint;
 pub const VIR_DOMAIN_NUMATUNE_MEM_STRICT: DomainNumatuneMemMode = 0;
 pub const VIR_DOMAIN_NUMATUNE_MEM_PREFERRED: DomainNumatuneMemMode = 1;
 pub const VIR_DOMAIN_NUMATUNE_MEM_INTERLEAVE: DomainNumatuneMemMode = 2;
@@ -694,7 +694,7 @@ impl NUMAParameters {
             for param in vec {
                 match str::from_utf8(CStr::from_ptr(param.field.as_ptr()).to_bytes()).unwrap() {
                     "numa_nodeset" => ret.node_set = Some(c_chars_to_string!(param.value.s)),
-                    "numa_mode" => ret.mode = Some(param.value.i),
+                    "numa_mode" => ret.mode = Some(param.value.ui),
                     unknow => panic!("Field not implemented for NUMAParameters, {:?}", unknow),
                 }
             }
@@ -1233,7 +1233,7 @@ impl Domain {
     /// object. This function may require privileged access.
     pub fn destroy_flags(&self, flags: DomainDestroyFlags) -> Result<u32, Error> {
         unsafe {
-            let ret = virDomainDestroyFlags(self.as_ptr(), flags as libc::c_uint);
+            let ret = virDomainDestroyFlags(self.as_ptr(), flags);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -1386,7 +1386,7 @@ impl Domain {
 
     pub fn set_autostart(&self, autostart: bool) -> Result<bool, Error> {
         unsafe {
-            let ret = virDomainSetAutostart(self.as_ptr(), autostart as libc::c_uint);
+            let ret = virDomainSetAutostart(self.as_ptr(), autostart as libc::c_int);
             if ret == -1 {
                 return Err(Error::new());
             }
@@ -1506,12 +1506,7 @@ impl Domain {
         flags: DomainSaveRestoreFlags,
     ) -> Result<(), Error> {
         unsafe {
-            if virDomainRestoreFlags(
-                conn.as_ptr(),
-                string_to_c_chars!(path),
-                flags as libc::c_uint,
-            ) == -1
-            {
+            if virDomainRestoreFlags(conn.as_ptr(), string_to_c_chars!(path), flags) == -1 {
                 return Err(Error::new());
             }
             Ok(())
@@ -1602,7 +1597,7 @@ impl Domain {
             let ret = virDomainSetTime(
                 self.as_ptr(),
                 seconds as libc::c_long,
-                nseconds as libc::c_int,
+                nseconds as libc::c_uint,
                 flags as libc::c_uint,
             );
             if ret == -1 {
@@ -1615,7 +1610,7 @@ impl Domain {
     pub fn get_time(&self, flags: u32) -> Result<(i64, i32), Error> {
         unsafe {
             let mut seconds: libc::c_long = 0;
-            let mut nseconds: libc::c_int = 0;
+            let mut nseconds: libc::c_uint = 0;
             let ret = virDomainGetTime(
                 self.as_ptr(),
                 &mut seconds,
@@ -1651,7 +1646,7 @@ impl Domain {
                 self.as_ptr(),
                 vcpu as libc::c_uint,
                 cpumap.as_ptr() as *mut _,
-                cpumap.len() as libc::c_uint,
+                cpumap.len() as libc::c_int,
             );
             if ret == -1 {
                 return Err(Error::new());
@@ -1666,7 +1661,7 @@ impl Domain {
                 self.as_ptr(),
                 vcpu as libc::c_uint,
                 cpumap.as_ptr() as *mut _,
-                cpumap.len() as libc::c_uint,
+                cpumap.len() as libc::c_int,
                 flags as libc::c_uint,
             );
             if ret == -1 {
@@ -1681,7 +1676,7 @@ impl Domain {
             let ret = virDomainPinEmulator(
                 self.as_ptr(),
                 cpumap.as_ptr() as *mut _,
-                cpumap.len() as libc::c_uint,
+                cpumap.len() as libc::c_int,
                 flags as libc::c_uint,
             );
             if ret == -1 {
@@ -1820,7 +1815,7 @@ impl Domain {
                 self.as_ptr(),
                 string_to_c_chars!(path),
                 pinfo,
-                mem::size_of::<sys::virDomainInterfaceStats>() as libc::c_uint,
+                mem::size_of::<sys::virDomainInterfaceStats>(),
             );
             if ret == -1 {
                 return Err(Error::new());
@@ -2150,7 +2145,7 @@ impl Domain {
             let ptr = virDomainMigrate(
                 self.as_ptr(),
                 dconn.as_ptr(),
-                flags as libc::c_uint,
+                flags as libc::c_ulong,
                 string_to_c_chars!(""),
                 string_to_c_chars!(uri),
                 bandwidth as libc::c_ulong,
@@ -2175,7 +2170,7 @@ impl Domain {
                 self.as_ptr(),
                 dconn.as_ptr(),
                 string_to_c_chars!(dxml),
-                flags as libc::c_uint,
+                flags as libc::c_ulong,
                 string_to_c_chars!(""),
                 string_to_c_chars!(uri),
                 bandwidth as libc::c_ulong,
@@ -2192,7 +2187,7 @@ impl Domain {
             let ptr = virDomainMigrateToURI(
                 self.as_ptr(),
                 string_to_c_chars!(duri),
-                flags as libc::c_uint,
+                flags as libc::c_ulong,
                 string_to_c_chars!(""),
                 bandwidth as libc::c_ulong,
             );
@@ -2217,7 +2212,7 @@ impl Domain {
                 string_to_c_chars!(dconn_uri),
                 string_to_c_chars!(mig_uri),
                 string_to_c_chars!(dxml),
-                flags as libc::c_uint,
+                flags as libc::c_ulong,
                 string_to_c_chars!(""),
                 bandwidth as libc::c_ulong,
             );
@@ -2272,7 +2267,7 @@ impl Domain {
                     field: to_arr("numa_mode\0"),
                     typed: crate::typedparam::VIR_TYPED_PARAM_INT,
                     value: _virTypedParameterValue {
-                        i: params.mode.unwrap(),
+                        ui: params.mode.unwrap(),
                     },
                 })
             }
