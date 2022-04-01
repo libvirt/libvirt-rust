@@ -19,6 +19,7 @@
 //! An example of migrating domain
 
 extern crate virt;
+extern crate virt_sys as sys;
 
 use std::env;
 
@@ -51,9 +52,7 @@ fn main() {
     };
 
     if let Ok(dom) = Domain::lookup_by_name(&conn, &dname) {
-        let flags = ::virt::domain::VIR_MIGRATE_LIVE
-            | ::virt::domain::VIR_MIGRATE_PEER2PEER
-            | ::virt::domain::VIR_MIGRATE_TUNNELLED;
+        let flags = sys::VIR_MIGRATE_LIVE | sys::VIR_MIGRATE_PEER2PEER | sys::VIR_MIGRATE_TUNNELLED;
         if let Ok(_) = dom.migrate(&conn, flags, &dst_uri, 0) {
             println!("Domain migrated");
         }

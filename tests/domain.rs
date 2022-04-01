@@ -17,6 +17,7 @@
  */
 
 extern crate virt;
+extern crate virt_sys as sys;
 
 mod common;
 
@@ -118,7 +119,7 @@ fn test_create_with_flags() {
     let c = common::conn();
     let d = common::build_test_domain(&c, "create", false);
     assert_eq!(Ok(0), d.create_with_flags(0));
-    assert_eq!(Ok((::virt::domain::VIR_DOMAIN_RUNNING, 1)), d.get_state());
+    assert_eq!(Ok((sys::VIR_DOMAIN_RUNNING, 1)), d.get_state());
     assert_eq!(Ok(String::from("libvirt-rs-test-create")), d.get_name());
     common::clean(d);
     common::close(c);
@@ -129,9 +130,9 @@ fn test_shutdown() {
     let c = common::conn();
     let d = common::build_test_domain(&c, "shutdown", false);
     assert_eq!(Ok(0), d.create_with_flags(0));
-    assert_eq!(Ok((::virt::domain::VIR_DOMAIN_RUNNING, 1)), d.get_state());
+    assert_eq!(Ok((sys::VIR_DOMAIN_RUNNING, 1)), d.get_state());
     assert_eq!(Ok(0), d.shutdown());
-    assert_eq!(Ok((::virt::domain::VIR_DOMAIN_SHUTOFF, 1)), d.get_state());
+    assert_eq!(Ok((sys::VIR_DOMAIN_SHUTOFF, 1)), d.get_state());
     common::clean(d);
     common::close(c);
 }
@@ -141,11 +142,11 @@ fn test_pause_resume() {
     let c = common::conn();
     let d = common::build_test_domain(&c, "pause_resume", false);
     assert_eq!(Ok(0), d.create_with_flags(0));
-    assert_eq!(Ok((::virt::domain::VIR_DOMAIN_RUNNING, 1)), d.get_state());
+    assert_eq!(Ok((sys::VIR_DOMAIN_RUNNING, 1)), d.get_state());
     assert_eq!(Ok(0), d.suspend());
-    assert_eq!(Ok((::virt::domain::VIR_DOMAIN_PAUSED, 1)), d.get_state());
+    assert_eq!(Ok((sys::VIR_DOMAIN_PAUSED, 1)), d.get_state());
     assert_eq!(Ok(0), d.resume());
-    assert_eq!(Ok((::virt::domain::VIR_DOMAIN_RUNNING, 5)), d.get_state());
+    assert_eq!(Ok((sys::VIR_DOMAIN_RUNNING, 5)), d.get_state());
     common::clean(d);
     common::close(c);
 }

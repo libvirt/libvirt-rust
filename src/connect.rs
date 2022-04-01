@@ -20,8 +20,6 @@ extern crate libc;
 
 use std::{mem, ptr, str};
 
-use crate::domain::sys::{virDomainPtr, virDomainStatsRecordPtr};
-
 use crate::domain::{Domain, DomainStatsRecord};
 use crate::error::Error;
 use crate::interface::Interface;
@@ -155,7 +153,7 @@ extern "C" {
     ) -> libc::c_int;
     fn virConnectListAllDomains(
         ptr: sys::virConnectPtr,
-        domains: *mut *mut virDomainPtr,
+        domains: *mut *mut virt_sys::virDomainPtr,
         flags: libc::c_uint,
     ) -> libc::c_int;
     fn virConnectListAllNetworks(
@@ -240,7 +238,7 @@ extern "C" {
     fn virConnectGetAllDomainStats(
         ptr: sys::virConnectPtr,
         stats: libc::c_uint,
-        ret: *mut *mut virDomainStatsRecordPtr,
+        ret: *mut *mut virt_sys::virDomainStatsRecordPtr,
         flags: libc::c_uint,
     ) -> libc::c_int;
     fn virConnectBaselineCPU(
@@ -922,7 +920,7 @@ impl Connect {
         flags: ConnectListAllDomainsFlags,
     ) -> Result<Vec<Domain>, Error> {
         unsafe {
-            let mut domains: *mut virDomainPtr = ptr::null_mut();
+            let mut domains: *mut virt_sys::virDomainPtr = ptr::null_mut();
             let size = virConnectListAllDomains(self.as_ptr(), &mut domains, flags as libc::c_uint);
             if size == -1 {
                 return Err(Error::new());
@@ -1622,7 +1620,7 @@ impl Connect {
         flags: u32,
     ) -> Result<Vec<DomainStatsRecord>, Error> {
         unsafe {
-            let mut record: *mut virDomainStatsRecordPtr = ptr::null_mut();
+            let mut record: *mut virt_sys::virDomainStatsRecordPtr = ptr::null_mut();
             let size = virConnectGetAllDomainStats(
                 self.as_ptr(),
                 stats as libc::c_uint,

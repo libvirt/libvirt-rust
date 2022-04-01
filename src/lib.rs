@@ -156,4 +156,3 @@ pub mod secret;
 pub mod storage_pool;
 pub mod storage_vol;
 pub mod stream;
-pub mod typedparam;
