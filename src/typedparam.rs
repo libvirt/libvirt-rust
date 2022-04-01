@@ -28,7 +28,19 @@ pub mod sys {
     pub struct virTypedParameter {
         pub field: [libc::c_char; 80usize],
         pub typed: libc::c_int,
-        pub value: libc::c_ulonglong,
+        pub value: _virTypedParameterValue,
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub union _virTypedParameterValue {
+        pub i: libc::c_int,
+        pub ui: libc::c_uint,
+        pub l: libc::c_longlong,
+        pub ul: libc::c_ulonglong,
+        pub d: libc::c_double,
+        pub b: libc::c_char,
+        pub s: *mut libc::c_char,
     }
 
     impl std::clone::Clone for virTypedParameter {

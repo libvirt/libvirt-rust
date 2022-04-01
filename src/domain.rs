@@ -24,7 +24,7 @@ use std::{mem, ptr, str};
 use crate::connect::sys::virConnectPtr;
 use crate::domain_snapshot::sys::virDomainSnapshotPtr;
 use crate::stream::sys::virStreamPtr;
-use crate::typedparam::sys::{virTypedParameter, virTypedParameterPtr};
+use crate::typedparam::sys::{_virTypedParameterValue, virTypedParameter, virTypedParameterPtr};
 
 use crate::connect::Connect;
 use crate::domain_snapshot::DomainSnapshot;
@@ -666,10 +666,10 @@ impl MemoryParameters {
             let mut ret = MemoryParameters::default();
             for param in vec {
                 match str::from_utf8(CStr::from_ptr(param.field.as_ptr()).to_bytes()).unwrap() {
-                    "hard_limit" => ret.hard_limit = Some(param.value as u64),
-                    "soft_limit" => ret.soft_limit = Some(param.value as u64),
-                    "min_guarantee" => ret.min_guarantee = Some(param.value as u64),
-                    "swap_hard_limit" => ret.swap_hard_limit = Some(param.value as u64),
+                    "hard_limit" => ret.hard_limit = Some(param.value.ul),
+                    "soft_limit" => ret.soft_limit = Some(param.value.ul),
+                    "min_guarantee" => ret.min_guarantee = Some(param.value.ul),
+                    "swap_hard_limit" => ret.swap_hard_limit = Some(param.value.ul),
                     unknow => panic!("Field not implemented for MemoryParameters, {:?}", unknow),
                 }
             }
@@ -693,10 +693,8 @@ impl NUMAParameters {
             let mut ret = NUMAParameters::default();
             for param in vec {
                 match str::from_utf8(CStr::from_ptr(param.field.as_ptr()).to_bytes()).unwrap() {
-                    "numa_nodeset" => {
-                        ret.node_set = Some(c_chars_to_string!(param.value as *mut libc::c_char))
-                    }
-                    "numa_mode" => ret.mode = Some(param.value as libc::c_int),
+                    "numa_nodeset" => ret.node_set = Some(c_chars_to_string!(param.value.s)),
+                    "numa_mode" => ret.mode = Some(param.value.i),
                     unknow => panic!("Field not implemented for NUMAParameters, {:?}", unknow),
                 }
             }
@@ -832,15 +830,15 @@ impl SchedulerInfo {
             };
             for param in vec {
                 match str::from_utf8(CStr::from_ptr(param.field.as_ptr()).to_bytes()).unwrap() {
-                    "cpu_shares" => ret.cpu_shares = Some(param.value as u64),
-                    "vcpu_period" => ret.vcpu_bw.period = Some(param.value as u64),
-                    "vcpu_quota" => ret.vcpu_bw.quota = Some(param.value as i64),
-                    "emulator_period" => ret.emulator_bw.period = Some(param.value as u64),
-                    "emulator_quota" => ret.emulator_bw.quota = Some(param.value as i64),
-                    "global_period" => ret.global_bw.period = Some(param.value as u64),
-                    "global_quota" => ret.global_bw.quota = Some(param.value as i64),
-                    "iothread_period" => ret.iothread_bw.period = Some(param.value as u64),
-                    "iothread_quota" => ret.iothread_bw.quota = Some(param.value as i64),
+                    "cpu_shares" => ret.cpu_shares = Some(param.value.ul),
+                    "vcpu_period" => ret.vcpu_bw.period = Some(param.value.ul),
+                    "vcpu_quota" => ret.vcpu_bw.quota = Some(param.value.l),
+                    "emulator_period" => ret.emulator_bw.period = Some(param.value.ul),
+                    "emulator_quota" => ret.emulator_bw.quota = Some(param.value.l),
+                    "global_period" => ret.global_bw.period = Some(param.value.ul),
+                    "global_quota" => ret.global_bw.quota = Some(param.value.l),
+                    "iothread_period" => ret.iothread_bw.period = Some(param.value.ul),
+                    "iothread_quota" => ret.iothread_bw.quota = Some(param.value.l),
                     unknow => panic!("Field not implemented for SchedulerInfo, {:?}", unknow),
                 }
             }
@@ -855,7 +853,7 @@ impl SchedulerInfo {
             cparams.push(virTypedParameter {
                 field: to_arr("cpu_shares\0"),
                 typed: crate::typedparam::VIR_TYPED_PARAM_ULLONG,
-                value: shares,
+                value: _virTypedParameterValue { ul: shares },
             });
         }
 
@@ -863,56 +861,56 @@ impl SchedulerInfo {
             cparams.push(virTypedParameter {
                 field: to_arr("vcpu_period\0"),
                 typed: crate::typedparam::VIR_TYPED_PARAM_ULLONG,
-                value: period,
+                value: _virTypedParameterValue { ul: period },
             });
         }
         if let Some(quota) = self.vcpu_bw.quota {
             cparams.push(virTypedParameter {
                 field: to_arr("vcpu_quota\0"),
                 typed: crate::typedparam::VIR_TYPED_PARAM_LLONG,
-                value: quota as u64,
+                value: _virTypedParameterValue { l: quota },
             });
         }
         if let Some(period) = self.emulator_bw.period {
             cparams.push(virTypedParameter {
                 field: to_arr("emulator_period\0"),
                 typed: crate::typedparam::VIR_TYPED_PARAM_ULLONG,
-                value: period,
+                value: _virTypedParameterValue { ul: period },
             });
         }
         if let Some(quota) = self.emulator_bw.quota {
             cparams.push(virTypedParameter {
                 field: to_arr("emulator_quota\0"),
                 typed: crate::typedparam::VIR_TYPED_PARAM_LLONG,
-                value: quota as u64,
+                value: _virTypedParameterValue { l: quota },
             });
         }
         if let Some(period) = self.global_bw.period {
             cparams.push(virTypedParameter {
                 field: to_arr("global_period\0"),
                 typed: crate::typedparam::VIR_TYPED_PARAM_ULLONG,
-                value: period,
+                value: _virTypedParameterValue { ul: period },
             });
         }
         if let Some(quota) = self.global_bw.quota {
             cparams.push(virTypedParameter {
                 field: to_arr("global_quota\0"),
                 typed: crate::typedparam::VIR_TYPED_PARAM_LLONG,
-                value: quota as u64,
+                value: _virTypedParameterValue { l: quota },
             });
         }
         if let Some(period) = self.iothread_bw.period {
             cparams.push(virTypedParameter {
                 field: to_arr("iothread_period\0"),
                 typed: crate::typedparam::VIR_TYPED_PARAM_ULLONG,
-                value: period,
+                value: _virTypedParameterValue { ul: period },
             });
         }
         if let Some(quota) = self.iothread_bw.quota {
             cparams.push(virTypedParameter {
                 field: to_arr("iothread_quota\0"),
                 typed: crate::typedparam::VIR_TYPED_PARAM_LLONG,
-                value: quota as u64,
+                value: _virTypedParameterValue { l: quota },
             });
         }
 
@@ -2094,28 +2092,36 @@ impl Domain {
                 cparams.push(virTypedParameter {
                     field: to_arr("hard_limit\0"),
                     typed: crate::typedparam::VIR_TYPED_PARAM_ULLONG,
-                    value: params.hard_limit.unwrap(),
+                    value: _virTypedParameterValue {
+                        ul: params.hard_limit.unwrap(),
+                    },
                 })
             }
             if params.soft_limit.is_some() {
                 cparams.push(virTypedParameter {
                     field: to_arr("soft_limit\0"),
                     typed: crate::typedparam::VIR_TYPED_PARAM_ULLONG,
-                    value: params.soft_limit.unwrap(),
+                    value: _virTypedParameterValue {
+                        ul: params.soft_limit.unwrap(),
+                    },
                 })
             }
             if params.min_guarantee.is_some() {
                 cparams.push(virTypedParameter {
                     field: to_arr("min_guarantee\0"),
                     typed: crate::typedparam::VIR_TYPED_PARAM_ULLONG,
-                    value: params.min_guarantee.unwrap(),
+                    value: _virTypedParameterValue {
+                        ul: params.min_guarantee.unwrap(),
+                    },
                 })
             }
             if params.swap_hard_limit.is_some() {
                 cparams.push(virTypedParameter {
                     field: to_arr("swap_hard_limit\0"),
                     typed: crate::typedparam::VIR_TYPED_PARAM_ULLONG,
-                    value: params.swap_hard_limit.unwrap(),
+                    value: _virTypedParameterValue {
+                        ul: params.swap_hard_limit.unwrap(),
+                    },
                 })
             }
 
@@ -2255,14 +2261,18 @@ impl Domain {
                 cparams.push(virTypedParameter {
                     field: to_arr("numa_nodeset\0"),
                     typed: crate::typedparam::VIR_TYPED_PARAM_STRING,
-                    value: string_to_mut_c_chars!(params.node_set.unwrap()) as u64,
+                    value: _virTypedParameterValue {
+                        s: string_to_mut_c_chars!(params.node_set.unwrap()),
+                    },
                 })
             }
             if params.mode.is_some() {
                 cparams.push(virTypedParameter {
                     field: to_arr("numa_mode\0"),
                     typed: crate::typedparam::VIR_TYPED_PARAM_INT,
-                    value: params.mode.unwrap() as u64,
+                    value: _virTypedParameterValue {
+                        i: params.mode.unwrap(),
+                    },
                 })
             }
 
