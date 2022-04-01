@@ -30,13 +30,13 @@ use crate::nwfilter::NWFilter;
 use crate::secret::Secret;
 use crate::storage_pool::StoragePool;
 
-extern "C" fn connectCallback(
+extern "C" fn connect_callback(
     ccreds: sys::virConnectCredentialPtr,
     ncred: libc::c_uint,
     cbdata: *mut libc::c_void,
 ) -> libc::c_int {
     let callback: ConnectAuthCallback = unsafe {
-        // Safe because connectCallback is private and only used by
+        // Safe because connect_callback is private and only used by
         // Connect::open_auth(). In open_auth() we transmute the
         // callback allocate in *void.
         mem::transmute(cbdata)
@@ -256,7 +256,7 @@ impl Connect {
             sys::virConnectAuth {
                 credtype: auth.creds.as_mut_ptr() as *mut libc::c_int,
                 ncredtype: auth.creds.len() as libc::c_uint,
-                cb: Some(connectCallback),
+                cb: Some(connect_callback),
                 cbdata: auth.callback as *mut _,
         };
         let c = unsafe {
