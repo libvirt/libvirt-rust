@@ -93,7 +93,7 @@ extern "C" {
     ) -> libc::c_int;
     fn virStoragePoolSetAutostart(
         ptr: sys::virStoragePoolPtr,
-        autostart: libc::c_uint,
+        autostart: libc::c_int,
     ) -> libc::c_int;
     fn virStoragePoolGetInfo(
         ptr: sys::virStoragePoolPtr,
@@ -437,7 +437,7 @@ impl StoragePool {
 
     pub fn set_autostart(&self, autostart: bool) -> Result<u32, Error> {
         unsafe {
-            let ret = virStoragePoolSetAutostart(self.as_ptr(), autostart as libc::c_uint);
+            let ret = virStoragePoolSetAutostart(self.as_ptr(), autostart as libc::c_int);
             if ret == -1 {
                 return Err(Error::new());
             }
