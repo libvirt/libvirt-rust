@@ -601,6 +601,9 @@ pub struct DomainInfo {
 }
 
 impl DomainInfo {
+    /// # Safety
+    ///
+    /// The caller must ensure that the pointer is valid.
     pub unsafe fn from_ptr(ptr: sys::virDomainInfoPtr) -> DomainInfo {
         DomainInfo {
             state: (*ptr).state as DomainState,
@@ -631,6 +634,9 @@ pub struct BlockInfo {
 }
 
 impl BlockInfo {
+    /// # Safety
+    ///
+    /// The caller must ensure that the pointer is valid.
     pub unsafe fn from_ptr(ptr: sys::virDomainBlockInfoPtr) -> BlockInfo {
         BlockInfo {
             capacity: (*ptr).capacity as u64,
@@ -707,6 +713,9 @@ pub struct IPAddress {
 }
 
 impl IPAddress {
+    /// # Safety
+    ///
+    /// The caller must ensure that the pointer is valid.
     pub unsafe fn from_ptr(ptr: sys::virDomainIPAddressPtr) -> IPAddress {
         IPAddress {
             typed: (*ptr).typed as i64,
@@ -725,6 +734,9 @@ pub struct Interface {
 }
 
 impl Interface {
+    /// # Safety
+    ///
+    /// The caller must ensure that the pointer is valid.
     pub unsafe fn from_ptr(ptr: sys::virDomainInterfacePtr) -> Interface {
         let naddrs = (*ptr).naddrs;
         let mut addrs = vec![];
@@ -753,6 +765,9 @@ pub struct InterfaceStats {
 }
 
 impl InterfaceStats {
+    /// # Safety
+    ///
+    /// The caller must ensure that the pointer is valid.
     pub unsafe fn from_ptr(ptr: sys::virDomainInterfaceStatsPtr) -> InterfaceStats {
         InterfaceStats {
             rx_bytes: (*ptr).rx_bytes as i64,
@@ -774,6 +789,9 @@ pub struct MemoryStats {
 }
 
 impl MemoryStats {
+    /// # Safety
+    ///
+    /// The caller must ensure that the pointer is valid.
     pub unsafe fn from_ptr(ptr: sys::virDomainMemoryStatsPtr) -> MemoryStats {
         MemoryStats {
             tag: (*ptr).tag as i32,

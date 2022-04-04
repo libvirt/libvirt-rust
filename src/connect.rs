@@ -441,6 +441,9 @@ pub struct ConnectCredential {
 }
 
 impl ConnectCredential {
+    /// # Safety
+    ///
+    /// The caller must ensure that the pointer is valid.
     pub unsafe fn from_ptr(cred: sys::virConnectCredentialPtr) -> ConnectCredential {
         let mut default: String = String::from("");
         if !(*cred).defresult.is_null() {

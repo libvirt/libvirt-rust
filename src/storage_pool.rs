@@ -144,6 +144,9 @@ pub struct StoragePoolInfo {
 }
 
 impl StoragePoolInfo {
+    /// # Safety
+    ///
+    /// The caller must ensure that the pointer is valid.
     pub unsafe fn from_ptr(ptr: sys::virStoragePoolInfoPtr) -> StoragePoolInfo {
         StoragePoolInfo {
             state: (*ptr).state as StoragePoolState,

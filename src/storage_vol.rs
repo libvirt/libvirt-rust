@@ -158,6 +158,9 @@ pub struct StorageVolInfo {
 }
 
 impl StorageVolInfo {
+    /// # Safety
+    ///
+    /// The caller must ensure that the pointer is valid.
     pub unsafe fn from_ptr(ptr: sys::virStorageVolInfoPtr) -> StorageVolInfo {
         StorageVolInfo {
             kind: (*ptr).kind as StorageVolType,
