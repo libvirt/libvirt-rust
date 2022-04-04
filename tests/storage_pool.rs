@@ -16,8 +16,6 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-extern crate virt;
-
 use virt::connect::Connect;
 use virt::storage_pool::StoragePool;
 

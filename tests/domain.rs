@@ -16,7 +16,6 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-extern crate virt;
 extern crate virt_sys as sys;
 
 mod common;

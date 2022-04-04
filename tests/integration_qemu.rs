@@ -19,7 +19,6 @@
 //! Integration tests using a real qemu:///system connection they are
 //! all ignored by default.
 
-extern crate virt;
 extern crate virt_sys as sys;
 
 mod common;

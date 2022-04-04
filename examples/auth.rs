@@ -37,7 +37,6 @@
 //! saslpasswd2 -a libvirt user
 //! ```
 
-extern crate virt;
 extern crate virt_sys as sys;
 
 use std::{env, io};

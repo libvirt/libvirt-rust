@@ -20,7 +20,6 @@
 //!
 //! Largely inspired by libvirt/examples/suspend.c
 
-extern crate virt;
 extern crate virt_sys as sys;
 
 use std::{env, thread, time};

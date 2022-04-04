@@ -16,8 +16,6 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-extern crate virt;
-
 mod common;
 
 use virt::connect::Connect;

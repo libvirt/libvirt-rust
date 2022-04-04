@@ -20,8 +20,6 @@
 // ignored tests are executed.
 #![allow(dead_code)]
 
-extern crate virt;
-
 use virt::connect::Connect;
 use virt::domain::Domain;
 use virt::error::Error;

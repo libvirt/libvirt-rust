@@ -18,7 +18,6 @@
 
 //! An example of migrating domain
 
-extern crate virt;
 extern crate virt_sys as sys;
 
 use std::env;

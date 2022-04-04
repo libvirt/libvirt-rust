@@ -16,9 +16,6 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-extern crate libc;
-extern crate virt_sys as sys;
-
 use std::convert::TryFrom;
 
 use crate::connect::Connect;

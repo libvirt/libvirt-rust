@@ -16,9 +16,6 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-extern crate libc;
-extern crate virt_sys as sys;
-
 use std::error::Error as StdError;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 

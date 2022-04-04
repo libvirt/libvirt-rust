@@ -22,7 +22,6 @@
 //!
 //! Largely inspired by hellolibvirt.c
 
-extern crate virt;
 extern crate virt_sys as sys;
 
 use std::env;
