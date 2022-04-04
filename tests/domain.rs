@@ -16,11 +16,10 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-extern crate virt_sys as sys;
-
 mod common;
 
 use virt::domain::Domain;
+use virt::sys;
 
 fn tdom(exec_test: fn(dom: Domain)) {
     let c = common::conn();

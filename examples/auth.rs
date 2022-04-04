@@ -37,11 +37,10 @@
 //! saslpasswd2 -a libvirt user
 //! ```
 
-extern crate virt_sys as sys;
-
 use std::{env, io};
 
 use virt::connect::{Connect, ConnectAuth, ConnectCredential};
+use virt::sys;
 
 fn main() {
     let uri = match env::args().nth(1) {

@@ -16,11 +16,10 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-extern crate virt_sys as sys;
-
 mod common;
 
 use virt::stream::Stream;
+use virt::sys;
 
 #[test]
 fn test_create_blocking() {

@@ -22,12 +22,11 @@
 //!
 //! Largely inspired by hellolibvirt.c
 
-extern crate virt_sys as sys;
-
 use std::env;
 
 use virt::connect::Connect;
 use virt::error::Error;
+use virt::sys;
 
 fn show_hypervisor_info(conn: &Connect) -> Result<(), Error> {
     if let Ok(hv_type) = conn.get_type() {

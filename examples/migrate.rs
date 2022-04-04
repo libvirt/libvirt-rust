@@ -18,12 +18,11 @@
 
 //! An example of migrating domain
 
-extern crate virt_sys as sys;
-
 use std::env;
 
 use virt::connect::Connect;
 use virt::domain::Domain;
+use virt::sys;
 
 fn main() {
     if env::args().len() < 4 {

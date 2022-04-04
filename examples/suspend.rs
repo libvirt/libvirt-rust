@@ -20,13 +20,12 @@
 //!
 //! Largely inspired by libvirt/examples/suspend.c
 
-extern crate virt_sys as sys;
-
 use std::{env, thread, time};
 
 use virt::connect::Connect;
 use virt::domain::Domain;
 use virt::error::Error;
+use virt::sys;
 
 fn suspend_and_resume(conn: &Connect, name: &str, sec: u64) -> Result<(), Error> {
     if let Ok(dom) = Domain::lookup_by_name(conn, name) {

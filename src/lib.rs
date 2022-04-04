@@ -78,7 +78,7 @@
 //! }
 //! ```
 
-extern crate virt_sys as sys;
+pub extern crate virt_sys as sys;
 
 macro_rules! c_chars_to_string {
     ($x:expr) => {{
