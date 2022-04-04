@@ -144,14 +144,12 @@ pub struct StoragePoolInfo {
 }
 
 impl StoragePoolInfo {
-    pub fn from_ptr(ptr: sys::virStoragePoolInfoPtr) -> StoragePoolInfo {
-        unsafe {
-            StoragePoolInfo {
-                state: (*ptr).state as StoragePoolState,
-                capacity: (*ptr).capacity as u64,
-                allocation: (*ptr).allocation as u64,
-                available: (*ptr).available as u64,
-            }
+    pub unsafe fn from_ptr(ptr: sys::virStoragePoolInfoPtr) -> StoragePoolInfo {
+        StoragePoolInfo {
+            state: (*ptr).state as StoragePoolState,
+            capacity: (*ptr).capacity as u64,
+            allocation: (*ptr).allocation as u64,
+            available: (*ptr).available as u64,
         }
     }
 }

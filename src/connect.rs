@@ -441,19 +441,17 @@ pub struct ConnectCredential {
 }
 
 impl ConnectCredential {
-    pub fn from_ptr(cred: sys::virConnectCredentialPtr) -> ConnectCredential {
-        unsafe {
-            let mut default: String = String::from("");
-            if !(*cred).defresult.is_null() {
-                default = c_chars_to_string!((*cred).defresult, nofree);
-            }
-            ConnectCredential {
-                typed: (*cred).typed,
-                prompt: c_chars_to_string!((*cred).prompt, nofree),
-                challenge: c_chars_to_string!((*cred).challenge, nofree),
-                def_result: default,
-                result: None,
-            }
+    pub unsafe fn from_ptr(cred: sys::virConnectCredentialPtr) -> ConnectCredential {
+        let mut default: String = String::from("");
+        if !(*cred).defresult.is_null() {
+            default = c_chars_to_string!((*cred).defresult, nofree);
+        }
+        ConnectCredential {
+            typed: (*cred).typed,
+            prompt: c_chars_to_string!((*cred).prompt, nofree),
+            challenge: c_chars_to_string!((*cred).challenge, nofree),
+            def_result: default,
+            result: None,
         }
     }
 }

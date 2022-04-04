@@ -601,15 +601,13 @@ pub struct DomainInfo {
 }
 
 impl DomainInfo {
-    pub fn from_ptr(ptr: sys::virDomainInfoPtr) -> DomainInfo {
-        unsafe {
-            DomainInfo {
-                state: (*ptr).state as DomainState,
-                max_mem: (*ptr).maxMem as u64,
-                memory: (*ptr).memory as u64,
-                nr_virt_cpu: (*ptr).nrVirtCpu as u32,
-                cpu_time: (*ptr).cpuTime as u64,
-            }
+    pub unsafe fn from_ptr(ptr: sys::virDomainInfoPtr) -> DomainInfo {
+        DomainInfo {
+            state: (*ptr).state as DomainState,
+            max_mem: (*ptr).maxMem as u64,
+            memory: (*ptr).memory as u64,
+            nr_virt_cpu: (*ptr).nrVirtCpu as u32,
+            cpu_time: (*ptr).cpuTime as u64,
         }
     }
 }
@@ -633,13 +631,11 @@ pub struct BlockInfo {
 }
 
 impl BlockInfo {
-    pub fn from_ptr(ptr: sys::virDomainBlockInfoPtr) -> BlockInfo {
-        unsafe {
-            BlockInfo {
-                capacity: (*ptr).capacity as u64,
-                allocation: (*ptr).capacity as u64,
-                physical: (*ptr).capacity as u64,
-            }
+    pub unsafe fn from_ptr(ptr: sys::virDomainBlockInfoPtr) -> BlockInfo {
+        BlockInfo {
+            capacity: (*ptr).capacity as u64,
+            allocation: (*ptr).capacity as u64,
+            physical: (*ptr).capacity as u64,
         }
     }
 }
@@ -711,13 +707,11 @@ pub struct IPAddress {
 }
 
 impl IPAddress {
-    pub fn from_ptr(ptr: sys::virDomainIPAddressPtr) -> IPAddress {
-        unsafe {
-            IPAddress {
-                typed: (*ptr).typed as i64,
-                addr: c_chars_to_string!((*ptr).addr),
-                prefix: (*ptr).prefix as u64,
-            }
+    pub unsafe fn from_ptr(ptr: sys::virDomainIPAddressPtr) -> IPAddress {
+        IPAddress {
+            typed: (*ptr).typed as i64,
+            addr: c_chars_to_string!((*ptr).addr),
+            prefix: (*ptr).prefix as u64,
         }
     }
 }
@@ -731,19 +725,17 @@ pub struct Interface {
 }
 
 impl Interface {
-    pub fn from_ptr(ptr: sys::virDomainInterfacePtr) -> Interface {
-        unsafe {
-            let naddrs = (*ptr).naddrs;
-            let mut addrs = vec![];
-            for x in 0..naddrs as isize {
-                addrs.push(IPAddress::from_ptr((*ptr).addrs.offset(x)));
-            }
-            Interface {
-                name: c_chars_to_string!((*ptr).name),
-                hwaddr: c_chars_to_string!((*ptr).hwaddr),
-                naddrs: naddrs as u64,
-                addrs,
-            }
+    pub unsafe fn from_ptr(ptr: sys::virDomainInterfacePtr) -> Interface {
+        let naddrs = (*ptr).naddrs;
+        let mut addrs = vec![];
+        for x in 0..naddrs as isize {
+            addrs.push(IPAddress::from_ptr((*ptr).addrs.offset(x)));
+        }
+        Interface {
+            name: c_chars_to_string!((*ptr).name),
+            hwaddr: c_chars_to_string!((*ptr).hwaddr),
+            naddrs: naddrs as u64,
+            addrs,
         }
     }
 }
@@ -761,18 +753,16 @@ pub struct InterfaceStats {
 }
 
 impl InterfaceStats {
-    pub fn from_ptr(ptr: sys::virDomainInterfaceStatsPtr) -> InterfaceStats {
-        unsafe {
-            InterfaceStats {
-                rx_bytes: (*ptr).rx_bytes as i64,
-                rx_packets: (*ptr).rx_packets as i64,
-                rx_errs: (*ptr).rx_errs as i64,
-                rx_drop: (*ptr).rx_drop as i64,
-                tx_bytes: (*ptr).tx_bytes as i64,
-                tx_packets: (*ptr).tx_packets as i64,
-                tx_errs: (*ptr).tx_errs as i64,
-                tx_drop: (*ptr).tx_drop as i64,
-            }
+    pub unsafe fn from_ptr(ptr: sys::virDomainInterfaceStatsPtr) -> InterfaceStats {
+        InterfaceStats {
+            rx_bytes: (*ptr).rx_bytes as i64,
+            rx_packets: (*ptr).rx_packets as i64,
+            rx_errs: (*ptr).rx_errs as i64,
+            rx_drop: (*ptr).rx_drop as i64,
+            tx_bytes: (*ptr).tx_bytes as i64,
+            tx_packets: (*ptr).tx_packets as i64,
+            tx_errs: (*ptr).tx_errs as i64,
+            tx_drop: (*ptr).tx_drop as i64,
         }
     }
 }
@@ -784,12 +774,10 @@ pub struct MemoryStats {
 }
 
 impl MemoryStats {
-    pub fn from_ptr(ptr: sys::virDomainMemoryStatsPtr) -> MemoryStats {
-        unsafe {
-            MemoryStats {
-                tag: (*ptr).tag as i32,
-                val: (*ptr).val as u64,
-            }
+    pub unsafe fn from_ptr(ptr: sys::virDomainMemoryStatsPtr) -> MemoryStats {
+        MemoryStats {
+            tag: (*ptr).tag as i32,
+            val: (*ptr).val as u64,
         }
     }
 }

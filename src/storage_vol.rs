@@ -158,13 +158,11 @@ pub struct StorageVolInfo {
 }
 
 impl StorageVolInfo {
-    pub fn from_ptr(ptr: sys::virStorageVolInfoPtr) -> StorageVolInfo {
-        unsafe {
-            StorageVolInfo {
-                kind: (*ptr).kind as StorageVolType,
-                capacity: (*ptr).capacity as u64,
-                allocation: (*ptr).allocation as u64,
-            }
+    pub unsafe fn from_ptr(ptr: sys::virStorageVolInfoPtr) -> StorageVolInfo {
+        StorageVolInfo {
+            kind: (*ptr).kind as StorageVolType,
+            capacity: (*ptr).capacity as u64,
+            allocation: (*ptr).allocation as u64,
         }
     }
 }
