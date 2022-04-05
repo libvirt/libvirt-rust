@@ -52,7 +52,7 @@ extern "C" {
         c: sys::virStreamPtr,
         event: libc::c_int,
         callback: StreamEventCallback,
-        opaque: *const libc::c_void,
+        opaque: *mut libc::c_void,
         ff: FreeCallback,
     ) -> libc::c_int;
     fn virStreamEventUpdateCallback(c: sys::virStreamPtr, events: libc::c_int) -> libc::c_int;
@@ -68,15 +68,11 @@ pub const VIR_STREAM_EVENT_HANGUP: StreamEventType = 1 << 3;
 pub type StreamFlags = self::libc::c_uint;
 pub const VIR_STREAM_NONBLOCK: StreamFlags = 1 << 0;
 
-pub type StreamEventCallback = extern "C" fn(sys::virStreamPtr, libc::c_int, *const libc::c_void);
+pub type StreamEventCallback = extern "C" fn(sys::virStreamPtr, libc::c_int, *mut libc::c_void);
 pub type FreeCallback = extern "C" fn(*mut libc::c_void);
 
 // wrapper for callbacks
-extern "C" fn event_callback(
-    c: sys::virStreamPtr,
-    flags: libc::c_int,
-    opaque: *const libc::c_void,
-) {
+extern "C" fn event_callback(c: sys::virStreamPtr, flags: libc::c_int, opaque: *mut libc::c_void) {
     let flags = flags as StreamFlags;
     let shadow_self = unsafe { &mut *(opaque as *mut Stream) };
     if let Some(callback) = &mut shadow_self.callback {
@@ -189,7 +185,7 @@ impl Stream {
         cb: F,
     ) -> Result<(), Error> {
         let ret = unsafe {
-            let ptr = self as *const _ as *const _;
+            let ptr = self as *mut _ as *mut _;
             virStreamEventAddCallback(
                 self.as_ptr(),
                 events as libc::c_int,
