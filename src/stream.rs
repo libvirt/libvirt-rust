@@ -68,8 +68,9 @@ pub const VIR_STREAM_EVENT_HANGUP: StreamEventType = 1 << 3;
 pub type StreamFlags = self::libc::c_uint;
 pub const VIR_STREAM_NONBLOCK: StreamFlags = 1 << 0;
 
-pub type StreamEventCallback = extern "C" fn(sys::virStreamPtr, libc::c_int, *mut libc::c_void);
-pub type FreeCallback = extern "C" fn(*mut libc::c_void);
+pub type StreamEventCallback =
+    Option<extern "C" fn(sys::virStreamPtr, libc::c_int, *mut libc::c_void)>;
+pub type FreeCallback = Option<extern "C" fn(*mut libc::c_void)>;
 
 // wrapper for callbacks
 extern "C" fn event_callback(c: sys::virStreamPtr, flags: libc::c_int, opaque: *mut libc::c_void) {
@@ -189,9 +190,9 @@ impl Stream {
             virStreamEventAddCallback(
                 self.as_ptr(),
                 events as libc::c_int,
-                event_callback,
+                Some(event_callback),
                 ptr,
-                event_free,
+                Some(event_free),
             )
         };
         if ret == -1 {
