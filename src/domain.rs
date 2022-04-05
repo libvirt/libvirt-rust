@@ -188,6 +188,7 @@ extern "C" {
     fn virDomainRestoreFlags(
         c: virConnectPtr,
         source: *const libc::c_char,
+        dxml: *const libc::c_char,
         flags: libc::c_uint,
     ) -> libc::c_int;
     fn virDomainGetConnect(ptr: sys::virDomainPtr) -> virConnectPtr;
@@ -1500,13 +1501,16 @@ impl Domain {
         }
     }
 
+    // TODO: expose dxml parameter
     pub fn domain_restore_flags(
         conn: &Connect,
         path: &str,
         flags: DomainSaveRestoreFlags,
     ) -> Result<(), Error> {
         unsafe {
-            if virDomainRestoreFlags(conn.as_ptr(), string_to_c_chars!(path), flags) == -1 {
+            if virDomainRestoreFlags(conn.as_ptr(), string_to_c_chars!(path), ptr::null(), flags)
+                == -1
+            {
                 return Err(Error::new());
             }
             Ok(())
