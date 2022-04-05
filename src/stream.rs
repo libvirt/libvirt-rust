@@ -189,7 +189,7 @@ impl Stream {
         cb: F,
     ) -> Result<(), Error> {
         let ret = unsafe {
-            let ptr = &*self as *const _ as *const _;
+            let ptr = self as *const _ as *const _;
             virStreamEventAddCallback(
                 self.as_ptr(),
                 events as libc::c_int,
