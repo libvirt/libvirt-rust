@@ -421,7 +421,7 @@ extern "C" {
         flags: libc::c_ulong,
         dname: *const libc::c_char,
         bandwidth: libc::c_ulong,
-    ) -> sys::virDomainPtr;
+    ) -> libc::c_int;
     fn virDomainMigrateToURI2(
         ptr: sys::virDomainPtr,
         dconnuri: *const libc::c_char,
@@ -430,7 +430,7 @@ extern "C" {
         flags: libc::c_ulong,
         dname: *const libc::c_char,
         bandwidth: libc::c_ulong,
-    ) -> sys::virDomainPtr;
+    ) -> libc::c_int;
     fn virDomainListAllSnapshots(
         ptr: sys::virDomainPtr,
         snaps: *mut *mut virDomainSnapshotPtr,
@@ -2182,19 +2182,19 @@ impl Domain {
         }
     }
 
-    pub fn migrate_to_uri(&self, duri: &str, flags: u32, bandwidth: u64) -> Result<Domain, Error> {
+    pub fn migrate_to_uri(&self, duri: &str, flags: u32, bandwidth: u64) -> Result<(), Error> {
         unsafe {
-            let ptr = virDomainMigrateToURI(
+            let ret = virDomainMigrateToURI(
                 self.as_ptr(),
                 string_to_c_chars!(duri),
                 flags as libc::c_ulong,
                 string_to_c_chars!(""),
                 bandwidth as libc::c_ulong,
             );
-            if ptr.is_null() {
+            if ret == -1 {
                 return Err(Error::new());
             }
-            Ok(Domain::new(ptr))
+            Ok(())
         }
     }
 
@@ -2205,9 +2205,9 @@ impl Domain {
         dxml: &str,
         flags: u32,
         bandwidth: u64,
-    ) -> Result<Domain, Error> {
+    ) -> Result<(), Error> {
         unsafe {
-            let ptr = virDomainMigrateToURI2(
+            let ret = virDomainMigrateToURI2(
                 self.as_ptr(),
                 string_to_c_chars!(dconn_uri),
                 string_to_c_chars!(mig_uri),
@@ -2216,10 +2216,10 @@ impl Domain {
                 string_to_c_chars!(""),
                 bandwidth as libc::c_ulong,
             );
-            if ptr.is_null() {
+            if ret == -1 {
                 return Err(Error::new());
             }
-            Ok(Domain::new(ptr))
+            Ok(())
         }
     }
 
