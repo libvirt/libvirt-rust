@@ -1519,7 +1519,7 @@ impl Connect {
     pub fn get_free_memory(&self) -> Result<u64, Error> {
         unsafe {
             let res = virNodeGetFreeMemory(self.as_ptr());
-            if res == -1 {
+            if res == 0 {
                 return Err(Error::new());
             }
             Ok(res as u64)
