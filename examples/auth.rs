@@ -54,7 +54,7 @@ fn main() {
             let mut input = String::new();
 
             println!("{}:", cred.prompt);
-            match cred.typed {
+            match cred.typed as u32 {
                 ::virt::connect::VIR_CRED_AUTHNAME => {
                     io::stdin().read_line(&mut input).expect("");
                     cred.result = Some(String::from(input.trim()));

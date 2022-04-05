@@ -97,7 +97,7 @@ fn test_create_storage_pool_and_vols() {
 fn test_connection_with_auth() {
     fn callback(creds: &mut Vec<ConnectCredential>) {
         for cred in creds {
-            match cred.typed {
+            match cred.typed as u32 {
                 ::virt::connect::VIR_CRED_AUTHNAME => {
                     cred.result = Some(String::from("user"));
                 }
@@ -128,7 +128,7 @@ fn test_connection_with_auth() {
 fn test_connection_with_auth_wrong() {
     fn callback(creds: &mut Vec<ConnectCredential>) {
         for cred in creds {
-            match cred.typed {
+            match cred.typed as u32 {
                 ::virt::connect::VIR_CRED_AUTHNAME => {
                     cred.result = Some(String::from("user"));
                 }

@@ -220,7 +220,7 @@ extern "C" {
         flags: libc::c_uint,
     ) -> libc::c_int;
     fn virNodeGetInfo(ptr: sys::virConnectPtr, ninfo: sys::virNodeInfoPtr) -> libc::c_int;
-    fn virNodeGetFreeMemory(ptr: sys::virConnectPtr) -> libc::c_long;
+    fn virNodeGetFreeMemory(ptr: sys::virConnectPtr) -> libc::c_ulonglong;
     fn virConnectSetKeepAlive(
         ptr: sys::virConnectPtr,
         interval: libc::c_int,
@@ -388,7 +388,7 @@ pub type BaselineCPUFlags = self::libc::c_int;
 pub const VIR_CONNECT_BASELINE_CPU_EXPAND_FEATURES: BaselineCPUFlags = 1 << 0;
 pub const VIR_CONNECT_BASELINE_CPU_MIGRATABLE: BaselineCPUFlags = 1 << 1;
 
-pub type ConnectCredentialType = self::libc::c_int;
+pub type ConnectCredentialType = self::libc::c_uint;
 pub const VIR_CRED_USERNAME: ConnectCredentialType = 1;
 pub const VIR_CRED_AUTHNAME: ConnectCredentialType = 2;
 pub const VIR_CRED_LANGUAGE: ConnectCredentialType = 3;
@@ -585,7 +585,7 @@ impl Connect {
             // Safe because Rust forces to allocate all attributes of
             // the struct ConnectAuth.
             sys::virConnectAuth {
-                credtype: &mut auth.creds[0],
+                credtype: auth.creds.as_mut_ptr() as *mut libc::c_int,
                 ncredtype: auth.creds.len() as libc::c_uint,
                 cb: Some(connectCallback),
                 cbdata: auth.callback as *mut _,
