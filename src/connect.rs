@@ -89,9 +89,9 @@ pub mod sys {
 #[link(name = "virt")]
 extern "C" {
     fn virGetVersion(
-        hyver: *const libc::c_ulong,
+        hyver: *mut libc::c_ulong,
         ctype: *const libc::c_char,
-        typever: *const libc::c_ulong,
+        typever: *mut libc::c_ulong,
     ) -> libc::c_int;
     fn virConnectOpen(uri: *const libc::c_char) -> sys::virConnectPtr;
     fn virConnectOpenReadOnly(uri: *const libc::c_char) -> sys::virConnectPtr;
@@ -253,7 +253,7 @@ extern "C" {
     ) -> libc::c_int;
     fn virConnectBaselineCPU(
         ptr: sys::virConnectPtr,
-        xmlcpus: *const *const libc::c_char,
+        xmlcpus: *mut *const libc::c_char,
         ncpus: libc::c_uint,
         flags: libc::c_uint,
     ) -> *mut libc::c_char;
@@ -491,8 +491,8 @@ impl Connect {
 
     pub fn get_version() -> Result<u32, Error> {
         unsafe {
-            let ver: libc::c_ulong = 0;
-            if virGetVersion(&ver, ptr::null(), ptr::null()) == -1 {
+            let mut ver: libc::c_ulong = 0;
+            if virGetVersion(&mut ver, ptr::null(), ptr::null_mut()) == -1 {
                 return Err(Error::new());
             }
             Ok(ver as u32)
@@ -1660,7 +1660,7 @@ impl Connect {
             }
             let ret = virConnectBaselineCPU(
                 self.as_ptr(),
-                xcpus.as_ptr(),
+                xcpus.as_mut_ptr(),
                 xmlcpus.len() as libc::c_uint,
                 flags as libc::c_uint,
             );
