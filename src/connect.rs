@@ -57,8 +57,9 @@ pub mod sys {
 
     pub type virConnectCredentialPtr = *mut virConnectCredential;
 
-    pub type virConnectAuthCallbackPtr =
-        unsafe extern "C" fn(virConnectCredentialPtr, libc::c_uint, *mut libc::c_void) -> i32;
+    pub type virConnectAuthCallbackPtr = Option<
+        unsafe extern "C" fn(virConnectCredentialPtr, libc::c_uint, *mut libc::c_void) -> i32,
+    >;
 
     #[repr(C)]
     pub struct virConnectAuth {
@@ -586,7 +587,7 @@ impl Connect {
             sys::virConnectAuth {
                 credtype: &mut auth.creds[0],
                 ncredtype: auth.creds.len() as libc::c_uint,
-                cb: connectCallback,
+                cb: Some(connectCallback),
                 cbdata: auth.callback as *mut _,
         };
         let c = unsafe {
