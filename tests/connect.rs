@@ -63,7 +63,7 @@ fn test_connection_invalid() {
 #[test]
 fn test_get_type() {
     let c = common::conn();
-    assert!(0 != c.get_type().unwrap_or(String::new()).len());
+    assert!(!c.get_type().unwrap_or_default().is_empty());
     common::close(c)
 }
 
@@ -126,7 +126,7 @@ fn test_get_node_info() {
 #[test]
 fn test_hostname() {
     let c = common::conn();
-    assert!(0 != c.get_hostname().unwrap_or(String::new()).len());
+    assert!(!c.get_hostname().unwrap_or_default().is_empty());
     common::close(c);
 }
 
@@ -152,7 +152,7 @@ fn test_lib_version() {
 fn test_list_domains() {
     let c = common::conn();
     assert!(
-        0 < c.list_domains().unwrap_or(vec![]).len(),
+        !c.list_domains().unwrap_or_default().is_empty(),
         "At least one domain should exist"
     );
     common::close(c);
@@ -162,7 +162,7 @@ fn test_list_domains() {
 fn test_list_interfaces() {
     let c = common::conn();
     assert!(
-        0 < c.list_interfaces().unwrap_or(vec![]).len(),
+        !c.list_interfaces().unwrap_or_default().is_empty(),
         "At least one interface should exist"
     );
     common::close(c);
@@ -172,7 +172,7 @@ fn test_list_interfaces() {
 fn test_list_networks() {
     let c = common::conn();
     assert!(
-        0 < c.list_networks().unwrap_or(vec![]).len(),
+        !c.list_networks().unwrap_or_default().is_empty(),
         "At least one networks should exist"
     );
     common::close(c);
@@ -182,7 +182,7 @@ fn test_list_networks() {
 fn test_list_storage_pools() {
     let c = common::conn();
     assert!(
-        0 < c.list_storage_pools().unwrap_or(vec![]).len(),
+        !c.list_storage_pools().unwrap_or_default().is_empty(),
         "At least one storage pool should exist"
     );
     common::close(c);
@@ -192,7 +192,7 @@ fn test_list_storage_pools() {
 fn test_list_all_domains() {
     let c = common::conn();
     let v = c.list_all_domains(0).unwrap_or(vec![]);
-    assert!(0 < v.len(), "At least one domain should exist");
+    assert!(!v.is_empty(), "At least one domain should exist");
     drop(v);
     common::close(c);
 }

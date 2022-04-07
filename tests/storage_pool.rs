@@ -26,17 +26,18 @@ fn exercices() {
     match Connect::open("test:///default") {
         Ok(mut conn) => {
             let sp = conn.list_storage_pools().unwrap_or(vec![]);
-            assert!(0 < sp.len(), "At least one storage_pool should exist");
+            assert!(!sp.is_empty(), "At least one storage_pool should exist");
             match StoragePool::lookup_by_name(&conn, &sp[0]) {
                 Ok(storage_pool) => {
-                    assert!(0 != storage_pool.get_name().unwrap_or(String::new()).len());
-                    assert!(
-                        0 != storage_pool
-                            .get_uuid_string()
-                            .unwrap_or(String::new())
-                            .len()
-                    );
-                    assert!(0 != storage_pool.get_xml_desc(0).unwrap_or(String::new()).len());
+                    assert!(!storage_pool.get_name().unwrap_or(String::new()).is_empty());
+                    assert!(!storage_pool
+                        .get_uuid_string()
+                        .unwrap_or(String::new())
+                        .is_empty());
+                    assert!(!storage_pool
+                        .get_xml_desc(0)
+                        .unwrap_or(String::new())
+                        .is_empty());
                 }
                 Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
             }
@@ -50,7 +51,7 @@ fn exercices() {
 fn test_lookup_storage_pool_by_name() {
     let c = common::conn();
     let v = c.list_storage_pools().unwrap_or(vec![]);
-    assert!(0 < v.len(), "At least one storage_pool should exist");
+    assert!(!v.is_empty(), "At least one storage_pool should exist");
     match StoragePool::lookup_by_name(&c, &v[0]) {
         Ok(mut s) => s.free().unwrap_or(()),
         Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),

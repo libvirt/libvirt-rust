@@ -24,8 +24,8 @@ fn test_create() {
     let n = common::build_interface(&c, "wipes");
     assert_eq!(Ok(0), n.create(0));
     assert_eq!(Ok(String::from("libvirt-rs-test-wipes")), n.get_name());
-    assert!(0 != n.get_mac_string().unwrap_or(String::new()).len());
-    assert!(0 != n.get_xml_desc(0).unwrap_or(String::new()).len());
+    assert!(!n.get_mac_string().unwrap_or(String::new()).is_empty());
+    assert!(!n.get_xml_desc(0).unwrap_or(String::new()).is_empty());
     common::clean_iface(n);
     common::close(c);
 }
@@ -45,6 +45,6 @@ fn test_active() {
 fn test_lookup_interface_by_name() {
     let c = common::conn();
     let v = c.list_interfaces().unwrap_or(vec![]);
-    assert!(0 < v.len(), "At least one interface should exist");
+    assert!(!v.is_empty(), "At least one interface should exist");
     common::close(c);
 }
