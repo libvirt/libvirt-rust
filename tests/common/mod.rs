@@ -103,12 +103,11 @@ pub fn build_qemu_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
         name
     );
 
-    let result: Result<Domain, Error>;
-    if transient {
-        result = Domain::create_xml(conn, &xml, 0);
+    let result: Result<Domain, Error> = if transient {
+        Domain::create_xml(conn, &xml, 0)
     } else {
-        result = Domain::define_xml(conn, &xml);
-    }
+        Domain::define_xml(conn, &xml)
+    };
 
     match result {
         Ok(dom) => dom,
@@ -141,12 +140,11 @@ pub fn build_test_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
         name
     );
 
-    let result: Result<Domain, Error>;
-    if transient {
-        result = Domain::create_xml(conn, &xml, 0);
+    let result: Result<Domain, Error> = if transient {
+        Domain::create_xml(conn, &xml, 0)
     } else {
-        result = Domain::define_xml(conn, &xml);
-    }
+        Domain::define_xml(conn, &xml)
+    };
 
     match result {
         Ok(dom) => dom,
@@ -174,12 +172,11 @@ pub fn build_storage_pool(conn: &Connect, name: &str, transient: bool) -> Storag
         name
     );
 
-    let result: Result<StoragePool, Error>;
-    if transient {
-        result = StoragePool::create_xml(conn, &xml, 0);
+    let result: Result<StoragePool, Error> = if transient {
+        StoragePool::create_xml(conn, &xml, 0)
     } else {
-        result = StoragePool::define_xml(conn, &xml, 0);
-    }
+        StoragePool::define_xml(conn, &xml, 0)
+    };
 
     match result {
         Ok(pool) => pool,
@@ -229,12 +226,11 @@ pub fn build_network(conn: &Connect, name: &str, transient: bool) -> Network {
         name
     );
 
-    let result: Result<Network, Error>;
-    if transient {
-        result = Network::create_xml(conn, &xml);
+    let result: Result<Network, Error> = if transient {
+        Network::create_xml(conn, &xml)
     } else {
-        result = Network::define_xml(conn, &xml);
-    }
+        Network::define_xml(conn, &xml)
+    };
 
     match result {
         Ok(net) => net,
