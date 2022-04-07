@@ -53,31 +53,31 @@ pub fn close(mut conn: Connect) {
 }
 
 pub fn clean(mut dom: Domain) {
-    if let Err(_) = dom.destroy() {}
-    if let Err(_) = dom.undefine() {}
+    let _ = dom.destroy();
+    let _ = dom.undefine();
     assert_eq!(Ok(()), dom.free())
 }
 
 pub fn clean_iface(mut iface: Interface) {
-    if let Err(_) = iface.destroy(0) {}
-    if let Err(_) = iface.undefine() {}
+    let _ = iface.destroy(0);
+    let _ = iface.undefine();
     assert_eq!(Ok(()), iface.free())
 }
 
 pub fn clean_pool(mut pool: StoragePool) {
-    if let Err(_) = pool.destroy() {}
-    if let Err(_) = pool.undefine() {}
+    let _ = pool.destroy();
+    let _ = pool.undefine();
     assert_eq!(Ok(()), pool.free())
 }
 
 pub fn clean_net(mut net: Network) {
-    if let Err(_) = net.destroy() {}
-    if let Err(_) = net.undefine() {}
+    let _ = net.destroy();
+    let _ = net.undefine();
     assert_eq!(Ok(()), net.free())
 }
 
 pub fn clean_vol(mut vol: StorageVol) {
-    if let Err(_) = vol.delete(0) {}
+    let _ = vol.delete(0);
     assert_eq!(Ok(()), vol.free())
 }
 
