@@ -74,7 +74,7 @@ fn main() {
         ),
     };
 
-    if name.len() == 0 {
+    if name.is_empty() {
         if let Err(e) = fetch_domains(&conn) {
             println!(
                 "Failed to fetch domains. code {}, message: {}",
