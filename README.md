@@ -19,13 +19,6 @@ The bindings use standard errors handling from Rust. Each method
 * https://libvirt.org/html/index.html
 * https://docs.rs/crate/virt/
 
-## Tests/Exercises
-
-CI is executing tests automatically from libvirt 2.5.0 to 5.5.0. Using
-Rust from stable, beta to nightly.
-
-* https://travis-ci.org/libvirt/libvirt-rust
-
 ### To execute locally tests and other excerices
 
 `cargo fmt -v -- --check`
