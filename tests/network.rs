@@ -24,8 +24,8 @@ fn test_create() {
     let n = common::build_network(&c, "wipes", false);
     assert_eq!(Ok(0), n.create());
     assert_eq!(Ok(String::from("libvirt-rs-test-wipes")), n.get_name());
-    assert!(!n.get_uuid_string().unwrap_or(String::new()).is_empty());
-    assert!(!n.get_xml_desc(0).unwrap_or(String::new()).is_empty());
+    assert!(!n.get_uuid_string().unwrap_or_default().is_empty());
+    assert!(!n.get_xml_desc(0).unwrap_or_default().is_empty());
     common::clean_net(n);
     common::close(c);
 }
@@ -56,7 +56,7 @@ fn test_auto_start() {
 #[test]
 fn test_lookup_network_by_name() {
     let c = common::conn();
-    let v = c.list_networks().unwrap_or(vec![]);
+    let v = c.list_networks().unwrap_or_default();
     assert!(!v.is_empty(), "At least one network should exist");
     common::close(c);
 }

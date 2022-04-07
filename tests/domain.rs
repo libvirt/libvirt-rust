@@ -35,7 +35,7 @@ fn tdom(exec_test: fn(dom: Domain)) {
 #[test]
 fn test_name() {
     fn t(dom: Domain) {
-        assert_eq!("test", dom.get_name().unwrap_or(String::new()));
+        assert_eq!("test", dom.get_name().unwrap_or_default());
     }
     tdom(t);
 }
@@ -45,7 +45,7 @@ fn test_uuid_string() {
     fn t(dom: Domain) {
         assert_eq!(
             "6695eb01-f6a4-8304-79aa-97f2502e193f",
-            dom.get_uuid_string().unwrap_or(String::new())
+            dom.get_uuid_string().unwrap_or_default()
         );
     }
     tdom(t);
@@ -63,7 +63,7 @@ fn test_id() {
 fn test_get_xml_desc() {
     fn t(dom: Domain) {
         assert!(
-            "" != dom.get_xml_desc(0).unwrap_or(String::new()),
+            "" != dom.get_xml_desc(0).unwrap_or_default(),
             "Should not be empty"
         );
     }

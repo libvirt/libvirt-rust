@@ -70,7 +70,7 @@ fn test_get_type() {
 #[test]
 fn test_get_uri() {
     let c = common::conn();
-    assert_eq!("test:///default", c.get_uri().unwrap_or(String::new()));
+    assert_eq!("test:///default", c.get_uri().unwrap_or_default());
     common::close(c);
 }
 
@@ -107,7 +107,7 @@ fn test_is_secure() {
 fn test_capabilities() {
     let c = common::conn();
     assert!(
-        "" != c.get_capabilities().unwrap_or(String::new()),
+        "" != c.get_capabilities().unwrap_or_default(),
         "Capabilities should not be empty"
     );
     common::close(c);
@@ -191,7 +191,7 @@ fn test_list_storage_pools() {
 #[test]
 fn test_list_all_domains() {
     let c = common::conn();
-    let v = c.list_all_domains(0).unwrap_or(vec![]);
+    let v = c.list_all_domains(0).unwrap_or_default();
     assert!(!v.is_empty(), "At least one domain should exist");
     drop(v);
     common::close(c);
