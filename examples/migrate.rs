@@ -28,7 +28,7 @@ fn main() {
     if env::args().len() < 4 {
         panic!(
             "Usage: {} <src uri> <dst uri> <domain name>",
-            env::args().nth(0).unwrap()
+            env::args().next().unwrap()
         );
     }
 
