@@ -48,7 +48,10 @@ fn fetch_domains(conn: &Connect) -> Result<(), Error> {
         println!("Running domains:");
         println!("----------------");
         for dom in doms {
-            println!("{}", dom.get_name().unwrap_or(String::from("no-name")));
+            println!(
+                "{}",
+                dom.get_name().unwrap_or_else(|_| String::from("no-name"))
+            );
         }
         return Ok(());
     }

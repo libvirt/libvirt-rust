@@ -61,7 +61,7 @@ fn show_domains(conn: &Connect) -> Result<(), Error> {
             if let Ok(doms) = conn.list_all_domains(flags) {
                 for dom in doms {
                     let id = dom.get_id().unwrap_or(0);
-                    let name = dom.get_name().unwrap_or(String::from("no-name"));
+                    let name = dom.get_name().unwrap_or_else(|_| String::from("no-name"));
                     let active = dom.is_active().unwrap_or(false);
                     println!("ID: {}, Name: {}, Active: {}", id, name, active);
                     if let Ok(dinfo) = dom.get_info() {
@@ -84,10 +84,7 @@ fn show_domains(conn: &Connect) -> Result<(), Error> {
                     }
                     if let Ok(numa) = dom.get_numa_parameters(0) {
                         println!("NUMA:");
-                        println!(
-                            "    Node Set: {}",
-                            numa.node_set.unwrap_or(String::from(""))
-                        );
+                        println!("    Node Set: {}", numa.node_set.unwrap_or_default());
                         println!("    Mode: {}", numa.mode.unwrap_or(0));
                     }
 
