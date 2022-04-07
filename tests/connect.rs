@@ -77,16 +77,15 @@ fn test_get_uri() {
 #[test]
 fn test_is_alive() {
     let c = common::conn();
-    assert_eq!(true, c.is_alive().unwrap_or(false));
+    assert!(c.is_alive().unwrap_or(false));
     common::close(c);
 }
 
 #[test]
 fn test_is_encrypted() {
     let c = common::conn();
-    assert_eq!(
-        false,
-        c.is_encrypted().unwrap_or(true),
+    assert!(
+        !c.is_encrypted().unwrap_or(true),
         "Test driver should not be encrypted"
     );
     common::close(c);
@@ -95,8 +94,7 @@ fn test_is_encrypted() {
 #[test]
 fn test_is_secure() {
     let c = common::conn();
-    assert_eq!(
-        true,
+    assert!(
         c.is_secure().unwrap_or(false),
         "Test driver should be secure"
     );

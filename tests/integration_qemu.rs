@@ -112,7 +112,7 @@ fn test_connection_with_auth() {
         callback,
     );
     let c = Connect::open_auth("test+tcp://127.0.0.1/default", &mut auth, 0);
-    assert_eq!(true, c.is_ok());
+    assert!(c.is_ok());
     common::close(c.unwrap());
 }
 
@@ -140,7 +140,7 @@ fn test_connection_with_auth_wrong() {
         callback,
     );
     let c = Connect::open_auth("test+tcp://127.0.0.1/default", &mut auth, 0);
-    assert_eq!(false, c.is_ok());
+    assert!(c.is_err());
 }
 
 #[test]
