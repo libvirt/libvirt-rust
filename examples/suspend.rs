@@ -81,13 +81,11 @@ fn main() {
                 e.code, e.message
             );
         }
-    } else {
-        if let Err(e) = suspend_and_resume(&conn, &name, 1) {
-            println!(
-                "Failed to suspend/resume. code {}, message: {}",
-                e.code, e.message
-            );
-        }
+    } else if let Err(e) = suspend_and_resume(&conn, &name, 1) {
+        println!(
+            "Failed to suspend/resume. code {}, message: {}",
+            e.code, e.message
+        );
     }
 
     if let Err(e) = conn.close() {
