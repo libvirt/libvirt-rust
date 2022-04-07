@@ -84,7 +84,7 @@ pub fn clean_vol(mut vol: StorageVol) {
 pub fn build_qemu_domain(conn: &Connect, name: &str, transient: bool) -> Domain {
     let name = format!("libvirt-rs-test-{}", name);
 
-    if let Ok(dom) = Domain::lookup_by_name(&conn, &name) {
+    if let Ok(dom) = Domain::lookup_by_name(conn, &name) {
         clean(dom);
     }
 
@@ -105,9 +105,9 @@ pub fn build_qemu_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
 
     let result: Result<Domain, Error>;
     if transient {
-        result = Domain::create_xml(&conn, &xml, 0);
+        result = Domain::create_xml(conn, &xml, 0);
     } else {
-        result = Domain::define_xml(&conn, &xml);
+        result = Domain::define_xml(conn, &xml);
     }
 
     match result {
@@ -122,7 +122,7 @@ pub fn build_qemu_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
 pub fn build_test_domain(conn: &Connect, name: &str, transient: bool) -> Domain {
     let name = format!("libvirt-rs-test-{}", name);
 
-    if let Ok(dom) = Domain::lookup_by_name(&conn, &name) {
+    if let Ok(dom) = Domain::lookup_by_name(conn, &name) {
         clean(dom);
     }
 
@@ -143,9 +143,9 @@ pub fn build_test_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
 
     let result: Result<Domain, Error>;
     if transient {
-        result = Domain::create_xml(&conn, &xml, 0);
+        result = Domain::create_xml(conn, &xml, 0);
     } else {
-        result = Domain::define_xml(&conn, &xml);
+        result = Domain::define_xml(conn, &xml);
     }
 
     match result {
@@ -160,7 +160,7 @@ pub fn build_test_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
 pub fn build_storage_pool(conn: &Connect, name: &str, transient: bool) -> StoragePool {
     let name = format!("libvirt-rs-test-{}", name);
 
-    if let Ok(pool) = StoragePool::lookup_by_name(&conn, &name) {
+    if let Ok(pool) = StoragePool::lookup_by_name(conn, &name) {
         clean_pool(pool);
     }
 
@@ -176,9 +176,9 @@ pub fn build_storage_pool(conn: &Connect, name: &str, transient: bool) -> Storag
 
     let result: Result<StoragePool, Error>;
     if transient {
-        result = StoragePool::create_xml(&conn, &xml, 0);
+        result = StoragePool::create_xml(conn, &xml, 0);
     } else {
-        result = StoragePool::define_xml(&conn, &xml, 0);
+        result = StoragePool::define_xml(conn, &xml, 0);
     }
 
     match result {
@@ -191,7 +191,7 @@ pub fn build_storage_pool(conn: &Connect, name: &str, transient: bool) -> Storag
 }
 
 pub fn build_storage_vol(pool: &StoragePool, name: &str, size: u64) -> StorageVol {
-    if let Ok(vol) = StorageVol::lookup_by_name(&pool, name) {
+    if let Ok(vol) = StorageVol::lookup_by_name(pool, name) {
         return vol;
     }
 
@@ -203,7 +203,7 @@ pub fn build_storage_vol(pool: &StoragePool, name: &str, size: u64) -> StorageVo
                        </volume>",
         name, size, size
     );
-    match StorageVol::create_xml(&pool, &xml, 0) {
+    match StorageVol::create_xml(pool, &xml, 0) {
         Ok(vol) => vol,
         Err(e) => panic!(
             "Build vol failed with code {}, message: {}",
@@ -215,7 +215,7 @@ pub fn build_storage_vol(pool: &StoragePool, name: &str, size: u64) -> StorageVo
 pub fn build_network(conn: &Connect, name: &str, transient: bool) -> Network {
     let name = format!("libvirt-rs-test-{}", name);
 
-    if let Ok(net) = Network::lookup_by_name(&conn, &name) {
+    if let Ok(net) = Network::lookup_by_name(conn, &name) {
         clean_net(net);
     }
 
@@ -231,9 +231,9 @@ pub fn build_network(conn: &Connect, name: &str, transient: bool) -> Network {
 
     let result: Result<Network, Error>;
     if transient {
-        result = Network::create_xml(&conn, &xml);
+        result = Network::create_xml(conn, &xml);
     } else {
-        result = Network::define_xml(&conn, &xml);
+        result = Network::define_xml(conn, &xml);
     }
 
     match result {
@@ -248,7 +248,7 @@ pub fn build_network(conn: &Connect, name: &str, transient: bool) -> Network {
 pub fn build_interface(conn: &Connect, name: &str) -> Interface {
     let name = format!("libvirt-rs-test-{}", name);
 
-    if let Ok(iface) = Interface::lookup_by_name(&conn, &name) {
+    if let Ok(iface) = Interface::lookup_by_name(conn, &name) {
         clean_iface(iface);
     }
 
@@ -259,7 +259,7 @@ pub fn build_interface(conn: &Connect, name: &str) -> Interface {
         name
     );
 
-    let result = Interface::define_xml(&conn, &xml, 0);
+    let result = Interface::define_xml(conn, &xml, 0);
     match result {
         Ok(iface) => iface,
         Err(e) => panic!(
