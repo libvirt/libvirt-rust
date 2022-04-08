@@ -41,11 +41,7 @@ extern "C" {
     ) -> sys::virNetworkPtr;
     fn virNetworkCreate(ptr: sys::virNetworkPtr) -> libc::c_int;
     fn virNetworkDefineXML(c: virConnectPtr, xml: *const libc::c_char) -> sys::virNetworkPtr;
-    fn virNetworkCreateXML(
-        c: virConnectPtr,
-        xml: *const libc::c_char,
-        flags: libc::c_uint,
-    ) -> sys::virNetworkPtr;
+    fn virNetworkCreateXML(c: virConnectPtr, xml: *const libc::c_char) -> sys::virNetworkPtr;
     fn virNetworkDestroy(ptr: sys::virNetworkPtr) -> libc::c_int;
     fn virNetworkUndefine(ptr: sys::virNetworkPtr) -> libc::c_int;
     fn virNetworkFree(ptr: sys::virNetworkPtr) -> libc::c_int;
@@ -218,13 +214,9 @@ impl Network {
         }
     }
 
-    pub fn create_xml(conn: &Connect, xml: &str, flags: u32) -> Result<Network, Error> {
+    pub fn create_xml(conn: &Connect, xml: &str) -> Result<Network, Error> {
         unsafe {
-            let ptr = virNetworkCreateXML(
-                conn.as_ptr(),
-                string_to_c_chars!(xml),
-                flags as libc::c_uint,
-            );
+            let ptr = virNetworkCreateXML(conn.as_ptr(), string_to_c_chars!(xml));
             if ptr.is_null() {
                 return Err(Error::new());
             }

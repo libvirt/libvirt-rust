@@ -233,7 +233,7 @@ pub fn build_network(conn: &Connect, name: &str, transient: bool) -> Network {
 
     let result: Result<Network, Error>;
     if transient {
-        result = Network::create_xml(&conn, &xml, 0);
+        result = Network::create_xml(&conn, &xml);
     } else {
         result = Network::define_xml(&conn, &xml);
     }
