@@ -16,8 +16,10 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
             ccache \
             gcc \
             git \
+            libclang-dev \
             libvirt-dev \
             locales \
+            pkgconf \
             rustc && \
     eatmydata apt-get autoremove -y && \
     eatmydata apt-get autoclean -y && \

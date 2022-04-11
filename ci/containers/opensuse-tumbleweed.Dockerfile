@@ -11,10 +11,12 @@ RUN zypper dist-upgrade -y && \
            ca-certificates \
            cargo \
            ccache \
+           clang-devel \
            gcc \
            git \
            glibc-locale \
            libvirt-devel \
+           pkgconfig \
            rust && \
     zypper clean --all && \
     rpm -qa | sort > /packages.txt && \

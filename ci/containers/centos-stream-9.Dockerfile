@@ -15,10 +15,12 @@ RUN dnf distro-sync -y && \
     dnf install -y \
         ca-certificates \
         cargo \
+        clang-devel \
         gcc \
         git \
         glibc-langpack-en \
         libvirt-devel \
+        pkgconfig \
         rust && \
     dnf autoremove -y && \
     dnf clean all -y && \

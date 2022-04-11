@@ -22,10 +22,12 @@ exec "$@"' > /usr/bin/nosync && \
         ca-certificates \
         cargo \
         ccache \
+        clang-devel \
         gcc \
         git \
         glibc-langpack-en \
         libvirt-devel \
+        pkgconfig \
         rust && \
     nosync dnf autoremove -y && \
     nosync dnf clean all -y && \

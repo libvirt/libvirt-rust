@@ -15,6 +15,7 @@ RUN dnf update -y && \
         ca-certificates \
         cargo \
         ccache \
+        clang-devel \
         cpp \
         gcc \
         gettext \
