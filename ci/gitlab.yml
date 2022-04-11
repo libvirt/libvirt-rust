@@ -83,13 +83,6 @@ x86_64-centos-stream-9-container:
     NAME: centos-stream-9
 
 
-x86_64-debian-10-container:
-  extends: .container_job
-  allow_failure: false
-  variables:
-    NAME: debian-10
-
-
 x86_64-debian-11-container:
   extends: .container_job
   allow_failure: false
@@ -139,13 +132,6 @@ x86_64-opensuse-tumbleweed-container:
     NAME: opensuse-tumbleweed
 
 
-x86_64-ubuntu-1804-container:
-  extends: .container_job
-  allow_failure: false
-  variables:
-    NAME: ubuntu-1804
-
-
 x86_64-ubuntu-2004-container:
   extends: .container_job
   allow_failure: false
@@ -189,15 +175,6 @@ x86_64-centos-stream-9:
   allow_failure: false
   variables:
     NAME: centos-stream-9
-
-
-x86_64-debian-10:
-  extends: .native_build_job
-  needs:
-    - x86_64-debian-10-container
-  allow_failure: false
-  variables:
-    NAME: debian-10
 
 
 x86_64-debian-11:
@@ -261,15 +238,6 @@ x86_64-opensuse-tumbleweed:
   allow_failure: false
   variables:
     NAME: opensuse-tumbleweed
-
-
-x86_64-ubuntu-1804:
-  extends: .native_build_job
-  needs:
-    - x86_64-ubuntu-1804-container
-  allow_failure: false
-  variables:
-    NAME: ubuntu-1804
 
 
 x86_64-ubuntu-2004:

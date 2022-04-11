@@ -26,8 +26,6 @@ targets:
 
   centos-stream-9: x86_64
 
-  debian-10: x86_64
-
   debian-11: x86_64
 
   debian-sid: x86_64
@@ -41,7 +39,5 @@ targets:
   opensuse-leap-152: x86_64
 
   opensuse-tumbleweed: x86_64
-
-  ubuntu-1804: x86_64
 
   ubuntu-2004: x86_64
