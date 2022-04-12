@@ -26,6 +26,7 @@ fn exercices() {
     match Connect::open("test:///default") {
         Ok(mut conn) => {
             let sp = conn.list_storage_pools().unwrap_or(vec![]);
+            assert!(0 < sp.len(), "At least one storage_pool should exist");
             match StoragePool::lookup_by_name(&conn, &sp[0]) {
                 Ok(storage_pool) => {
                     assert!(0 != storage_pool.get_name().unwrap_or(String::new()).len());
