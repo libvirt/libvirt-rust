@@ -210,6 +210,7 @@ x86_64-fedora-35:
     - x86_64-fedora-35-container
   allow_failure: false
   variables:
+    CLIPPY: enable
     NAME: fedora-35
 
 

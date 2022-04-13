@@ -35,7 +35,11 @@ targets:
 
   fedora-34: x86_64
 
-  fedora-35: x86_64
+  fedora-35:
+    jobs:
+      - arch: x86_64
+        variables:
+          CLIPPY: enable
 
   fedora-rawhide:
     jobs:
