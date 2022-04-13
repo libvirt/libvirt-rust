@@ -20,6 +20,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
             libvirt-dev \
             locales \
             pkgconf \
+            rust-clippy \
             rustc && \
     eatmydata apt-get autoremove -y && \
     eatmydata apt-get autoclean -y && \

@@ -16,6 +16,7 @@ RUN dnf update -y && \
         cargo \
         ccache \
         clang-devel \
+        clippy \
         cpp \
         gcc \
         gettext \

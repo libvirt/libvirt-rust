@@ -16,6 +16,7 @@ RUN dnf distro-sync -y && \
         cargo \
         ccache \
         clang-devel \
+        clippy \
         gcc \
         git \
         glibc-langpack-en \

@@ -23,6 +23,7 @@ exec "$@"' > /usr/bin/nosync && \
         cargo \
         ccache \
         clang-devel \
+        clippy \
         gcc \
         git \
         glibc-langpack-en \
