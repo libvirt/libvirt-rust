@@ -34,5 +34,17 @@ stages:
   script:
     - cargo test --verbose
     - cargo test --verbose --manifest-path=virt-sys/Cargo.toml
+    - if test "$CLIPPY" = "enable"; then
+        cargo clippy --quiet --no-deps --all-targets >cargo-clippy.txt 2>&1;
+        if test -s cargo-clippy.txt; then
+          echo "clippy error, see cargo-clippy.txt artifact for details";
+          exit 1;
+        fi;
+      fi
+  artifacts:
+    paths:
+      - cargo-clippy.txt
+    expire_in: 1 week
+    when: on_failure
 
 include: '/ci/gitlab.yml'
