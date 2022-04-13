@@ -42,8 +42,6 @@ targets:
       - arch: x86_64
         allow-failure: true
 
-  opensuse-leap-152: x86_64
-
   opensuse-tumbleweed:
     jobs:
       - arch: x86_64
