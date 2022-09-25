@@ -379,7 +379,7 @@ impl Drop for Domain {
 fn to_arr(name: &str) -> [libc::c_char; 80] {
     let mut field: [libc::c_char; 80] = [0; 80];
     for (a, c) in field.iter_mut().zip(name.as_bytes()) {
-        *a = *c as i8
+        *a = *c as libc::c_char
     }
     field
 }
