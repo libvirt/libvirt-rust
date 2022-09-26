@@ -19,7 +19,7 @@
 use std::error::Error as StdError;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 #[repr(C)]
 pub enum ErrorLevel {
     NONE = 0,
@@ -33,7 +33,7 @@ impl_from! { u32, ErrorLevel }
 /// Error handling
 ///
 /// See: http://libvirt.org/html/libvirt-virterror.html
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Error {
     pub code: i32,
     pub domain: i32,
