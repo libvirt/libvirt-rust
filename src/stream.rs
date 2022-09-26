@@ -32,10 +32,12 @@ extern "C" fn event_callback(c: sys::virStreamPtr, flags: libc::c_int, opaque: *
 
 extern "C" fn event_free(_opaque: *mut libc::c_void) {}
 
+type StreamCallback = dyn FnMut(&Stream, sys::virStreamEventType);
+
 // #[derive(Debug)]
 pub struct Stream {
     ptr: Option<sys::virStreamPtr>,
-    callback: Option<Box<dyn FnMut(&Stream, sys::virStreamEventType)>>,
+    callback: Option<Box<StreamCallback>>,
 }
 
 impl Drop for Stream {
