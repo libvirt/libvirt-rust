@@ -5,8 +5,7 @@ stages:
   - sanity_checks
 
 .native_git_build_job:
-  extends: .gitlab_native_build_job
-  before_script:
+  script:
     - export MAKEFLAGS="-j$(getconf _NPROCESSORS_ONLN)"
     - export SCRATCH_DIR="/tmp/scratch"
     - export VROOT="$SCRATCH_DIR/vroot"
@@ -15,7 +14,6 @@ stages:
     - export PATH="$VROOT/bin:$PATH"
     - export PKG_CONFIG_PATH="$LIBDIR/pkgconfig"
     - export RUSTFLAGS="-D warnings"
-  script:
     - pushd "$PWD"
     - mkdir -p "$SCRATCH_DIR"
     - cd "$SCRATCH_DIR"
@@ -27,11 +25,19 @@ stages:
     - cargo test --verbose
     - cargo test --verbose --manifest-path=virt-sys/Cargo.toml
 
+.native_git_build_job_prebuilt_env:
+  extends:
+    - .native_git_build_job
+    - .gitlab_native_build_job_prebuilt_env
+
+.native_git_build_job_local_env:
+  extends:
+    - .native_git_build_job
+    - .gitlab_native_build_job_local_env
+
 .native_build_job:
-  extends: .gitlab_native_build_job
-  before_script:
-    - export RUSTFLAGS="-D warnings"
   script:
+    - export RUSTFLAGS="-D warnings"
     - cargo test --verbose
     - cargo test --verbose --manifest-path=virt-sys/Cargo.toml
     - if test "$CLIPPY" = "enable"; then
@@ -46,5 +52,15 @@ stages:
       - cargo-clippy.txt
     expire_in: 1 week
     when: on_failure
+
+.native_build_job_prebuilt_env:
+  extends:
+    - .native_build_job
+    - .gitlab_native_build_job_prebuilt_env
+
+.native_build_job_local_env:
+  extends:
+    - .native_build_job
+    - .gitlab_native_build_job_local_env
 
 include: '/ci/gitlab.yml'

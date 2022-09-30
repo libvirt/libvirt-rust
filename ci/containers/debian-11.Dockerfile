@@ -11,16 +11,16 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get install -y eatmydata && \
     eatmydata apt-get dist-upgrade -y && \
     eatmydata apt-get install --no-install-recommends -y \
-            ca-certificates \
-            cargo \
-            ccache \
-            gcc \
-            git \
-            libclang-dev \
-            libvirt-dev \
-            locales \
-            pkgconf \
-            rustc && \
+                      ca-certificates \
+                      cargo \
+                      ccache \
+                      gcc \
+                      git \
+                      libclang-dev \
+                      libvirt-dev \
+                      locales \
+                      pkgconf \
+                      rustc && \
     eatmydata apt-get autoremove -y && \
     eatmydata apt-get autoclean -y && \
     sed -Ei 's,^# (en_US\.UTF-8 .*)$,\1,' /etc/locale.gen && \
@@ -30,5 +30,5 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     ln -s /usr/bin/ccache /usr/libexec/ccache-wrappers/cc && \
     ln -s /usr/bin/ccache /usr/libexec/ccache-wrappers/gcc
 
-ENV LANG "en_US.UTF-8"
 ENV CCACHE_WRAPPERSDIR "/usr/libexec/ccache-wrappers"
+ENV LANG "en_US.UTF-8"
