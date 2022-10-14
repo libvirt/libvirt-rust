@@ -125,20 +125,6 @@ macro_rules! string_to_mut_c_chars {
     };
 }
 
-macro_rules! impl_from {
-    // Largely inspired by impl_from! in rust core/num/mod.rs
-    ($Small: ty, $Large: ty) => {
-        impl From<$Small> for $Large {
-            #[inline]
-            fn from(small: $Small) -> $Large {
-                let r: $Large;
-                unsafe { r = ::std::mem::transmute(small) }
-                r
-            }
-        }
-    };
-}
-
 mod util;
 
 pub mod connect;
