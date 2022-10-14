@@ -139,6 +139,8 @@ macro_rules! impl_from {
     };
 }
 
+mod util;
+
 pub mod connect;
 pub mod domain;
 pub mod domain_snapshot;
