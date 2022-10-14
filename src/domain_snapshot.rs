@@ -53,7 +53,7 @@ impl DomainSnapshot {
         unsafe {
             let ptr = sys::virDomainSnapshotGetConnect(self.as_ptr());
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Connect::new(ptr))
         }
@@ -63,7 +63,7 @@ impl DomainSnapshot {
         unsafe {
             let ptr = sys::virDomainSnapshotGetDomain(self.as_ptr());
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Domain::new(ptr))
         }
@@ -73,7 +73,7 @@ impl DomainSnapshot {
         unsafe {
             let n = sys::virDomainSnapshotGetName(self.as_ptr());
             if n.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(n, nofree))
         }
@@ -88,7 +88,7 @@ impl DomainSnapshot {
                 flags as libc::c_uint,
             );
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(DomainSnapshot::new(ptr))
         }
@@ -99,7 +99,7 @@ impl DomainSnapshot {
         unsafe {
             let xml = sys::virDomainSnapshotGetXMLDesc(self.as_ptr(), flags as libc::c_uint);
             if xml.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(xml))
         }
@@ -113,7 +113,7 @@ impl DomainSnapshot {
                 flags as libc::c_uint,
             );
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(DomainSnapshot::new(ptr))
         }
@@ -124,7 +124,7 @@ impl DomainSnapshot {
         unsafe {
             let ptr = sys::virDomainSnapshotCurrent(dom.as_ptr(), flags as libc::c_uint);
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(DomainSnapshot::new(ptr))
         }
@@ -135,7 +135,7 @@ impl DomainSnapshot {
         unsafe {
             let ptr = sys::virDomainSnapshotGetParent(self.as_ptr(), flags as libc::c_uint);
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(DomainSnapshot::new(ptr))
         }
@@ -146,7 +146,7 @@ impl DomainSnapshot {
         unsafe {
             let ret = sys::virDomainSnapshotDelete(self.as_ptr(), flags as libc::c_uint);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -157,7 +157,7 @@ impl DomainSnapshot {
         unsafe {
             let ret = sys::virDomainSnapshotNum(dom.as_ptr(), flags as libc::c_uint);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -168,7 +168,7 @@ impl DomainSnapshot {
         unsafe {
             let ret = sys::virDomainSnapshotNumChildren(self.as_ptr(), flags as libc::c_uint);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -179,7 +179,7 @@ impl DomainSnapshot {
         unsafe {
             let ret = sys::virDomainSnapshotIsCurrent(self.as_ptr(), flags as libc::c_uint);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret == 1)
         }
@@ -191,7 +191,7 @@ impl DomainSnapshot {
         unsafe {
             let ret = sys::virDomainSnapshotHasMetadata(self.as_ptr(), flags as libc::c_uint);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret == 1)
         }
@@ -207,7 +207,7 @@ impl DomainSnapshot {
                 flags as libc::c_uint,
             );
             if size == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
 
             let mut array: Vec<DomainSnapshot> = Vec::new();
@@ -223,7 +223,7 @@ impl DomainSnapshot {
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
             if sys::virDomainSnapshotFree(self.as_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             self.ptr = None;
             Ok(())

@@ -59,7 +59,7 @@ impl Stream {
     pub fn new(conn: &Connect, flags: sys::virStreamFlags) -> Result<Stream, Error> {
         let ptr = unsafe { sys::virStreamNew(conn.as_ptr(), flags as libc::c_uint) };
         if ptr.is_null() {
-            return Err(Error::new());
+            return Err(Error::last_error());
         }
         Ok(Stream::from_ptr(ptr))
     }
@@ -78,7 +78,7 @@ impl Stream {
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
             if sys::virStreamFree(self.as_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
         }
         self.ptr = None;
@@ -88,7 +88,7 @@ impl Stream {
     pub fn finish(self) -> Result<(), Error> {
         unsafe {
             if sys::virStreamFinish(self.as_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -97,7 +97,7 @@ impl Stream {
     pub fn abort(self) -> Result<(), Error> {
         unsafe {
             if sys::virStreamAbort(self.as_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -111,7 +111,7 @@ impl Stream {
                 data.len(),
             )
         };
-        usize::try_from(ret).map_err(|_| Error::new())
+        usize::try_from(ret).map_err(|_| Error::last_error())
     }
 
     pub fn recv(&self, buf: &mut [u8]) -> Result<usize, Error> {
@@ -122,7 +122,7 @@ impl Stream {
                 buf.len(),
             )
         };
-        usize::try_from(ret).map_err(|_| Error::new())
+        usize::try_from(ret).map_err(|_| Error::last_error())
     }
 
     pub fn event_add_callback<F: 'static + FnMut(&Stream, sys::virStreamEventType)>(
@@ -141,7 +141,7 @@ impl Stream {
             )
         };
         if ret == -1 {
-            return Err(Error::new());
+            return Err(Error::last_error());
         }
         self.callback = Some(Box::new(cb));
         Ok(())
@@ -151,7 +151,7 @@ impl Stream {
         let ret =
             unsafe { sys::virStreamEventUpdateCallback(self.as_ptr(), events as libc::c_int) };
         if ret == -1 {
-            return Err(Error::new());
+            return Err(Error::last_error());
         }
         Ok(())
     }
@@ -159,7 +159,7 @@ impl Stream {
     pub fn event_remove_callback(&self) -> Result<(), Error> {
         unsafe {
             if sys::virStreamEventRemoveCallback(self.as_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }

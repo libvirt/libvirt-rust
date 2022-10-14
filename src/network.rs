@@ -52,7 +52,7 @@ impl Network {
         unsafe {
             let ptr = sys::virNetworkGetConnect(self.as_ptr());
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Connect::new(ptr))
         }
@@ -62,7 +62,7 @@ impl Network {
         unsafe {
             let ptr = sys::virNetworkLookupByName(conn.as_ptr(), string_to_c_chars!(id));
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Network::new(ptr))
         }
@@ -72,7 +72,7 @@ impl Network {
         unsafe {
             let ptr = sys::virNetworkLookupByUUIDString(conn.as_ptr(), string_to_c_chars!(uuid));
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Network::new(ptr))
         }
@@ -82,7 +82,7 @@ impl Network {
         unsafe {
             let n = sys::virNetworkGetName(self.as_ptr());
             if n.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(n, nofree))
         }
@@ -92,7 +92,7 @@ impl Network {
         unsafe {
             let mut uuid: [libc::c_char; 37] = [0; 37];
             if sys::virNetworkGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(uuid.as_ptr(), nofree))
         }
@@ -102,7 +102,7 @@ impl Network {
         unsafe {
             let n = sys::virNetworkGetBridgeName(self.as_ptr());
             if n.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(n))
         }
@@ -112,7 +112,7 @@ impl Network {
         unsafe {
             let xml = sys::virNetworkGetXMLDesc(self.as_ptr(), flags);
             if xml.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(xml))
         }
@@ -122,7 +122,7 @@ impl Network {
         unsafe {
             let ret = sys::virNetworkCreate(self.as_ptr());
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -132,7 +132,7 @@ impl Network {
         unsafe {
             let ptr = sys::virNetworkDefineXML(conn.as_ptr(), string_to_c_chars!(xml));
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Network::new(ptr))
         }
@@ -142,7 +142,7 @@ impl Network {
         unsafe {
             let ptr = sys::virNetworkCreateXML(conn.as_ptr(), string_to_c_chars!(xml));
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Network::new(ptr))
         }
@@ -151,7 +151,7 @@ impl Network {
     pub fn destroy(&self) -> Result<(), Error> {
         unsafe {
             if sys::virNetworkDestroy(self.as_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -160,7 +160,7 @@ impl Network {
     pub fn undefine(&self) -> Result<(), Error> {
         unsafe {
             if sys::virNetworkUndefine(self.as_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -169,7 +169,7 @@ impl Network {
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
             if sys::virNetworkFree(self.as_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             self.ptr = None;
             Ok(())
@@ -180,7 +180,7 @@ impl Network {
         unsafe {
             let ret = sys::virNetworkIsActive(self.as_ptr());
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret == 1)
         }
@@ -190,7 +190,7 @@ impl Network {
         unsafe {
             let ret = sys::virNetworkIsPersistent(self.as_ptr());
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret == 1)
         }
@@ -201,7 +201,7 @@ impl Network {
             let mut auto = 0;
             let ret = sys::virNetworkGetAutostart(self.as_ptr(), &mut auto);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(auto == 1)
         }
@@ -211,7 +211,7 @@ impl Network {
         unsafe {
             let ret = sys::virNetworkSetAutostart(self.as_ptr(), autostart as libc::c_int);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -235,7 +235,7 @@ impl Network {
                 flags,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }

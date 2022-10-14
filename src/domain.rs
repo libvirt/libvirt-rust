@@ -394,7 +394,7 @@ impl Domain {
         unsafe {
             let ptr = sys::virDomainGetConnect(self.as_ptr());
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Connect::new(ptr))
         }
@@ -404,7 +404,7 @@ impl Domain {
         unsafe {
             let ptr = sys::virDomainLookupByID(conn.as_ptr(), id as libc::c_int);
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Domain::new(ptr))
         }
@@ -414,7 +414,7 @@ impl Domain {
         unsafe {
             let ptr = sys::virDomainLookupByName(conn.as_ptr(), string_to_c_chars!(id));
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Domain::new(ptr))
         }
@@ -424,7 +424,7 @@ impl Domain {
         unsafe {
             let ptr = sys::virDomainLookupByUUIDString(conn.as_ptr(), string_to_c_chars!(uuid));
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Domain::new(ptr))
         }
@@ -440,7 +440,7 @@ impl Domain {
             let mut reason: libc::c_int = -1;
             let ret = sys::virDomainGetState(self.as_ptr(), &mut state, &mut reason, 0);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok((state as sys::virDomainState, reason as i32))
         }
@@ -451,7 +451,7 @@ impl Domain {
         unsafe {
             let n = sys::virDomainGetName(self.as_ptr());
             if n.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(n, nofree))
         }
@@ -462,7 +462,7 @@ impl Domain {
         unsafe {
             let n = sys::virDomainGetOSType(self.as_ptr());
             if n.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(n))
         }
@@ -473,7 +473,7 @@ impl Domain {
         unsafe {
             let n = sys::virDomainGetHostname(self.as_ptr(), flags as libc::c_uint);
             if n.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(n))
         }
@@ -486,7 +486,7 @@ impl Domain {
         unsafe {
             let mut uuid: [libc::c_char; 37] = [0; 37];
             if sys::virDomainGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(uuid.as_ptr(), nofree))
         }
@@ -509,7 +509,7 @@ impl Domain {
         unsafe {
             let xml = sys::virDomainGetXMLDesc(self.as_ptr(), flags);
             if xml.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(xml))
         }
@@ -523,7 +523,7 @@ impl Domain {
         unsafe {
             let ret = sys::virDomainCreate(self.as_ptr());
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -535,7 +535,7 @@ impl Domain {
         unsafe {
             let res = sys::virDomainCreateWithFlags(self.as_ptr(), flags as libc::c_uint);
             if res == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(res as u32)
         }
@@ -549,7 +549,7 @@ impl Domain {
             let mut pinfo = mem::MaybeUninit::uninit();
             let res = sys::virDomainGetInfo(self.as_ptr(), pinfo.as_mut_ptr());
             if res == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(DomainInfo::from_ptr(&mut pinfo.assume_init()))
         }
@@ -575,7 +575,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Domain::new(ptr))
         }
@@ -596,7 +596,7 @@ impl Domain {
         unsafe {
             let ptr = sys::virDomainDefineXML(conn.as_ptr(), string_to_c_chars!(xml));
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Domain::new(ptr))
         }
@@ -625,7 +625,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Domain::new(ptr))
         }
@@ -638,7 +638,7 @@ impl Domain {
     pub fn destroy(&self) -> Result<(), Error> {
         unsafe {
             if sys::virDomainDestroy(self.as_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -655,7 +655,7 @@ impl Domain {
         unsafe {
             let ret = sys::virDomainReset(self.as_ptr(), 0);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -669,7 +669,7 @@ impl Domain {
         unsafe {
             let ret = sys::virDomainDestroyFlags(self.as_ptr(), flags);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -691,7 +691,7 @@ impl Domain {
         unsafe {
             let ret = sys::virDomainShutdown(self.as_ptr());
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -703,7 +703,7 @@ impl Domain {
     pub fn reboot(&self, flags: sys::virDomainRebootFlagValues) -> Result<(), Error> {
         unsafe {
             if sys::virDomainReboot(self.as_ptr(), flags) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -722,7 +722,7 @@ impl Domain {
         unsafe {
             let ret = sys::virDomainSuspend(self.as_ptr());
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -738,7 +738,7 @@ impl Domain {
         unsafe {
             let ret = sys::virDomainResume(self.as_ptr());
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -749,7 +749,7 @@ impl Domain {
         unsafe {
             let ret = sys::virDomainIsActive(self.as_ptr());
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret == 1)
         }
@@ -763,7 +763,7 @@ impl Domain {
     pub fn undefine(&self) -> Result<(), Error> {
         unsafe {
             if sys::virDomainUndefine(self.as_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -777,7 +777,7 @@ impl Domain {
     pub fn undefine_flags(&self, flags: sys::virDomainUndefineFlagsValues) -> Result<(), Error> {
         unsafe {
             if sys::virDomainUndefineFlags(self.as_ptr(), flags) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -790,7 +790,7 @@ impl Domain {
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
             if sys::virDomainFree(self.as_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             self.ptr = None;
             Ok(())
@@ -801,7 +801,7 @@ impl Domain {
         unsafe {
             let ret = sys::virDomainIsUpdated(self.as_ptr());
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret == 1)
         }
@@ -812,7 +812,7 @@ impl Domain {
             let mut autostart: libc::c_int = 0;
             let ret = sys::virDomainGetAutostart(self.as_ptr(), &mut autostart);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(autostart == 1)
         }
@@ -822,7 +822,7 @@ impl Domain {
         unsafe {
             let ret = sys::virDomainSetAutostart(self.as_ptr(), autostart as libc::c_int);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret == 1)
         }
@@ -832,7 +832,7 @@ impl Domain {
         unsafe {
             let ret = sys::virDomainSetMaxMemory(self.as_ptr(), memory as libc::c_ulong);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret == 1)
         }
@@ -842,7 +842,7 @@ impl Domain {
         unsafe {
             let ret = sys::virDomainGetMaxMemory(self.as_ptr());
             if ret == 0 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u64)
         }
@@ -852,7 +852,7 @@ impl Domain {
         unsafe {
             let ret = sys::virDomainGetMaxVcpus(self.as_ptr());
             if ret == 0 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u64)
         }
@@ -862,7 +862,7 @@ impl Domain {
         unsafe {
             let ret = sys::virDomainSetMemory(self.as_ptr(), memory as libc::c_ulong);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret == 1)
         }
@@ -880,7 +880,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret == 1)
         }
@@ -898,7 +898,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret == 1)
         }
@@ -908,7 +908,7 @@ impl Domain {
         unsafe {
             let ret = sys::virDomainSetVcpus(self.as_ptr(), vcpus as libc::c_uint);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret == 1)
         }
@@ -926,7 +926,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret == 1)
         }
@@ -935,7 +935,7 @@ impl Domain {
     pub fn domain_restore(conn: &Connect, path: &str) -> Result<(), Error> {
         unsafe {
             if sys::virDomainRestore(conn.as_ptr(), string_to_c_chars!(path)) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -955,7 +955,7 @@ impl Domain {
                 flags,
             ) == -1
             {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -965,7 +965,7 @@ impl Domain {
         unsafe {
             let ret = sys::virDomainGetVcpusFlags(self.as_ptr(), flags as libc::c_uint);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -979,7 +979,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -994,7 +994,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(bandwidth as u64)
         }
@@ -1008,7 +1008,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1023,7 +1023,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(size as u64)
         }
@@ -1037,7 +1037,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1052,7 +1052,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1069,7 +1069,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok((seconds as i64, nseconds as i32))
         }
@@ -1085,7 +1085,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(BlockInfo::from_ptr(&mut pinfo.assume_init()))
         }
@@ -1100,7 +1100,7 @@ impl Domain {
                 cpumap.len() as libc::c_int,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1116,7 +1116,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1131,7 +1131,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1145,7 +1145,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1160,7 +1160,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1175,7 +1175,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1190,7 +1190,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1204,7 +1204,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1219,7 +1219,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1234,7 +1234,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1250,7 +1250,7 @@ impl Domain {
             let size =
                 sys::virDomainInterfaceAddresses(self.as_ptr(), &mut addresses, source, flags);
             if size == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
 
             let mut array: Vec<Interface> = Vec::new();
@@ -1273,7 +1273,7 @@ impl Domain {
                 mem::size_of::<sys::virDomainInterfaceStatsStruct>(),
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(InterfaceStats::from_ptr(&mut pinfo.assume_init()))
         }
@@ -1289,7 +1289,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(MemoryStats::from_ptr(&mut pinfo.assume_init()))
         }
@@ -1307,7 +1307,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(ptr))
         }
@@ -1327,7 +1327,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1337,7 +1337,7 @@ impl Domain {
         unsafe {
             let ret = sys::virDomainAttachDevice(self.as_ptr(), string_to_c_chars!(xml));
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1351,7 +1351,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1361,7 +1361,7 @@ impl Domain {
         unsafe {
             let ret = sys::virDomainDetachDevice(self.as_ptr(), string_to_c_chars!(xml));
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1375,7 +1375,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1389,7 +1389,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1399,7 +1399,7 @@ impl Domain {
         unsafe {
             let ret = sys::virDomainManagedSave(self.as_ptr(), flags as libc::c_uint);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1409,7 +1409,7 @@ impl Domain {
         unsafe {
             let ret = sys::virDomainHasManagedSaveImage(self.as_ptr(), flags as libc::c_uint);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret == 1)
         }
@@ -1419,7 +1419,7 @@ impl Domain {
         unsafe {
             let ret = sys::virDomainManagedSaveRemove(self.as_ptr(), flags as libc::c_uint);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1433,7 +1433,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1448,7 +1448,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1472,7 +1472,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1487,7 +1487,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if n.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(n))
         }
@@ -1502,7 +1502,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1518,7 +1518,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             let mut params: Vec<sys::virTypedParameter> = Vec::with_capacity(nparams as usize);
             let ret = sys::virDomainGetMemoryParameters(
@@ -1528,7 +1528,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             params.set_len(nparams as usize);
             Ok(MemoryParameters::from_vec(params))
@@ -1586,7 +1586,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1609,7 +1609,7 @@ impl Domain {
                 bandwidth as libc::c_ulong,
             );
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Domain::new(ptr))
         }
@@ -1634,7 +1634,7 @@ impl Domain {
                 bandwidth as libc::c_ulong,
             );
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Domain::new(ptr))
         }
@@ -1650,7 +1650,7 @@ impl Domain {
                 bandwidth as libc::c_ulong,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -1675,7 +1675,7 @@ impl Domain {
                 bandwidth as libc::c_ulong,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -1691,7 +1691,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             let mut params: Vec<sys::virTypedParameter> = Vec::with_capacity(nparams as usize);
             let ret = sys::virDomainGetNumaParameters(
@@ -1701,7 +1701,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             params.set_len(nparams as usize);
             Ok(NUMAParameters::from_vec(params))
@@ -1737,7 +1737,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -1749,7 +1749,7 @@ impl Domain {
             let size =
                 sys::virDomainListAllSnapshots(self.as_ptr(), &mut snaps, flags as libc::c_uint);
             if size == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
 
             let mut array: Vec<DomainSnapshot> = Vec::new();
@@ -1768,7 +1768,7 @@ impl Domain {
             let mut nparams: libc::c_int = -1;
             let sched_type = sys::virDomainGetSchedulerType(self.as_ptr(), &mut nparams);
             if sched_type.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
 
             Ok((c_chars_to_string!(sched_type), nparams))
@@ -1783,7 +1783,7 @@ impl Domain {
             let ret =
                 sys::virDomainGetSchedulerParameters(self.as_ptr(), &mut params[0], &mut nparams);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             params.set_len(nparams as usize);
             Ok(SchedulerInfo::from_vec(params, sched_type))
@@ -1809,7 +1809,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             params.set_len(nparams as usize);
             Ok(SchedulerInfo::from_vec(params, sched_type))
@@ -1826,7 +1826,7 @@ impl Domain {
                 params.len() as libc::c_int,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret)
         }
@@ -1851,7 +1851,7 @@ impl Domain {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret)
         }
@@ -1883,7 +1883,7 @@ impl Domain {
                 flags as libc::c_uint,
             ) == -1
             {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }

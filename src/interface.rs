@@ -52,7 +52,7 @@ impl Interface {
         unsafe {
             let ptr = sys::virInterfaceGetConnect(self.as_ptr());
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Connect::new(ptr))
         }
@@ -62,7 +62,7 @@ impl Interface {
         unsafe {
             let ptr = sys::virInterfaceLookupByName(conn.as_ptr(), string_to_c_chars!(id));
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Interface::new(ptr))
         }
@@ -76,7 +76,7 @@ impl Interface {
                 flags as libc::c_uint,
             );
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Interface::new(ptr))
         }
@@ -86,7 +86,7 @@ impl Interface {
         unsafe {
             let ptr = sys::virInterfaceLookupByMACString(conn.as_ptr(), string_to_c_chars!(id));
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Interface::new(ptr))
         }
@@ -96,7 +96,7 @@ impl Interface {
         unsafe {
             let n = sys::virInterfaceGetName(self.as_ptr());
             if n.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(n, nofree))
         }
@@ -106,7 +106,7 @@ impl Interface {
         unsafe {
             let mac = sys::virInterfaceGetMACString(self.as_ptr());
             if mac.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(mac, nofree))
         }
@@ -116,7 +116,7 @@ impl Interface {
         unsafe {
             let xml = sys::virInterfaceGetXMLDesc(self.as_ptr(), flags);
             if xml.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(xml))
         }
@@ -126,7 +126,7 @@ impl Interface {
         unsafe {
             let ret = sys::virInterfaceCreate(self.as_ptr(), flags);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -135,7 +135,7 @@ impl Interface {
     pub fn destroy(&self, flags: u32) -> Result<(), Error> {
         unsafe {
             if sys::virInterfaceDestroy(self.as_ptr(), flags) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -144,7 +144,7 @@ impl Interface {
     pub fn undefine(&self) -> Result<(), Error> {
         unsafe {
             if sys::virInterfaceUndefine(self.as_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -153,7 +153,7 @@ impl Interface {
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
             if sys::virInterfaceFree(self.as_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             self.ptr = None;
             Ok(())
@@ -164,7 +164,7 @@ impl Interface {
         unsafe {
             let ret = sys::virInterfaceIsActive(self.as_ptr());
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret == 1)
         }

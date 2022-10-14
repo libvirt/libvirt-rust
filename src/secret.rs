@@ -50,7 +50,7 @@ impl Secret {
         unsafe {
             let ptr = sys::virSecretGetConnect(self.as_ptr());
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Connect::new(ptr))
         }
@@ -64,7 +64,7 @@ impl Secret {
                 flags as libc::c_uint,
             );
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Secret::new(ptr))
         }
@@ -74,7 +74,7 @@ impl Secret {
         unsafe {
             let ptr = sys::virSecretLookupByUUIDString(conn.as_ptr(), string_to_c_chars!(uuid));
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Secret::new(ptr))
         }
@@ -88,7 +88,7 @@ impl Secret {
                 string_to_c_chars!(usageid),
             );
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Secret::new(ptr))
         }
@@ -98,7 +98,7 @@ impl Secret {
         unsafe {
             let n = sys::virSecretGetUsageID(self.as_ptr());
             if n.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(n))
         }
@@ -108,7 +108,7 @@ impl Secret {
         unsafe {
             let t = sys::virSecretGetUsageType(self.as_ptr());
             if t == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(t as u32)
         }
@@ -118,7 +118,7 @@ impl Secret {
         unsafe {
             let mut uuid: [libc::c_char; 37] = [0; 37];
             if sys::virSecretGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(uuid.as_ptr(), nofree))
         }
@@ -128,7 +128,7 @@ impl Secret {
         unsafe {
             let xml = sys::virSecretGetXMLDesc(self.as_ptr(), flags);
             if xml.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(xml))
         }
@@ -137,7 +137,7 @@ impl Secret {
     pub fn set_value(&self, value: &[u8], flags: u32) -> Result<(), Error> {
         unsafe {
             if sys::virSecretSetValue(self.as_ptr(), value.as_ptr(), value.len(), flags) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -148,7 +148,7 @@ impl Secret {
             let mut size: usize = 0;
             let n = sys::virSecretGetValue(self.as_ptr(), &mut size, flags as libc::c_uint);
             if n.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
 
             let mut array: Vec<u8> = Vec::new();
@@ -162,7 +162,7 @@ impl Secret {
     pub fn undefine(&self) -> Result<(), Error> {
         unsafe {
             if sys::virSecretUndefine(self.as_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -171,7 +171,7 @@ impl Secret {
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
             if sys::virSecretFree(self.as_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             self.ptr = None;
             Ok(())

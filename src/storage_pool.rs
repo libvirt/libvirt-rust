@@ -79,7 +79,7 @@ impl StoragePool {
         unsafe {
             let ptr = sys::virStoragePoolGetConnect(self.as_ptr());
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Connect::new(ptr))
         }
@@ -93,7 +93,7 @@ impl StoragePool {
                 flags as libc::c_uint,
             );
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(StoragePool::new(ptr))
         }
@@ -111,7 +111,7 @@ impl StoragePool {
                 flags as libc::c_uint,
             );
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(StoragePool::new(ptr))
         }
@@ -121,7 +121,7 @@ impl StoragePool {
         unsafe {
             let ptr = sys::virStoragePoolLookupByName(conn.as_ptr(), string_to_c_chars!(id));
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(StoragePool::new(ptr))
         }
@@ -131,7 +131,7 @@ impl StoragePool {
         unsafe {
             let ptr = sys::virStoragePoolLookupByVolume(vol.as_ptr());
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(StoragePool::new(ptr))
         }
@@ -142,7 +142,7 @@ impl StoragePool {
             let ptr =
                 sys::virStoragePoolLookupByUUIDString(conn.as_ptr(), string_to_c_chars!(uuid));
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(StoragePool::new(ptr))
         }
@@ -152,7 +152,7 @@ impl StoragePool {
         unsafe {
             let n = sys::virStoragePoolGetName(self.as_ptr());
             if n.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(n, nofree))
         }
@@ -162,7 +162,7 @@ impl StoragePool {
         unsafe {
             let ret = sys::virStoragePoolNumOfVolumes(self.as_ptr());
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -174,7 +174,7 @@ impl StoragePool {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
             let size = sys::virStoragePoolListVolumes(self.as_ptr(), names.as_mut_ptr(), 1024);
             if size == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
 
             let mut array: Vec<String> = Vec::new();
@@ -194,7 +194,7 @@ impl StoragePool {
                 flags as libc::c_uint,
             );
             if size == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
 
             let mut array: Vec<StorageVol> = Vec::new();
@@ -211,7 +211,7 @@ impl StoragePool {
         unsafe {
             let mut uuid: [libc::c_char; 37] = [0; 37];
             if sys::virStoragePoolGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(uuid.as_ptr(), nofree))
         }
@@ -221,7 +221,7 @@ impl StoragePool {
         unsafe {
             let xml = sys::virStoragePoolGetXMLDesc(self.as_ptr(), flags);
             if xml.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(xml))
         }
@@ -231,7 +231,7 @@ impl StoragePool {
         unsafe {
             let ret = sys::virStoragePoolCreate(self.as_ptr(), flags);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -241,7 +241,7 @@ impl StoragePool {
         unsafe {
             let ret = sys::virStoragePoolBuild(self.as_ptr(), flags);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -250,7 +250,7 @@ impl StoragePool {
     pub fn destroy(&self) -> Result<(), Error> {
         unsafe {
             if sys::virStoragePoolDestroy(self.as_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -259,7 +259,7 @@ impl StoragePool {
     pub fn delete(&self, flags: u32) -> Result<(), Error> {
         unsafe {
             if sys::virStoragePoolDelete(self.as_ptr(), flags as libc::c_uint) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -268,7 +268,7 @@ impl StoragePool {
     pub fn undefine(&self) -> Result<(), Error> {
         unsafe {
             if sys::virStoragePoolUndefine(self.as_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -277,7 +277,7 @@ impl StoragePool {
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
             if sys::virStoragePoolFree(self.as_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             self.ptr = None;
             Ok(())
@@ -288,7 +288,7 @@ impl StoragePool {
         unsafe {
             let ret = sys::virStoragePoolIsActive(self.as_ptr());
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret == 1)
         }
@@ -298,7 +298,7 @@ impl StoragePool {
         unsafe {
             let ret = sys::virStoragePoolIsPersistent(self.as_ptr());
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret == 1)
         }
@@ -308,7 +308,7 @@ impl StoragePool {
         unsafe {
             let ret = sys::virStoragePoolRefresh(self.as_ptr(), flags as libc::c_uint);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -318,7 +318,7 @@ impl StoragePool {
             let mut auto = 0;
             let ret = sys::virStoragePoolGetAutostart(self.as_ptr(), &mut auto);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(auto == 1)
         }
@@ -328,7 +328,7 @@ impl StoragePool {
         unsafe {
             let ret = sys::virStoragePoolSetAutostart(self.as_ptr(), autostart as libc::c_int);
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -339,7 +339,7 @@ impl StoragePool {
             let mut pinfo = mem::MaybeUninit::uninit();
             let res = sys::virStoragePoolGetInfo(self.as_ptr(), pinfo.as_mut_ptr());
             if res == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(StoragePoolInfo::from_ptr(&mut pinfo.assume_init()))
         }

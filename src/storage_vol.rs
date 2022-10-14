@@ -77,7 +77,7 @@ impl StorageVol {
         unsafe {
             let ptr = sys::virStorageVolGetConnect(self.as_ptr());
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(Connect::new(ptr))
         }
@@ -95,7 +95,7 @@ impl StorageVol {
                 flags as libc::c_uint,
             );
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(StorageVol::new(ptr))
         }
@@ -115,7 +115,7 @@ impl StorageVol {
                 flags as libc::c_uint,
             );
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(StorageVol::new(ptr))
         }
@@ -125,7 +125,7 @@ impl StorageVol {
         unsafe {
             let ptr = sys::virStorageVolLookupByName(pool.as_ptr(), string_to_c_chars!(name));
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(StorageVol::new(ptr))
         }
@@ -135,7 +135,7 @@ impl StorageVol {
         unsafe {
             let ptr = sys::virStorageVolLookupByKey(conn.as_ptr(), string_to_c_chars!(key));
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(StorageVol::new(ptr))
         }
@@ -145,7 +145,7 @@ impl StorageVol {
         unsafe {
             let ptr = sys::virStorageVolLookupByPath(conn.as_ptr(), string_to_c_chars!(path));
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(StorageVol::new(ptr))
         }
@@ -155,7 +155,7 @@ impl StorageVol {
         unsafe {
             let n = sys::virStorageVolGetName(self.as_ptr());
             if n.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(n, nofree))
         }
@@ -165,7 +165,7 @@ impl StorageVol {
         unsafe {
             let n = sys::virStorageVolGetKey(self.as_ptr());
             if n.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(n, nofree))
         }
@@ -175,7 +175,7 @@ impl StorageVol {
         unsafe {
             let n = sys::virStorageVolGetPath(self.as_ptr());
             if n.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(n))
         }
@@ -185,7 +185,7 @@ impl StorageVol {
         unsafe {
             let xml = sys::virStorageVolGetXMLDesc(self.as_ptr(), flags);
             if xml.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(xml))
         }
@@ -194,7 +194,7 @@ impl StorageVol {
     pub fn delete(&self, flags: u32) -> Result<(), Error> {
         unsafe {
             if sys::virStorageVolDelete(self.as_ptr(), flags as libc::c_uint) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -203,7 +203,7 @@ impl StorageVol {
     pub fn wipe(&self, flags: u32) -> Result<(), Error> {
         unsafe {
             if sys::virStorageVolWipe(self.as_ptr(), flags as libc::c_uint) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -221,7 +221,7 @@ impl StorageVol {
                 flags as libc::c_uint,
             ) == -1
             {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -230,7 +230,7 @@ impl StorageVol {
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
             if sys::virStorageVolFree(self.as_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             self.ptr = None;
             Ok(())
@@ -245,7 +245,7 @@ impl StorageVol {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -256,7 +256,7 @@ impl StorageVol {
             let mut pinfo = mem::MaybeUninit::uninit();
             let res = sys::virStorageVolGetInfo(self.as_ptr(), pinfo.as_mut_ptr());
             if res == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(StorageVolInfo::from_ptr(&mut pinfo.assume_init()))
         }
@@ -271,7 +271,7 @@ impl StorageVol {
                 flags as libc::c_uint,
             );
             if res == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(StorageVolInfo::from_ptr(&mut pinfo.assume_init()))
         }
@@ -293,7 +293,7 @@ impl StorageVol {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -315,7 +315,7 @@ impl StorageVol {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }

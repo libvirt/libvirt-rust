@@ -39,7 +39,7 @@ fn suspend_and_resume(conn: &Connect, name: &str, sec: u64) -> Result<(), Error>
             }
         }
     }
-    Err(Error::new())
+    Err(Error::last_error())
 }
 
 fn fetch_domains(conn: &Connect) -> Result<(), Error> {
@@ -55,7 +55,7 @@ fn fetch_domains(conn: &Connect) -> Result<(), Error> {
         }
         return Ok(());
     }
-    Err(Error::new())
+    Err(Error::last_error())
 }
 
 fn main() {

@@ -52,7 +52,7 @@ impl NWFilter {
         unsafe {
             let ptr = sys::virNWFilterLookupByName(conn.as_ptr(), string_to_c_chars!(id));
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(NWFilter::new(ptr))
         }
@@ -62,7 +62,7 @@ impl NWFilter {
         unsafe {
             let ptr = sys::virNWFilterLookupByUUIDString(conn.as_ptr(), string_to_c_chars!(uuid));
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(NWFilter::new(ptr))
         }
@@ -72,7 +72,7 @@ impl NWFilter {
         unsafe {
             let n = sys::virNWFilterGetName(self.as_ptr());
             if n.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(n, nofree))
         }
@@ -82,7 +82,7 @@ impl NWFilter {
         unsafe {
             let mut uuid: [libc::c_char; 37] = [0; 37];
             if sys::virNWFilterGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(uuid.as_ptr(), nofree))
         }
@@ -92,7 +92,7 @@ impl NWFilter {
         unsafe {
             let xml = sys::virNWFilterGetXMLDesc(self.as_ptr(), flags as libc::c_uint);
             if xml.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(xml))
         }
@@ -102,7 +102,7 @@ impl NWFilter {
         unsafe {
             let ptr = sys::virNWFilterDefineXML(conn.as_ptr(), string_to_c_chars!(xml));
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(NWFilter::new(ptr))
         }
@@ -111,7 +111,7 @@ impl NWFilter {
     pub fn undefine(&self) -> Result<(), Error> {
         unsafe {
             if sys::virNWFilterUndefine(self.as_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(())
         }
@@ -120,7 +120,7 @@ impl NWFilter {
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
             if sys::virNWFilterFree(self.as_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             self.ptr = None;
             Ok(())

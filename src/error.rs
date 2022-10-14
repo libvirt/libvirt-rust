@@ -44,7 +44,7 @@ pub struct Error {
 extern "C" fn noop(_data: *mut libc::c_void, _error: sys::virErrorPtr) {}
 
 impl Error {
-    pub fn new() -> Error {
+    pub fn last_error() -> Error {
         unsafe {
             let ptr: sys::virErrorPtr = sys::virGetLastError();
             Error {
@@ -71,7 +71,7 @@ impl Display for Error {
 
 impl Default for Error {
     fn default() -> Self {
-        Self::new()
+        Self::last_error()
     }
 }
 

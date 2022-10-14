@@ -52,7 +52,7 @@ impl NodeDevice {
         unsafe {
             let ptr = sys::virNodeDeviceLookupByName(conn.as_ptr(), string_to_c_chars!(id));
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(NodeDevice::new(ptr))
         }
@@ -72,7 +72,7 @@ impl NodeDevice {
                 flags as libc::c_uint,
             );
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(NodeDevice::new(ptr))
         }
@@ -86,7 +86,7 @@ impl NodeDevice {
                 flags as libc::c_uint,
             );
             if ptr.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(NodeDevice::new(ptr))
         }
@@ -96,7 +96,7 @@ impl NodeDevice {
         unsafe {
             let n = sys::virNodeDeviceGetName(self.as_ptr());
             if n.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(n, nofree))
         }
@@ -106,7 +106,7 @@ impl NodeDevice {
         unsafe {
             let n = sys::virNodeDeviceGetParent(self.as_ptr());
             if n.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(n, nofree))
         }
@@ -116,7 +116,7 @@ impl NodeDevice {
         unsafe {
             let xml = sys::virNodeDeviceGetXMLDesc(self.as_ptr(), flags as libc::c_uint);
             if xml.is_null() {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(xml))
         }
@@ -126,7 +126,7 @@ impl NodeDevice {
         unsafe {
             let ret = sys::virNodeDeviceDestroy(self.as_ptr());
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -136,7 +136,7 @@ impl NodeDevice {
         unsafe {
             let ret = sys::virNodeDeviceDettach(self.as_ptr());
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -146,7 +146,7 @@ impl NodeDevice {
         unsafe {
             let ret = sys::virNodeDeviceReset(self.as_ptr());
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -156,7 +156,7 @@ impl NodeDevice {
         unsafe {
             let ret = sys::virNodeDeviceReAttach(self.as_ptr());
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -170,7 +170,7 @@ impl NodeDevice {
                 flags as libc::c_uint,
             );
             if ret == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(ret as u32)
         }
@@ -179,7 +179,7 @@ impl NodeDevice {
     pub fn free(&mut self) -> Result<(), Error> {
         unsafe {
             if sys::virNodeDeviceFree(self.as_ptr()) == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             self.ptr = None;
             Ok(())
@@ -194,7 +194,7 @@ impl NodeDevice {
                 flags as libc::c_uint,
             );
             if num == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(num as u32)
         }
@@ -204,7 +204,7 @@ impl NodeDevice {
         unsafe {
             let num = sys::virNodeDeviceNumOfCaps(self.as_ptr());
             if num == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
             Ok(num as u32)
         }
@@ -216,7 +216,7 @@ impl NodeDevice {
             let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
             let size = sys::virNodeDeviceListCaps(self.as_ptr(), names.as_mut_ptr(), 1024);
             if size == -1 {
-                return Err(Error::new());
+                return Err(Error::last_error());
             }
 
             let mut array: Vec<String> = Vec::new();

@@ -42,7 +42,7 @@ fn show_hypervisor_info(conn: &Connect) -> Result<(), Error> {
             return Ok(());
         }
     }
-    Err(Error::new())
+    Err(Error::last_error())
 }
 
 fn show_domains(conn: &Connect) -> Result<(), Error> {
@@ -128,7 +128,7 @@ fn show_domains(conn: &Connect) -> Result<(), Error> {
             return Ok(());
         }
     }
-    Err(Error::new())
+    Err(Error::last_error())
 }
 
 fn main() {
