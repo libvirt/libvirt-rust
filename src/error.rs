@@ -55,14 +55,6 @@ impl Error {
             }
         }
     }
-
-    /// Removes the current virt error function
-    /// Use this to disable the default printing to stdout of all errors by virt
-    pub fn clear_error_func() {
-        unsafe {
-            sys::virSetErrorFunc(std::ptr::null_mut(), Some(noop));
-        }
-    }
 }
 
 impl StdError for Error {
@@ -84,5 +76,14 @@ impl Display for Error {
 impl Default for Error {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+/// Clears the libvirt error callback.
+///
+/// Use this to disable libvirt's default handler, which prints all errors to stdout
+pub fn clear_error_callback() {
+    unsafe {
+        sys::virSetErrorFunc(std::ptr::null_mut(), Some(noop));
     }
 }
