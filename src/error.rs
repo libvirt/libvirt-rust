@@ -57,11 +57,7 @@ impl Error {
     }
 }
 
-impl StdError for Error {
-    fn description(&self) -> &str {
-        self.message.as_str()
-    }
-}
+impl StdError for Error {}
 
 impl Display for Error {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
