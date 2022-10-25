@@ -17,6 +17,7 @@
  */
 
 use std::error::Error as StdError;
+use std::ffi::CStr;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 
 use crate::util::impl_enum;
@@ -616,30 +617,73 @@ impl_enum! {
     }
 }
 
-/// Error handling
+/// A structure that represents errors coming from libvirt.
 ///
-/// See: http://libvirt.org/html/libvirt-virterror.html
-#[derive(Debug, PartialEq, Eq)]
+/// See <http://libvirt.org/html/libvirt-virterror.html>
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Error {
-    pub code: i32,
-    pub domain: i32,
-    pub message: String,
-    pub level: u32,
+    code: sys::virErrorNumber,
+    domain: sys::virErrorDomain,
+    message: String,
+    level: sys::virErrorLevel,
 }
 
 extern "C" fn noop(_data: *mut libc::c_void, _error: sys::virErrorPtr) {}
 
 impl Error {
+    /// Returns the last error that occurred.
+    ///
+    /// This function is typically called by the safe wrappers in this library. It should only be
+    /// used if you call [virt_sys] functions directly.
     pub fn last_error() -> Error {
         unsafe {
             let ptr: sys::virErrorPtr = sys::virGetLastError();
-            Error {
-                code: (*ptr).code,
-                domain: (*ptr).domain,
-                message: c_chars_to_string!((*ptr).message, nofree),
-                level: (*ptr).level,
+            if ptr.is_null() {
+                Error {
+                    code: sys::VIR_ERR_INTERNAL_ERROR,
+                    domain: sys::VIR_FROM_NONE,
+                    message: "an unknown libvirt error occurred".into(),
+                    level: sys::VIR_ERR_ERROR,
+                }
+            } else {
+                Error::from_raw(ptr)
             }
         }
+    }
+
+    unsafe fn from_raw(ptr: sys::virErrorPtr) -> Error {
+        let code = (*ptr).code as sys::virErrorNumber;
+        let domain = (*ptr).domain as sys::virErrorDomain;
+        let message = CStr::from_ptr((*ptr).message)
+            .to_string_lossy()
+            .into_owned();
+        let level = (*ptr).level;
+        Error {
+            code,
+            domain,
+            message,
+            level,
+        }
+    }
+
+    /// Returns the exact error code.
+    pub fn code(&self) -> ErrorNumber {
+        ErrorNumber::from_raw(self.code)
+    }
+
+    /// Returns the source of the error.
+    pub fn domain(&self) -> ErrorDomain {
+        ErrorDomain::from_raw(self.domain)
+    }
+
+    /// Returns the error message.
+    pub fn message(&self) -> &str {
+        &self.message
+    }
+
+    /// Returns the error level.
+    pub fn level(&self) -> ErrorLevel {
+        ErrorLevel::from_raw(self.level)
     }
 }
 
@@ -647,10 +691,19 @@ impl StdError for Error {}
 
 impl Display for Error {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
+        match self.level() {
+            ErrorLevel::None => {}
+            ErrorLevel::Warning => write!(f, "warning: ")?,
+            ErrorLevel::Error => write!(f, "error: ")?,
+        }
         write!(
             f,
-            "{:?}: code: {} domain: {} - {}",
-            self.level, self.code, self.domain, self.message
+            "{} [code={:?} ({}), domain={:?} ({})]",
+            self.message,
+            self.code(),
+            self.code,
+            self.domain(),
+            self.domain,
         )
     }
 }
