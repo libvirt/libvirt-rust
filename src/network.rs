@@ -33,10 +33,7 @@ impl Drop for Network {
     fn drop(&mut self) {
         if self.ptr.is_some() {
             if let Err(e) = self.free() {
-                panic!(
-                    "Unable to drop memory for Network, code {}, message: {}",
-                    e.code, e.message
-                )
+                panic!("Unable to drop memory for Network: {}", e)
             }
         }
     }

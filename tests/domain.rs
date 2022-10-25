@@ -28,7 +28,7 @@ fn tdom(exec_test: fn(dom: Domain)) {
             exec_test(dom);
             common::close(c);
         }
-        Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
+        Err(e) => panic!("{}", e),
     }
 }
 
@@ -96,7 +96,7 @@ fn test_lookup_domain_by_id() {
     let id = d.get_id().unwrap_or(0);
     match Domain::lookup_by_id(&c, id) {
         Ok(mut r) => r.free().unwrap_or(()),
-        Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
+        Err(e) => panic!("{}", e),
     }
     common::clean(d);
     common::close(c);
@@ -107,7 +107,7 @@ fn test_lookup_domain_by_name() {
     let c = common::conn();
     match Domain::lookup_by_name(&c, "test") {
         Ok(mut r) => r.free().unwrap_or(()),
-        Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
+        Err(e) => panic!("{}", e),
     }
     common::close(c);
 }

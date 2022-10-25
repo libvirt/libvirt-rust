@@ -140,45 +140,30 @@ fn main() {
 
     let conn = match Connect::open(&uri) {
         Ok(c) => c,
-        Err(e) => panic!(
-            "No connection to hypervisor: code {}, message: {}",
-            e.code, e.message
-        ),
+        Err(e) => panic!("No connection to hypervisor: {}", e),
     };
 
     match conn.get_uri() {
         Ok(u) => println!("Connected to hypervisor at '{}'", u),
         Err(e) => {
             disconnect(conn);
-            panic!(
-                "Failed to get URI for hypervisor connection: code {}, message: {}",
-                e.code, e.message
-            );
+            panic!("Failed to get URI for hypervisor connection: {}", e);
         }
     };
 
     if let Err(e) = show_hypervisor_info(&conn) {
         disconnect(conn);
-        panic!(
-            "Failed to show hypervisor info: code {}, message: {}",
-            e.code, e.message
-        );
+        panic!("Failed to show hypervisor info: {}", e);
     }
 
     if let Err(e) = show_domains(&conn) {
         disconnect(conn);
-        panic!(
-            "Failed to show domains info: code {}, message: {}",
-            e.code, e.message
-        );
+        panic!("Failed to show domains info: {}", e);
     }
 
     fn disconnect(mut conn: Connect) {
         if let Err(e) = conn.close() {
-            panic!(
-                "Failed to disconnect from hypervisor: code {}, message: {}",
-                e.code, e.message
-            );
+            panic!("Failed to disconnect from hypervisor: {}", e);
         }
         println!("Disconnected from hypervisor");
     }

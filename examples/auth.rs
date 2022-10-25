@@ -79,12 +79,9 @@ fn main() {
             println!("Connected");
             c
         }
-        Err(e) => panic!("Not connected, code: {}, message: {}", e.code, e.message),
+        Err(e) => panic!("Not connected: {}", e),
     };
     if let Err(e) = conn.close() {
-        panic!(
-            "Failed to disconnect from hypervisor: code {}, message: {}",
-            e.code, e.message
-        );
+        panic!("Failed to disconnect from hypervisor: {}", e);
     }
 }

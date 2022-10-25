@@ -36,11 +36,11 @@ fn exercices() {
                         .is_empty());
                     assert!(!storage_pool.get_xml_desc(0).unwrap_or_default().is_empty());
                 }
-                Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
+                Err(e) => panic!("{}", e),
             }
             assert_eq!(0, conn.close().unwrap_or(-1));
         }
-        Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
+        Err(e) => panic!("{}", e),
     }
 }
 
@@ -51,7 +51,7 @@ fn test_lookup_storage_pool_by_name() {
     assert!(!v.is_empty(), "At least one storage_pool should exist");
     match StoragePool::lookup_by_name(&c, &v[0]) {
         Ok(mut s) => s.free().unwrap_or(()),
-        Err(e) => panic!("failed with code {}, message: {}", e.code, e.message),
+        Err(e) => panic!("{}", e),
     }
     common::close(c);
 }

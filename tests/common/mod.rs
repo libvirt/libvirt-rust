@@ -29,23 +29,11 @@ use virt::storage_pool::StoragePool;
 use virt::storage_vol::StorageVol;
 
 pub fn conn() -> Connect {
-    match Connect::open("test:///default") {
-        Err(e) => panic!(
-            "Build connection failed with code {}, message: {}",
-            e.code, e.message
-        ),
-        Ok(conn) => conn,
-    }
+    Connect::open("test:///default").unwrap()
 }
 
 pub fn qemu_conn() -> Connect {
-    match Connect::open("qemu:///system") {
-        Err(e) => panic!(
-            "Build connection failed with code {}, message: {}",
-            e.code, e.message
-        ),
-        Ok(conn) => conn,
-    }
+    Connect::open("qemu:///system").unwrap()
 }
 
 pub fn close(mut conn: Connect) {
@@ -109,13 +97,7 @@ pub fn build_qemu_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
         Domain::define_xml(conn, &xml)
     };
 
-    match result {
-        Ok(dom) => dom,
-        Err(e) => panic!(
-            "Build domain failed with code {}, message: {}",
-            e.code, e.message
-        ),
-    }
+    result.unwrap()
 }
 
 pub fn build_test_domain(conn: &Connect, name: &str, transient: bool) -> Domain {
@@ -146,13 +128,7 @@ pub fn build_test_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
         Domain::define_xml(conn, &xml)
     };
 
-    match result {
-        Ok(dom) => dom,
-        Err(e) => panic!(
-            "Build domain failed with code {}, message: {}",
-            e.code, e.message
-        ),
-    }
+    result.unwrap()
 }
 
 pub fn build_storage_pool(conn: &Connect, name: &str, transient: bool) -> StoragePool {
@@ -178,13 +154,7 @@ pub fn build_storage_pool(conn: &Connect, name: &str, transient: bool) -> Storag
         StoragePool::define_xml(conn, &xml, 0)
     };
 
-    match result {
-        Ok(pool) => pool,
-        Err(e) => panic!(
-            "Build storage pool failed with code {}, message: {}",
-            e.code, e.message
-        ),
-    }
+    result.unwrap()
 }
 
 pub fn build_storage_vol(pool: &StoragePool, name: &str, size: u64) -> StorageVol {
@@ -200,13 +170,7 @@ pub fn build_storage_vol(pool: &StoragePool, name: &str, size: u64) -> StorageVo
                        </volume>",
         name, size, size
     );
-    match StorageVol::create_xml(pool, &xml, 0) {
-        Ok(vol) => vol,
-        Err(e) => panic!(
-            "Build vol failed with code {}, message: {}",
-            e.code, e.message
-        ),
-    }
+    StorageVol::create_xml(pool, &xml, 0).unwrap()
 }
 
 pub fn build_network(conn: &Connect, name: &str, transient: bool) -> Network {
@@ -232,13 +196,7 @@ pub fn build_network(conn: &Connect, name: &str, transient: bool) -> Network {
         Network::define_xml(conn, &xml)
     };
 
-    match result {
-        Ok(net) => net,
-        Err(e) => panic!(
-            "Build storage pool failed with code {}, message: {}",
-            e.code, e.message
-        ),
-    }
+    result.unwrap()
 }
 
 pub fn build_interface(conn: &Connect, name: &str) -> Interface {
@@ -255,12 +213,5 @@ pub fn build_interface(conn: &Connect, name: &str) -> Interface {
         name
     );
 
-    let result = Interface::define_xml(conn, &xml, 0);
-    match result {
-        Ok(iface) => iface,
-        Err(e) => panic!(
-            "Build storage pool failed with code {}, message: {}",
-            e.code, e.message
-        ),
-    }
+    Interface::define_xml(conn, &xml, 0).unwrap()
 }

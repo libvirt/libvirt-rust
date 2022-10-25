@@ -31,10 +31,7 @@ impl Drop for Secret {
     fn drop(&mut self) {
         if self.ptr.is_some() {
             if let Err(e) = self.free() {
-                panic!(
-                    "Unable to drop memory for Secret, code {}, message: {}",
-                    e.code, e.message
-                )
+                panic!("Unable to drop memory for Secret: {}", e)
             }
         }
     }

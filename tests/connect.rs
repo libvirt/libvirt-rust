@@ -29,10 +29,7 @@ fn test_version() {
 #[test]
 fn test_connection() {
     match Connect::open("test:///default") {
-        Err(e) => panic!(
-            "Build connection failed with code {}, message: {}",
-            e.code, e.message
-        ),
+        Err(e) => panic!("Build connection failed: {}", e),
         Ok(conn) => common::close(conn),
     }
 }
@@ -40,10 +37,7 @@ fn test_connection() {
 #[test]
 fn test_read_only_connection() {
     match Connect::open_read_only("test:///default") {
-        Err(e) => panic!(
-            "Build connection failed with code {}, message: {}",
-            e.code, e.message
-        ),
+        Err(e) => panic!("Build connection failed: {}", e),
         Ok(conn) => common::close(conn),
     }
 }
@@ -52,10 +46,7 @@ fn test_read_only_connection() {
 #[should_panic]
 fn test_connection_invalid() {
     match Connect::open_read_only("invalid") {
-        Err(e) => panic!(
-            "Build connection failed with code {}, message: {}",
-            e.code, e.message
-        ),
+        Err(e) => panic!("Build connection failed: {}", e),
         Ok(conn) => common::close(conn),
     }
 }

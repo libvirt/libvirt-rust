@@ -60,10 +60,7 @@ impl Drop for StoragePool {
     fn drop(&mut self) {
         if self.ptr.is_some() {
             if let Err(e) = self.free() {
-                panic!(
-                    "Unable to drop memory for StoragePool, code {}, message: {}",
-                    e.code, e.message
-                )
+                panic!("Unable to drop memory for StoragePool: {}", e)
             }
         }
     }

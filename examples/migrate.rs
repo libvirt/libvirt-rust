@@ -43,10 +43,7 @@ fn main() {
 
     let mut conn = match Connect::open(&src_uri) {
         Ok(c) => c,
-        Err(e) => panic!(
-            "No connection to source hypervisor: code {}, message: {}",
-            e.code, e.message
-        ),
+        Err(e) => panic!("No connection to source hypervisor: {}", e),
     };
 
     if let Ok(dom) = Domain::lookup_by_name(&conn, &dname) {
@@ -57,10 +54,7 @@ fn main() {
     }
 
     if let Err(e) = conn.close() {
-        panic!(
-            "Failed to disconnect from hypervisor: code {}, message: {}",
-            e.code, e.message
-        );
+        panic!("Failed to disconnect from hypervisor: {}", e);
     }
     println!("Disconnected from source hypervisor");
 }

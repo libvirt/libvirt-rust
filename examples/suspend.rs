@@ -71,30 +71,18 @@ fn main() {
     println!("Attempting to connect to hypervisor: '{}'", uri);
     let mut conn = match Connect::open(&uri) {
         Ok(c) => c,
-        Err(e) => panic!(
-            "No connection to hypervisor: code {}, message: {}",
-            e.code, e.message
-        ),
+        Err(e) => panic!("No connection to hypervisor: {}", e),
     };
 
     if name.is_empty() {
         if let Err(e) = fetch_domains(&conn) {
-            println!(
-                "Failed to fetch domains. code {}, message: {}",
-                e.code, e.message
-            );
+            println!("Failed to fetch domains: {}", e);
         }
     } else if let Err(e) = suspend_and_resume(&conn, &name, 1) {
-        println!(
-            "Failed to suspend/resume. code {}, message: {}",
-            e.code, e.message
-        );
+        println!("Failed to suspend/resume: {}", e);
     }
 
     if let Err(e) = conn.close() {
-        panic!(
-            "Failed to disconnect from hypervisor: code {}, message: {}",
-            e.code, e.message
-        );
+        panic!("Failed to disconnect from hypervisor: {}", e);
     }
 }

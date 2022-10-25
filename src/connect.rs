@@ -186,19 +186,6 @@ impl Connect {
     ///
     /// Connect.close should be used to release the resources after the
     /// connection is no longer needed.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use virt::connect::Connect;
-    ///
-    /// match Connect::open("test:///default") {
-    ///   Ok(mut conn) => {
-    ///       assert_eq!(Ok(0), conn.close());
-    ///   },
-    ///   Err(e) => panic!(
-    ///     "failed with code {}, message: {}", e.code, e.message)
-    /// }
     /// ```
     pub fn open(uri: &str) -> Result<Connect, Error> {
         unsafe {
@@ -218,20 +205,6 @@ impl Connect {
     /// See 'new' for notes about environment variables which can have
     /// an effect on opening drivers and freeing the connection
     /// resources.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use virt::connect::Connect;
-    ///
-    /// match Connect::open_read_only("test:///default") {
-    ///   Ok(mut conn) => {
-    ///     assert_eq!(Ok(0), conn.close());
-    ///   },
-    ///   Err(e) => panic!(
-    ///     "failed with code {}, message: {}", e.code, e.message)
-    /// }
-    /// ```
     pub fn open_read_only(uri: &str) -> Result<Connect, Error> {
         unsafe {
             let c = sys::virConnectOpenReadOnly(string_to_c_chars!(uri));
@@ -417,18 +390,9 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::open("test:///default") {
-    ///   Ok(mut conn) => {
-    ///     match conn.list_domains() {
-    ///       Ok(arr) => assert_eq!(1, arr.len()),
-    ///       Err(e) => panic!(
-    ///         "failed with code {}, message: {}", e.code, e.message)
-    ///     }
-    ///     assert_eq!(Ok(0), conn.close());
-    ///   },
-    ///   Err(e) => panic!(
-    ///     "failed with code {}, message: {}", e.code, e.message)
-    ///   }
+    /// let conn = Connect::open("test:///default").unwrap();
+    /// let domains = conn.list_domains().unwrap();
+    /// assert_eq!(domains.len(), 1);
     /// ```
     #[allow(clippy::needless_range_loop)]
     pub fn list_domains(&self) -> Result<Vec<u32>, Error> {
@@ -454,18 +418,9 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::open("test:///default") {
-    ///   Ok(mut conn) => {
-    ///     match conn.list_interfaces() {
-    ///       Ok(arr) => assert_eq!(1, arr.len()),
-    ///       Err(e) => panic!(
-    ///         "failed with code {}, message: {}", e.code, e.message)
-    ///     }
-    ///     assert_eq!(Ok(0), conn.close());
-    ///   },
-    ///   Err(e) => panic!(
-    ///     "failed with code {}, message: {}", e.code, e.message)
-    ///   }
+    /// let conn = Connect::open("test:///default").unwrap();
+    /// let ifaces = conn.list_interfaces().unwrap();
+    /// assert_eq!(ifaces.len(), 1);
     /// ```
     #[allow(clippy::needless_range_loop)]
     pub fn list_interfaces(&self) -> Result<Vec<String>, Error> {
@@ -491,18 +446,9 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::open("test:///default") {
-    ///   Ok(mut conn) => {
-    ///     match conn.list_networks() {
-    ///       Ok(arr) => assert_eq!(1, arr.len()),
-    ///       Err(e) => panic!(
-    ///         "failed with code {}, message: {}", e.code, e.message)
-    ///     }
-    ///     assert_eq!(Ok(0), conn.close());
-    ///   },
-    ///   Err(e) => panic!(
-    ///     "failed with code {}, message: {}", e.code, e.message)
-    ///   }
+    /// let conn = Connect::open("test:///default").unwrap();
+    /// let networks = conn.list_networks().unwrap();
+    /// assert_eq!(networks.len(), 1);
     /// ```
     #[allow(clippy::needless_range_loop)]
     pub fn list_networks(&self) -> Result<Vec<String>, Error> {
@@ -562,18 +508,9 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::open("test:///default") {
-    ///   Ok(mut conn) => {
-    ///     match conn.list_storage_pools() {
-    ///       Ok(arr) => assert_eq!(1, arr.len()),
-    ///       Err(e) => panic!(
-    ///         "failed with code {}, message: {}", e.code, e.message)
-    ///     }
-    ///     assert_eq!(Ok(0), conn.close());
-    ///   },
-    ///   Err(e) => panic!(
-    ///     "failed with code {}, message: {}", e.code, e.message)
-    ///   }
+    /// let conn = Connect::open("test:///default").unwrap();
+    /// let pools = conn.list_storage_pools().unwrap();
+    /// assert_eq!(pools.len(), 1);
     /// ```
     #[allow(clippy::needless_range_loop)]
     pub fn list_storage_pools(&self) -> Result<Vec<String>, Error> {
@@ -759,18 +696,9 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::open("test:///default") {
-    ///   Ok(mut conn) => {
-    ///     match conn.list_defined_domains() {
-    ///       Ok(arr) => assert_eq!(0, arr.len()),
-    ///       Err(e) => panic!(
-    ///         "failed with code {}, message: {}", e.code, e.message)
-    ///     }
-    ///     assert_eq!(Ok(0), conn.close());
-    ///   },
-    ///   Err(e) => panic!(
-    ///     "failed with code {}, message: {}", e.code, e.message)
-    ///   }
+    /// let conn = Connect::open("test:///default").unwrap();
+    /// let domains = conn.list_defined_domains().unwrap();
+    /// assert_eq!(domains.len(), 0);
     /// ```
     #[allow(clippy::needless_range_loop)]
     pub fn list_defined_domains(&self) -> Result<Vec<String>, Error> {
@@ -796,18 +724,9 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::open("test:///default") {
-    ///   Ok(mut conn) => {
-    ///     match conn.list_defined_interfaces() {
-    ///       Ok(arr) => assert_eq!(0, arr.len()),
-    ///       Err(e) => panic!(
-    ///         "failed with code {}, message: {}", e.code, e.message)
-    ///     }
-    ///     assert_eq!(Ok(0), conn.close());
-    ///   },
-    ///   Err(e) => panic!(
-    ///     "failed with code {}, message: {}", e.code, e.message)
-    ///   }
+    /// let conn = Connect::open("test:///default").unwrap();
+    /// let ifaces = conn.list_defined_interfaces().unwrap();
+    /// assert_eq!(ifaces.len(), 0);
     /// ```
     #[allow(clippy::needless_range_loop)]
     pub fn list_defined_interfaces(&self) -> Result<Vec<String>, Error> {
@@ -834,18 +753,9 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::open("test:///default") {
-    ///   Ok(mut conn) => {
-    ///     match conn.list_defined_storage_pools() {
-    ///       Ok(arr) => assert_eq!(0, arr.len()),
-    ///       Err(e) => panic!(
-    ///         "failed with code {}, message: {}", e.code, e.message)
-    ///     }
-    ///     assert_eq!(Ok(0), conn.close());
-    ///   },
-    ///   Err(e) => panic!(
-    ///     "failed with code {}, message: {}", e.code, e.message)
-    ///   }
+    /// let conn = Connect::open("test:///default").unwrap();
+    /// let pools = conn.list_defined_storage_pools().unwrap();
+    /// assert_eq!(pools.len(), 0);
     /// ```
     #[allow(clippy::needless_range_loop)]
     pub fn list_defined_storage_pools(&self) -> Result<Vec<String>, Error> {
@@ -872,18 +782,9 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::open("test:///default") {
-    ///   Ok(mut conn) => {
-    ///     match conn.list_networks() {
-    ///       Ok(arr) => assert_eq!(1, arr.len()),
-    ///       Err(e) => panic!(
-    ///         "failed with code {}, message: {}", e.code, e.message)
-    ///     }
-    ///     assert_eq!(Ok(0), conn.close());
-    ///   },
-    ///   Err(e) => panic!(
-    ///     "failed with code {}, message: {}", e.code, e.message)
-    ///   }
+    /// let conn = Connect::open("test:///default").unwrap();
+    /// let networks = conn.list_defined_networks().unwrap();
+    /// assert_eq!(networks.len(), 0);
     /// ```
     #[allow(clippy::needless_range_loop)]
     pub fn list_defined_networks(&self) -> Result<Vec<String>, Error> {
@@ -907,18 +808,9 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::open("test:///default") {
-    ///   Ok(mut conn) => {
-    ///     match conn.num_of_domains() {
-    ///       Ok(n) => assert_eq!(1, n),
-    ///       Err(e) => panic!(
-    ///         "failed with code {}, message: {}", e.code, e.message)
-    ///     }
-    ///     assert_eq!(Ok(0), conn.close());
-    ///   },
-    ///   Err(e) => panic!(
-    ///     "failed with code {}, message: {}", e.code, e.message)
-    ///   }
+    /// let conn = Connect::open("test:///default").unwrap();
+    /// let num_domains = conn.num_of_domains().unwrap();
+    /// assert_eq!(num_domains, 1);
     /// ```
     pub fn num_of_domains(&self) -> Result<u32, Error> {
         unsafe {
@@ -935,18 +827,9 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::open("test:///default") {
-    ///   Ok(mut conn) => {
-    ///     match conn.num_of_interfaces() {
-    ///       Ok(n) => assert_eq!(1, n),
-    ///       Err(e) => panic!(
-    ///         "failed with code {}, message: {}", e.code, e.message)
-    ///     }
-    ///     assert_eq!(Ok(0), conn.close());
-    ///   },
-    ///   Err(e) => panic!(
-    ///     "failed with code {}, message: {}", e.code, e.message)
-    ///   }
+    /// let conn = Connect::open("test:///default").unwrap();
+    /// let num_ifaces = conn.num_of_interfaces().unwrap();
+    /// assert_eq!(num_ifaces, 1);
     /// ```
     pub fn num_of_interfaces(&self) -> Result<u32, Error> {
         unsafe {
@@ -963,18 +846,9 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::open("test:///default") {
-    ///   Ok(mut conn) => {
-    ///     match conn.num_of_networks() {
-    ///       Ok(n) => assert_eq!(1, n),
-    ///       Err(e) => panic!(
-    ///         "failed with code {}, message: {}", e.code, e.message)
-    ///     }
-    ///     assert_eq!(Ok(0), conn.close());
-    ///   },
-    ///   Err(e) => panic!(
-    ///     "failed with code {}, message: {}", e.code, e.message)
-    ///   }
+    /// let conn = Connect::open("test:///default").unwrap();
+    /// let num_networks = conn.num_of_networks().unwrap();
+    /// assert_eq!(num_networks, 1);
     /// ```
     pub fn num_of_networks(&self) -> Result<u32, Error> {
         unsafe {
@@ -991,18 +865,9 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::open("test:///default") {
-    ///   Ok(mut conn) => {
-    ///     match conn.num_of_storage_pools() {
-    ///       Ok(n) => assert_eq!(1, n),
-    ///       Err(e) => panic!(
-    ///         "failed with code {}, message: {}", e.code, e.message)
-    ///     }
-    ///     assert_eq!(Ok(0), conn.close());
-    ///   },
-    ///   Err(e) => panic!(
-    ///     "failed with code {}, message: {}", e.code, e.message)
-    ///   }
+    /// let conn = Connect::open("test:///default").unwrap();
+    /// let num_pools = conn.num_of_storage_pools().unwrap();
+    /// assert_eq!(num_pools, 1);
     /// ```
     pub fn num_of_storage_pools(&self) -> Result<u32, Error> {
         unsafe {
@@ -1039,18 +904,9 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::open("test:///default") {
-    ///   Ok(mut conn) => {
-    ///     match conn.num_of_defined_domains() {
-    ///       Ok(n) => assert_eq!(0, n),
-    ///       Err(e) => panic!(
-    ///         "failed with code {}, message: {}", e.code, e.message)
-    ///     }
-    ///     assert_eq!(Ok(0), conn.close());
-    ///   },
-    ///   Err(e) => panic!(
-    ///     "failed with code {}, message: {}", e.code, e.message)
-    ///   }
+    /// let conn = Connect::open("test:///default").unwrap();
+    /// let num_domains = conn.num_of_defined_domains().unwrap();
+    /// assert_eq!(num_domains, 0);
     /// ```
     pub fn num_of_defined_domains(&self) -> Result<u32, Error> {
         unsafe {
@@ -1067,18 +923,9 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::open("test:///default") {
-    ///   Ok(mut conn) => {
-    ///     match conn.num_of_defined_interfaces() {
-    ///       Ok(n) => assert_eq!(0, n),
-    ///       Err(e) => panic!(
-    ///         "failed with code {}, message: {}", e.code, e.message)
-    ///     }
-    ///     assert_eq!(Ok(0), conn.close());
-    ///   },
-    ///   Err(e) => panic!(
-    ///     "failed with code {}, message: {}", e.code, e.message)
-    ///   }
+    /// let conn = Connect::open("test:///default").unwrap();
+    /// let num_ifaces = conn.num_of_defined_interfaces().unwrap();
+    /// assert_eq!(num_ifaces, 0);
     /// ```
     pub fn num_of_defined_interfaces(&self) -> Result<u32, Error> {
         unsafe {
@@ -1095,18 +942,9 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::open("test:///default") {
-    ///   Ok(mut conn) => {
-    ///     match conn.num_of_defined_networks() {
-    ///       Ok(n) => assert_eq!(0, n),
-    ///       Err(e) => panic!(
-    ///         "failed with code {}, message: {}", e.code, e.message)
-    ///     }
-    ///     assert_eq!(Ok(0), conn.close());
-    ///   },
-    ///   Err(e) => panic!(
-    ///     "failed with code {}, message: {}", e.code, e.message)
-    ///   }
+    /// let conn = Connect::open("test:///default").unwrap();
+    /// let num_networks = conn.num_of_defined_networks().unwrap();
+    /// assert_eq!(num_networks, 0);
     /// ```
     pub fn num_of_defined_networks(&self) -> Result<u32, Error> {
         unsafe {
@@ -1123,18 +961,9 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::open("test:///default") {
-    ///   Ok(mut conn) => {
-    ///     match conn.num_of_defined_storage_pools() {
-    ///       Ok(n) => assert_eq!(0, n),
-    ///       Err(e) => panic!(
-    ///         "failed with code {}, message: {}", e.code, e.message)
-    ///     }
-    ///     assert_eq!(Ok(0), conn.close());
-    ///   },
-    ///   Err(e) => panic!(
-    ///     "failed with code {}, message: {}", e.code, e.message)
-    ///   }
+    /// let conn = Connect::open("test:///default").unwrap();
+    /// let num_pools = conn.num_of_defined_storage_pools().unwrap();
+    /// assert_eq!(num_pools, 0);
     /// ```
     pub fn num_of_defined_storage_pools(&self) -> Result<u32, Error> {
         unsafe {
@@ -1154,18 +983,9 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// match Connect::open("test:///default") {
-    ///   Ok(mut conn) => {
-    ///       match conn.get_hyp_version() {
-    ///         Ok(hyver) => assert_eq!(2, hyver),
-    ///         Err(e) => panic!(
-    ///           "failed with code {}, message: {}", e.code, e.message)
-    ///       }
-    ///       assert_eq!(Ok(0), conn.close());
-    ///   },
-    ///   Err(e) => panic!(
-    ///     "failed with code {}, message: {}", e.code, e.message)
-    /// }
+    /// let conn = Connect::open("test:///default").unwrap();
+    /// let hyp_version = conn.get_hyp_version().unwrap();
+    /// assert_eq!(hyp_version, 2);
     /// ```
     pub fn get_hyp_version(&self) -> Result<u32, Error> {
         unsafe {
