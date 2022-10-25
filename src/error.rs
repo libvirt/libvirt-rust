@@ -69,12 +69,6 @@ impl Display for Error {
     }
 }
 
-impl Default for Error {
-    fn default() -> Self {
-        Self::last_error()
-    }
-}
-
 /// Clears the libvirt error callback.
 ///
 /// Use this to disable libvirt's default handler, which prints all errors to stdout
