@@ -1266,4 +1266,33 @@ impl Connect {
 
         Ok(counts)
     }
+
+    pub fn lookup_interface_by_name(&self, id: &str) -> Result<Interface, Error> {
+        let id_buf = CString::new(id)?;
+        let ptr = unsafe { sys::virInterfaceLookupByName(self.as_ptr(), id_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { Interface::from_ptr(ptr) })
+    }
+
+    pub fn define_interface_xml(&self, xml: &str, flags: u32) -> Result<Interface, Error> {
+        let xml_buf = CString::new(xml)?;
+        let ptr = unsafe {
+            sys::virInterfaceDefineXML(self.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { Interface::from_ptr(ptr) })
+    }
+
+    pub fn lookup_interface_by_mac_string(&self, id: &str) -> Result<Interface, Error> {
+        let id_buf = CString::new(id)?;
+        let ptr = unsafe { sys::virInterfaceLookupByMACString(self.as_ptr(), id_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { Interface::from_ptr(ptr) })
+    }
 }

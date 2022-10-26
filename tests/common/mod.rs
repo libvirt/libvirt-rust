@@ -197,7 +197,7 @@ pub fn build_network(conn: &Connect, name: &str, transient: bool) -> Network {
 pub fn build_interface(conn: &Connect, name: &str) -> Interface {
     let name = format!("libvirt-rs-test-{name}");
 
-    if let Ok(iface) = Interface::lookup_by_name(conn, &name) {
+    if let Ok(iface) = conn.lookup_interface_by_name(&name) {
         clean_iface(iface);
     }
 
@@ -207,5 +207,5 @@ pub fn build_interface(conn: &Connect, name: &str) -> Interface {
                        </interface>"
     );
 
-    Interface::define_xml(conn, &xml, 0).unwrap()
+    conn.define_interface_xml(&xml, 0).unwrap()
 }
