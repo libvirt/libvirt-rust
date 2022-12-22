@@ -16,3 +16,6 @@ libc = "0.2.122"
 [build-dependencies]
 bindgen = "0.59.2"
 pkg-config = "0.3.25"
+
+[features]
+qemu = []
