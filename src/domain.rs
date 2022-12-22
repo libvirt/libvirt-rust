@@ -1888,4 +1888,27 @@ impl Domain {
             Ok(())
         }
     }
+
+    /// Take a screenshot of current domain console as a stream.
+    /// Returns a string representing the mime-type of the image format.
+    /// # Arguments
+    ///
+    /// * `domain` - a domain object
+    /// * `stream` - stream to use as output
+    /// * `screen` - monitor ID to take screenshot from
+    /// * `flags` - extra flags; not used yet, so callers should always pass 0
+    pub fn screenshot(&self, stream: &Stream, screen: u32, flags: u32) -> Result<String, Error> {
+        unsafe {
+            let n = sys::virDomainScreenshot(
+                self.as_ptr(),
+                stream.as_ptr(),
+                screen as libc::c_uint,
+                flags as libc::c_uint,
+            );
+            if n.is_null() {
+                return Err(Error::last_error());
+            }
+            Ok(c_chars_to_string!(n))
+        }
+    }
 }

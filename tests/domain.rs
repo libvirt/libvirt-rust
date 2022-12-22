@@ -148,3 +148,18 @@ fn test_pause_resume() {
     common::clean(d);
     common::close(c);
 }
+
+#[test]
+fn test_screenshot() {
+    let c = common::conn();
+    let d = common::build_test_domain(&c, "screenshot", false);
+    assert_eq!(Ok(0), d.create_with_flags(0));
+    assert_eq!(Ok((sys::VIR_DOMAIN_RUNNING, 1)), d.get_state());
+
+    let s = virt::stream::Stream::new(&c, 0).unwrap();
+    assert_eq!(Ok(String::from("image/png")), d.screenshot(&s, 0, 0));
+    assert_eq!(Ok(()), s.finish());
+
+    common::clean(d);
+    common::close(c);
+}
