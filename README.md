@@ -14,6 +14,10 @@ but we do consider the current API quite stable.
 The bindings use standard errors handling from Rust. Each method
 (there are some exceptions) returns a type `Option` or `Result`.
 
+## Optional features
+
+* `qemu` allows using `libvirt-qemu` functions, such as `qemu_monitor_command`.
+
 ## Documentation
 
 * https://libvirt.org/html/index.html

@@ -1911,4 +1911,25 @@ impl Domain {
             Ok(c_chars_to_string!(n))
         }
     }
+
+    /// Send an arbitrary monitor command cmd to domain through the QEMU monitor.
+    ///
+    /// * `cmd` - the QEMU monitor command string
+    /// * `flags` - bitwise-or of supported virDomainQemuMonitorCommandFlags
+    #[cfg(feature = "qemu")]
+    pub fn qemu_monitor_command(&self, cmd: &str, flags: u32) -> Result<String, Error> {
+        unsafe {
+            let mut result: *mut libc::c_char = std::ptr::null_mut();
+            if sys::virDomainQemuMonitorCommand(
+                self.as_ptr(),
+                string_to_c_chars!(cmd),
+                &mut result,
+                flags as libc::c_uint,
+            ) == -1
+            {
+                return Err(Error::last_error());
+            }
+            Ok(c_chars_to_string!(result))
+        }
+    }
 }

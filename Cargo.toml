@@ -15,3 +15,6 @@ homepage  = "https://libvirt.org/"
 [dependencies]
 libc = "0.2.0"
 virt-sys = { path = "virt-sys" }
+
+[features]
+qemu = ["virt-sys/qemu"]
