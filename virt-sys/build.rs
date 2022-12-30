@@ -34,9 +34,7 @@ fn run() -> Result<(), Box<dyn Error>> {
         .probe("libvirt")?;
 
     if cfg!(feature = "qemu") {
-        config
-            .atleast_version(LIBVIRT_VERSION)
-            .probe("libvirt-qemu")?;
+        config.probe("libvirt-qemu")?;
 
         bindings = bindings
             .clang_arg("-DBINDGEN_USE_QEMU");
