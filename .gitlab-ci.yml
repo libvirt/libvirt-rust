@@ -23,6 +23,7 @@ stages:
     - ninja -C build install
     - popd
     - cargo test --verbose
+    - cargo test --verbose --features qemu
     - cargo test --verbose --manifest-path=virt-sys/Cargo.toml
 
 .native_git_build_job_prebuilt_env:
