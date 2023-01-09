@@ -1,6 +1,6 @@
 # This crate provides a Rust bindings to the libvirt C library
 
-The bindings try to be a direct mapping of the underling C API
+The bindings try to be a direct mapping of the underlying C API
 with some differences to match Rust conventions.
 
 ## Important considerations
