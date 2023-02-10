@@ -152,13 +152,12 @@ impl DomainSnapshot {
     }
 
     /// Delete a snapshot.
-    pub fn delete(&self, flags: u32) -> Result<u32, Error> {
+    pub fn delete(&self, flags: u32) -> Result<(), Error> {
         unsafe {
-            let ret = sys::virDomainSnapshotDelete(self.as_ptr(), flags as libc::c_uint);
-            if ret == -1 {
+            if sys::virDomainSnapshotDelete(self.as_ptr(), flags as libc::c_uint) == -1 {
                 return Err(Error::last_error());
             }
-            Ok(ret as u32)
+            Ok(())
         }
     }
 
