@@ -141,6 +141,16 @@ impl DomainSnapshot {
         }
     }
 
+    /// Revert a snapshot.
+    pub fn revert(&self, flags: u32) -> Result<(), Error> {
+        unsafe {
+            if sys::virDomainRevertToSnapshot(self.as_ptr(), flags as libc::c_uint) == -1 {
+                return Err(Error::last_error());
+            }
+            Ok(())
+        }
+    }
+
     /// Delete a snapshot.
     pub fn delete(&self, flags: u32) -> Result<u32, Error> {
         unsafe {
