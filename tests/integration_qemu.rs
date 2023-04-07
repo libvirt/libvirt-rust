@@ -155,3 +155,25 @@ fn test_reset() {
     common::clean(d);
     common::close(c);
 }
+
+#[test]
+#[ignore]
+fn test_domain_memory_stats() {
+    let c = common::qemu_conn();
+    let d = common::build_qemu_domain(&c, "memory_stats", false);
+    assert_eq!(Ok(0), d.create_with_flags(0));
+    assert_eq!(
+        Ok(String::from("libvirt-rs-test-memory_stats")),
+        d.get_name()
+    );
+    for stat in d.memory_stats(0).unwrap() {
+        match stat.tag {
+            sys::VIR_DOMAIN_MEMORY_STAT_ACTUAL_BALLOON => assert_eq!(1024, stat.val),
+            sys::VIR_DOMAIN_MEMORY_STAT_LAST_UPDATE => assert_eq!(0, stat.val),
+            sys::VIR_DOMAIN_MEMORY_STAT_RSS => assert!(stat.val > 0),
+            _ => assert!(stat.tag <= sys::VIR_DOMAIN_MEMORY_STAT_NR),
+        }
+    }
+    common::clean(d);
+    common::close(c);
+}

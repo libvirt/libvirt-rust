@@ -219,18 +219,18 @@ impl InterfaceStats {
 }
 
 #[derive(Clone, Debug)]
-pub struct MemoryStats {
-    pub tag: i32,
+pub struct MemoryStat {
+    pub tag: u32,
     pub val: u64,
 }
 
-impl MemoryStats {
+impl MemoryStat {
     /// # Safety
     ///
     /// The caller must ensure that the pointer is valid.
-    pub unsafe fn from_ptr(ptr: sys::virDomainMemoryStatPtr) -> MemoryStats {
-        MemoryStats {
-            tag: (*ptr).tag as i32,
+    pub unsafe fn from_ptr(ptr: *const sys::virDomainMemoryStatStruct) -> MemoryStat {
+        MemoryStat {
+            tag: (*ptr).tag as u32,
             val: (*ptr).val as u64,
         }
     }
@@ -1279,19 +1279,28 @@ impl Domain {
         }
     }
 
-    pub fn memory_stats(&self, nr_stats: u32, flags: u32) -> Result<MemoryStats, Error> {
+    pub fn memory_stats(&self, flags: u32) -> Result<Vec<MemoryStat>, Error> {
         unsafe {
-            let mut pinfo = mem::MaybeUninit::uninit();
+            let mut pinfo: Vec<sys::virDomainMemoryStatStruct> =
+                Vec::with_capacity(sys::VIR_DOMAIN_MEMORY_STAT_NR as usize);
             let ret = sys::virDomainMemoryStats(
                 self.as_ptr(),
                 pinfo.as_mut_ptr(),
-                nr_stats as libc::c_uint,
+                sys::VIR_DOMAIN_MEMORY_STAT_NR,
                 flags as libc::c_uint,
             );
             if ret == -1 {
                 return Err(Error::last_error());
             }
-            Ok(MemoryStats::from_ptr(&mut pinfo.assume_init()))
+            // low-level operation that is confirmed by return from
+            // libvirt.
+            pinfo.set_len(ret as usize);
+
+            let mut stats: Vec<MemoryStat> = Vec::with_capacity(ret as usize);
+            for x in pinfo.iter().take(ret as usize) {
+                stats.push(MemoryStat::from_ptr(x));
+            }
+            Ok(stats)
         }
     }
 
