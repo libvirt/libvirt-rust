@@ -1210,7 +1210,7 @@ impl Domain {
         }
     }
 
-    pub fn open_channel(&self, name: &str, stream: Stream, flags: u32) -> Result<u32, Error> {
+    pub fn open_channel(&self, name: &str, stream: &Stream, flags: u32) -> Result<u32, Error> {
         unsafe {
             let ret = sys::virDomainOpenChannel(
                 self.as_ptr(),
