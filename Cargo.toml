@@ -18,3 +18,4 @@ virt-sys = { path = "virt-sys", version = "0.1.0" }
 
 [features]
 qemu = ["virt-sys/qemu"]
+bindgen_regenerate = ["virt-sys/bindgen_regenerate"]

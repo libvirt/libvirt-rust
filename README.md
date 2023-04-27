@@ -18,6 +18,11 @@ The bindings use standard errors handling from Rust. Each method
 
 * `qemu` allows using `libvirt-qemu` functions, such as `qemu_monitor_command`.
 
+* `bindgen_regenerate` uses the `bindgen` crate to generate a
+  Rust-compatible representation of the C API. The output for a
+  recent version of libvirt is already included in the repository, so
+  only maintainers should ever need to use this feature.
+
 ## Documentation
 
 * https://libvirt.org/html/index.html
