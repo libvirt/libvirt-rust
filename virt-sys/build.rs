@@ -15,6 +15,41 @@ fn main() {
     }
 }
 
+#[cfg(feature = "bindgen_regenerate")]
+fn bindgen_regenerate(bindgen_out_file: &PathBuf) -> Result<(), Box<dyn Error>> {
+
+    // We want to make sure that the generated bindings.rs file includes all libvirt APIs,
+    // including the ones that are QEMU-specific
+    if !cfg!(feature = "qemu") {
+        return Err("qemu must be enabled along with bindgen_regenerate".into())
+    }
+
+    let bindings = bindgen::builder()
+        .header("wrapper.h")
+        .allowlist_var("^(VIR_|vir).*")
+        .allowlist_type("^vir.*")
+        .allowlist_function("^vir.*")
+        // this is only false on esoteric platforms which libvirt does not support
+        .size_t_is_usize(true)
+        .generate_comments(false)
+        .prepend_enum_name(false)
+        .ctypes_prefix("::libc");
+
+    bindings
+        .generate()
+        .map_err(|_| String::from("could not generate bindings"))?
+        .write_to_file(bindgen_out_file)?;
+
+    Ok(())
+}
+
+#[cfg(not(feature = "bindgen_regenerate"))]
+fn bindgen_regenerate(_: &PathBuf) -> Result<(), Box<dyn Error>> {
+
+    // We haven't been asked to regenerate bindings.rs, so nothing to do here
+    Ok(())
+}
+
 fn run() -> Result<(), Box<dyn Error>> {
     println!("cargo:rerun-if-changed=wrapper.h");
 
@@ -40,30 +75,7 @@ fn run() -> Result<(), Box<dyn Error>> {
     let bindgen_out_dir = PathBuf::from(env::var("OUT_DIR")?);
     let bindgen_out_file = bindgen_out_dir.join("bindings.rs");
 
-    if cfg!(feature = "bindgen_regenerate") {
-
-        // We want to make sure that the generated bindings.rs file includes all libvirt APIs,
-        // including the ones that are QEMU-specific
-        if !cfg!(feature = "qemu") {
-            return Err("qemu must be enabled along with bindgen_regenerate".into())
-        }
-
-        let bindings = bindgen::builder()
-            .header("wrapper.h")
-            .allowlist_var("^(VIR_|vir).*")
-            .allowlist_type("^vir.*")
-            .allowlist_function("^vir.*")
-            // this is only false on esoteric platforms which libvirt does not support
-            .size_t_is_usize(true)
-            .generate_comments(false)
-            .prepend_enum_name(false)
-            .ctypes_prefix("::libc");
-
-        bindings
-            .generate()
-            .map_err(|_| String::from("could not generate bindings"))?
-            .write_to_file(&bindgen_in_file)?;
-    }
+    bindgen_regenerate(&bindgen_in_file)?;
 
     fs::copy(bindgen_in_file, bindgen_out_file)?;
 
