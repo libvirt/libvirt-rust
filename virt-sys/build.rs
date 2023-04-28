@@ -20,14 +20,19 @@ fn run() -> Result<(), Box<dyn Error>> {
 
     let mut config = pkg_config::Config::new();
 
-    config
+    // Normally we would make the calls to probe() fatal by not ignoring their return value, but we
+    // want to be able to build the documentation for the library even when the libvirt header
+    // files are not present. This is necessary so that docs.rs can build and publish the API
+    // documentation for libvirt-rust. If any of these calls fail, then we'll still get an error
+    // when attempting to link against libvirt (e.g. when building the test suite).
+    let _ = config
         .atleast_version(LIBVIRT_VERSION)
-        .probe("libvirt")?;
+        .probe("libvirt");
 
     if cfg!(feature = "qemu") {
-        config
+        let _ = config
             .atleast_version(LIBVIRT_VERSION)
-            .probe("libvirt-qemu")?;
+            .probe("libvirt-qemu");
     }
 
     let bindgen_in_dir = PathBuf::from("bindgen");
