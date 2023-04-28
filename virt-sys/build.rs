@@ -36,7 +36,14 @@ fn run() -> Result<(), Box<dyn Error>> {
     let bindgen_out_file = bindgen_out_dir.join("bindings.rs");
 
     if cfg!(feature = "bindgen_regenerate") {
-        let mut bindings = bindgen::builder()
+
+        // We want to make sure that the generated bindings.rs file includes all libvirt APIs,
+        // including the ones that are QEMU-specific
+        if !cfg!(feature = "qemu") {
+            return Err("qemu must be enabled along with bindgen_regenerate".into())
+        }
+
+        let bindings = bindgen::builder()
             .header("wrapper.h")
             .allowlist_var("^(VIR_|vir).*")
             .allowlist_type("^vir.*")
@@ -46,11 +53,6 @@ fn run() -> Result<(), Box<dyn Error>> {
             .generate_comments(false)
             .prepend_enum_name(false)
             .ctypes_prefix("::libc");
-
-        if cfg!(feature = "qemu") {
-            bindings = bindings
-                .clang_arg("-DBINDGEN_USE_QEMU");
-        }
 
         bindings
             .generate()
