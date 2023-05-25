@@ -1,6 +1,6 @@
 [package]
 name = "virt"
-version = "0.2.12"
+version = "0.3.0"
 edition = "2018"
 authors = ["Sahid Orentino Ferdjaoui <sahid.ferdjaoui@libremel.fr>",]
 license = "LGPL-2.1"
@@ -14,7 +14,7 @@ homepage  = "https://libvirt.org/"
 
 [dependencies]
 libc = "0.2.0"
-virt-sys = { path = "virt-sys", version = "0.1.0" }
+virt-sys = { path = "virt-sys", version = "0.2.0" }
 
 [features]
 qemu = ["virt-sys/qemu"]
