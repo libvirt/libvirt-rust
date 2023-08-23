@@ -16,6 +16,7 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
+use std::ffi::CString;
 use std::{ptr, str};
 
 use crate::connect::Connect;
@@ -50,7 +51,8 @@ impl NodeDevice {
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<NodeDevice, Error> {
         unsafe {
-            let ptr = sys::virNodeDeviceLookupByName(conn.as_ptr(), string_to_c_chars!(id));
+            let id_buf = CString::new(id).unwrap();
+            let ptr = sys::virNodeDeviceLookupByName(conn.as_ptr(), id_buf.as_ptr());
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
@@ -65,10 +67,12 @@ impl NodeDevice {
         flags: u32,
     ) -> Result<NodeDevice, Error> {
         unsafe {
+            let wwnn_buf = CString::new(wwnn).unwrap();
+            let wwpn_buf = CString::new(wwpn).unwrap();
             let ptr = sys::virNodeDeviceLookupSCSIHostByWWN(
                 conn.as_ptr(),
-                string_to_c_chars!(wwnn),
-                string_to_c_chars!(wwpn),
+                wwnn_buf.as_ptr(),
+                wwpn_buf.as_ptr(),
                 flags as libc::c_uint,
             );
             if ptr.is_null() {
@@ -80,11 +84,9 @@ impl NodeDevice {
 
     pub fn create_xml(conn: &Connect, xml: &str, flags: u32) -> Result<NodeDevice, Error> {
         unsafe {
-            let ptr = sys::virNodeDeviceCreateXML(
-                conn.as_ptr(),
-                string_to_c_chars!(xml),
-                flags as libc::c_uint,
-            );
+            let xml_buf = CString::new(xml).unwrap();
+            let ptr =
+                sys::virNodeDeviceCreateXML(conn.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint);
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
@@ -164,9 +166,10 @@ impl NodeDevice {
 
     pub fn detach_flags(&self, driver: &str, flags: u32) -> Result<u32, Error> {
         unsafe {
+            let driver_buf = CString::new(driver).unwrap();
             let ret = sys::virNodeDeviceDetachFlags(
                 self.as_ptr(),
-                string_to_c_chars!(driver),
+                driver_buf.as_ptr(),
                 flags as libc::c_uint,
             );
             if ret == -1 {
@@ -188,11 +191,9 @@ impl NodeDevice {
 
     pub fn num_of_devices(conn: &Connect, cap: &str, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let num = sys::virNodeNumOfDevices(
-                conn.as_ptr(),
-                string_to_c_chars!(cap),
-                flags as libc::c_uint,
-            );
+            let cap_buf = CString::new(cap).unwrap();
+            let num =
+                sys::virNodeNumOfDevices(conn.as_ptr(), cap_buf.as_ptr(), flags as libc::c_uint);
             if num == -1 {
                 return Err(Error::last_error());
             }
