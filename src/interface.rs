@@ -16,6 +16,7 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
+use std::ffi::CString;
 use std::str;
 
 use crate::connect::Connect;
@@ -60,7 +61,8 @@ impl Interface {
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<Interface, Error> {
         unsafe {
-            let ptr = sys::virInterfaceLookupByName(conn.as_ptr(), string_to_c_chars!(id));
+            let id_buf = CString::new(id).unwrap();
+            let ptr = sys::virInterfaceLookupByName(conn.as_ptr(), id_buf.as_ptr());
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
@@ -70,11 +72,9 @@ impl Interface {
 
     pub fn define_xml(conn: &Connect, xml: &str, flags: u32) -> Result<Interface, Error> {
         unsafe {
-            let ptr = sys::virInterfaceDefineXML(
-                conn.as_ptr(),
-                string_to_c_chars!(xml),
-                flags as libc::c_uint,
-            );
+            let xml_buf = CString::new(xml).unwrap();
+            let ptr =
+                sys::virInterfaceDefineXML(conn.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint);
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
@@ -84,7 +84,8 @@ impl Interface {
 
     pub fn lookup_by_mac_string(conn: &Connect, id: &str) -> Result<Interface, Error> {
         unsafe {
-            let ptr = sys::virInterfaceLookupByMACString(conn.as_ptr(), string_to_c_chars!(id));
+            let id_buf = CString::new(id).unwrap();
+            let ptr = sys::virInterfaceLookupByMACString(conn.as_ptr(), id_buf.as_ptr());
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
