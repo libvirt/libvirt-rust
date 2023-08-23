@@ -16,6 +16,7 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
+use std::ffi::CString;
 use std::str;
 
 use crate::connect::Connect;
@@ -60,7 +61,8 @@ impl Network {
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<Network, Error> {
         unsafe {
-            let ptr = sys::virNetworkLookupByName(conn.as_ptr(), string_to_c_chars!(id));
+            let id_buf = CString::new(id).unwrap();
+            let ptr = sys::virNetworkLookupByName(conn.as_ptr(), id_buf.as_ptr());
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
@@ -70,7 +72,8 @@ impl Network {
 
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Network, Error> {
         unsafe {
-            let ptr = sys::virNetworkLookupByUUIDString(conn.as_ptr(), string_to_c_chars!(uuid));
+            let uuid_buf = CString::new(uuid).unwrap();
+            let ptr = sys::virNetworkLookupByUUIDString(conn.as_ptr(), uuid_buf.as_ptr());
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
@@ -130,7 +133,8 @@ impl Network {
 
     pub fn define_xml(conn: &Connect, xml: &str) -> Result<Network, Error> {
         unsafe {
-            let ptr = sys::virNetworkDefineXML(conn.as_ptr(), string_to_c_chars!(xml));
+            let xml_buf = CString::new(xml).unwrap();
+            let ptr = sys::virNetworkDefineXML(conn.as_ptr(), xml_buf.as_ptr());
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
@@ -140,7 +144,8 @@ impl Network {
 
     pub fn create_xml(conn: &Connect, xml: &str) -> Result<Network, Error> {
         unsafe {
-            let ptr = sys::virNetworkCreateXML(conn.as_ptr(), string_to_c_chars!(xml));
+            let xml_buf = CString::new(xml).unwrap();
+            let ptr = sys::virNetworkCreateXML(conn.as_ptr(), xml_buf.as_ptr());
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
@@ -226,12 +231,13 @@ impl Network {
         flags: sys::virNetworkUpdateFlags,
     ) -> Result<(), Error> {
         unsafe {
+            let xml_buf = CString::new(xml).unwrap();
             let ret = sys::virNetworkUpdate(
                 self.as_ptr(),
                 cmd,
                 section,
                 index as libc::c_int,
-                string_to_c_chars!(xml),
+                xml_buf.as_ptr(),
                 flags,
             );
             if ret == -1 {
