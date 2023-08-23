@@ -16,6 +16,7 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
+use std::ffi::CString;
 use std::{mem, ptr, str};
 
 use crate::connect::Connect;
@@ -87,9 +88,10 @@ impl StoragePool {
 
     pub fn define_xml(conn: &Connect, xml: &str, flags: u32) -> Result<StoragePool, Error> {
         unsafe {
+            let xml_buf = CString::new(xml).unwrap();
             let ptr = sys::virStoragePoolDefineXML(
                 conn.as_ptr(),
-                string_to_c_chars!(xml),
+                xml_buf.as_ptr(),
                 flags as libc::c_uint,
             );
             if ptr.is_null() {
@@ -105,9 +107,10 @@ impl StoragePool {
         flags: sys::virStoragePoolCreateFlags,
     ) -> Result<StoragePool, Error> {
         unsafe {
+            let xml_buf = CString::new(xml).unwrap();
             let ptr = sys::virStoragePoolCreateXML(
                 conn.as_ptr(),
-                string_to_c_chars!(xml),
+                xml_buf.as_ptr(),
                 flags as libc::c_uint,
             );
             if ptr.is_null() {
@@ -119,7 +122,8 @@ impl StoragePool {
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<StoragePool, Error> {
         unsafe {
-            let ptr = sys::virStoragePoolLookupByName(conn.as_ptr(), string_to_c_chars!(id));
+            let id_buf = CString::new(id).unwrap();
+            let ptr = sys::virStoragePoolLookupByName(conn.as_ptr(), id_buf.as_ptr());
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
@@ -139,8 +143,8 @@ impl StoragePool {
 
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<StoragePool, Error> {
         unsafe {
-            let ptr =
-                sys::virStoragePoolLookupByUUIDString(conn.as_ptr(), string_to_c_chars!(uuid));
+            let uuid_buf = CString::new(uuid).unwrap();
+            let ptr = sys::virStoragePoolLookupByUUIDString(conn.as_ptr(), uuid_buf.as_ptr());
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
