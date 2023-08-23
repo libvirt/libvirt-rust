@@ -16,6 +16,7 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
+use std::ffi::CString;
 use std::{mem, str};
 
 use crate::connect::Connect;
@@ -89,11 +90,9 @@ impl StorageVol {
         flags: sys::virStorageVolCreateFlags,
     ) -> Result<StorageVol, Error> {
         unsafe {
-            let ptr = sys::virStorageVolCreateXML(
-                pool.as_ptr(),
-                string_to_c_chars!(xml),
-                flags as libc::c_uint,
-            );
+            let xml_buf = CString::new(xml).unwrap();
+            let ptr =
+                sys::virStorageVolCreateXML(pool.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint);
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
@@ -108,9 +107,10 @@ impl StorageVol {
         flags: sys::virStorageVolCreateFlags,
     ) -> Result<StorageVol, Error> {
         unsafe {
+            let xml_buf = CString::new(xml).unwrap();
             let ptr = sys::virStorageVolCreateXMLFrom(
                 pool.as_ptr(),
-                string_to_c_chars!(xml),
+                xml_buf.as_ptr(),
                 vol.as_ptr(),
                 flags as libc::c_uint,
             );
@@ -123,7 +123,8 @@ impl StorageVol {
 
     pub fn lookup_by_name(pool: &StoragePool, name: &str) -> Result<StorageVol, Error> {
         unsafe {
-            let ptr = sys::virStorageVolLookupByName(pool.as_ptr(), string_to_c_chars!(name));
+            let name_buf = CString::new(name).unwrap();
+            let ptr = sys::virStorageVolLookupByName(pool.as_ptr(), name_buf.as_ptr());
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
@@ -133,7 +134,8 @@ impl StorageVol {
 
     pub fn lookup_by_key(conn: &Connect, key: &str) -> Result<StorageVol, Error> {
         unsafe {
-            let ptr = sys::virStorageVolLookupByKey(conn.as_ptr(), string_to_c_chars!(key));
+            let key_buf = CString::new(key).unwrap();
+            let ptr = sys::virStorageVolLookupByKey(conn.as_ptr(), key_buf.as_ptr());
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
@@ -143,7 +145,8 @@ impl StorageVol {
 
     pub fn lookup_by_path(conn: &Connect, path: &str) -> Result<StorageVol, Error> {
         unsafe {
-            let ptr = sys::virStorageVolLookupByPath(conn.as_ptr(), string_to_c_chars!(path));
+            let path_buf = CString::new(path).unwrap();
+            let ptr = sys::virStorageVolLookupByPath(conn.as_ptr(), path_buf.as_ptr());
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
