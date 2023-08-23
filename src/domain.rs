@@ -1774,6 +1774,7 @@ impl Domain {
                 cparams.len() as libc::c_int,
                 flags as libc::c_uint,
             );
+            typed_params_release_c_chars!(cparams);
             if ret == -1 {
                 return Err(Error::last_error());
             }

@@ -106,6 +106,16 @@ macro_rules! string_to_mut_c_chars {
     };
 }
 
+macro_rules! typed_params_release_c_chars {
+    ($x:expr) => {
+        for p in $x {
+            if p.type_ == sys::VIR_TYPED_PARAM_STRING as libc::c_int {
+                let _cleanup = CString::from_raw(p.value.s);
+            }
+        }
+    };
+}
+
 mod util;
 
 pub mod connect;
