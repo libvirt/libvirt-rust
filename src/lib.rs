@@ -96,28 +96,6 @@ macro_rules! c_chars_to_string {
     }};
 }
 
-// Those two macros are not completely safe and we should probably
-// stop using them to avoid possibility of pointers dangling. The
-// memory may be freed too early.
-//
-// To avoid that, the right pattern would be:
-//
-// let cstring = CString::new(rs_string).unwrap();
-// unsafe {
-//   some_c_function(cstring.as_ptr() as *const libc::c_char);
-// }
-//
-// So we ensure the pointer passed to 'some_c_function()' will live
-// until 'cstring' exists.
-//
-// TODO(sahid): fix code + remove macros.
-
-macro_rules! string_to_c_chars {
-    ($x:expr) => {
-        ::std::ffi::CString::new($x).unwrap().as_ptr() as *const libc::c_char
-    };
-}
-
 macro_rules! string_to_mut_c_chars {
     ($x:expr) => {
         // Usage of this should ensure deallocation.
