@@ -16,6 +16,8 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
+use std::ffi::CString;
+
 use crate::connect::Connect;
 use crate::error::Error;
 
@@ -58,11 +60,9 @@ impl Secret {
 
     pub fn define_xml(conn: &Connect, xml: &str, flags: u32) -> Result<Secret, Error> {
         unsafe {
-            let ptr = sys::virSecretDefineXML(
-                conn.as_ptr(),
-                string_to_c_chars!(xml),
-                flags as libc::c_uint,
-            );
+            let xml_buf = CString::new(xml).unwrap();
+            let ptr =
+                sys::virSecretDefineXML(conn.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint);
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
@@ -72,7 +72,8 @@ impl Secret {
 
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Secret, Error> {
         unsafe {
-            let ptr = sys::virSecretLookupByUUIDString(conn.as_ptr(), string_to_c_chars!(uuid));
+            let uuid_buf = CString::new(uuid).unwrap();
+            let ptr = sys::virSecretLookupByUUIDString(conn.as_ptr(), uuid_buf.as_ptr());
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
@@ -82,10 +83,11 @@ impl Secret {
 
     pub fn lookup_by_usage(conn: &Connect, usagetype: i32, usageid: &str) -> Result<Secret, Error> {
         unsafe {
+            let usageid_buf = CString::new(usageid).unwrap();
             let ptr = sys::virSecretLookupByUsage(
                 conn.as_ptr(),
                 usagetype as libc::c_int,
-                string_to_c_chars!(usageid),
+                usageid_buf.as_ptr(),
             );
             if ptr.is_null() {
                 return Err(Error::last_error());
