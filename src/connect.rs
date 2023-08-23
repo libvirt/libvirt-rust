@@ -52,10 +52,17 @@ extern "C" fn connect_callback(
         if rcreds[i as usize].result.is_some() {
             if let Some(ref result) = rcreds[i as usize].result {
                 unsafe {
+                    // libvirt will call free() on 'result', so we must provide
+                    // memory allocated by the C malloc impl
+                    let bytes = result.as_bytes();
+                    let buffer = ::libc::malloc(bytes.len() + 1);
+                    ::std::ptr::copy(bytes.as_ptr().cast(), buffer, bytes.len());
+                    ::std::ptr::write(buffer.add(bytes.len()) as *mut u8, 0u8);
+
                     // Safe because ccreds is allocated and the result
                     // is comming from Rust calls.
                     (*ccreds.offset(i)).resultlen = result.len() as libc::c_uint;
-                    (*ccreds.offset(i)).result = string_to_mut_c_chars!(result.clone());
+                    (*ccreds.offset(i)).result = buffer as *mut i8;
                 }
             }
         }
