@@ -16,6 +16,7 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
+use std::ffi::CString;
 use std::str;
 
 use crate::connect::Connect;
@@ -50,7 +51,8 @@ impl NWFilter {
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<NWFilter, Error> {
         unsafe {
-            let ptr = sys::virNWFilterLookupByName(conn.as_ptr(), string_to_c_chars!(id));
+            let id_buf = CString::new(id).unwrap();
+            let ptr = sys::virNWFilterLookupByName(conn.as_ptr(), id_buf.as_ptr());
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
@@ -60,7 +62,8 @@ impl NWFilter {
 
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<NWFilter, Error> {
         unsafe {
-            let ptr = sys::virNWFilterLookupByUUIDString(conn.as_ptr(), string_to_c_chars!(uuid));
+            let uuid_buf = CString::new(uuid).unwrap();
+            let ptr = sys::virNWFilterLookupByUUIDString(conn.as_ptr(), uuid_buf.as_ptr());
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
@@ -100,7 +103,8 @@ impl NWFilter {
 
     pub fn define_xml(conn: &Connect, xml: &str) -> Result<NWFilter, Error> {
         unsafe {
-            let ptr = sys::virNWFilterDefineXML(conn.as_ptr(), string_to_c_chars!(xml));
+            let xml_buf = CString::new(xml).unwrap();
+            let ptr = sys::virNWFilterDefineXML(conn.as_ptr(), xml_buf.as_ptr());
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
