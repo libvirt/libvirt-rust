@@ -17,6 +17,7 @@
  */
 
 use std::ffi::CStr;
+use std::ffi::CString;
 use std::{mem, ptr, str};
 
 use crate::connect::Connect;
@@ -412,7 +413,8 @@ impl Domain {
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<Domain, Error> {
         unsafe {
-            let ptr = sys::virDomainLookupByName(conn.as_ptr(), string_to_c_chars!(id));
+            let id_buf = CString::new(id).unwrap();
+            let ptr = sys::virDomainLookupByName(conn.as_ptr(), id_buf.as_ptr());
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
@@ -422,7 +424,8 @@ impl Domain {
 
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Domain, Error> {
         unsafe {
-            let ptr = sys::virDomainLookupByUUIDString(conn.as_ptr(), string_to_c_chars!(uuid));
+            let uuid_buf = CString::new(uuid).unwrap();
+            let ptr = sys::virDomainLookupByUUIDString(conn.as_ptr(), uuid_buf.as_ptr());
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
@@ -569,11 +572,9 @@ impl Domain {
         flags: sys::virDomainCreateFlags,
     ) -> Result<Domain, Error> {
         unsafe {
-            let ptr = sys::virDomainCreateXML(
-                conn.as_ptr(),
-                string_to_c_chars!(xml),
-                flags as libc::c_uint,
-            );
+            let xml_buf = CString::new(xml).unwrap();
+            let ptr =
+                sys::virDomainCreateXML(conn.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint);
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
@@ -594,7 +595,8 @@ impl Domain {
     /// same id as the domain being defined.
     pub fn define_xml(conn: &Connect, xml: &str) -> Result<Domain, Error> {
         unsafe {
-            let ptr = sys::virDomainDefineXML(conn.as_ptr(), string_to_c_chars!(xml));
+            let xml_buf = CString::new(xml).unwrap();
+            let ptr = sys::virDomainDefineXML(conn.as_ptr(), xml_buf.as_ptr());
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
@@ -619,9 +621,10 @@ impl Domain {
         flags: sys::virDomainDefineFlags,
     ) -> Result<Domain, Error> {
         unsafe {
+            let xml_buf = CString::new(xml).unwrap();
             let ptr = sys::virDomainDefineXMLFlags(
                 conn.as_ptr(),
-                string_to_c_chars!(xml),
+                xml_buf.as_ptr(),
                 flags as libc::c_uint,
             );
             if ptr.is_null() {
@@ -934,7 +937,9 @@ impl Domain {
 
     pub fn domain_restore(conn: &Connect, path: &str) -> Result<(), Error> {
         unsafe {
-            if sys::virDomainRestore(conn.as_ptr(), string_to_c_chars!(path)) == -1 {
+            let path_buf = CString::new(path).unwrap();
+            let ret = sys::virDomainRestore(conn.as_ptr(), path_buf.as_ptr());
+            if ret == -1 {
                 return Err(Error::last_error());
             }
             Ok(())
@@ -948,13 +953,10 @@ impl Domain {
         flags: sys::virDomainSaveRestoreFlags,
     ) -> Result<(), Error> {
         unsafe {
-            if sys::virDomainRestoreFlags(
-                conn.as_ptr(),
-                string_to_c_chars!(path),
-                ptr::null(),
-                flags,
-            ) == -1
-            {
+            let path_buf = CString::new(path).unwrap();
+            let ret =
+                sys::virDomainRestoreFlags(conn.as_ptr(), path_buf.as_ptr(), ptr::null(), flags);
+            if ret == -1 {
                 return Err(Error::last_error());
             }
             Ok(())
@@ -1078,9 +1080,10 @@ impl Domain {
     pub fn get_block_info(&self, disk: &str, flags: u32) -> Result<BlockInfo, Error> {
         unsafe {
             let mut pinfo = mem::MaybeUninit::uninit();
+            let disk_buf = CString::new(disk).unwrap();
             let ret = sys::virDomainGetBlockInfo(
                 self.as_ptr(),
-                string_to_c_chars!(disk),
+                disk_buf.as_ptr(),
                 pinfo.as_mut_ptr(),
                 flags as libc::c_uint,
             );
@@ -1139,11 +1142,9 @@ impl Domain {
 
     pub fn rename(&self, new_name: &str, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let ret = sys::virDomainRename(
-                self.as_ptr(),
-                string_to_c_chars!(new_name),
-                flags as libc::c_uint,
-            );
+            let new_name_buf = CString::new(new_name).unwrap();
+            let ret =
+                sys::virDomainRename(self.as_ptr(), new_name_buf.as_ptr(), flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::last_error());
             }
@@ -1153,10 +1154,12 @@ impl Domain {
 
     pub fn set_user_password(&self, user: &str, password: &str, flags: u32) -> Result<u32, Error> {
         unsafe {
+            let user_buf = CString::new(user).unwrap();
+            let password_buf = CString::new(password).unwrap();
             let ret = sys::virDomainSetUserPassword(
                 self.as_ptr(),
-                string_to_c_chars!(user),
-                string_to_c_chars!(password),
+                user_buf.as_ptr(),
+                password_buf.as_ptr(),
                 flags as libc::c_uint,
             );
             if ret == -1 {
@@ -1168,9 +1171,10 @@ impl Domain {
 
     pub fn set_block_threshold(&self, dev: &str, threshold: u64, flags: u32) -> Result<u32, Error> {
         unsafe {
+            let dev_buf = CString::new(dev).unwrap();
             let ret = sys::virDomainSetBlockThreshold(
                 self.as_ptr(),
-                string_to_c_chars!(dev),
+                dev_buf.as_ptr(),
                 threshold as libc::c_ulonglong,
                 flags as libc::c_uint,
             );
@@ -1212,9 +1216,10 @@ impl Domain {
 
     pub fn open_channel(&self, name: &str, stream: &Stream, flags: u32) -> Result<u32, Error> {
         unsafe {
+            let name_buf = CString::new(name).unwrap();
             let ret = sys::virDomainOpenChannel(
                 self.as_ptr(),
-                string_to_c_chars!(name),
+                name_buf.as_ptr(),
                 stream.as_ptr(),
                 flags as libc::c_uint,
             );
@@ -1227,9 +1232,10 @@ impl Domain {
 
     pub fn open_console(&self, name: &str, stream: &Stream, flags: u32) -> Result<u32, Error> {
         unsafe {
+            let name_buf = CString::new(name).unwrap();
             let ret = sys::virDomainOpenConsole(
                 self.as_ptr(),
-                string_to_c_chars!(name),
+                name_buf.as_ptr(),
                 stream.as_ptr(),
                 flags as libc::c_uint,
             );
@@ -1266,9 +1272,10 @@ impl Domain {
     pub fn interface_stats(&self, path: &str) -> Result<InterfaceStats, Error> {
         unsafe {
             let mut pinfo = mem::MaybeUninit::uninit();
+            let path_buf = CString::new(path).unwrap();
             let ret = sys::virDomainInterfaceStats(
                 self.as_ptr(),
-                string_to_c_chars!(path),
+                path_buf.as_ptr(),
                 pinfo.as_mut_ptr(),
                 mem::size_of::<sys::virDomainInterfaceStatsStruct>(),
             );
@@ -1310,9 +1317,10 @@ impl Domain {
         flags: u32,
     ) -> Result<String, Error> {
         unsafe {
+            let file_buf = CString::new(file).unwrap();
             let ptr = sys::virDomainSaveImageGetXMLDesc(
                 conn.as_ptr(),
-                string_to_c_chars!(file),
+                file_buf.as_ptr(),
                 flags as libc::c_uint,
             );
             if ptr.is_null() {
@@ -1329,10 +1337,12 @@ impl Domain {
         flags: u32,
     ) -> Result<u32, Error> {
         unsafe {
+            let file_buf = CString::new(file).unwrap();
+            let dxml_buf = CString::new(dxml).unwrap();
             let ret = sys::virDomainSaveImageDefineXML(
                 conn.as_ptr(),
-                string_to_c_chars!(file),
-                string_to_c_chars!(dxml),
+                file_buf.as_ptr(),
+                dxml_buf.as_ptr(),
                 flags as libc::c_uint,
             );
             if ret == -1 {
@@ -1344,7 +1354,8 @@ impl Domain {
 
     pub fn attach_device(&self, xml: &str) -> Result<u32, Error> {
         unsafe {
-            let ret = sys::virDomainAttachDevice(self.as_ptr(), string_to_c_chars!(xml));
+            let xml_buf = CString::new(xml).unwrap();
+            let ret = sys::virDomainAttachDevice(self.as_ptr(), xml_buf.as_ptr());
             if ret == -1 {
                 return Err(Error::last_error());
             }
@@ -1354,9 +1365,10 @@ impl Domain {
 
     pub fn attach_device_flags(&self, xml: &str, flags: u32) -> Result<u32, Error> {
         unsafe {
+            let xml_buf = CString::new(xml).unwrap();
             let ret = sys::virDomainAttachDeviceFlags(
                 self.as_ptr(),
-                string_to_c_chars!(xml),
+                xml_buf.as_ptr(),
                 flags as libc::c_uint,
             );
             if ret == -1 {
@@ -1368,7 +1380,8 @@ impl Domain {
 
     pub fn detach_device(&self, xml: &str) -> Result<u32, Error> {
         unsafe {
-            let ret = sys::virDomainDetachDevice(self.as_ptr(), string_to_c_chars!(xml));
+            let xml_buf = CString::new(xml).unwrap();
+            let ret = sys::virDomainDetachDevice(self.as_ptr(), xml_buf.as_ptr());
             if ret == -1 {
                 return Err(Error::last_error());
             }
@@ -1378,9 +1391,10 @@ impl Domain {
 
     pub fn detach_device_flags(&self, xml: &str, flags: u32) -> Result<u32, Error> {
         unsafe {
+            let xml_buf = CString::new(xml).unwrap();
             let ret = sys::virDomainDetachDeviceFlags(
                 self.as_ptr(),
-                string_to_c_chars!(xml),
+                xml_buf.as_ptr(),
                 flags as libc::c_uint,
             );
             if ret == -1 {
@@ -1392,9 +1406,10 @@ impl Domain {
 
     pub fn update_device_flags(&self, xml: &str, flags: u32) -> Result<u32, Error> {
         unsafe {
+            let xml_buf = CString::new(xml).unwrap();
             let ret = sys::virDomainUpdateDeviceFlags(
                 self.as_ptr(),
-                string_to_c_chars!(xml),
+                xml_buf.as_ptr(),
                 flags as libc::c_uint,
             );
             if ret == -1 {
@@ -1436,11 +1451,8 @@ impl Domain {
 
     pub fn core_dump(&self, to: &str, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let ret = sys::virDomainCoreDump(
-                self.as_ptr(),
-                string_to_c_chars!(to),
-                flags as libc::c_uint,
-            );
+            let to_buf = CString::new(to).unwrap();
+            let ret = sys::virDomainCoreDump(self.as_ptr(), to_buf.as_ptr(), flags as libc::c_uint);
             if ret == -1 {
                 return Err(Error::last_error());
             }
@@ -1450,9 +1462,10 @@ impl Domain {
 
     pub fn core_dump_with_format(&self, to: &str, format: u32, flags: u32) -> Result<u32, Error> {
         unsafe {
+            let to_buf = CString::new(to).unwrap();
             let ret = sys::virDomainCoreDumpWithFormat(
                 self.as_ptr(),
-                string_to_c_chars!(to),
+                to_buf.as_ptr(),
                 format as libc::c_uint,
                 flags as libc::c_uint,
             );
@@ -1472,12 +1485,15 @@ impl Domain {
         flags: u32,
     ) -> Result<u32, Error> {
         unsafe {
+            let metadata_buf = CString::new(metadata).unwrap();
+            let key_buf = CString::new(key).unwrap();
+            let uri_buf = CString::new(uri).unwrap();
             let ret = sys::virDomainSetMetadata(
                 self.as_ptr(),
                 kind as libc::c_int,
-                string_to_c_chars!(metadata),
-                string_to_c_chars!(key),
-                string_to_c_chars!(uri),
+                metadata_buf.as_ptr(),
+                key_buf.as_ptr(),
+                uri_buf.as_ptr(),
                 flags as libc::c_uint,
             );
             if ret == -1 {
@@ -1489,10 +1505,11 @@ impl Domain {
 
     pub fn get_metadata(&self, kind: i32, uri: &str, flags: u32) -> Result<String, Error> {
         unsafe {
+            let uri_buf = CString::new(uri).unwrap();
             let n = sys::virDomainGetMetadata(
                 self.as_ptr(),
                 kind as libc::c_int,
-                string_to_c_chars!(uri),
+                uri_buf.as_ptr(),
                 flags as libc::c_uint,
             );
             if n.is_null() {
@@ -1504,9 +1521,10 @@ impl Domain {
 
     pub fn block_resize(&self, disk: &str, size: u64, flags: u32) -> Result<u32, Error> {
         unsafe {
+            let disk_buf = CString::new(disk).unwrap();
             let ret = sys::virDomainBlockResize(
                 self.as_ptr(),
-                string_to_c_chars!(disk),
+                disk_buf.as_ptr(),
                 size as libc::c_ulonglong,
                 flags as libc::c_uint,
             );
@@ -1609,12 +1627,14 @@ impl Domain {
         bandwidth: u64,
     ) -> Result<Domain, Error> {
         unsafe {
+            let dname_buf = CString::new("").unwrap();
+            let uri_buf = CString::new(uri).unwrap();
             let ptr = sys::virDomainMigrate(
                 self.as_ptr(),
                 dconn.as_ptr(),
                 flags as libc::c_ulong,
-                string_to_c_chars!(""),
-                string_to_c_chars!(uri),
+                dname_buf.as_ptr(),
+                uri_buf.as_ptr(),
                 bandwidth as libc::c_ulong,
             );
             if ptr.is_null() {
@@ -1633,13 +1653,16 @@ impl Domain {
         bandwidth: u64,
     ) -> Result<Domain, Error> {
         unsafe {
+            let dxml_buf = CString::new(dxml).unwrap();
+            let dname_buf = CString::new("").unwrap();
+            let uri_buf = CString::new(uri).unwrap();
             let ptr = sys::virDomainMigrate2(
                 self.as_ptr(),
                 dconn.as_ptr(),
-                string_to_c_chars!(dxml),
+                dxml_buf.as_ptr(),
                 flags as libc::c_ulong,
-                string_to_c_chars!(""),
-                string_to_c_chars!(uri),
+                dname_buf.as_ptr(),
+                uri_buf.as_ptr(),
                 bandwidth as libc::c_ulong,
             );
             if ptr.is_null() {
@@ -1651,11 +1674,13 @@ impl Domain {
 
     pub fn migrate_to_uri(&self, duri: &str, flags: u32, bandwidth: u64) -> Result<(), Error> {
         unsafe {
+            let duri_buf = CString::new(duri).unwrap();
+            let dname_buf = CString::new("").unwrap();
             let ret = sys::virDomainMigrateToURI(
                 self.as_ptr(),
-                string_to_c_chars!(duri),
+                duri_buf.as_ptr(),
                 flags as libc::c_ulong,
-                string_to_c_chars!(""),
+                dname_buf.as_ptr(),
                 bandwidth as libc::c_ulong,
             );
             if ret == -1 {
@@ -1674,13 +1699,17 @@ impl Domain {
         bandwidth: u64,
     ) -> Result<(), Error> {
         unsafe {
+            let dconn_uri_buf = CString::new(dconn_uri).unwrap();
+            let mig_uri_buf = CString::new(mig_uri).unwrap();
+            let dxml_buf = CString::new(dxml).unwrap();
+            let dname_buf = CString::new("").unwrap();
             let ret = sys::virDomainMigrateToURI2(
                 self.as_ptr(),
-                string_to_c_chars!(dconn_uri),
-                string_to_c_chars!(mig_uri),
-                string_to_c_chars!(dxml),
+                dconn_uri_buf.as_ptr(),
+                mig_uri_buf.as_ptr(),
+                dxml_buf.as_ptr(),
                 flags as libc::c_ulong,
-                string_to_c_chars!(""),
+                dname_buf.as_ptr(),
                 bandwidth as libc::c_ulong,
             );
             if ret == -1 {
@@ -1929,13 +1958,14 @@ impl Domain {
     pub fn qemu_monitor_command(&self, cmd: &str, flags: u32) -> Result<String, Error> {
         unsafe {
             let mut result: *mut libc::c_char = std::ptr::null_mut();
-            if sys::virDomainQemuMonitorCommand(
+            let cmd_buf = CString::new(cmd).unwrap();
+            let ret = sys::virDomainQemuMonitorCommand(
                 self.as_ptr(),
-                string_to_c_chars!(cmd),
+                cmd_buf.as_ptr(),
                 &mut result,
                 flags as libc::c_uint,
-            ) == -1
-            {
+            );
+            if ret == -1 {
                 return Err(Error::last_error());
             }
             Ok(c_chars_to_string!(result))
