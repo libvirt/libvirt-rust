@@ -16,6 +16,7 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
+use std::ffi::CString;
 use std::{mem, ptr, str};
 
 use crate::domain::{Domain, DomainStatsRecord};
@@ -188,8 +189,9 @@ impl Connect {
     /// connection is no longer needed.
     /// ```
     pub fn open(uri: &str) -> Result<Connect, Error> {
+        let uri_buf = CString::new(uri).unwrap();
         unsafe {
-            let c = sys::virConnectOpen(string_to_c_chars!(uri));
+            let c = sys::virConnectOpen(uri_buf.as_ptr());
             if c.is_null() {
                 return Err(Error::last_error());
             }
@@ -206,8 +208,9 @@ impl Connect {
     /// an effect on opening drivers and freeing the connection
     /// resources.
     pub fn open_read_only(uri: &str) -> Result<Connect, Error> {
+        let uri_buf = CString::new(uri).unwrap();
         unsafe {
-            let c = sys::virConnectOpenReadOnly(string_to_c_chars!(uri));
+            let c = sys::virConnectOpenReadOnly(uri_buf.as_ptr());
             if c.is_null() {
                 return Err(Error::last_error());
             }
@@ -229,13 +232,14 @@ impl Connect {
                 cb: Some(connect_callback),
                 cbdata: auth.callback as *mut _,
         };
-        let c = unsafe {
-            sys::virConnectOpenAuth(string_to_c_chars!(uri), &mut cauth, flags as libc::c_uint)
-        };
-        if c.is_null() {
-            return Err(Error::last_error());
+        let uri_buf = CString::new(uri).unwrap();
+        unsafe {
+            let c = sys::virConnectOpenAuth(uri_buf.as_ptr(), &mut cauth, flags as libc::c_uint);
+            if c.is_null() {
+                return Err(Error::last_error());
+            }
+            Ok(Connect::new(c))
         }
-        Ok(Connect::new(c))
     }
 
     /// This function closes the connection to the hypervisor. This
@@ -321,8 +325,9 @@ impl Connect {
     }
 
     pub fn get_max_vcpus(&self, attr: &str) -> Result<u32, Error> {
+        let attr_buf = CString::new(attr).unwrap();
         unsafe {
-            let max = sys::virConnectGetMaxVcpus(self.as_ptr(), string_to_c_chars!(attr));
+            let max = sys::virConnectGetMaxVcpus(self.as_ptr(), attr_buf.as_ptr());
             if max == -1 {
                 return Err(Error::last_error());
             }
@@ -333,9 +338,10 @@ impl Connect {
     pub fn get_cpu_models_names(&self, arch: &str, flags: u32) -> Result<Vec<String>, Error> {
         unsafe {
             let mut names: *mut *mut libc::c_char = ptr::null_mut();
+            let arch_buf = CString::new(arch).unwrap();
             let size = sys::virConnectGetCPUModelNames(
                 self.as_ptr(),
-                string_to_c_chars!(arch),
+                arch_buf.as_ptr(),
                 &mut names,
                 flags as libc::c_uint,
             );
@@ -1003,11 +1009,9 @@ impl Connect {
         flags: sys::virConnectCompareCPUFlags,
     ) -> Result<sys::virCPUCompareResult, Error> {
         unsafe {
-            let res = sys::virConnectCompareCPU(
-                self.as_ptr(),
-                string_to_c_chars!(xml),
-                flags as libc::c_uint,
-            );
+            let xml_buf = CString::new(xml).unwrap();
+            let res =
+                sys::virConnectCompareCPU(self.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint);
             if res == sys::VIR_CPU_COMPARE_ERROR {
                 return Err(Error::last_error());
             }
@@ -1067,10 +1071,12 @@ impl Connect {
         flags: u32,
     ) -> Result<String, Error> {
         unsafe {
+            let nformat_buf = CString::new(nformat).unwrap();
+            let nconfig_buf = CString::new(nconfig).unwrap();
             let ret = sys::virConnectDomainXMLFromNative(
                 self.as_ptr(),
-                string_to_c_chars!(nformat),
-                string_to_c_chars!(nconfig),
+                nformat_buf.as_ptr(),
+                nconfig_buf.as_ptr(),
                 flags as libc::c_uint,
             );
             if ret.is_null() {
@@ -1087,10 +1093,12 @@ impl Connect {
         flags: u32,
     ) -> Result<String, Error> {
         unsafe {
+            let nformat_buf = CString::new(nformat).unwrap();
+            let dxml_buf = CString::new(dxml).unwrap();
             let ret = sys::virConnectDomainXMLToNative(
                 self.as_ptr(),
-                string_to_c_chars!(nformat),
-                string_to_c_chars!(dxml),
+                nformat_buf.as_ptr(),
+                dxml_buf.as_ptr(),
                 flags as libc::c_uint,
             );
             if ret.is_null() {
@@ -1109,12 +1117,16 @@ impl Connect {
         flags: u32,
     ) -> Result<String, Error> {
         unsafe {
+            let emulatorbin_buf = CString::new(emulatorbin).unwrap();
+            let arch_buf = CString::new(arch).unwrap();
+            let machine_buf = CString::new(machine).unwrap();
+            let virttype_buf = CString::new(virttype).unwrap();
             let ret = sys::virConnectGetDomainCapabilities(
                 self.as_ptr(),
-                string_to_c_chars!(emulatorbin),
-                string_to_c_chars!(arch),
-                string_to_c_chars!(machine),
-                string_to_c_chars!(virttype),
+                emulatorbin_buf.as_ptr(),
+                arch_buf.as_ptr(),
+                machine_buf.as_ptr(),
+                virttype_buf.as_ptr(),
                 flags as libc::c_uint,
             );
             if ret.is_null() {
@@ -1159,13 +1171,16 @@ impl Connect {
         flags: sys::virConnectBaselineCPUFlags,
     ) -> Result<String, Error> {
         unsafe {
-            let mut xcpus: [*const libc::c_char; 512] = [ptr::null_mut(); 512];
+            let mut xcpus: [*mut CString; 512] = [ptr::null_mut(); 512];
+            let mut xcpus_buf: [*const libc::c_char; 512] = [ptr::null(); 512];
             for x in 0..xmlcpus.len() {
-                xcpus[x] = string_to_c_chars!(xmlcpus[x]);
+                let mut buf = CString::new(xmlcpus[x]).unwrap();
+                xcpus[x] = &mut buf;
+                xcpus_buf[x] = buf.as_ptr()
             }
             let ret = sys::virConnectBaselineCPU(
                 self.as_ptr(),
-                xcpus.as_mut_ptr(),
+                xcpus_buf.as_mut_ptr(),
                 xmlcpus.len() as libc::c_uint,
                 flags as libc::c_uint,
             );
@@ -1183,10 +1198,12 @@ impl Connect {
         flags: u32,
     ) -> Result<String, Error> {
         unsafe {
+            let kind_buf = CString::new(kind).unwrap();
+            let spec_buf = CString::new(spec).unwrap();
             let n = sys::virConnectFindStoragePoolSources(
                 self.as_ptr(),
-                string_to_c_chars!(kind),
-                string_to_c_chars!(spec),
+                kind_buf.as_ptr(),
+                spec_buf.as_ptr(),
                 flags as libc::c_uint,
             );
             if n.is_null() {
