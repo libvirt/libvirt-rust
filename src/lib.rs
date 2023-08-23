@@ -96,9 +96,12 @@ macro_rules! c_chars_to_string {
     }};
 }
 
+// The caller must do 'let _ptr_cleanup = CString::from_raw(ptr)'
+// to release the memory associated with the returned pointer.
+// Also note it is not valid to use C's free(ptr) call, it must
+// be released via the CString API.
 macro_rules! string_to_mut_c_chars {
     ($x:expr) => {
-        // Usage of this should ensure deallocation.
         ::std::ffi::CString::new($x).unwrap().into_raw() as *mut libc::c_char
     };
 }
