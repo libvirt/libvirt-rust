@@ -16,6 +16,7 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
+use std::ffi::CString;
 use std::{ptr, str};
 
 use crate::connect::Connect;
@@ -82,9 +83,10 @@ impl DomainSnapshot {
     /// Get a handle to a named snapshot.
     pub fn lookup_by_name(dom: &Domain, name: &str, flags: u32) -> Result<DomainSnapshot, Error> {
         unsafe {
+            let name_buf = CString::new(name).unwrap();
             let ptr = sys::virDomainSnapshotLookupByName(
                 dom.as_ptr(),
-                string_to_c_chars!(name),
+                name_buf.as_ptr(),
                 flags as libc::c_uint,
             );
             if ptr.is_null() {
@@ -107,9 +109,10 @@ impl DomainSnapshot {
 
     pub fn create_xml(dom: &Domain, xml: &str, flags: u32) -> Result<DomainSnapshot, Error> {
         unsafe {
+            let xml_buf = CString::new(xml).unwrap();
             let ptr = sys::virDomainSnapshotCreateXML(
                 dom.as_ptr(),
-                string_to_c_chars!(xml),
+                xml_buf.as_ptr(),
                 flags as libc::c_uint,
             );
             if ptr.is_null() {
