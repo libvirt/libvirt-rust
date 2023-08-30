@@ -29,11 +29,11 @@ use virt::storage_pool::StoragePool;
 use virt::storage_vol::StorageVol;
 
 pub fn conn() -> Connect {
-    Connect::open("test:///default").unwrap()
+    Connect::open(Some("test:///default")).unwrap()
 }
 
 pub fn qemu_conn() -> Connect {
-    Connect::open("qemu:///system").unwrap()
+    Connect::open(Some("qemu:///system")).unwrap()
 }
 
 pub fn close(mut conn: Connect) {

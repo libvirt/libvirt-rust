@@ -23,7 +23,7 @@ mod common;
 
 #[test]
 fn exercices() {
-    match Connect::open("test:///default") {
+    match Connect::open(Some("test:///default")) {
         Ok(mut conn) => {
             let sp = conn.list_storage_pools().unwrap_or_default();
             assert!(!sp.is_empty(), "At least one storage_pool should exist");

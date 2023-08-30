@@ -111,7 +111,7 @@ fn test_connection_with_auth() {
         vec![sys::VIR_CRED_AUTHNAME, sys::VIR_CRED_PASSPHRASE],
         callback,
     );
-    let c = Connect::open_auth("test+tcp://127.0.0.1/default", &mut auth, 0);
+    let c = Connect::open_auth(Some("test+tcp://127.0.0.1/default"), &mut auth, 0);
     assert!(c.is_ok());
     common::close(c.unwrap());
 }
@@ -139,7 +139,7 @@ fn test_connection_with_auth_wrong() {
         vec![sys::VIR_CRED_AUTHNAME, sys::VIR_CRED_PASSPHRASE],
         callback,
     );
-    let c = Connect::open_auth("test+tcp://127.0.0.1/default", &mut auth, 0);
+    let c = Connect::open_auth(Some("test+tcp://127.0.0.1/default"), &mut auth, 0);
     assert!(c.is_err());
 }
 

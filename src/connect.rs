@@ -196,10 +196,10 @@ impl Connect {
     /// Connect.close should be used to release the resources after the
     /// connection is no longer needed.
     /// ```
-    pub fn open(uri: &str) -> Result<Connect, Error> {
-        let uri_buf = CString::new(uri).unwrap();
+    pub fn open(uri: Option<&str>) -> Result<Connect, Error> {
+        let uri_buf = some_string_to_cstring!(uri);
         unsafe {
-            let c = sys::virConnectOpen(uri_buf.as_ptr());
+            let c = sys::virConnectOpen(some_cstring_to_c_chars!(uri_buf));
             if c.is_null() {
                 return Err(Error::last_error());
             }
@@ -215,10 +215,10 @@ impl Connect {
     /// See 'new' for notes about environment variables which can have
     /// an effect on opening drivers and freeing the connection
     /// resources.
-    pub fn open_read_only(uri: &str) -> Result<Connect, Error> {
-        let uri_buf = CString::new(uri).unwrap();
+    pub fn open_read_only(uri: Option<&str>) -> Result<Connect, Error> {
+        let uri_buf = some_string_to_cstring!(uri);
         unsafe {
-            let c = sys::virConnectOpenReadOnly(uri_buf.as_ptr());
+            let c = sys::virConnectOpenReadOnly(some_cstring_to_c_chars!(uri_buf));
             if c.is_null() {
                 return Err(Error::last_error());
             }
@@ -227,7 +227,7 @@ impl Connect {
     }
 
     pub fn open_auth(
-        uri: &str,
+        uri: Option<&str>,
         auth: &mut ConnectAuth,
         flags: sys::virConnectFlags,
     ) -> Result<Connect, Error> {
@@ -240,9 +240,13 @@ impl Connect {
                 cb: Some(connect_callback),
                 cbdata: auth.callback as *mut _,
         };
-        let uri_buf = CString::new(uri).unwrap();
+        let uri_buf = some_string_to_cstring!(uri);
         unsafe {
-            let c = sys::virConnectOpenAuth(uri_buf.as_ptr(), &mut cauth, flags as libc::c_uint);
+            let c = sys::virConnectOpenAuth(
+                some_cstring_to_c_chars!(uri_buf),
+                &mut cauth,
+                flags as libc::c_uint,
+            );
             if c.is_null() {
                 return Err(Error::last_error());
             }
@@ -404,7 +408,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// let conn = Connect::open("test:///default").unwrap();
+    /// let conn = Connect::open(Some("test:///default")).unwrap();
     /// let domains = conn.list_domains().unwrap();
     /// assert_eq!(domains.len(), 1);
     /// ```
@@ -432,7 +436,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// let conn = Connect::open("test:///default").unwrap();
+    /// let conn = Connect::open(Some("test:///default")).unwrap();
     /// let ifaces = conn.list_interfaces().unwrap();
     /// assert_eq!(ifaces.len(), 1);
     /// ```
@@ -460,7 +464,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// let conn = Connect::open("test:///default").unwrap();
+    /// let conn = Connect::open(Some("test:///default")).unwrap();
     /// let networks = conn.list_networks().unwrap();
     /// assert_eq!(networks.len(), 1);
     /// ```
@@ -522,7 +526,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// let conn = Connect::open("test:///default").unwrap();
+    /// let conn = Connect::open(Some("test:///default")).unwrap();
     /// let pools = conn.list_storage_pools().unwrap();
     /// assert_eq!(pools.len(), 1);
     /// ```
@@ -710,7 +714,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// let conn = Connect::open("test:///default").unwrap();
+    /// let conn = Connect::open(Some("test:///default")).unwrap();
     /// let domains = conn.list_defined_domains().unwrap();
     /// assert_eq!(domains.len(), 0);
     /// ```
@@ -738,7 +742,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// let conn = Connect::open("test:///default").unwrap();
+    /// let conn = Connect::open(Some("test:///default")).unwrap();
     /// let ifaces = conn.list_defined_interfaces().unwrap();
     /// assert_eq!(ifaces.len(), 0);
     /// ```
@@ -767,7 +771,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// let conn = Connect::open("test:///default").unwrap();
+    /// let conn = Connect::open(Some("test:///default")).unwrap();
     /// let pools = conn.list_defined_storage_pools().unwrap();
     /// assert_eq!(pools.len(), 0);
     /// ```
@@ -796,7 +800,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// let conn = Connect::open("test:///default").unwrap();
+    /// let conn = Connect::open(Some("test:///default")).unwrap();
     /// let networks = conn.list_defined_networks().unwrap();
     /// assert_eq!(networks.len(), 0);
     /// ```
@@ -822,7 +826,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// let conn = Connect::open("test:///default").unwrap();
+    /// let conn = Connect::open(Some("test:///default")).unwrap();
     /// let num_domains = conn.num_of_domains().unwrap();
     /// assert_eq!(num_domains, 1);
     /// ```
@@ -841,7 +845,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// let conn = Connect::open("test:///default").unwrap();
+    /// let conn = Connect::open(Some("test:///default")).unwrap();
     /// let num_ifaces = conn.num_of_interfaces().unwrap();
     /// assert_eq!(num_ifaces, 1);
     /// ```
@@ -860,7 +864,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// let conn = Connect::open("test:///default").unwrap();
+    /// let conn = Connect::open(Some("test:///default")).unwrap();
     /// let num_networks = conn.num_of_networks().unwrap();
     /// assert_eq!(num_networks, 1);
     /// ```
@@ -879,7 +883,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// let conn = Connect::open("test:///default").unwrap();
+    /// let conn = Connect::open(Some("test:///default")).unwrap();
     /// let num_pools = conn.num_of_storage_pools().unwrap();
     /// assert_eq!(num_pools, 1);
     /// ```
@@ -918,7 +922,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// let conn = Connect::open("test:///default").unwrap();
+    /// let conn = Connect::open(Some("test:///default")).unwrap();
     /// let num_domains = conn.num_of_defined_domains().unwrap();
     /// assert_eq!(num_domains, 0);
     /// ```
@@ -937,7 +941,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// let conn = Connect::open("test:///default").unwrap();
+    /// let conn = Connect::open(Some("test:///default")).unwrap();
     /// let num_ifaces = conn.num_of_defined_interfaces().unwrap();
     /// assert_eq!(num_ifaces, 0);
     /// ```
@@ -956,7 +960,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// let conn = Connect::open("test:///default").unwrap();
+    /// let conn = Connect::open(Some("test:///default")).unwrap();
     /// let num_networks = conn.num_of_defined_networks().unwrap();
     /// assert_eq!(num_networks, 0);
     /// ```
@@ -975,7 +979,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// let conn = Connect::open("test:///default").unwrap();
+    /// let conn = Connect::open(Some("test:///default")).unwrap();
     /// let num_pools = conn.num_of_defined_storage_pools().unwrap();
     /// assert_eq!(num_pools, 0);
     /// ```
@@ -997,7 +1001,7 @@ impl Connect {
     /// ```
     /// use virt::connect::Connect;
     ///
-    /// let conn = Connect::open("test:///default").unwrap();
+    /// let conn = Connect::open(Some("test:///default")).unwrap();
     /// let hyp_version = conn.get_hyp_version().unwrap();
     /// assert_eq!(hyp_version, 2);
     /// ```

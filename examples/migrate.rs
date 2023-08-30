@@ -32,16 +32,16 @@ fn main() {
         );
     }
 
-    let src_uri = env::args().nth(1).unwrap();
+    let src_uri = env::args().nth(1);
     let dst_uri = env::args().nth(2).unwrap();
     let dname = env::args().nth(3).unwrap();
 
     println!(
-        "Attempting to migrate domain '{}' from '{}' to '{}'...",
+        "Attempting to migrate domain '{}' from '{:?}' to '{}'...",
         dname, src_uri, dst_uri
     );
 
-    let mut conn = match Connect::open(&src_uri) {
+    let mut conn = match Connect::open(src_uri.as_deref()) {
         Ok(c) => c,
         Err(e) => panic!("No connection to source hypervisor: {}", e),
     };

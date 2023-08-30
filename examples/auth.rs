@@ -43,10 +43,7 @@ use virt::connect::{Connect, ConnectAuth, ConnectCredential};
 use virt::sys;
 
 fn main() {
-    let uri = match env::args().nth(1) {
-        Some(u) => u,
-        None => String::from("test+tcp://127.0.0.1/default"),
-    };
+    let uri = env::args().nth(1);
 
     fn callback(creds: &mut Vec<ConnectCredential>) {
         for cred in creds {
@@ -73,8 +70,8 @@ fn main() {
         callback,
     );
 
-    println!("Attempting to connect to hypervisor: '{}'...", uri);
-    let mut conn = match Connect::open_auth(&uri, &mut auth, 0) {
+    println!("Attempting to connect to hypervisor: '{:?}'...", uri);
+    let mut conn = match Connect::open_auth(uri.as_deref(), &mut auth, 0) {
         Ok(c) => {
             println!("Connected");
             c

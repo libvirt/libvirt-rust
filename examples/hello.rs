@@ -132,13 +132,10 @@ fn show_domains(conn: &Connect) -> Result<(), Error> {
 }
 
 fn main() {
-    let uri = match env::args().nth(1) {
-        Some(u) => u,
-        None => String::from(""),
-    };
-    println!("Attempting to connect to hypervisor: '{}'", uri);
+    let uri = env::args().nth(1);
+    println!("Attempting to connect to hypervisor: '{:?}'", uri);
 
-    let conn = match Connect::open(&uri) {
+    let conn = match Connect::open(uri.as_deref()) {
         Ok(c) => c,
         Err(e) => panic!("No connection to hypervisor: {}", e),
     };
