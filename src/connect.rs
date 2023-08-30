@@ -1206,16 +1206,16 @@ impl Connect {
     pub fn find_storage_pool_sources(
         &self,
         kind: &str,
-        spec: &str,
+        spec: Option<&str>,
         flags: u32,
     ) -> Result<String, Error> {
         unsafe {
             let kind_buf = CString::new(kind).unwrap();
-            let spec_buf = CString::new(spec).unwrap();
+            let spec_buf = some_string_to_cstring!(spec);
             let n = sys::virConnectFindStoragePoolSources(
                 self.as_ptr(),
                 kind_buf.as_ptr(),
-                spec_buf.as_ptr(),
+                some_cstring_to_c_chars!(spec_buf),
                 flags as libc::c_uint,
             );
             if n.is_null() {
