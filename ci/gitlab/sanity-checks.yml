@@ -8,7 +8,8 @@
 check-dco:
   stage: sanity_checks
   needs: []
-  image: registry.gitlab.com/libvirt/libvirt-ci/check-dco:master
+  image: registry.gitlab.com/libvirt/libvirt-ci/check-dco:latest
+  interruptible: true
   script:
     - /check-dco "$RUN_UPSTREAM_NAMESPACE"
   rules:
@@ -16,8 +17,10 @@ check-dco:
     - if: '$CI_PIPELINE_SOURCE =~ "merge_request_event"'
       when: on_success
 
-    # forks: pushes to branches with pipeline requested
+    # forks: pushes to branches with pipeline requested (including upstream env pipelines)
     - if: '$CI_PROJECT_NAMESPACE != $RUN_UPSTREAM_NAMESPACE && $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH && $RUN_PIPELINE'
+      when: on_success
+    - if: '$CI_PROJECT_NAMESPACE != $RUN_UPSTREAM_NAMESPACE && $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH && $RUN_PIPELINE_UPSTREAM_ENV'
       when: on_success
 
     # upstream+forks: that's all folks
@@ -28,7 +31,8 @@ check-dco:
 
 .code_format:
   stage: sanity_checks
-  image: registry.gitlab.com/libvirt/libvirt-ci/$NAME:master
+  image: registry.gitlab.com/libvirt/libvirt-ci/$NAME:latest
+  interruptible: true
   needs: []
   script:
     - /$NAME
@@ -37,8 +41,10 @@ check-dco:
     - if: '$CI_PIPELINE_SOURCE =~ /(web|api|schedule|merge_request_event)/'
       when: on_success
 
-    # forks: pushes to branches with pipeline requested
+    # forks: pushes to branches with pipeline requested (including upstream env pipelines)
     - if: '$CI_PROJECT_NAMESPACE != $RUN_UPSTREAM_NAMESPACE && $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH && $RUN_PIPELINE'
+      when: on_success
+    - if: '$CI_PROJECT_NAMESPACE != $RUN_UPSTREAM_NAMESPACE && $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH && $RUN_PIPELINE_UPSTREAM_ENV'
       when: on_success
 
     # upstream+forks: that's all folks
@@ -53,5 +59,5 @@ check-dco:
 cargo-fmt:
   extends: .code_format
   variables:
-    NAME: cargo-fmt
     EXT: txt
+    NAME: cargo-fmt
