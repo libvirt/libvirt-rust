@@ -947,16 +947,21 @@ impl Domain {
         }
     }
 
-    // TODO: expose dxml parameter
     pub fn domain_restore_flags(
         conn: &Connect,
         path: &str,
+        dxml: Option<&str>,
         flags: sys::virDomainSaveRestoreFlags,
     ) -> Result<(), Error> {
         unsafe {
             let path_buf = CString::new(path).unwrap();
-            let ret =
-                sys::virDomainRestoreFlags(conn.as_ptr(), path_buf.as_ptr(), ptr::null(), flags);
+            let dxml_buf = some_string_to_cstring!(dxml);
+            let ret = sys::virDomainRestoreFlags(
+                conn.as_ptr(),
+                path_buf.as_ptr(),
+                some_cstring_to_c_chars!(dxml_buf),
+                flags,
+            );
             if ret == -1 {
                 return Err(Error::last_error());
             }
