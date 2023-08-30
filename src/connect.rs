@@ -1122,23 +1122,23 @@ impl Connect {
 
     pub fn get_domain_capabilities(
         &self,
-        emulatorbin: &str,
-        arch: &str,
-        machine: &str,
-        virttype: &str,
+        emulatorbin: Option<&str>,
+        arch: Option<&str>,
+        machine: Option<&str>,
+        virttype: Option<&str>,
         flags: u32,
     ) -> Result<String, Error> {
         unsafe {
-            let emulatorbin_buf = CString::new(emulatorbin).unwrap();
-            let arch_buf = CString::new(arch).unwrap();
-            let machine_buf = CString::new(machine).unwrap();
-            let virttype_buf = CString::new(virttype).unwrap();
+            let emulatorbin_buf = some_string_to_cstring!(emulatorbin);
+            let arch_buf = some_string_to_cstring!(arch);
+            let machine_buf = some_string_to_cstring!(machine);
+            let virttype_buf = some_string_to_cstring!(virttype);
             let ret = sys::virConnectGetDomainCapabilities(
                 self.as_ptr(),
-                emulatorbin_buf.as_ptr(),
-                arch_buf.as_ptr(),
-                machine_buf.as_ptr(),
-                virttype_buf.as_ptr(),
+                some_cstring_to_c_chars!(emulatorbin_buf),
+                some_cstring_to_c_chars!(arch_buf),
+                some_cstring_to_c_chars!(machine_buf),
+                some_cstring_to_c_chars!(virttype_buf),
                 flags as libc::c_uint,
             );
             if ret.is_null() {
