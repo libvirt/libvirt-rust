@@ -189,11 +189,14 @@ impl NodeDevice {
         }
     }
 
-    pub fn num_of_devices(conn: &Connect, cap: &str, flags: u32) -> Result<u32, Error> {
+    pub fn num_of_devices(conn: &Connect, cap: Option<&str>, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let cap_buf = CString::new(cap).unwrap();
-            let num =
-                sys::virNodeNumOfDevices(conn.as_ptr(), cap_buf.as_ptr(), flags as libc::c_uint);
+            let cap_buf = some_string_to_cstring!(cap);
+            let num = sys::virNodeNumOfDevices(
+                conn.as_ptr(),
+                some_cstring_to_c_chars!(cap_buf),
+                flags as libc::c_uint,
+            );
             if num == -1 {
                 return Err(Error::last_error());
             }
