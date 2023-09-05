@@ -42,9 +42,9 @@ impl StoragePoolInfo {
     pub unsafe fn from_ptr(ptr: sys::virStoragePoolInfoPtr) -> StoragePoolInfo {
         StoragePoolInfo {
             state: (*ptr).state as sys::virStoragePoolState,
-            capacity: (*ptr).capacity as u64,
-            allocation: (*ptr).allocation as u64,
-            available: (*ptr).available as u64,
+            capacity: (*ptr).capacity,
+            allocation: (*ptr).allocation,
+            available: (*ptr).available,
         }
     }
 }

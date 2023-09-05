@@ -41,8 +41,8 @@ impl StorageVolInfo {
     pub unsafe fn from_ptr(ptr: sys::virStorageVolInfoPtr) -> StorageVolInfo {
         StorageVolInfo {
             kind: (*ptr).type_ as sys::virStorageVolType,
-            capacity: (*ptr).capacity as u64,
-            allocation: (*ptr).allocation as u64,
+            capacity: (*ptr).capacity,
+            allocation: (*ptr).allocation,
         }
     }
 }

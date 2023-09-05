@@ -1033,7 +1033,7 @@ impl Connect {
             if res == 0 {
                 return Err(Error::last_error());
             }
-            Ok(res as u64)
+            Ok(res)
         }
     }
 
@@ -1048,12 +1048,12 @@ impl Connect {
             Ok(NodeInfo {
                 model: c_chars_to_string!(pinfo.model.as_ptr(), nofree),
                 memory: c_ulong_to_u64(pinfo.memory),
-                cpus: pinfo.cpus as u32,
-                mhz: pinfo.mhz as u32,
-                nodes: pinfo.nodes as u32,
-                sockets: pinfo.sockets as u32,
-                cores: pinfo.cores as u32,
-                threads: pinfo.threads as u32,
+                cpus: pinfo.cpus,
+                mhz: pinfo.mhz,
+                nodes: pinfo.nodes,
+                sockets: pinfo.sockets,
+                cores: pinfo.cores,
+                threads: pinfo.threads,
             })
         }
     }
@@ -1068,7 +1068,7 @@ impl Connect {
             if ret == -1 {
                 return Err(Error::last_error());
             }
-            Ok(ret as i32)
+            Ok(ret)
         }
     }
 

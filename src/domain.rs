@@ -50,7 +50,7 @@ impl DomainInfo {
             max_mem: c_ulong_to_u64((*ptr).maxMem),
             memory: c_ulong_to_u64((*ptr).memory),
             nr_virt_cpu: (*ptr).nrVirtCpu as u32,
-            cpu_time: (*ptr).cpuTime as u64,
+            cpu_time: (*ptr).cpuTime,
         }
     }
 }
@@ -79,9 +79,9 @@ impl BlockInfo {
     /// The caller must ensure that the pointer is valid.
     pub unsafe fn from_ptr(ptr: sys::virDomainBlockInfoPtr) -> BlockInfo {
         BlockInfo {
-            capacity: (*ptr).capacity as u64,
-            allocation: (*ptr).capacity as u64,
-            physical: (*ptr).capacity as u64,
+            capacity: (*ptr).capacity,
+            allocation: (*ptr).capacity,
+            physical: (*ptr).capacity,
         }
     }
 }
@@ -208,14 +208,14 @@ impl InterfaceStats {
     /// The caller must ensure that the pointer is valid.
     pub unsafe fn from_ptr(ptr: sys::virDomainInterfaceStatsPtr) -> InterfaceStats {
         InterfaceStats {
-            rx_bytes: (*ptr).rx_bytes as i64,
-            rx_packets: (*ptr).rx_packets as i64,
-            rx_errs: (*ptr).rx_errs as i64,
-            rx_drop: (*ptr).rx_drop as i64,
-            tx_bytes: (*ptr).tx_bytes as i64,
-            tx_packets: (*ptr).tx_packets as i64,
-            tx_errs: (*ptr).tx_errs as i64,
-            tx_drop: (*ptr).tx_drop as i64,
+            rx_bytes: (*ptr).rx_bytes,
+            rx_packets: (*ptr).rx_packets,
+            rx_errs: (*ptr).rx_errs,
+            rx_drop: (*ptr).rx_drop,
+            tx_bytes: (*ptr).tx_bytes,
+            tx_packets: (*ptr).tx_packets,
+            tx_errs: (*ptr).tx_errs,
+            tx_drop: (*ptr).tx_drop,
         }
     }
 }
@@ -233,7 +233,7 @@ impl MemoryStat {
     pub unsafe fn from_ptr(ptr: *const sys::virDomainMemoryStatStruct) -> MemoryStat {
         MemoryStat {
             tag: (*ptr).tag as u32,
-            val: (*ptr).val as u64,
+            val: (*ptr).val,
         }
     }
 }
@@ -446,7 +446,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::last_error());
             }
-            Ok((state as sys::virDomainState, reason as i32))
+            Ok((state as sys::virDomainState, reason))
         }
     }
 
@@ -1028,7 +1028,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::last_error());
             }
-            Ok(size as u64)
+            Ok(size)
         }
     }
 
@@ -1074,7 +1074,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::last_error());
             }
-            Ok((seconds as i64, nseconds as i32))
+            Ok((seconds, nseconds as i32))
         }
     }
 
