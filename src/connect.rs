@@ -27,6 +27,7 @@ use crate::nodedev::NodeDevice;
 use crate::nwfilter::NWFilter;
 use crate::secret::Secret;
 use crate::storage_pool::StoragePool;
+use crate::util::c_ulong_to_u64;
 
 extern "C" fn connect_callback(
     ccreds: sys::virConnectCredentialPtr,
@@ -1046,7 +1047,7 @@ impl Connect {
             let pinfo = pinfo.assume_init();
             Ok(NodeInfo {
                 model: c_chars_to_string!(pinfo.model.as_ptr(), nofree),
-                memory: pinfo.memory as u64,
+                memory: c_ulong_to_u64(pinfo.memory),
                 cpus: pinfo.cpus as u32,
                 mhz: pinfo.mhz as u32,
                 nodes: pinfo.nodes as u32,

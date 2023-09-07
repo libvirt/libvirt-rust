@@ -24,6 +24,7 @@ use crate::connect::Connect;
 use crate::domain_snapshot::DomainSnapshot;
 use crate::error::Error;
 use crate::stream::Stream;
+use crate::util::c_ulong_to_u64;
 
 #[derive(Clone, Debug)]
 pub struct DomainInfo {
@@ -46,8 +47,8 @@ impl DomainInfo {
     pub unsafe fn from_ptr(ptr: sys::virDomainInfoPtr) -> DomainInfo {
         DomainInfo {
             state: (*ptr).state as sys::virDomainState,
-            max_mem: (*ptr).maxMem as u64,
-            memory: (*ptr).memory as u64,
+            max_mem: c_ulong_to_u64((*ptr).maxMem),
+            memory: c_ulong_to_u64((*ptr).memory),
             nr_virt_cpu: (*ptr).nrVirtCpu as u32,
             cpu_time: (*ptr).cpuTime as u64,
         }
@@ -847,7 +848,7 @@ impl Domain {
             if ret == 0 {
                 return Err(Error::last_error());
             }
-            Ok(ret as u64)
+            Ok(c_ulong_to_u64(ret))
         }
     }
 
@@ -998,7 +999,7 @@ impl Domain {
             if ret == -1 {
                 return Err(Error::last_error());
             }
-            Ok(bandwidth as u64)
+            Ok(c_ulong_to_u64(bandwidth))
         }
     }
 
