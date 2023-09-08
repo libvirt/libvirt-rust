@@ -164,12 +164,12 @@ impl NodeDevice {
         }
     }
 
-    pub fn detach_flags(&self, driver: &str, flags: u32) -> Result<u32, Error> {
+    pub fn detach_flags(&self, driver: Option<&str>, flags: u32) -> Result<u32, Error> {
         unsafe {
-            let driver_buf = CString::new(driver).unwrap();
+            let driver_buf = some_string_to_cstring!(driver);
             let ret = sys::virNodeDeviceDetachFlags(
                 self.as_ptr(),
-                driver_buf.as_ptr(),
+                some_cstring_to_c_chars!(driver_buf),
                 flags as libc::c_uint,
             );
             if ret == -1 {
