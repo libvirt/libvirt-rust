@@ -19,6 +19,7 @@
 mod common;
 
 use virt::domain::Domain;
+use virt::error::ErrorNumber;
 use virt::sys;
 
 fn tdom(exec_test: fn(dom: Domain)) {
@@ -159,6 +160,130 @@ fn test_screenshot() {
     let s = virt::stream::Stream::new(&c, 0).unwrap();
     assert_eq!(Ok(String::from("image/png")), d.screenshot(&s, 0, 0));
     assert_eq!(Ok(()), s.finish());
+
+    common::clean(d);
+    common::close(c);
+}
+
+#[test]
+fn test_metadata() {
+    let c = common::conn();
+    let d = common::build_test_domain(&c, "metadata", false);
+
+    assert_eq!(
+        ErrorNumber::NoDomainMetadata,
+        d.get_metadata(sys::VIR_DOMAIN_METADATA_DESCRIPTION as i32, None, 0)
+            .unwrap_err()
+            .code()
+    );
+
+    assert_eq!(
+        Ok(0),
+        d.set_metadata(
+            sys::VIR_DOMAIN_METADATA_DESCRIPTION as i32,
+            Some("fish"),
+            None,
+            None,
+            0
+        )
+    );
+    assert_eq!(
+        Ok("fish".to_string()),
+        d.get_metadata(sys::VIR_DOMAIN_METADATA_DESCRIPTION as i32, None, 0)
+    );
+    assert_eq!(
+        Ok(0),
+        d.set_metadata(
+            sys::VIR_DOMAIN_METADATA_DESCRIPTION as i32,
+            None,
+            None,
+            None,
+            0
+        )
+    );
+
+    assert_eq!(
+        ErrorNumber::NoDomainMetadata,
+        d.get_metadata(sys::VIR_DOMAIN_METADATA_DESCRIPTION as i32, None, 0)
+            .unwrap_err()
+            .code()
+    );
+
+    assert_eq!(
+        ErrorNumber::NoDomainMetadata,
+        d.get_metadata(sys::VIR_DOMAIN_METADATA_TITLE as i32, None, 0)
+            .unwrap_err()
+            .code()
+    );
+
+    assert_eq!(
+        Ok(0),
+        d.set_metadata(
+            sys::VIR_DOMAIN_METADATA_TITLE as i32,
+            Some("food"),
+            None,
+            None,
+            0
+        )
+    );
+    assert_eq!(
+        Ok("food".to_string()),
+        d.get_metadata(sys::VIR_DOMAIN_METADATA_TITLE as i32, None, 0)
+    );
+    assert_eq!(
+        Ok(0),
+        d.set_metadata(sys::VIR_DOMAIN_METADATA_TITLE as i32, None, None, None, 0)
+    );
+
+    assert_eq!(
+        ErrorNumber::NoDomainMetadata,
+        d.get_metadata(sys::VIR_DOMAIN_METADATA_TITLE as i32, None, 0)
+            .unwrap_err()
+            .code()
+    );
+
+    let xmldoc = "<location>\n  <planet>mars</planet>\n</location>";
+    let xmlkey = "space";
+    let xmlns = "https://libvirt.org/schemas/rust/test/space/1.0";
+
+    assert_eq!(
+        ErrorNumber::NoDomainMetadata,
+        d.get_metadata(sys::VIR_DOMAIN_METADATA_ELEMENT as i32, Some(xmlns), 0)
+            .unwrap_err()
+            .code()
+    );
+
+    assert_eq!(
+        Ok(0),
+        d.set_metadata(
+            sys::VIR_DOMAIN_METADATA_ELEMENT as i32,
+            Some(xmldoc),
+            Some(xmlkey),
+            Some(xmlns),
+            0
+        )
+    );
+    assert_eq!(
+        Ok(xmldoc.to_string()),
+        d.get_metadata(sys::VIR_DOMAIN_METADATA_ELEMENT as i32, Some(xmlns), 0)
+    );
+    assert_eq!(
+        Ok(0),
+        d.set_metadata(
+            sys::VIR_DOMAIN_METADATA_ELEMENT as i32,
+            None,
+            Some(xmlkey),
+            Some(xmlns),
+            0
+        )
+    );
+
+    assert_eq!(
+        ErrorNumber::NoDomainMetadata,
+        d.get_metadata(sys::VIR_DOMAIN_METADATA_ELEMENT as i32, Some(xmlns), 0)
+            .unwrap_err()
+            .code()
+    );
 
     common::clean(d);
     common::close(c);
