@@ -106,6 +106,29 @@ macro_rules! string_to_mut_c_chars {
     };
 }
 
+// To be used when handling Option<&str> parameters which need
+// to be passed to libvirt. General usage pattern is:
+//
+//   pub fn something(foo: Option<&str>) -> Result<int, Error> {
+//      let foo_buf = some_string_to_cstring!(foo);
+//      unsafe {
+//           sys::virConnectSomething(self.as_ptr(),
+//                                    some_cstring_to_c_chars!(foo_buf));
+//      }
+//      ...
+//
+macro_rules! some_string_to_cstring {
+    ($x:expr) => {
+        $x.map(|s| CString::new(s).unwrap())
+    };
+}
+
+macro_rules! some_cstring_to_c_chars {
+    ($x:expr) => {
+        $x.as_ref().map_or_else(|| ptr::null(), |s| s.as_ptr())
+    };
+}
+
 macro_rules! typed_params_release_c_chars {
     ($x:expr) => {
         for p in $x {
