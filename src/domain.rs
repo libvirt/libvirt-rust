@@ -1236,12 +1236,17 @@ impl Domain {
         }
     }
 
-    pub fn open_console(&self, name: &str, stream: &Stream, flags: u32) -> Result<u32, Error> {
+    pub fn open_console(
+        &self,
+        name: Option<&str>,
+        stream: &Stream,
+        flags: u32,
+    ) -> Result<u32, Error> {
         unsafe {
-            let name_buf = CString::new(name).unwrap();
+            let name_buf = some_string_to_cstring!(name);
             let ret = sys::virDomainOpenConsole(
                 self.as_ptr(),
-                name_buf.as_ptr(),
+                some_cstring_to_c_chars!(name_buf),
                 stream.as_ptr(),
                 flags as libc::c_uint,
             );
