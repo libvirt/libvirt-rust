@@ -1486,18 +1486,15 @@ impl Domain {
         flags: u32,
     ) -> Result<u32, Error> {
         unsafe {
-            let metadata_buf = metadata.map(|s| CString::new(s).unwrap());
-            let key_buf = key.map(|s| CString::new(s).unwrap());
-            let uri_buf = uri.map(|s| CString::new(s).unwrap());
+            let metadata_buf = some_string_to_cstring!(metadata);
+            let key_buf = some_string_to_cstring!(key);
+            let uri_buf = some_string_to_cstring!(uri);
             let ret = sys::virDomainSetMetadata(
                 self.as_ptr(),
                 kind as libc::c_int,
-                metadata_buf
-                    .as_ref()
-                    .map(|s| s.as_ptr())
-                    .unwrap_or(ptr::null()),
-                key_buf.as_ref().map(|s| s.as_ptr()).unwrap_or(ptr::null()),
-                uri_buf.as_ref().map(|s| s.as_ptr()).unwrap_or(ptr::null()),
+                some_cstring_to_c_chars!(metadata_buf),
+                some_cstring_to_c_chars!(key_buf),
+                some_cstring_to_c_chars!(uri_buf),
                 flags as libc::c_uint,
             );
             if ret == -1 {
@@ -1509,11 +1506,11 @@ impl Domain {
 
     pub fn get_metadata(&self, kind: i32, uri: Option<&str>, flags: u32) -> Result<String, Error> {
         unsafe {
-            let uri_buf = uri.map(|s| CString::new(s).unwrap());
+            let uri_buf = some_string_to_cstring!(uri);
             let n = sys::virDomainGetMetadata(
                 self.as_ptr(),
                 kind as libc::c_int,
-                uri_buf.as_ref().map(|s| s.as_ptr()).unwrap_or(ptr::null()),
+                some_cstring_to_c_chars!(uri_buf),
                 flags as libc::c_uint,
             );
             if n.is_null() {
