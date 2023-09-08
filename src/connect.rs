@@ -336,10 +336,10 @@ impl Connect {
         }
     }
 
-    pub fn get_max_vcpus(&self, attr: &str) -> Result<u32, Error> {
-        let attr_buf = CString::new(attr).unwrap();
+    pub fn get_max_vcpus(&self, domtype: Option<&str>) -> Result<u32, Error> {
+        let type_buf = some_string_to_cstring!(domtype);
         unsafe {
-            let max = sys::virConnectGetMaxVcpus(self.as_ptr(), attr_buf.as_ptr());
+            let max = sys::virConnectGetMaxVcpus(self.as_ptr(), some_cstring_to_c_chars!(type_buf));
             if max == -1 {
                 return Err(Error::last_error());
             }

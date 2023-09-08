@@ -199,7 +199,7 @@ fn test_get_cpu_models_names() {
 #[test]
 fn test_get_max_vcpus() {
     let c = common::conn();
-    let m = c.get_max_vcpus("").unwrap_or(0);
+    let m = c.get_max_vcpus(None).unwrap_or(0);
     assert!(0 < m, "At least one cpu should exist");
     common::close(c);
 }
