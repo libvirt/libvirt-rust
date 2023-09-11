@@ -42,7 +42,7 @@ stages:
     - cargo test --verbose
     - cargo test --verbose --manifest-path=virt-sys/Cargo.toml
     - if test "$CLIPPY" = "enable"; then
-        cargo clippy --quiet --no-deps --all-targets >cargo-clippy.txt 2>&1;
+        cargo clippy --quiet --no-deps --all-targets >cargo-clippy.txt 2>&1 || true ;
         if test -s cargo-clippy.txt; then
           echo "clippy error, see cargo-clippy.txt artifact for details";
           exit 1;
