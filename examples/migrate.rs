@@ -33,11 +33,11 @@ fn main() {
     }
 
     let src_uri = env::args().nth(1);
-    let dst_uri = env::args().nth(2).unwrap();
+    let dst_uri = env::args().nth(2);
     let dname = env::args().nth(3).unwrap();
 
     println!(
-        "Attempting to migrate domain '{}' from '{:?}' to '{}'...",
+        "Attempting to migrate domain '{}' from '{:?}' to '{:?}'...",
         dname, src_uri, dst_uri
     );
 
@@ -48,7 +48,7 @@ fn main() {
 
     if let Ok(dom) = Domain::lookup_by_name(&conn, &dname) {
         let flags = sys::VIR_MIGRATE_LIVE | sys::VIR_MIGRATE_PEER2PEER | sys::VIR_MIGRATE_TUNNELLED;
-        if dom.migrate(&conn, flags, &dst_uri, 0).is_ok() {
+        if dom.migrate(&conn, flags, dst_uri.as_deref(), 0).is_ok() {
             println!("Domain migrated");
         }
     }

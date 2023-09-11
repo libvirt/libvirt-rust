@@ -1639,18 +1639,18 @@ impl Domain {
         &self,
         dconn: &Connect,
         flags: u32,
-        uri: &str,
+        uri: Option<&str>,
         bandwidth: u64,
     ) -> Result<Domain, Error> {
         unsafe {
             let dname_buf = CString::new("").unwrap();
-            let uri_buf = CString::new(uri).unwrap();
+            let uri_buf = some_string_to_cstring!(uri);
             let ptr = sys::virDomainMigrate(
                 self.as_ptr(),
                 dconn.as_ptr(),
                 flags as libc::c_ulong,
                 dname_buf.as_ptr(),
-                uri_buf.as_ptr(),
+                some_cstring_to_c_chars!(uri_buf),
                 bandwidth as libc::c_ulong,
             );
             if ptr.is_null() {
@@ -1663,22 +1663,23 @@ impl Domain {
     pub fn migrate2(
         &self,
         dconn: &Connect,
-        dxml: &str,
+        dxml: Option<&str>,
         flags: u32,
-        uri: &str,
+        dname: Option<&str>,
+        uri: Option<&str>,
         bandwidth: u64,
     ) -> Result<Domain, Error> {
         unsafe {
-            let dxml_buf = CString::new(dxml).unwrap();
-            let dname_buf = CString::new("").unwrap();
-            let uri_buf = CString::new(uri).unwrap();
+            let dxml_buf = some_string_to_cstring!(dxml);
+            let dname_buf = some_string_to_cstring!(dname);
+            let uri_buf = some_string_to_cstring!(uri);
             let ptr = sys::virDomainMigrate2(
                 self.as_ptr(),
                 dconn.as_ptr(),
-                dxml_buf.as_ptr(),
+                some_cstring_to_c_chars!(dxml_buf),
                 flags as libc::c_ulong,
-                dname_buf.as_ptr(),
-                uri_buf.as_ptr(),
+                some_cstring_to_c_chars!(dname_buf),
+                some_cstring_to_c_chars!(uri_buf),
                 bandwidth as libc::c_ulong,
             );
             if ptr.is_null() {
@@ -1688,15 +1689,21 @@ impl Domain {
         }
     }
 
-    pub fn migrate_to_uri(&self, duri: &str, flags: u32, bandwidth: u64) -> Result<(), Error> {
+    pub fn migrate_to_uri(
+        &self,
+        duri: &str,
+        flags: u32,
+        dname: Option<&str>,
+        bandwidth: u64,
+    ) -> Result<(), Error> {
         unsafe {
             let duri_buf = CString::new(duri).unwrap();
-            let dname_buf = CString::new("").unwrap();
+            let dname_buf = some_string_to_cstring!(dname);
             let ret = sys::virDomainMigrateToURI(
                 self.as_ptr(),
                 duri_buf.as_ptr(),
                 flags as libc::c_ulong,
-                dname_buf.as_ptr(),
+                some_cstring_to_c_chars!(dname_buf),
                 bandwidth as libc::c_ulong,
             );
             if ret == -1 {
@@ -1708,24 +1715,25 @@ impl Domain {
 
     pub fn migrate_to_uri2(
         &self,
-        dconn_uri: &str,
-        mig_uri: &str,
-        dxml: &str,
+        dconn_uri: Option<&str>,
+        mig_uri: Option<&str>,
+        dxml: Option<&str>,
         flags: u32,
+        dname: Option<&str>,
         bandwidth: u64,
     ) -> Result<(), Error> {
         unsafe {
-            let dconn_uri_buf = CString::new(dconn_uri).unwrap();
-            let mig_uri_buf = CString::new(mig_uri).unwrap();
-            let dxml_buf = CString::new(dxml).unwrap();
-            let dname_buf = CString::new("").unwrap();
+            let dconn_uri_buf = some_string_to_cstring!(dconn_uri);
+            let mig_uri_buf = some_string_to_cstring!(mig_uri);
+            let dxml_buf = some_string_to_cstring!(dxml);
+            let dname_buf = some_string_to_cstring!(dname);
             let ret = sys::virDomainMigrateToURI2(
                 self.as_ptr(),
-                dconn_uri_buf.as_ptr(),
-                mig_uri_buf.as_ptr(),
-                dxml_buf.as_ptr(),
+                some_cstring_to_c_chars!(dconn_uri_buf),
+                some_cstring_to_c_chars!(mig_uri_buf),
+                some_cstring_to_c_chars!(dxml_buf),
                 flags as libc::c_ulong,
-                dname_buf.as_ptr(),
+                some_cstring_to_c_chars!(dname_buf),
                 bandwidth as libc::c_ulong,
             );
             if ret == -1 {
