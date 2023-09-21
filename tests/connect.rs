@@ -103,6 +103,27 @@ fn test_capabilities() {
 }
 
 #[test]
+fn test_domain_capabilities() {
+    let c = common::conn();
+
+    /* Libvirt's test driver implemented domcaps in 9.8.0. Allow test to
+     * run gracefully on older versions. */
+    match c.get_domain_capabilities(None, None, None, None, 0) {
+        Ok(domcaps) => assert!(
+            !domcaps.is_empty(),
+            "Domain capabilities should not be empty"
+        ),
+        Err(e) => assert!(
+            e.level() == virt::error::ErrorLevel::Error
+                && e.code() == virt::error::ErrorNumber::NoSupport
+                && e.domain() == virt::error::ErrorDomain::Domain,
+            "Unexpected error"
+        ),
+    }
+    common::close(c);
+}
+
+#[test]
 fn test_get_node_info() {
     let c = common::conn();
     match c.get_node_info() {
