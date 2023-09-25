@@ -11,7 +11,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.  If not, see
- * <http://www.gnu.org/licenses/>.
+ * <https://www.gnu.org/licenses/>.
  *
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
@@ -51,7 +51,7 @@ impl StoragePoolInfo {
 
 /// Provides APIs for the management of storage pools.
 ///
-/// See http://libvirt.org/html/libvirt-libvirt-storage.html
+/// See https://libvirt.org/html/libvirt-libvirt-storage.html
 #[derive(Debug)]
 pub struct StoragePool {
     ptr: Option<sys::virStoragePoolPtr>,

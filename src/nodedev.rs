@@ -11,7 +11,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.  If not, see
- * <http://www.gnu.org/licenses/>.
+ * <https://www.gnu.org/licenses/>.
  *
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
@@ -24,7 +24,7 @@ use crate::error::Error;
 
 /// Provides APIs for the management of nodedevs.
 ///
-/// See http://libvirt.org/html/libvirt-libvirt-nodedev.html
+/// See https://libvirt.org/html/libvirt-libvirt-nodedev.html
 #[derive(Debug)]
 pub struct NodeDevice {
     ptr: Option<sys::virNodeDevicePtr>,

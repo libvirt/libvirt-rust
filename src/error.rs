@@ -11,7 +11,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.  If not, see
- * <http://www.gnu.org/licenses/>.
+ * <https://www.gnu.org/licenses/>.
  *
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
@@ -619,7 +619,7 @@ impl_enum! {
 
 /// A structure that represents errors coming from libvirt.
 ///
-/// See <http://libvirt.org/html/libvirt-virterror.html>
+/// See <https://libvirt.org/html/libvirt-virterror.html>
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Error {
     code: sys::virErrorNumber,
