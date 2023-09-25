@@ -1224,4 +1224,37 @@ impl Connect {
             Ok(c_chars_to_string!(n))
         }
     }
+
+    /// Connect.get_cells_free_memory should be used to get
+    /// information on free memory on individual NUMA nodes, starting
+    /// with `start_cell` and consecutive `max_cells`. Continuous NUMA
+    /// node IDs are expected. Returned values are in bytes.
+    pub fn get_cells_free_memory(
+        &self,
+        start_cell: i32,
+        max_cells: i32,
+    ) -> Result<Vec<u64>, Error> {
+        let mut free_mems: Vec<libc::c_ulonglong> = Vec::with_capacity(max_cells as usize);
+        let size: i32 = unsafe {
+            let size = sys::virNodeGetCellsFreeMemory(
+                self.as_ptr(),
+                free_mems.as_mut_ptr(),
+                start_cell as libc::c_int,
+                max_cells as libc::c_int,
+            );
+            if size < 0 {
+                return Err(Error::last_error());
+            }
+
+            free_mems.set_len(size as usize);
+            size
+        };
+
+        let mut array: Vec<u64> = Vec::new();
+        for x in free_mems.iter().take(size as usize) {
+            array.push(*x);
+        }
+
+        Ok(array)
+    }
 }

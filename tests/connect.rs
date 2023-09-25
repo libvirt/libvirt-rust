@@ -203,3 +203,13 @@ fn test_get_max_vcpus() {
     assert!(0 < m, "At least one cpu should exist");
     common::close(c);
 }
+
+#[test]
+fn test_get_cells_free_memory() {
+    let c = common::conn();
+    let free = c.get_cells_free_memory(0, 2).unwrap_or_default();
+    assert!(free.len() == 2, "Expected two NUMA nodes");
+    assert!(free[0] == 2097152, "Invalid free pages for NUMA node 0");
+    assert!(free[1] == 4194304, "Invalid free pages for NUMA node 1");
+    common::close(c);
+}
