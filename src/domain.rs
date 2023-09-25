@@ -239,7 +239,7 @@ impl MemoryStat {
 }
 
 /// Structure representing the CFS scheduler cpu bandwidth parameters
-/// see https://www.kernel.org/doc/html/latest/scheduler/sched-bwc.html
+/// see <https://www.kernel.org/doc/html/latest/scheduler/sched-bwc.html>
 #[derive(Clone, Debug, Default)]
 pub struct SchedBandwidth {
     pub period: Option<u64>,
@@ -359,7 +359,7 @@ impl SchedulerInfo {
 
 /// Provides APIs for the management of domains.
 ///
-/// See https://libvirt.org/html/libvirt-libvirt-domain.html
+/// See <https://libvirt.org/html/libvirt-libvirt-domain.html>
 #[derive(Debug)]
 pub struct Domain {
     ptr: Option<sys::virDomainPtr>,

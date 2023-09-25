@@ -150,7 +150,7 @@ impl ConnectAuth {
 
 /// Provides APIs for the management of hosts.
 ///
-/// See https://libvirt.org/html/libvirt-libvirt-host.html
+/// See <https://libvirt.org/html/libvirt-libvirt-host.html>
 #[derive(Debug)]
 pub struct Connect {
     ptr: Option<sys::virConnectPtr>,
@@ -191,7 +191,7 @@ impl Connect {
     /// prevented by setting the environment variable
     /// LIBVIRT_AUTOSTART=0
     ///
-    /// URIs are documented at https://libvirt.org/uri.html
+    /// URIs are documented at <https://libvirt.org/uri.html>
     ///
     /// Connect.close should be used to release the resources after the
     /// connection is no longer needed.

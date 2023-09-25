@@ -25,7 +25,7 @@ use crate::error::Error;
 
 /// Provides APIs for the management of domain snapshots.
 ///
-/// See https://libvirt.org/formatsnapshot.html
+/// See <https://libvirt.org/formatsnapshot.html>
 #[derive(Debug)]
 pub struct DomainSnapshot {
     ptr: Option<sys::virDomainSnapshotPtr>,

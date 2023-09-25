@@ -24,7 +24,7 @@ use crate::error::Error;
 
 /// Provides APIs for the management of networks.
 ///
-/// See https://libvirt.org/html/libvirt-libvirt-network.html
+/// See <https://libvirt.org/html/libvirt-libvirt-network.html>
 #[derive(Debug)]
 pub struct Network {
     ptr: Option<sys::virNetworkPtr>,

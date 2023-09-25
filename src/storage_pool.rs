@@ -51,7 +51,7 @@ impl StoragePoolInfo {
 
 /// Provides APIs for the management of storage pools.
 ///
-/// See https://libvirt.org/html/libvirt-libvirt-storage.html
+/// See <https://libvirt.org/html/libvirt-libvirt-storage.html>
 #[derive(Debug)]
 pub struct StoragePool {
     ptr: Option<sys::virStoragePoolPtr>,

@@ -24,7 +24,7 @@ use crate::error::Error;
 
 /// Provides APIs for the management for network filters.
 ///
-/// See https://libvirt.org/formatnwfilter.html
+/// See <https://libvirt.org/formatnwfilter.html>
 #[derive(Debug)]
 pub struct NWFilter {
     ptr: Option<sys::virNWFilterPtr>,

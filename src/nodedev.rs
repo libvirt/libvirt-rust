@@ -24,7 +24,7 @@ use crate::error::Error;
 
 /// Provides APIs for the management of nodedevs.
 ///
-/// See https://libvirt.org/html/libvirt-libvirt-nodedev.html
+/// See <https://libvirt.org/html/libvirt-libvirt-nodedev.html>
 #[derive(Debug)]
 pub struct NodeDevice {
     ptr: Option<sys::virNodeDevicePtr>,

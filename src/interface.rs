@@ -24,7 +24,7 @@ use crate::error::Error;
 
 /// Provides APIs for the management of interfaces.
 ///
-/// See https://libvirt.org/html/libvirt-libvirt-interface.html
+/// See <https://libvirt.org/html/libvirt-libvirt-interface.html>
 #[derive(Debug)]
 pub struct Interface {
     ptr: Option<sys::virInterfacePtr>,

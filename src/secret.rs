@@ -23,7 +23,7 @@ use crate::error::Error;
 
 /// Provides APIs for the management of secrets.
 ///
-/// See https://libvirt.org/html/libvirt-libvirt-secret.html
+/// See <https://libvirt.org/html/libvirt-libvirt-secret.html>
 #[derive(Debug)]
 pub struct Secret {
     ptr: Option<sys::virSecretPtr>,
