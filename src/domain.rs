@@ -508,7 +508,9 @@ impl Domain {
     }
 
     /// Provide an XML description of the domain. The description may
-    /// be reused later to relaunch the domain with `create_xml()`.
+    /// be reused later to relaunch the domain with [`create_xml()`].
+    ///
+    /// [`create_xml()`]: Domain::create_xml
     pub fn get_xml_desc(&self, flags: sys::virDomainCreateFlags) -> Result<String, Error> {
         unsafe {
             let xml = sys::virDomainGetXMLDesc(self.as_ptr(), flags);
@@ -522,7 +524,9 @@ impl Domain {
     /// Launch a defined domain. If the call succeeds the domain moves
     /// from the defined to the running domains pools. The domain will
     /// be paused only if restoring from managed state created from a
-    /// paused domain.  For more control, see `create_with_flags()`.
+    /// paused domain.For more control, see [`create_with_flags()`].
+    ///
+    /// [`create_with_flags()`]: Domain::create_with_flags
     pub fn create(&self) -> Result<u32, Error> {
         unsafe {
             let ret = sys::virDomainCreate(self.as_ptr());
@@ -560,13 +564,16 @@ impl Domain {
     }
 
     /// Launch a new guest domain, based on an XML description similar
-    /// to the one returned by `get_xml_desc()`.
+    /// to the one returned by [`get_xml_desc()`].
     ///
     /// This function may require privileged access to the hypervisor.
     ///
     /// The domain is not persistent, so its definition will disappear
     /// when it is destroyed, or if the host is restarted (see
-    /// `define_xml()` to define persistent domains).
+    /// [`define_xml()`] to define persistent domains).
+    ///
+    /// [`get_xml_desc()`]: Domain::get_xml_desc
+    /// [`define_xml()`]: Domain::define_xml
     pub fn create_xml(
         conn: &Connect,
         xml: &str,
@@ -586,7 +593,7 @@ impl Domain {
     /// Define a domain, but does not start it.
     ///
     /// This definition is persistent, until explicitly undefined with
-    /// `undefine()`. A previous definition for this domain would be
+    /// [`undefine()`]. A previous definition for this domain would be
     /// overridden if it already exists.
     ///
     /// # Note:
@@ -594,6 +601,8 @@ impl Domain {
     /// Some hypervisors may prevent this operation if there is a
     /// current block copy operation on a transient domain with the
     /// same id as the domain being defined.
+    ///
+    /// [`undefine()`]: Domain::undefine
     pub fn define_xml(conn: &Connect, xml: &str) -> Result<Domain, Error> {
         unsafe {
             let xml_buf = CString::new(xml).unwrap();
@@ -608,7 +617,7 @@ impl Domain {
     /// Define a domain, but does not start it.
     ///
     /// This definition is persistent, until explicitly undefined with
-    /// `undefine()`. A previous definition for this domain would be
+    /// [`undefine()`]. A previous definition for this domain would be
     /// overridden if it already exists.
     ///
     /// # Note:
@@ -616,6 +625,8 @@ impl Domain {
     /// Some hypervisors may prevent this operation if there is a
     /// current block copy operation on a transient domain with the
     /// same id as the domain being defined.
+    ///
+    /// [`undefine()`]: Domain::undefine
     pub fn define_xml_flags(
         conn: &Connect,
         xml: &str,
@@ -686,11 +697,13 @@ impl Domain {
     /// request. Additionally, the hypervisor may check and support
     /// the domain 'on_poweroff' XML setting resulting in a domain
     /// that reboots instead of shutting down. For guests that react
-    /// to a shutdown request, the differences from `destroy()` are
+    /// to a shutdown request, the differences from [`destroy()`] are
     /// that the guests disk storage will be in a stable state rather
     /// than having the (virtual) power cord pulled, and this command
     /// returns as soon as the shutdown request is issued rather than
     /// blocking until the guest is no longer running.
+    ///
+    /// [`destroy()`]: Domain::destroy
     pub fn shutdown(&self) -> Result<u32, Error> {
         unsafe {
             let ret = sys::virDomainShutdown(self.as_ptr());
@@ -721,7 +734,9 @@ impl Domain {
     /// `resume` to reactivate the domain.  This function may
     /// require privileged access.  Moreover, suspend may not be
     /// supported if domain is in some special state like
-    /// VIR_DOMAIN_PMSUSPENDED.
+    /// [`VIR_DOMAIN_PMSUSPENDED`].
+    ///
+    /// [`VIR_DOMAIN_PMSUSPENDED`]: sys::VIR_DOMAIN_PMSUSPENDED
     pub fn suspend(&self) -> Result<u32, Error> {
         unsafe {
             let ret = sys::virDomainSuspend(self.as_ptr());
@@ -735,9 +750,12 @@ impl Domain {
     /// Resume a suspended domain.
     ///
     /// the process is restarted from the state where it was frozen by
-    /// calling `suspend()`. This function may require privileged
+    /// calling [`suspend()`]. This function may require privileged
     /// access Moreover, resume may not be supported if domain is in
-    /// some special state like VIR_DOMAIN_PMSUSPENDED.
+    /// some special state like ['VIR_DOMAIN_PMSUSPENDED'].
+    ///
+    /// [`suspend()`]: Domain::suspend
+    /// [`VIR_DOMAIN_PMSUSPENDED`]: sys::VIR_DOMAIN_PMSUSPENDED
     pub fn resume(&self) -> Result<u32, Error> {
         unsafe {
             let ret = sys::virDomainResume(self.as_ptr());
@@ -1857,7 +1875,13 @@ impl Domain {
     /// as specified by the flags.
     /// # Arguments
     ///
-    /// * `flags` - Specifies the Domain Impact: CONFIG, LIVE or CURRENT.
+    /// * `flags` - Specifies the domain modification [`Impact`]: [`VIR_DOMAIN_AFFECT_CURRENT`],
+    /// [`VIR_DOMAIN_AFFECT_LIVE`] or [`VIR_DOMAIN_AFFECT_CONFIG`].
+    ///
+    /// [`Impact`]: sys::virDomainModificationImpact
+    /// [`VIR_DOMAIN_AFFECT_CURRENT`]: sys::VIR_DOMAIN_AFFECT_CURRENT
+    /// [`VIR_DOMAIN_AFFECT_LIVE`]: sys::VIR_DOMAIN_AFFECT_LIVE
+    /// [`VIR_DOMAIN_AFFECT_CONFIG`]: sys::VIR_DOMAIN_AFFECT_CONFIG
     pub fn get_scheduler_parameters_flags(
         &self,
         flags: sys::virDomainModificationImpact,
@@ -1899,7 +1923,13 @@ impl Domain {
     /// as specified by the flags.
     /// # Arguments
     ///
-    /// * `flags` - Specifies the Domain Impact: CONFIG, LIVE or CURRENT.
+    /// * `flags` - Specifies the domain modification [`Impact`]: [`VIR_DOMAIN_AFFECT_CURRENT`],
+    /// [`VIR_DOMAIN_AFFECT_LIVE`] or [`VIR_DOMAIN_AFFECT_CONFIG`].
+    ///
+    /// [`Impact`]: sys::virDomainModificationImpact
+    /// [`VIR_DOMAIN_AFFECT_CURRENT`]: sys::VIR_DOMAIN_AFFECT_CURRENT
+    /// [`VIR_DOMAIN_AFFECT_LIVE`]: sys::VIR_DOMAIN_AFFECT_LIVE
+    /// [`VIR_DOMAIN_AFFECT_CONFIG`]: sys::VIR_DOMAIN_AFFECT_CONFIG
     pub fn set_scheduler_parameters_flags(
         &self,
         sched_info: &SchedulerInfo,
@@ -1978,7 +2008,9 @@ impl Domain {
     /// Send an arbitrary monitor command cmd to domain through the QEMU monitor.
     ///
     /// * `cmd` - the QEMU monitor command string
-    /// * `flags` - bitwise-or of supported virDomainQemuMonitorCommandFlags
+    /// * `flags` - bitwise-or of supported [`virDomainQemuMonitorCommandFlags`]
+    ///
+    /// [`virDomainQemuMonitorCommandFlags`]: sys::virDomainQemuMonitorCommandFlags
     #[cfg(feature = "qemu")]
     pub fn qemu_monitor_command(&self, cmd: &str, flags: u32) -> Result<String, Error> {
         unsafe {
