@@ -14,6 +14,7 @@ stages:
     - export PATH="$VROOT/bin:$PATH"
     - export PKG_CONFIG_PATH="$LIBDIR/pkgconfig"
     - export RUSTFLAGS="-D warnings"
+    - export RUSTDOCFLAGS="-D warnings"
     - pushd "$PWD"
     - mkdir -p "$SCRATCH_DIR"
     - cd "$SCRATCH_DIR"
@@ -25,6 +26,8 @@ stages:
     - cargo test --verbose
     - cargo test --verbose --features qemu
     - cargo test --verbose --manifest-path=virt-sys/Cargo.toml
+    - cargo doc
+    - cargo doc --features qemu
 
 .native_git_build_job_prebuilt_env:
   extends:
@@ -39,6 +42,7 @@ stages:
 .native_build_job:
   script:
     - export RUSTFLAGS="-D warnings"
+    - export RUSTDOCFLAGS="-D warnings"
     - cargo test --verbose
     - cargo test --verbose --manifest-path=virt-sys/Cargo.toml
     - if test "$CLIPPY" = "enable"; then
@@ -48,9 +52,17 @@ stages:
           exit 1;
         fi;
       fi
+    - if test "$DOC" = "enable"; then
+        if ! cargo doc 2> cargo-doc.txt || ! cargo doc --features qemu 2>> cargo-doc.txt ; then
+          echo "cargo doc error, see cargo-doc.txt artifact for details";
+          exit 1;
+        fi;
+      fi
+
   artifacts:
     paths:
       - cargo-clippy.txt
+      - cargo-doc.txt
     expire_in: 1 week
     when: on_failure
 

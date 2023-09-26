@@ -42,6 +42,7 @@ targets:
       - arch: x86_64
         variables:
           CLIPPY: enable
+          DOC: enable
 
   fedora-rawhide:
     jobs:

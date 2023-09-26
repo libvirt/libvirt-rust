@@ -159,6 +159,7 @@ x86_64-fedora-38-prebuilt-env:
   allow_failure: false
   variables:
     CLIPPY: enable
+    DOC: enable
     NAME: fedora-38
 
 x86_64-fedora-38-local-env:
@@ -167,6 +168,7 @@ x86_64-fedora-38-local-env:
   allow_failure: false
   variables:
     CLIPPY: enable
+    DOC: enable
     IMAGE: registry.fedoraproject.org/fedora:38
     NAME: fedora-38
 
