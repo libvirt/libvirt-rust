@@ -195,6 +195,18 @@ impl Connect {
     ///
     /// Connect.close should be used to release the resources after the
     /// connection is no longer needed.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use virt::connect::Connect;
+    ///
+    /// let mut conn = match Connect::open(Some("test:///default")) {
+    ///     Ok(c) => c,
+    ///     Err(e) => panic!("Unable to connect: {}", e),
+    /// };
+    ///
+    /// conn.close();
     /// ```
     pub fn open(uri: Option<&str>) -> Result<Connect, Error> {
         let uri_buf = some_string_to_cstring!(uri);
