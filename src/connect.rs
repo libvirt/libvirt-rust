@@ -16,6 +16,7 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
+use std::convert::TryInto;
 use std::ffi::CString;
 use std::{mem, ptr, str};
 
@@ -1230,5 +1231,48 @@ impl Connect {
         }
 
         Ok(array)
+    }
+
+    /// Connect.get_free_pages should be used to get information on free memory
+    /// pages of size `pages` (in KiB) on individual `cell_count` NUMA nodes
+    /// starting with `start_cell. Returned is a vector of free page counts for
+    /// each NUMA node consecutively.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use virt::connect::Connect;
+    ///
+    /// let conn = Connect::open(Some("test:///default")).unwrap();
+    /// let free_pages = conn.get_free_pages(&[4, 8, 2048, 1024 * 1024], 0, 2, 0);
+    /// ```
+    pub fn get_free_pages(
+        &self,
+        pages: &[u32],
+        start_cell: u32,
+        cell_count: u32,
+        flags: u32,
+    ) -> Result<Vec<u64>, Error> {
+        let nentries = cell_count as usize * pages.len();
+        let mut counts = vec![0; nentries];
+
+        let size = unsafe {
+            sys::virNodeGetFreePages(
+                self.as_ptr(),
+                pages.len().try_into().unwrap(),
+                pages.as_ptr() as *mut _,
+                start_cell.try_into().unwrap(),
+                cell_count,
+                counts.as_mut_ptr(),
+                flags,
+            )
+        };
+        if size < 0 {
+            return Err(Error::last_error());
+        }
+
+        counts.truncate(size.try_into().unwrap());
+
+        Ok(counts)
     }
 }
