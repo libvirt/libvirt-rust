@@ -156,6 +156,32 @@ pub struct Connect {
     ptr: Option<sys::virConnectPtr>,
 }
 
+impl Clone for Connect {
+    /// Creates a copy of connection.
+    ///
+    /// Increments the internal reference counter on the given
+    /// connection. For each call to this method, there shall be a
+    /// correspodning call to [`close()`].
+    ///
+    /// [`close()`]: Connect::close
+    ///
+    /// # Examples
+    ///
+    /// ````
+    /// use virt::connect::Connect;
+    ///
+    /// let mut conn1 = Connect::open(Some("test:///default")).unwrap();
+    /// let mut conn2 = conn1.clone();
+    /// let mut conn3 = conn2.clone();
+    /// assert_eq!(Ok(1), conn1.close(), "conn1.close(), expected 1");
+    /// assert_eq!(Ok(1), conn2.close(), "conn2.close(), expected 1");
+    /// assert_eq!(Ok(0), conn3.close(), "conn3.close(), expected 0");
+    /// ````
+    fn clone(&self) -> Self {
+        self.add_ref().unwrap()
+    }
+}
+
 impl Connect {
     pub fn as_ptr(&self) -> sys::virConnectPtr {
         self.ptr.unwrap()
@@ -163,6 +189,15 @@ impl Connect {
 
     pub fn new(ptr: sys::virConnectPtr) -> Connect {
         Connect { ptr: Some(ptr) }
+    }
+    fn add_ref(&self) -> Result<Connect, Error> {
+        unsafe {
+            if sys::virConnectRef(self.as_ptr()) == -1 {
+                return Err(Error::last_error());
+            }
+        }
+
+        Ok(Connect::new(self.as_ptr()))
     }
 
     pub fn get_version() -> Result<u32, Error> {
@@ -280,9 +315,9 @@ impl Connect {
             if ret == -1 {
                 return Err(Error::last_error());
             }
-            if ret == 0 {
-                self.ptr = None;
-            }
+            // Because of add_ref() we must refrain from using the
+            // connection further.
+            self.ptr = None;
             Ok(ret)
         }
     }
