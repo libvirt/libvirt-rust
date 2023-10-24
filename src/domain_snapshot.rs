@@ -31,6 +31,9 @@ pub struct DomainSnapshot {
     ptr: Option<sys::virDomainSnapshotPtr>,
 }
 
+unsafe impl Send for DomainSnapshot {}
+unsafe impl Sync for DomainSnapshot {}
+
 impl Drop for DomainSnapshot {
     fn drop(&mut self) {
         if self.ptr.is_some() {

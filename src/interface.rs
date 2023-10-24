@@ -30,6 +30,9 @@ pub struct Interface {
     ptr: Option<sys::virInterfacePtr>,
 }
 
+unsafe impl Send for Interface {}
+unsafe impl Sync for Interface {}
+
 impl Drop for Interface {
     fn drop(&mut self) {
         if self.ptr.is_some() {

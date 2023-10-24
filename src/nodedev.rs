@@ -30,6 +30,9 @@ pub struct NodeDevice {
     ptr: Option<sys::virNodeDevicePtr>,
 }
 
+unsafe impl Send for NodeDevice {}
+unsafe impl Sync for NodeDevice {}
+
 impl Drop for NodeDevice {
     fn drop(&mut self) {
         if self.ptr.is_some() {

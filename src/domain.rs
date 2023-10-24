@@ -365,6 +365,9 @@ pub struct Domain {
     ptr: Option<sys::virDomainPtr>,
 }
 
+unsafe impl Send for Domain {}
+unsafe impl Sync for Domain {}
+
 impl Drop for Domain {
     fn drop(&mut self) {
         if self.ptr.is_some() {

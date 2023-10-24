@@ -30,6 +30,9 @@ pub struct NWFilter {
     ptr: Option<sys::virNWFilterPtr>,
 }
 
+unsafe impl Send for NWFilter {}
+unsafe impl Sync for NWFilter {}
+
 impl Drop for NWFilter {
     fn drop(&mut self) {
         if self.ptr.is_some() {

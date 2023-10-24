@@ -57,6 +57,9 @@ pub struct StoragePool {
     ptr: Option<sys::virStoragePoolPtr>,
 }
 
+unsafe impl Send for StoragePool {}
+unsafe impl Sync for StoragePool {}
+
 impl Drop for StoragePool {
     fn drop(&mut self) {
         if self.ptr.is_some() {

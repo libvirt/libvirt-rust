@@ -30,6 +30,9 @@ pub struct Network {
     ptr: Option<sys::virNetworkPtr>,
 }
 
+unsafe impl Send for Network {}
+unsafe impl Sync for Network {}
+
 impl Drop for Network {
     fn drop(&mut self) {
         if self.ptr.is_some() {

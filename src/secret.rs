@@ -29,6 +29,9 @@ pub struct Secret {
     ptr: Option<sys::virSecretPtr>,
 }
 
+unsafe impl Send for Secret {}
+unsafe impl Sync for Secret {}
+
 impl Drop for Secret {
     fn drop(&mut self) {
         if self.ptr.is_some() {

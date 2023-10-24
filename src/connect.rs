@@ -182,6 +182,9 @@ impl Clone for Connect {
     }
 }
 
+unsafe impl Send for Connect {}
+unsafe impl Sync for Connect {}
+
 impl Connect {
     pub fn as_ptr(&self) -> sys::virConnectPtr {
         self.ptr.unwrap()

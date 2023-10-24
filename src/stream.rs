@@ -40,6 +40,9 @@ pub struct Stream {
     callback: Option<Box<StreamCallback>>,
 }
 
+unsafe impl Send for Stream {}
+unsafe impl Sync for Stream {}
+
 impl Drop for Stream {
     fn drop(&mut self) {
         if self.ptr.is_some() {
