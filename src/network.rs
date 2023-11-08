@@ -47,7 +47,7 @@ impl Network {
     /// # Safety
     ///
     /// The caller must ensure that the pointer is valid.
-    pub unsafe fn new(ptr: sys::virNetworkPtr) -> Network {
+    pub unsafe fn from_ptr(ptr: sys::virNetworkPtr) -> Network {
         Network { ptr: Some(ptr) }
     }
 
@@ -61,7 +61,7 @@ impl Network {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Connect::new(ptr))
+            Ok(Connect::from_ptr(ptr))
         }
     }
 
@@ -72,7 +72,7 @@ impl Network {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Network::new(ptr))
+            Ok(Network::from_ptr(ptr))
         }
     }
 
@@ -83,7 +83,7 @@ impl Network {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Network::new(ptr))
+            Ok(Network::from_ptr(ptr))
         }
     }
 
@@ -144,7 +144,7 @@ impl Network {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Network::new(ptr))
+            Ok(Network::from_ptr(ptr))
         }
     }
 
@@ -155,7 +155,7 @@ impl Network {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Network::new(ptr))
+            Ok(Network::from_ptr(ptr))
         }
     }
 

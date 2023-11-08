@@ -48,7 +48,7 @@ impl DomainSnapshot {
     /// # Safety
     ///
     /// The caller must ensure that the pointer is valid.
-    pub unsafe fn new(ptr: sys::virDomainSnapshotPtr) -> DomainSnapshot {
+    pub unsafe fn from_ptr(ptr: sys::virDomainSnapshotPtr) -> DomainSnapshot {
         DomainSnapshot { ptr: Some(ptr) }
     }
 
@@ -62,7 +62,7 @@ impl DomainSnapshot {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Connect::new(ptr))
+            Ok(Connect::from_ptr(ptr))
         }
     }
 
@@ -72,7 +72,7 @@ impl DomainSnapshot {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Domain::new(ptr))
+            Ok(Domain::from_ptr(ptr))
         }
     }
 
@@ -98,7 +98,7 @@ impl DomainSnapshot {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(DomainSnapshot::new(ptr))
+            Ok(DomainSnapshot::from_ptr(ptr))
         }
     }
 
@@ -124,7 +124,7 @@ impl DomainSnapshot {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(DomainSnapshot::new(ptr))
+            Ok(DomainSnapshot::from_ptr(ptr))
         }
     }
 
@@ -135,7 +135,7 @@ impl DomainSnapshot {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(DomainSnapshot::new(ptr))
+            Ok(DomainSnapshot::from_ptr(ptr))
         }
     }
 
@@ -146,7 +146,7 @@ impl DomainSnapshot {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(DomainSnapshot::new(ptr))
+            Ok(DomainSnapshot::from_ptr(ptr))
         }
     }
 
@@ -230,7 +230,7 @@ impl DomainSnapshot {
 
             let mut array: Vec<DomainSnapshot> = Vec::new();
             for x in 0..size as isize {
-                array.push(DomainSnapshot::new(*snaps.offset(x)));
+                array.push(DomainSnapshot::from_ptr(*snaps.offset(x)));
             }
             libc::free(snaps as *mut libc::c_void);
 

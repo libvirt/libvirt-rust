@@ -47,7 +47,7 @@ impl Interface {
     /// # Safety
     ///
     /// The caller must ensure that the pointer is valid.
-    pub unsafe fn new(ptr: sys::virInterfacePtr) -> Interface {
+    pub unsafe fn from_ptr(ptr: sys::virInterfacePtr) -> Interface {
         Interface { ptr: Some(ptr) }
     }
 
@@ -61,7 +61,7 @@ impl Interface {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Connect::new(ptr))
+            Ok(Connect::from_ptr(ptr))
         }
     }
 
@@ -72,7 +72,7 @@ impl Interface {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Interface::new(ptr))
+            Ok(Interface::from_ptr(ptr))
         }
     }
 
@@ -84,7 +84,7 @@ impl Interface {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Interface::new(ptr))
+            Ok(Interface::from_ptr(ptr))
         }
     }
 
@@ -95,7 +95,7 @@ impl Interface {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Interface::new(ptr))
+            Ok(Interface::from_ptr(ptr))
         }
     }
 

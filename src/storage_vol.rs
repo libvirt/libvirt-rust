@@ -72,7 +72,7 @@ impl StorageVol {
     /// # Safety
     ///
     /// The caller must ensure that the pointer is valid.
-    pub unsafe fn new(ptr: sys::virStorageVolPtr) -> StorageVol {
+    pub unsafe fn from_ptr(ptr: sys::virStorageVolPtr) -> StorageVol {
         StorageVol { ptr: Some(ptr) }
     }
 
@@ -86,7 +86,7 @@ impl StorageVol {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Connect::new(ptr))
+            Ok(Connect::from_ptr(ptr))
         }
     }
 
@@ -102,7 +102,7 @@ impl StorageVol {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(StorageVol::new(ptr))
+            Ok(StorageVol::from_ptr(ptr))
         }
     }
 
@@ -123,7 +123,7 @@ impl StorageVol {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(StorageVol::new(ptr))
+            Ok(StorageVol::from_ptr(ptr))
         }
     }
 
@@ -134,7 +134,7 @@ impl StorageVol {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(StorageVol::new(ptr))
+            Ok(StorageVol::from_ptr(ptr))
         }
     }
 
@@ -145,7 +145,7 @@ impl StorageVol {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(StorageVol::new(ptr))
+            Ok(StorageVol::from_ptr(ptr))
         }
     }
 
@@ -156,7 +156,7 @@ impl StorageVol {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(StorageVol::new(ptr))
+            Ok(StorageVol::from_ptr(ptr))
         }
     }
 

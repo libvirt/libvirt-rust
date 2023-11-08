@@ -74,7 +74,7 @@ impl StoragePool {
     /// # Safety
     ///
     /// The caller must ensure that the pointer is valid.
-    pub unsafe fn new(ptr: sys::virStoragePoolPtr) -> StoragePool {
+    pub unsafe fn from_ptr(ptr: sys::virStoragePoolPtr) -> StoragePool {
         StoragePool { ptr: Some(ptr) }
     }
 
@@ -88,7 +88,7 @@ impl StoragePool {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Connect::new(ptr))
+            Ok(Connect::from_ptr(ptr))
         }
     }
 
@@ -103,7 +103,7 @@ impl StoragePool {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(StoragePool::new(ptr))
+            Ok(StoragePool::from_ptr(ptr))
         }
     }
 
@@ -122,7 +122,7 @@ impl StoragePool {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(StoragePool::new(ptr))
+            Ok(StoragePool::from_ptr(ptr))
         }
     }
 
@@ -133,7 +133,7 @@ impl StoragePool {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(StoragePool::new(ptr))
+            Ok(StoragePool::from_ptr(ptr))
         }
     }
 
@@ -143,7 +143,7 @@ impl StoragePool {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(StoragePool::new(ptr))
+            Ok(StoragePool::from_ptr(ptr))
         }
     }
 
@@ -154,7 +154,7 @@ impl StoragePool {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(StoragePool::new(ptr))
+            Ok(StoragePool::from_ptr(ptr))
         }
     }
 
@@ -209,7 +209,7 @@ impl StoragePool {
 
             let mut array: Vec<StorageVol> = Vec::new();
             for x in 0..size as isize {
-                array.push(StorageVol::new(*volumes.offset(x)));
+                array.push(StorageVol::from_ptr(*volumes.offset(x)));
             }
             libc::free(volumes as *mut libc::c_void);
 

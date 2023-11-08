@@ -193,7 +193,7 @@ impl Connect {
     /// # Safety
     ///
     /// The caller must ensure that the pointer is valid.
-    pub unsafe fn new(ptr: sys::virConnectPtr) -> Connect {
+    pub unsafe fn from_ptr(ptr: sys::virConnectPtr) -> Connect {
         Connect { ptr: Some(ptr) }
     }
     fn add_ref(&self) -> Result<Connect, Error> {
@@ -203,7 +203,7 @@ impl Connect {
             }
         }
 
-        Ok(unsafe { Connect::new(self.as_ptr()) })
+        Ok(unsafe { Connect::from_ptr(self.as_ptr()) })
     }
 
     pub fn get_version() -> Result<u32, Error> {
@@ -258,7 +258,7 @@ impl Connect {
             if c.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Connect::new(c))
+            Ok(Connect::from_ptr(c))
         }
     }
 
@@ -279,7 +279,7 @@ impl Connect {
             if c.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Connect::new(c))
+            Ok(Connect::from_ptr(c))
         }
     }
 
@@ -307,7 +307,7 @@ impl Connect {
             if c.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Connect::new(c))
+            Ok(Connect::from_ptr(c))
         }
     }
 
@@ -618,7 +618,7 @@ impl Connect {
 
             let mut array: Vec<Domain> = Vec::new();
             for x in 0..size as isize {
-                array.push(Domain::new(*domains.offset(x)));
+                array.push(Domain::from_ptr(*domains.offset(x)));
             }
             libc::free(domains as *mut libc::c_void);
 
@@ -640,7 +640,7 @@ impl Connect {
 
             let mut array: Vec<Network> = Vec::new();
             for x in 0..size as isize {
-                array.push(Network::new(*networks.offset(x)));
+                array.push(Network::from_ptr(*networks.offset(x)));
             }
             libc::free(networks as *mut libc::c_void);
 
@@ -665,7 +665,7 @@ impl Connect {
 
             let mut array: Vec<Interface> = Vec::new();
             for x in 0..size as isize {
-                array.push(Interface::new(*interfaces.offset(x)));
+                array.push(Interface::from_ptr(*interfaces.offset(x)));
             }
             libc::free(interfaces as *mut libc::c_void);
 
@@ -690,7 +690,7 @@ impl Connect {
 
             let mut array: Vec<NodeDevice> = Vec::new();
             for x in 0..size as isize {
-                array.push(NodeDevice::new(*nodedevs.offset(x)));
+                array.push(NodeDevice::from_ptr(*nodedevs.offset(x)));
             }
             libc::free(nodedevs as *mut libc::c_void);
 
@@ -712,7 +712,7 @@ impl Connect {
 
             let mut array: Vec<Secret> = Vec::new();
             for x in 0..size as isize {
-                array.push(Secret::new(*secrets.offset(x)));
+                array.push(Secret::from_ptr(*secrets.offset(x)));
             }
             libc::free(secrets as *mut libc::c_void);
 
@@ -737,7 +737,7 @@ impl Connect {
 
             let mut array: Vec<StoragePool> = Vec::new();
             for x in 0..size as isize {
-                array.push(StoragePool::new(*storages.offset(x)));
+                array.push(StoragePool::from_ptr(*storages.offset(x)));
             }
             libc::free(storages as *mut libc::c_void);
 
@@ -756,7 +756,7 @@ impl Connect {
 
             let mut array: Vec<NWFilter> = Vec::new();
             for x in 0..size as isize {
-                array.push(NWFilter::new(*filters.offset(x)));
+                array.push(NWFilter::from_ptr(*filters.offset(x)));
             }
             libc::free(filters as *mut libc::c_void);
 

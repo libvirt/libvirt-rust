@@ -46,7 +46,7 @@ impl Secret {
     /// # Safety
     ///
     /// The caller must ensure that the pointer is valid.
-    pub unsafe fn new(ptr: sys::virSecretPtr) -> Secret {
+    pub unsafe fn from_ptr(ptr: sys::virSecretPtr) -> Secret {
         Secret { ptr: Some(ptr) }
     }
 
@@ -60,7 +60,7 @@ impl Secret {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Connect::new(ptr))
+            Ok(Connect::from_ptr(ptr))
         }
     }
 
@@ -72,7 +72,7 @@ impl Secret {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Secret::new(ptr))
+            Ok(Secret::from_ptr(ptr))
         }
     }
 
@@ -83,7 +83,7 @@ impl Secret {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Secret::new(ptr))
+            Ok(Secret::from_ptr(ptr))
         }
     }
 
@@ -98,7 +98,7 @@ impl Secret {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Secret::new(ptr))
+            Ok(Secret::from_ptr(ptr))
         }
     }
 

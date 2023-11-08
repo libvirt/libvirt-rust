@@ -47,7 +47,7 @@ impl NodeDevice {
     /// # Safety
     ///
     /// The caller must ensure that the pointer is valid.
-    pub unsafe fn new(ptr: sys::virNodeDevicePtr) -> NodeDevice {
+    pub unsafe fn from_ptr(ptr: sys::virNodeDevicePtr) -> NodeDevice {
         NodeDevice { ptr: Some(ptr) }
     }
 
@@ -62,7 +62,7 @@ impl NodeDevice {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(NodeDevice::new(ptr))
+            Ok(NodeDevice::from_ptr(ptr))
         }
     }
 
@@ -84,7 +84,7 @@ impl NodeDevice {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(NodeDevice::new(ptr))
+            Ok(NodeDevice::from_ptr(ptr))
         }
     }
 
@@ -96,7 +96,7 @@ impl NodeDevice {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(NodeDevice::new(ptr))
+            Ok(NodeDevice::from_ptr(ptr))
         }
     }
 

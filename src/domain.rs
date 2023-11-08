@@ -390,7 +390,7 @@ impl Domain {
     /// # Safety
     ///
     /// The caller must ensure that the pointer is valid.
-    pub unsafe fn new(ptr: sys::virDomainPtr) -> Domain {
+    pub unsafe fn from_ptr(ptr: sys::virDomainPtr) -> Domain {
         Domain { ptr: Some(ptr) }
     }
 
@@ -404,7 +404,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Connect::new(ptr))
+            Ok(Connect::from_ptr(ptr))
         }
     }
 
@@ -414,7 +414,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Domain::new(ptr))
+            Ok(Domain::from_ptr(ptr))
         }
     }
 
@@ -425,7 +425,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Domain::new(ptr))
+            Ok(Domain::from_ptr(ptr))
         }
     }
 
@@ -436,7 +436,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Domain::new(ptr))
+            Ok(Domain::from_ptr(ptr))
         }
     }
 
@@ -592,7 +592,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Domain::new(ptr))
+            Ok(Domain::from_ptr(ptr))
         }
     }
 
@@ -616,7 +616,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Domain::new(ptr))
+            Ok(Domain::from_ptr(ptr))
         }
     }
 
@@ -648,7 +648,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Domain::new(ptr))
+            Ok(Domain::from_ptr(ptr))
         }
     }
 
@@ -1681,7 +1681,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Domain::new(ptr))
+            Ok(Domain::from_ptr(ptr))
         }
     }
 
@@ -1710,7 +1710,7 @@ impl Domain {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(Domain::new(ptr))
+            Ok(Domain::from_ptr(ptr))
         }
     }
 
@@ -1842,7 +1842,7 @@ impl Domain {
 
             let mut array: Vec<DomainSnapshot> = Vec::new();
             for x in 0..size as isize {
-                array.push(DomainSnapshot::new(*snaps.offset(x)));
+                array.push(DomainSnapshot::from_ptr(*snaps.offset(x)));
             }
             libc::free(snaps as *mut libc::c_void);
 

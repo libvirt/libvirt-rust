@@ -47,7 +47,7 @@ impl NWFilter {
     /// # Safety
     ///
     /// The caller must ensure that the pointer is valid.
-    pub unsafe fn new(ptr: sys::virNWFilterPtr) -> NWFilter {
+    pub unsafe fn from_ptr(ptr: sys::virNWFilterPtr) -> NWFilter {
         NWFilter { ptr: Some(ptr) }
     }
 
@@ -62,7 +62,7 @@ impl NWFilter {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(NWFilter::new(ptr))
+            Ok(NWFilter::from_ptr(ptr))
         }
     }
 
@@ -73,7 +73,7 @@ impl NWFilter {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(NWFilter::new(ptr))
+            Ok(NWFilter::from_ptr(ptr))
         }
     }
 
@@ -114,7 +114,7 @@ impl NWFilter {
             if ptr.is_null() {
                 return Err(Error::last_error());
             }
-            Ok(NWFilter::new(ptr))
+            Ok(NWFilter::from_ptr(ptr))
         }
     }
 
