@@ -57,194 +57,165 @@ impl DomainSnapshot {
     }
 
     pub fn get_connect(&self) -> Result<Connect, Error> {
-        unsafe {
-            let ptr = sys::virDomainSnapshotGetConnect(self.as_ptr());
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(Connect::from_ptr(ptr))
+        let ptr = unsafe { sys::virDomainSnapshotGetConnect(self.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { Connect::from_ptr(ptr) })
     }
 
     pub fn get_domain(&self) -> Result<Domain, Error> {
-        unsafe {
-            let ptr = sys::virDomainSnapshotGetDomain(self.as_ptr());
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(Domain::from_ptr(ptr))
+        let ptr = unsafe { sys::virDomainSnapshotGetDomain(self.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { Domain::from_ptr(ptr) })
     }
 
     pub fn get_name(&self) -> Result<String, Error> {
-        unsafe {
-            let n = sys::virDomainSnapshotGetName(self.as_ptr());
-            if n.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(c_chars_to_string!(n, nofree))
+        let n = unsafe { sys::virDomainSnapshotGetName(self.as_ptr()) };
+        if n.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { c_chars_to_string!(n, nofree) })
     }
 
     /// Get a handle to a named snapshot.
     pub fn lookup_by_name(dom: &Domain, name: &str, flags: u32) -> Result<DomainSnapshot, Error> {
-        unsafe {
-            let name_buf = CString::new(name).unwrap();
-            let ptr = sys::virDomainSnapshotLookupByName(
+        let name_buf = CString::new(name).unwrap();
+        let ptr = unsafe {
+            sys::virDomainSnapshotLookupByName(
                 dom.as_ptr(),
                 name_buf.as_ptr(),
                 flags as libc::c_uint,
-            );
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(DomainSnapshot::from_ptr(ptr))
+            )
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { DomainSnapshot::from_ptr(ptr) })
     }
 
     /// Dump the XML of a snapshot.
     pub fn get_xml_desc(&self, flags: u32) -> Result<String, Error> {
-        unsafe {
-            let xml = sys::virDomainSnapshotGetXMLDesc(self.as_ptr(), flags as libc::c_uint);
-            if xml.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(c_chars_to_string!(xml))
+        let xml = unsafe { sys::virDomainSnapshotGetXMLDesc(self.as_ptr(), flags as libc::c_uint) };
+        if xml.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { c_chars_to_string!(xml) })
     }
 
     pub fn create_xml(dom: &Domain, xml: &str, flags: u32) -> Result<DomainSnapshot, Error> {
-        unsafe {
-            let xml_buf = CString::new(xml).unwrap();
-            let ptr = sys::virDomainSnapshotCreateXML(
-                dom.as_ptr(),
-                xml_buf.as_ptr(),
-                flags as libc::c_uint,
-            );
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(DomainSnapshot::from_ptr(ptr))
+        let xml_buf = CString::new(xml).unwrap();
+        let ptr = unsafe {
+            sys::virDomainSnapshotCreateXML(dom.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { DomainSnapshot::from_ptr(ptr) })
     }
 
     /// Get a handle to the current snapshot
     pub fn current(dom: &Domain, flags: u32) -> Result<DomainSnapshot, Error> {
-        unsafe {
-            let ptr = sys::virDomainSnapshotCurrent(dom.as_ptr(), flags as libc::c_uint);
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(DomainSnapshot::from_ptr(ptr))
+        let ptr = unsafe { sys::virDomainSnapshotCurrent(dom.as_ptr(), flags as libc::c_uint) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { DomainSnapshot::from_ptr(ptr) })
     }
 
     /// Get a handle to the parent snapshot, if one exists.
     pub fn get_parent(&self, flags: u32) -> Result<DomainSnapshot, Error> {
-        unsafe {
-            let ptr = sys::virDomainSnapshotGetParent(self.as_ptr(), flags as libc::c_uint);
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(DomainSnapshot::from_ptr(ptr))
+        let ptr = unsafe { sys::virDomainSnapshotGetParent(self.as_ptr(), flags as libc::c_uint) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { DomainSnapshot::from_ptr(ptr) })
     }
 
     /// Revert a snapshot.
     pub fn revert(&self, flags: u32) -> Result<(), Error> {
-        unsafe {
-            if sys::virDomainRevertToSnapshot(self.as_ptr(), flags as libc::c_uint) == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(())
+        let ret = unsafe { sys::virDomainRevertToSnapshot(self.as_ptr(), flags as libc::c_uint) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(())
     }
 
     /// Delete a snapshot.
     pub fn delete(&self, flags: u32) -> Result<(), Error> {
-        unsafe {
-            if sys::virDomainSnapshotDelete(self.as_ptr(), flags as libc::c_uint) == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(())
+        let ret = unsafe { sys::virDomainSnapshotDelete(self.as_ptr(), flags as libc::c_uint) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(())
     }
 
     /// Return the number of snapshots for this domain.
     pub fn num(dom: &Domain, flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let ret = sys::virDomainSnapshotNum(dom.as_ptr(), flags as libc::c_uint);
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+        let ret = unsafe { sys::virDomainSnapshotNum(dom.as_ptr(), flags as libc::c_uint) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     /// Return the number of child snapshots for this snapshot.
     pub fn num_children(&self, flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let ret = sys::virDomainSnapshotNumChildren(self.as_ptr(), flags as libc::c_uint);
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+        let ret =
+            unsafe { sys::virDomainSnapshotNumChildren(self.as_ptr(), flags as libc::c_uint) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     /// Determine if a snapshot is the current snapshot of its domain.
     pub fn is_current(&self, flags: u32) -> Result<bool, Error> {
-        unsafe {
-            let ret = sys::virDomainSnapshotIsCurrent(self.as_ptr(), flags as libc::c_uint);
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret == 1)
+        let ret = unsafe { sys::virDomainSnapshotIsCurrent(self.as_ptr(), flags as libc::c_uint) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret == 1)
     }
 
     /// Determine if a snapshot has associated libvirt metadata that
     /// would prevent the deletion of its domain.
     pub fn has_metadata(&self, flags: u32) -> Result<bool, Error> {
-        unsafe {
-            let ret = sys::virDomainSnapshotHasMetadata(self.as_ptr(), flags as libc::c_uint);
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret == 1)
+        let ret =
+            unsafe { sys::virDomainSnapshotHasMetadata(self.as_ptr(), flags as libc::c_uint) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret == 1)
     }
 
     /// Get all snapshot object children for this snapshot.
     pub fn list_all_children(&self, flags: u32) -> Result<Vec<DomainSnapshot>, Error> {
-        unsafe {
-            let mut snaps: *mut sys::virDomainSnapshotPtr = ptr::null_mut();
-            let size = sys::virDomainSnapshotListAllChildren(
-                self.as_ptr(),
-                &mut snaps,
-                flags as libc::c_uint,
-            );
-            if size == -1 {
-                return Err(Error::last_error());
-            }
-
-            let mut array: Vec<DomainSnapshot> = Vec::new();
-            for x in 0..size as isize {
-                array.push(DomainSnapshot::from_ptr(*snaps.offset(x)));
-            }
-            libc::free(snaps as *mut libc::c_void);
-
-            Ok(array)
+        let mut snaps: *mut sys::virDomainSnapshotPtr = ptr::null_mut();
+        let size = unsafe {
+            sys::virDomainSnapshotListAllChildren(self.as_ptr(), &mut snaps, flags as libc::c_uint)
+        };
+        if size == -1 {
+            return Err(Error::last_error());
         }
+
+        let mut array: Vec<DomainSnapshot> = Vec::new();
+        for x in 0..size as isize {
+            array.push(unsafe { DomainSnapshot::from_ptr(*snaps.offset(x)) });
+        }
+        unsafe { libc::free(snaps as *mut libc::c_void) };
+
+        Ok(array)
     }
 
     pub fn free(&mut self) -> Result<(), Error> {
-        unsafe {
-            if sys::virDomainSnapshotFree(self.as_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-            self.ptr = None;
-            Ok(())
+        let ret = unsafe { sys::virDomainSnapshotFree(self.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        self.ptr = None;
+        Ok(())
     }
 }
