@@ -44,7 +44,10 @@ impl Drop for NWFilter {
 }
 
 impl NWFilter {
-    pub fn new(ptr: sys::virNWFilterPtr) -> NWFilter {
+    /// # Safety
+    ///
+    /// The caller must ensure that the pointer is valid.
+    pub unsafe fn new(ptr: sys::virNWFilterPtr) -> NWFilter {
         NWFilter { ptr: Some(ptr) }
     }
 

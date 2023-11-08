@@ -43,7 +43,10 @@ impl Drop for Secret {
 }
 
 impl Secret {
-    pub fn new(ptr: sys::virSecretPtr) -> Secret {
+    /// # Safety
+    ///
+    /// The caller must ensure that the pointer is valid.
+    pub unsafe fn new(ptr: sys::virSecretPtr) -> Secret {
         Secret { ptr: Some(ptr) }
     }
 

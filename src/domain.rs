@@ -387,7 +387,10 @@ fn to_arr(name: &str) -> [libc::c_char; 80] {
 }
 
 impl Domain {
-    pub fn new(ptr: sys::virDomainPtr) -> Domain {
+    /// # Safety
+    ///
+    /// The caller must ensure that the pointer is valid.
+    pub unsafe fn new(ptr: sys::virDomainPtr) -> Domain {
         Domain { ptr: Some(ptr) }
     }
 

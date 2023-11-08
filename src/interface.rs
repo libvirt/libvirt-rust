@@ -44,7 +44,10 @@ impl Drop for Interface {
 }
 
 impl Interface {
-    pub fn new(ptr: sys::virInterfacePtr) -> Interface {
+    /// # Safety
+    ///
+    /// The caller must ensure that the pointer is valid.
+    pub unsafe fn new(ptr: sys::virInterfacePtr) -> Interface {
         Interface { ptr: Some(ptr) }
     }
 

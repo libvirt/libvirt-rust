@@ -69,7 +69,10 @@ impl Drop for StorageVol {
 }
 
 impl StorageVol {
-    pub fn new(ptr: sys::virStorageVolPtr) -> StorageVol {
+    /// # Safety
+    ///
+    /// The caller must ensure that the pointer is valid.
+    pub unsafe fn new(ptr: sys::virStorageVolPtr) -> StorageVol {
         StorageVol { ptr: Some(ptr) }
     }
 

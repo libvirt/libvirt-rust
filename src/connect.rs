@@ -190,7 +190,10 @@ impl Connect {
         self.ptr.unwrap()
     }
 
-    pub fn new(ptr: sys::virConnectPtr) -> Connect {
+    /// # Safety
+    ///
+    /// The caller must ensure that the pointer is valid.
+    pub unsafe fn new(ptr: sys::virConnectPtr) -> Connect {
         Connect { ptr: Some(ptr) }
     }
     fn add_ref(&self) -> Result<Connect, Error> {
@@ -200,7 +203,7 @@ impl Connect {
             }
         }
 
-        Ok(Connect::new(self.as_ptr()))
+        Ok(unsafe { Connect::new(self.as_ptr()) })
     }
 
     pub fn get_version() -> Result<u32, Error> {

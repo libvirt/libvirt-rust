@@ -45,7 +45,10 @@ impl Drop for DomainSnapshot {
 }
 
 impl DomainSnapshot {
-    pub fn new(ptr: sys::virDomainSnapshotPtr) -> DomainSnapshot {
+    /// # Safety
+    ///
+    /// The caller must ensure that the pointer is valid.
+    pub unsafe fn new(ptr: sys::virDomainSnapshotPtr) -> DomainSnapshot {
         DomainSnapshot { ptr: Some(ptr) }
     }
 

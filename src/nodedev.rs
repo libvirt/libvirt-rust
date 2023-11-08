@@ -44,7 +44,10 @@ impl Drop for NodeDevice {
 }
 
 impl NodeDevice {
-    pub fn new(ptr: sys::virNodeDevicePtr) -> NodeDevice {
+    /// # Safety
+    ///
+    /// The caller must ensure that the pointer is valid.
+    pub unsafe fn new(ptr: sys::virNodeDevicePtr) -> NodeDevice {
         NodeDevice { ptr: Some(ptr) }
     }
 

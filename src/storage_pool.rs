@@ -71,7 +71,10 @@ impl Drop for StoragePool {
 }
 
 impl StoragePool {
-    pub fn new(ptr: sys::virStoragePoolPtr) -> StoragePool {
+    /// # Safety
+    ///
+    /// The caller must ensure that the pointer is valid.
+    pub unsafe fn new(ptr: sys::virStoragePoolPtr) -> StoragePool {
         StoragePool { ptr: Some(ptr) }
     }
 

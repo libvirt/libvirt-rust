@@ -44,7 +44,10 @@ impl Drop for Network {
 }
 
 impl Network {
-    pub fn new(ptr: sys::virNetworkPtr) -> Network {
+    /// # Safety
+    ///
+    /// The caller must ensure that the pointer is valid.
+    pub unsafe fn new(ptr: sys::virNetworkPtr) -> Network {
         Network { ptr: Some(ptr) }
     }
 
