@@ -56,84 +56,71 @@ impl NWFilter {
     }
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<NWFilter, Error> {
-        unsafe {
-            let id_buf = CString::new(id).unwrap();
-            let ptr = sys::virNWFilterLookupByName(conn.as_ptr(), id_buf.as_ptr());
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(NWFilter::from_ptr(ptr))
+        let id_buf = CString::new(id).unwrap();
+        let ptr = unsafe { sys::virNWFilterLookupByName(conn.as_ptr(), id_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { NWFilter::from_ptr(ptr) })
     }
 
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<NWFilter, Error> {
-        unsafe {
-            let uuid_buf = CString::new(uuid).unwrap();
-            let ptr = sys::virNWFilterLookupByUUIDString(conn.as_ptr(), uuid_buf.as_ptr());
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(NWFilter::from_ptr(ptr))
+        let uuid_buf = CString::new(uuid).unwrap();
+        let ptr = unsafe { sys::virNWFilterLookupByUUIDString(conn.as_ptr(), uuid_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { NWFilter::from_ptr(ptr) })
     }
 
     pub fn get_name(&self) -> Result<String, Error> {
-        unsafe {
-            let n = sys::virNWFilterGetName(self.as_ptr());
-            if n.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(c_chars_to_string!(n, nofree))
+        let n = unsafe { sys::virNWFilterGetName(self.as_ptr()) };
+        if n.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { c_chars_to_string!(n, nofree) })
     }
 
     pub fn get_uuid_string(&self) -> Result<String, Error> {
-        unsafe {
-            let mut uuid: [libc::c_char; 37] = [0; 37];
-            if sys::virNWFilterGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(c_chars_to_string!(uuid.as_ptr(), nofree))
+        let mut uuid: [libc::c_char; 37] = [0; 37];
+        let ret = unsafe { sys::virNWFilterGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { c_chars_to_string!(uuid.as_ptr(), nofree) })
     }
 
     pub fn get_xml_desc(&self, flags: u32) -> Result<String, Error> {
-        unsafe {
-            let xml = sys::virNWFilterGetXMLDesc(self.as_ptr(), flags as libc::c_uint);
-            if xml.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(c_chars_to_string!(xml))
+        let xml = unsafe { sys::virNWFilterGetXMLDesc(self.as_ptr(), flags as libc::c_uint) };
+        if xml.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { c_chars_to_string!(xml) })
     }
 
     pub fn define_xml(conn: &Connect, xml: &str) -> Result<NWFilter, Error> {
-        unsafe {
-            let xml_buf = CString::new(xml).unwrap();
-            let ptr = sys::virNWFilterDefineXML(conn.as_ptr(), xml_buf.as_ptr());
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(NWFilter::from_ptr(ptr))
+        let xml_buf = CString::new(xml).unwrap();
+        let ptr = unsafe { sys::virNWFilterDefineXML(conn.as_ptr(), xml_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { NWFilter::from_ptr(ptr) })
     }
 
     pub fn undefine(&self) -> Result<(), Error> {
-        unsafe {
-            if sys::virNWFilterUndefine(self.as_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(())
+        let ret = unsafe { sys::virNWFilterUndefine(self.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(())
     }
 
     pub fn free(&mut self) -> Result<(), Error> {
-        unsafe {
-            if sys::virNWFilterFree(self.as_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-            self.ptr = None;
-            Ok(())
+        let ret = unsafe { sys::virNWFilterFree(self.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        self.ptr = None;
+        Ok(())
     }
 }
