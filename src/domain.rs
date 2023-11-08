@@ -399,45 +399,37 @@ impl Domain {
     }
 
     pub fn get_connect(&self) -> Result<Connect, Error> {
-        unsafe {
-            let ptr = sys::virDomainGetConnect(self.as_ptr());
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(Connect::from_ptr(ptr))
+        let ptr = unsafe { sys::virDomainGetConnect(self.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { Connect::from_ptr(ptr) })
     }
 
     pub fn lookup_by_id(conn: &Connect, id: u32) -> Result<Domain, Error> {
-        unsafe {
-            let ptr = sys::virDomainLookupByID(conn.as_ptr(), id as libc::c_int);
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(Domain::from_ptr(ptr))
+        let ptr = unsafe { sys::virDomainLookupByID(conn.as_ptr(), id as libc::c_int) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { Domain::from_ptr(ptr) })
     }
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<Domain, Error> {
-        unsafe {
-            let id_buf = CString::new(id).unwrap();
-            let ptr = sys::virDomainLookupByName(conn.as_ptr(), id_buf.as_ptr());
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(Domain::from_ptr(ptr))
+        let id_buf = CString::new(id).unwrap();
+        let ptr = unsafe { sys::virDomainLookupByName(conn.as_ptr(), id_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { Domain::from_ptr(ptr) })
     }
 
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Domain, Error> {
-        unsafe {
-            let uuid_buf = CString::new(uuid).unwrap();
-            let ptr = sys::virDomainLookupByUUIDString(conn.as_ptr(), uuid_buf.as_ptr());
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(Domain::from_ptr(ptr))
+        let uuid_buf = CString::new(uuid).unwrap();
+        let ptr = unsafe { sys::virDomainLookupByUUIDString(conn.as_ptr(), uuid_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { Domain::from_ptr(ptr) })
     }
 
     /// Extracts domain state.
@@ -445,72 +437,61 @@ impl Domain {
     /// Each state can be accompanied with a reason (if known) which
     /// led to the state.
     pub fn get_state(&self) -> Result<(sys::virDomainState, i32), Error> {
-        unsafe {
-            let mut state: libc::c_int = -1;
-            let mut reason: libc::c_int = -1;
-            let ret = sys::virDomainGetState(self.as_ptr(), &mut state, &mut reason, 0);
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok((state as sys::virDomainState, reason))
+        let mut state: libc::c_int = -1;
+        let mut reason: libc::c_int = -1;
+        let ret = unsafe { sys::virDomainGetState(self.as_ptr(), &mut state, &mut reason, 0) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok((state as sys::virDomainState, reason))
     }
 
     /// Get the public name of the domain.
     pub fn get_name(&self) -> Result<String, Error> {
-        unsafe {
-            let n = sys::virDomainGetName(self.as_ptr());
-            if n.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(c_chars_to_string!(n, nofree))
+        let n = unsafe { sys::virDomainGetName(self.as_ptr()) };
+        if n.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { c_chars_to_string!(n, nofree) })
     }
 
     /// Get the type of domain operating system.
     pub fn get_os_type(&self) -> Result<String, Error> {
-        unsafe {
-            let n = sys::virDomainGetOSType(self.as_ptr());
-            if n.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(c_chars_to_string!(n))
+        let n = unsafe { sys::virDomainGetOSType(self.as_ptr()) };
+        if n.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { c_chars_to_string!(n) })
     }
 
     /// Get the hostname for that domain.
     pub fn get_hostname(&self, flags: u32) -> Result<String, Error> {
-        unsafe {
-            let n = sys::virDomainGetHostname(self.as_ptr(), flags as libc::c_uint);
-            if n.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(c_chars_to_string!(n))
+        let n = unsafe { sys::virDomainGetHostname(self.as_ptr(), flags as libc::c_uint) };
+        if n.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { c_chars_to_string!(n) })
     }
 
     /// Get the UUID for a domain as string.
     ///
     /// For more information about UUID see RFC4122.
     pub fn get_uuid_string(&self) -> Result<String, Error> {
-        unsafe {
-            let mut uuid: [libc::c_char; 37] = [0; 37];
-            if sys::virDomainGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(c_chars_to_string!(uuid.as_ptr(), nofree))
+        let mut uuid: [libc::c_char; 37] = [0; 37];
+        let ret = unsafe { sys::virDomainGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { c_chars_to_string!(uuid.as_ptr(), nofree) })
     }
 
     /// Get the hypervisor ID number for the domain
     pub fn get_id(&self) -> Option<u32> {
-        unsafe {
-            let ret = sys::virDomainGetID(self.as_ptr());
-            if ret as i32 == -1 {
-                return None;
-            }
-            Some(ret)
+        let ret = unsafe { sys::virDomainGetID(self.as_ptr()) };
+        if ret as i32 == -1 {
+            return None;
         }
+        Some(ret)
     }
 
     /// Provide an XML description of the domain. The description may
@@ -518,13 +499,11 @@ impl Domain {
     ///
     /// [`create_xml()`]: Domain::create_xml
     pub fn get_xml_desc(&self, flags: sys::virDomainCreateFlags) -> Result<String, Error> {
-        unsafe {
-            let xml = sys::virDomainGetXMLDesc(self.as_ptr(), flags);
-            if xml.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(c_chars_to_string!(xml))
+        let xml = unsafe { sys::virDomainGetXMLDesc(self.as_ptr(), flags) };
+        if xml.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { c_chars_to_string!(xml) })
     }
 
     /// Launch a defined domain. If the call succeeds the domain moves
@@ -534,39 +513,33 @@ impl Domain {
     ///
     /// [`create_with_flags()`]: Domain::create_with_flags
     pub fn create(&self) -> Result<u32, Error> {
-        unsafe {
-            let ret = sys::virDomainCreate(self.as_ptr());
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+        let ret = unsafe { sys::virDomainCreate(self.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     /// Launch a defined domain. If the call succeeds the domain moves
     /// from the defined to the running domains pools.
     pub fn create_with_flags(&self, flags: sys::virDomainCreateFlags) -> Result<u32, Error> {
-        unsafe {
-            let res = sys::virDomainCreateWithFlags(self.as_ptr(), flags as libc::c_uint);
-            if res == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(res as u32)
+        let res = unsafe { sys::virDomainCreateWithFlags(self.as_ptr(), flags as libc::c_uint) };
+        if res == -1 {
+            return Err(Error::last_error());
         }
+        Ok(res as u32)
     }
 
     /// Extract information about a domain. Note that if the
     /// connection used to get the domain is limited only a partial
     /// set of the information can be extracted.
     pub fn get_info(&self) -> Result<DomainInfo, Error> {
-        unsafe {
-            let mut pinfo = mem::MaybeUninit::uninit();
-            let res = sys::virDomainGetInfo(self.as_ptr(), pinfo.as_mut_ptr());
-            if res == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(DomainInfo::from_ptr(&mut pinfo.assume_init()))
+        let mut pinfo = mem::MaybeUninit::uninit();
+        let res = unsafe { sys::virDomainGetInfo(self.as_ptr(), pinfo.as_mut_ptr()) };
+        if res == -1 {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { DomainInfo::from_ptr(&mut pinfo.assume_init()) })
     }
 
     /// Launch a new guest domain, based on an XML description similar
@@ -585,15 +558,14 @@ impl Domain {
         xml: &str,
         flags: sys::virDomainCreateFlags,
     ) -> Result<Domain, Error> {
-        unsafe {
-            let xml_buf = CString::new(xml).unwrap();
-            let ptr =
-                sys::virDomainCreateXML(conn.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint);
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(Domain::from_ptr(ptr))
+        let xml_buf = CString::new(xml).unwrap();
+        let ptr = unsafe {
+            sys::virDomainCreateXML(conn.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { Domain::from_ptr(ptr) })
     }
 
     /// Define a domain, but does not start it.
@@ -610,14 +582,12 @@ impl Domain {
     ///
     /// [`undefine()`]: Domain::undefine
     pub fn define_xml(conn: &Connect, xml: &str) -> Result<Domain, Error> {
-        unsafe {
-            let xml_buf = CString::new(xml).unwrap();
-            let ptr = sys::virDomainDefineXML(conn.as_ptr(), xml_buf.as_ptr());
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(Domain::from_ptr(ptr))
+        let xml_buf = CString::new(xml).unwrap();
+        let ptr = unsafe { sys::virDomainDefineXML(conn.as_ptr(), xml_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { Domain::from_ptr(ptr) })
     }
 
     /// Define a domain, but does not start it.
@@ -638,18 +608,14 @@ impl Domain {
         xml: &str,
         flags: sys::virDomainDefineFlags,
     ) -> Result<Domain, Error> {
-        unsafe {
-            let xml_buf = CString::new(xml).unwrap();
-            let ptr = sys::virDomainDefineXMLFlags(
-                conn.as_ptr(),
-                xml_buf.as_ptr(),
-                flags as libc::c_uint,
-            );
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(Domain::from_ptr(ptr))
+        let xml_buf = CString::new(xml).unwrap();
+        let ptr = unsafe {
+            sys::virDomainDefineXMLFlags(conn.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { Domain::from_ptr(ptr) })
     }
 
     /// Destroy the domain. The running instance is shutdown if not
@@ -657,12 +623,11 @@ impl Domain {
     /// the hypervisor. This does not free the associated virDomainPtr
     /// object. This function may require privileged access.
     pub fn destroy(&self) -> Result<(), Error> {
-        unsafe {
-            if sys::virDomainDestroy(self.as_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(())
+        let ret = unsafe { sys::virDomainDestroy(self.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(())
     }
 
     /// Reset a domain immediately without any guest OS shutdown.
@@ -673,13 +638,11 @@ impl Domain {
     /// Note that there is a risk of data loss caused by reset without
     /// any guest OS shutdown.
     pub fn reset(&self) -> Result<u32, Error> {
-        unsafe {
-            let ret = sys::virDomainReset(self.as_ptr(), 0);
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+        let ret = unsafe { sys::virDomainReset(self.as_ptr(), 0) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     /// Destroy the domain. The running instance is shutdown if not
@@ -687,13 +650,11 @@ impl Domain {
     /// the hypervisor. This does not free the associated virDomainPtr
     /// object. This function may require privileged access.
     pub fn destroy_flags(&self, flags: sys::virDomainDestroyFlagsValues) -> Result<u32, Error> {
-        unsafe {
-            let ret = sys::virDomainDestroyFlags(self.as_ptr(), flags);
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+        let ret = unsafe { sys::virDomainDestroyFlags(self.as_ptr(), flags) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     /// Shutdown a domain
@@ -711,25 +672,22 @@ impl Domain {
     ///
     /// [`destroy()`]: Domain::destroy
     pub fn shutdown(&self) -> Result<u32, Error> {
-        unsafe {
-            let ret = sys::virDomainShutdown(self.as_ptr());
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+        let ret = unsafe { sys::virDomainShutdown(self.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     /// Reboot a domain.
     ///
     /// The domain object is still usable thereafter.
     pub fn reboot(&self, flags: sys::virDomainRebootFlagValues) -> Result<(), Error> {
-        unsafe {
-            if sys::virDomainReboot(self.as_ptr(), flags) == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(())
+        let ret = unsafe { sys::virDomainReboot(self.as_ptr(), flags) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(())
     }
 
     /// Suspend a domain.
@@ -744,13 +702,11 @@ impl Domain {
     ///
     /// [`VIR_DOMAIN_PMSUSPENDED`]: sys::VIR_DOMAIN_PMSUSPENDED
     pub fn suspend(&self) -> Result<u32, Error> {
-        unsafe {
-            let ret = sys::virDomainSuspend(self.as_ptr());
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+        let ret = unsafe { sys::virDomainSuspend(self.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     /// Resume a suspended domain.
@@ -763,24 +719,20 @@ impl Domain {
     /// [`suspend()`]: Domain::suspend
     /// [`VIR_DOMAIN_PMSUSPENDED`]: sys::VIR_DOMAIN_PMSUSPENDED
     pub fn resume(&self) -> Result<u32, Error> {
-        unsafe {
-            let ret = sys::virDomainResume(self.as_ptr());
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+        let ret = unsafe { sys::virDomainResume(self.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     /// Determine if the domain is currently running.
     pub fn is_active(&self) -> Result<bool, Error> {
-        unsafe {
-            let ret = sys::virDomainIsActive(self.as_ptr());
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret == 1)
+        let ret = unsafe { sys::virDomainIsActive(self.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret == 1)
     }
 
     /// Undefine a domain.
@@ -789,12 +741,11 @@ impl Domain {
     /// without stopping it. If the domain is inactive, the domain
     /// configuration is removed.
     pub fn undefine(&self) -> Result<(), Error> {
-        unsafe {
-            if sys::virDomainUndefine(self.as_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(())
+        let ret = unsafe { sys::virDomainUndefine(self.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(())
     }
 
     /// Undefine a domain.
@@ -803,12 +754,11 @@ impl Domain {
     /// without stopping it. If the domain is inactive, the domain
     /// configuration is removed.
     pub fn undefine_flags(&self, flags: sys::virDomainUndefineFlagsValues) -> Result<(), Error> {
-        unsafe {
-            if sys::virDomainUndefineFlags(self.as_ptr(), flags) == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(())
+        let ret = unsafe { sys::virDomainUndefineFlags(self.as_ptr(), flags) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(())
     }
 
     /// Free the domain object.
@@ -816,84 +766,69 @@ impl Domain {
     /// The running instance is kept alive. The data structure is
     /// freed and should not be used thereafter.
     pub fn free(&mut self) -> Result<(), Error> {
-        unsafe {
-            if sys::virDomainFree(self.as_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-            self.ptr = None;
-            Ok(())
+        let ret = unsafe { sys::virDomainFree(self.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        self.ptr = None;
+        Ok(())
     }
 
     pub fn is_updated(&self) -> Result<bool, Error> {
-        unsafe {
-            let ret = sys::virDomainIsUpdated(self.as_ptr());
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret == 1)
+        let ret = unsafe { sys::virDomainIsUpdated(self.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret == 1)
     }
 
     pub fn get_autostart(&self) -> Result<bool, Error> {
-        unsafe {
-            let mut autostart: libc::c_int = 0;
-            let ret = sys::virDomainGetAutostart(self.as_ptr(), &mut autostart);
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(autostart == 1)
+        let mut autostart: libc::c_int = 0;
+        let ret = unsafe { sys::virDomainGetAutostart(self.as_ptr(), &mut autostart) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(autostart == 1)
     }
 
     pub fn set_autostart(&self, autostart: bool) -> Result<bool, Error> {
-        unsafe {
-            let ret = sys::virDomainSetAutostart(self.as_ptr(), autostart as libc::c_int);
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret == 1)
+        let ret = unsafe { sys::virDomainSetAutostart(self.as_ptr(), autostart as libc::c_int) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret == 1)
     }
 
     pub fn set_max_memory(&self, memory: u64) -> Result<bool, Error> {
-        unsafe {
-            let ret = sys::virDomainSetMaxMemory(self.as_ptr(), memory as libc::c_ulong);
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret == 1)
+        let ret = unsafe { sys::virDomainSetMaxMemory(self.as_ptr(), memory as libc::c_ulong) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret == 1)
     }
 
     pub fn get_max_memory(&self) -> Result<u64, Error> {
-        unsafe {
-            let ret = sys::virDomainGetMaxMemory(self.as_ptr());
-            if ret == 0 {
-                return Err(Error::last_error());
-            }
-            Ok(c_ulong_to_u64(ret))
+        let ret = unsafe { sys::virDomainGetMaxMemory(self.as_ptr()) };
+        if ret == 0 {
+            return Err(Error::last_error());
         }
+        Ok(c_ulong_to_u64(ret))
     }
 
     pub fn get_max_vcpus(&self) -> Result<u64, Error> {
-        unsafe {
-            let ret = sys::virDomainGetMaxVcpus(self.as_ptr());
-            if ret == 0 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u64)
+        let ret = unsafe { sys::virDomainGetMaxVcpus(self.as_ptr()) };
+        if ret == 0 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u64)
     }
 
     pub fn set_memory(&self, memory: u64) -> Result<bool, Error> {
-        unsafe {
-            let ret = sys::virDomainSetMemory(self.as_ptr(), memory as libc::c_ulong);
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret == 1)
+        let ret = unsafe { sys::virDomainSetMemory(self.as_ptr(), memory as libc::c_ulong) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret == 1)
     }
 
     pub fn set_memory_flags(
@@ -901,17 +836,17 @@ impl Domain {
         memory: u64,
         flags: sys::virDomainMemoryModFlags,
     ) -> Result<bool, Error> {
-        unsafe {
-            let ret = sys::virDomainSetMemoryFlags(
+        let ret = unsafe {
+            sys::virDomainSetMemoryFlags(
                 self.as_ptr(),
                 memory as libc::c_ulong,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret == 1)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret == 1)
     }
 
     pub fn set_memory_stats_period(
@@ -919,27 +854,25 @@ impl Domain {
         period: i32,
         flags: sys::virDomainMemoryModFlags,
     ) -> Result<bool, Error> {
-        unsafe {
-            let ret = sys::virDomainSetMemoryStatsPeriod(
+        let ret = unsafe {
+            sys::virDomainSetMemoryStatsPeriod(
                 self.as_ptr(),
                 period as libc::c_int,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret == 1)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret == 1)
     }
 
     pub fn set_vcpus(&self, vcpus: u32) -> Result<bool, Error> {
-        unsafe {
-            let ret = sys::virDomainSetVcpus(self.as_ptr(), vcpus as libc::c_uint);
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret == 1)
+        let ret = unsafe { sys::virDomainSetVcpus(self.as_ptr(), vcpus as libc::c_uint) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret == 1)
     }
 
     pub fn set_vcpus_flags(
@@ -947,28 +880,22 @@ impl Domain {
         vcpus: u32,
         flags: sys::virDomainVcpuFlags,
     ) -> Result<bool, Error> {
-        unsafe {
-            let ret = sys::virDomainSetVcpusFlags(
-                self.as_ptr(),
-                vcpus as libc::c_uint,
-                flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret == 1)
+        let ret = unsafe {
+            sys::virDomainSetVcpusFlags(self.as_ptr(), vcpus as libc::c_uint, flags as libc::c_uint)
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret == 1)
     }
 
     pub fn domain_restore(conn: &Connect, path: &str) -> Result<(), Error> {
-        unsafe {
-            let path_buf = CString::new(path).unwrap();
-            let ret = sys::virDomainRestore(conn.as_ptr(), path_buf.as_ptr());
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(())
+        let path_buf = CString::new(path).unwrap();
+        let ret = unsafe { sys::virDomainRestore(conn.as_ptr(), path_buf.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(())
     }
 
     pub fn domain_restore_flags(
@@ -977,271 +904,260 @@ impl Domain {
         dxml: Option<&str>,
         flags: sys::virDomainSaveRestoreFlags,
     ) -> Result<(), Error> {
-        unsafe {
-            let path_buf = CString::new(path).unwrap();
-            let dxml_buf = some_string_to_cstring!(dxml);
-            let ret = sys::virDomainRestoreFlags(
+        let path_buf = CString::new(path).unwrap();
+        let dxml_buf = some_string_to_cstring!(dxml);
+        let ret = unsafe {
+            sys::virDomainRestoreFlags(
                 conn.as_ptr(),
                 path_buf.as_ptr(),
                 some_cstring_to_c_chars!(dxml_buf),
                 flags,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(())
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(())
     }
 
     pub fn get_vcpus_flags(&self, flags: sys::virDomainVcpuFlags) -> Result<u32, Error> {
-        unsafe {
-            let ret = sys::virDomainGetVcpusFlags(self.as_ptr(), flags as libc::c_uint);
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+        let ret = unsafe { sys::virDomainGetVcpusFlags(self.as_ptr(), flags as libc::c_uint) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn migrate_set_max_speed(&self, bandwidth: u64, flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let ret = sys::virDomainMigrateSetMaxSpeed(
+        let ret = unsafe {
+            sys::virDomainMigrateSetMaxSpeed(
                 self.as_ptr(),
                 bandwidth as libc::c_ulong,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn migrate_get_max_speed(&self, flags: u32) -> Result<u64, Error> {
-        unsafe {
-            let mut bandwidth: libc::c_ulong = 0;
-            let ret = sys::virDomainMigrateGetMaxSpeed(
-                self.as_ptr(),
-                &mut bandwidth,
-                flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(c_ulong_to_u64(bandwidth))
+        let mut bandwidth: libc::c_ulong = 0;
+        let ret = unsafe {
+            sys::virDomainMigrateGetMaxSpeed(self.as_ptr(), &mut bandwidth, flags as libc::c_uint)
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(c_ulong_to_u64(bandwidth))
     }
 
     pub fn migrate_set_compression_cache(&self, size: u64, flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let ret = sys::virDomainMigrateSetCompressionCache(
+        let ret = unsafe {
+            sys::virDomainMigrateSetCompressionCache(
                 self.as_ptr(),
                 size as libc::c_ulong,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn migrate_get_compression_cache(&self, flags: u32) -> Result<u64, Error> {
-        unsafe {
-            let mut size: libc::c_ulong = 0;
-            let ret = sys::virDomainMigrateGetCompressionCache(
+        let mut size: libc::c_ulong = 0;
+        let ret = unsafe {
+            sys::virDomainMigrateGetCompressionCache(
                 self.as_ptr(),
                 &mut size,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(size)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(size)
     }
 
     pub fn migrate_set_max_downtime(&self, downtime: u64, flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let ret = sys::virDomainMigrateSetMaxDowntime(
+        let ret = unsafe {
+            sys::virDomainMigrateSetMaxDowntime(
                 self.as_ptr(),
                 downtime as libc::c_ulong,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn set_time(&self, seconds: i64, nseconds: i32, flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let ret = sys::virDomainSetTime(
+        let ret = unsafe {
+            sys::virDomainSetTime(
                 self.as_ptr(),
                 seconds as libc::c_long,
                 nseconds as libc::c_uint,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn get_time(&self, flags: u32) -> Result<(i64, i32), Error> {
-        unsafe {
-            let mut seconds: libc::c_long = 0;
-            let mut nseconds: libc::c_uint = 0;
-            let ret = sys::virDomainGetTime(
+        let mut seconds: libc::c_long = 0;
+        let mut nseconds: libc::c_uint = 0;
+        let ret = unsafe {
+            sys::virDomainGetTime(
                 self.as_ptr(),
                 &mut seconds,
                 &mut nseconds,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok((seconds, nseconds as i32))
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok((seconds, nseconds as i32))
     }
 
     pub fn get_block_info(&self, disk: &str, flags: u32) -> Result<BlockInfo, Error> {
-        unsafe {
-            let mut pinfo = mem::MaybeUninit::uninit();
-            let disk_buf = CString::new(disk).unwrap();
-            let ret = sys::virDomainGetBlockInfo(
+        let mut pinfo = mem::MaybeUninit::uninit();
+        let disk_buf = CString::new(disk).unwrap();
+        let ret = unsafe {
+            sys::virDomainGetBlockInfo(
                 self.as_ptr(),
                 disk_buf.as_ptr(),
                 pinfo.as_mut_ptr(),
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(BlockInfo::from_ptr(&mut pinfo.assume_init()))
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { BlockInfo::from_ptr(&mut pinfo.assume_init()) })
     }
 
     pub fn pin_vcpu(&self, vcpu: u32, cpumap: &[u8]) -> Result<u32, Error> {
-        unsafe {
-            let ret = sys::virDomainPinVcpu(
+        let ret = unsafe {
+            sys::virDomainPinVcpu(
                 self.as_ptr(),
                 vcpu as libc::c_uint,
                 cpumap.as_ptr() as *mut _,
                 cpumap.len() as libc::c_int,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn pin_vcpu_flags(&self, vcpu: u32, cpumap: &[u8], flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let ret = sys::virDomainPinVcpuFlags(
+        let ret = unsafe {
+            sys::virDomainPinVcpuFlags(
                 self.as_ptr(),
                 vcpu as libc::c_uint,
                 cpumap.as_ptr() as *mut _,
                 cpumap.len() as libc::c_int,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn pin_emulator(&self, cpumap: &[u8], flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let ret = sys::virDomainPinEmulator(
+        let ret = unsafe {
+            sys::virDomainPinEmulator(
                 self.as_ptr(),
                 cpumap.as_ptr() as *mut _,
                 cpumap.len() as libc::c_int,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn rename(&self, new_name: &str, flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let new_name_buf = CString::new(new_name).unwrap();
-            let ret =
-                sys::virDomainRename(self.as_ptr(), new_name_buf.as_ptr(), flags as libc::c_uint);
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+        let new_name_buf = CString::new(new_name).unwrap();
+        let ret = unsafe {
+            sys::virDomainRename(self.as_ptr(), new_name_buf.as_ptr(), flags as libc::c_uint)
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn set_user_password(&self, user: &str, password: &str, flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let user_buf = CString::new(user).unwrap();
-            let password_buf = CString::new(password).unwrap();
-            let ret = sys::virDomainSetUserPassword(
+        let user_buf = CString::new(user).unwrap();
+        let password_buf = CString::new(password).unwrap();
+        let ret = unsafe {
+            sys::virDomainSetUserPassword(
                 self.as_ptr(),
                 user_buf.as_ptr(),
                 password_buf.as_ptr(),
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn set_block_threshold(&self, dev: &str, threshold: u64, flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let dev_buf = CString::new(dev).unwrap();
-            let ret = sys::virDomainSetBlockThreshold(
+        let dev_buf = CString::new(dev).unwrap();
+        let ret = unsafe {
+            sys::virDomainSetBlockThreshold(
                 self.as_ptr(),
                 dev_buf.as_ptr(),
                 threshold as libc::c_ulonglong,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn open_graphics(&self, idx: u32, fd: i32, flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let ret = sys::virDomainOpenGraphics(
+        let ret = unsafe {
+            sys::virDomainOpenGraphics(
                 self.as_ptr(),
                 idx as libc::c_uint,
                 fd as libc::c_int,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn open_graphics_fd(&self, idx: u32, flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let ret = sys::virDomainOpenGraphicsFD(
-                self.as_ptr(),
-                idx as libc::c_uint,
-                flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+        let ret = unsafe {
+            sys::virDomainOpenGraphicsFD(self.as_ptr(), idx as libc::c_uint, flags as libc::c_uint)
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn open_channel(
@@ -1250,19 +1166,19 @@ impl Domain {
         stream: &Stream,
         flags: u32,
     ) -> Result<u32, Error> {
-        unsafe {
-            let name_buf = some_string_to_cstring!(name);
-            let ret = sys::virDomainOpenChannel(
+        let name_buf = some_string_to_cstring!(name);
+        let ret = unsafe {
+            sys::virDomainOpenChannel(
                 self.as_ptr(),
                 some_cstring_to_c_chars!(name_buf),
                 stream.as_ptr(),
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn open_console(
@@ -1271,19 +1187,19 @@ impl Domain {
         stream: &Stream,
         flags: u32,
     ) -> Result<u32, Error> {
-        unsafe {
-            let name_buf = some_string_to_cstring!(name);
-            let ret = sys::virDomainOpenConsole(
+        let name_buf = some_string_to_cstring!(name);
+        let ret = unsafe {
+            sys::virDomainOpenConsole(
                 self.as_ptr(),
                 some_cstring_to_c_chars!(name_buf),
                 stream.as_ptr(),
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn interface_addresses(
@@ -1291,64 +1207,63 @@ impl Domain {
         source: sys::virDomainInterfaceAddressesSource,
         flags: u32,
     ) -> Result<Vec<Interface>, Error> {
-        unsafe {
-            let mut addresses: *mut sys::virDomainInterfacePtr = ptr::null_mut();
-            let size =
-                sys::virDomainInterfaceAddresses(self.as_ptr(), &mut addresses, source, flags);
-            if size == -1 {
-                return Err(Error::last_error());
-            }
-
-            let mut array: Vec<Interface> = Vec::new();
-            for x in 0..size as isize {
-                array.push(Interface::from_ptr(*addresses.offset(x)));
-            }
-            libc::free(addresses as *mut libc::c_void);
-
-            Ok(array)
+        let mut addresses: *mut sys::virDomainInterfacePtr = ptr::null_mut();
+        let size = unsafe {
+            sys::virDomainInterfaceAddresses(self.as_ptr(), &mut addresses, source, flags)
+        };
+        if size == -1 {
+            return Err(Error::last_error());
         }
+
+        let mut array: Vec<Interface> = Vec::new();
+        for x in 0..size as isize {
+            array.push(unsafe { Interface::from_ptr(*addresses.offset(x)) });
+        }
+        unsafe { libc::free(addresses as *mut libc::c_void) };
+
+        Ok(array)
     }
 
     pub fn interface_stats(&self, path: &str) -> Result<InterfaceStats, Error> {
-        unsafe {
-            let mut pinfo = mem::MaybeUninit::uninit();
-            let path_buf = CString::new(path).unwrap();
-            let ret = sys::virDomainInterfaceStats(
+        let mut pinfo = mem::MaybeUninit::uninit();
+        let path_buf = CString::new(path).unwrap();
+        let ret = unsafe {
+            sys::virDomainInterfaceStats(
                 self.as_ptr(),
                 path_buf.as_ptr(),
                 pinfo.as_mut_ptr(),
                 mem::size_of::<sys::virDomainInterfaceStatsStruct>(),
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(InterfaceStats::from_ptr(&mut pinfo.assume_init()))
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { InterfaceStats::from_ptr(&mut pinfo.assume_init()) })
     }
 
     pub fn memory_stats(&self, flags: u32) -> Result<Vec<MemoryStat>, Error> {
-        unsafe {
-            let mut pinfo: Vec<sys::virDomainMemoryStatStruct> =
-                Vec::with_capacity(sys::VIR_DOMAIN_MEMORY_STAT_NR as usize);
-            let ret = sys::virDomainMemoryStats(
+        let mut pinfo: Vec<sys::virDomainMemoryStatStruct> =
+            Vec::with_capacity(sys::VIR_DOMAIN_MEMORY_STAT_NR as usize);
+        let ret = unsafe {
+            sys::virDomainMemoryStats(
                 self.as_ptr(),
                 pinfo.as_mut_ptr(),
                 sys::VIR_DOMAIN_MEMORY_STAT_NR,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            // low-level operation that is confirmed by return from
-            // libvirt.
-            pinfo.set_len(ret as usize);
-
-            let mut stats: Vec<MemoryStat> = Vec::with_capacity(ret as usize);
-            for x in pinfo.iter().take(ret as usize) {
-                stats.push(MemoryStat::from_ptr(x));
-            }
-            Ok(stats)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        // low-level operation that is confirmed by return from
+        // libvirt.
+        unsafe { pinfo.set_len(ret as usize) };
+
+        let mut stats: Vec<MemoryStat> = Vec::with_capacity(ret as usize);
+        for x in pinfo.iter().take(ret as usize) {
+            stats.push(unsafe { MemoryStat::from_ptr(x) });
+        }
+        Ok(stats)
     }
 
     pub fn save_image_get_xml_desc(
@@ -1356,18 +1271,18 @@ impl Domain {
         file: &str,
         flags: u32,
     ) -> Result<String, Error> {
-        unsafe {
-            let file_buf = CString::new(file).unwrap();
-            let ptr = sys::virDomainSaveImageGetXMLDesc(
+        let file_buf = CString::new(file).unwrap();
+        let ptr = unsafe {
+            sys::virDomainSaveImageGetXMLDesc(
                 conn.as_ptr(),
                 file_buf.as_ptr(),
                 flags as libc::c_uint,
-            );
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(c_chars_to_string!(ptr))
+            )
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { c_chars_to_string!(ptr) })
     }
 
     pub fn save_image_define_xml(
@@ -1376,144 +1291,123 @@ impl Domain {
         dxml: &str,
         flags: u32,
     ) -> Result<u32, Error> {
-        unsafe {
-            let file_buf = CString::new(file).unwrap();
-            let dxml_buf = CString::new(dxml).unwrap();
-            let ret = sys::virDomainSaveImageDefineXML(
+        let file_buf = CString::new(file).unwrap();
+        let dxml_buf = CString::new(dxml).unwrap();
+        let ret = unsafe {
+            sys::virDomainSaveImageDefineXML(
                 conn.as_ptr(),
                 file_buf.as_ptr(),
                 dxml_buf.as_ptr(),
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn attach_device(&self, xml: &str) -> Result<u32, Error> {
-        unsafe {
-            let xml_buf = CString::new(xml).unwrap();
-            let ret = sys::virDomainAttachDevice(self.as_ptr(), xml_buf.as_ptr());
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+        let xml_buf = CString::new(xml).unwrap();
+        let ret = unsafe { sys::virDomainAttachDevice(self.as_ptr(), xml_buf.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn attach_device_flags(&self, xml: &str, flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let xml_buf = CString::new(xml).unwrap();
-            let ret = sys::virDomainAttachDeviceFlags(
-                self.as_ptr(),
-                xml_buf.as_ptr(),
-                flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+        let xml_buf = CString::new(xml).unwrap();
+        let ret = unsafe {
+            sys::virDomainAttachDeviceFlags(self.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn detach_device(&self, xml: &str) -> Result<u32, Error> {
-        unsafe {
-            let xml_buf = CString::new(xml).unwrap();
-            let ret = sys::virDomainDetachDevice(self.as_ptr(), xml_buf.as_ptr());
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+        let xml_buf = CString::new(xml).unwrap();
+        let ret = unsafe { sys::virDomainDetachDevice(self.as_ptr(), xml_buf.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn detach_device_flags(&self, xml: &str, flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let xml_buf = CString::new(xml).unwrap();
-            let ret = sys::virDomainDetachDeviceFlags(
-                self.as_ptr(),
-                xml_buf.as_ptr(),
-                flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+        let xml_buf = CString::new(xml).unwrap();
+        let ret = unsafe {
+            sys::virDomainDetachDeviceFlags(self.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn update_device_flags(&self, xml: &str, flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let xml_buf = CString::new(xml).unwrap();
-            let ret = sys::virDomainUpdateDeviceFlags(
-                self.as_ptr(),
-                xml_buf.as_ptr(),
-                flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+        let xml_buf = CString::new(xml).unwrap();
+        let ret = unsafe {
+            sys::virDomainUpdateDeviceFlags(self.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn managed_save(&self, flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let ret = sys::virDomainManagedSave(self.as_ptr(), flags as libc::c_uint);
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+        let ret = unsafe { sys::virDomainManagedSave(self.as_ptr(), flags as libc::c_uint) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn has_managed_save(&self, flags: u32) -> Result<bool, Error> {
-        unsafe {
-            let ret = sys::virDomainHasManagedSaveImage(self.as_ptr(), flags as libc::c_uint);
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret == 1)
+        let ret =
+            unsafe { sys::virDomainHasManagedSaveImage(self.as_ptr(), flags as libc::c_uint) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret == 1)
     }
 
     pub fn managed_save_remove(&self, flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let ret = sys::virDomainManagedSaveRemove(self.as_ptr(), flags as libc::c_uint);
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+        let ret = unsafe { sys::virDomainManagedSaveRemove(self.as_ptr(), flags as libc::c_uint) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn core_dump(&self, to: &str, flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let to_buf = CString::new(to).unwrap();
-            let ret = sys::virDomainCoreDump(self.as_ptr(), to_buf.as_ptr(), flags as libc::c_uint);
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+        let to_buf = CString::new(to).unwrap();
+        let ret = unsafe {
+            sys::virDomainCoreDump(self.as_ptr(), to_buf.as_ptr(), flags as libc::c_uint)
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn core_dump_with_format(&self, to: &str, format: u32, flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let to_buf = CString::new(to).unwrap();
-            let ret = sys::virDomainCoreDumpWithFormat(
+        let to_buf = CString::new(to).unwrap();
+        let ret = unsafe {
+            sys::virDomainCoreDumpWithFormat(
                 self.as_ptr(),
                 to_buf.as_ptr(),
                 format as libc::c_uint,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn set_metadata(
@@ -1524,82 +1418,84 @@ impl Domain {
         uri: Option<&str>,
         flags: u32,
     ) -> Result<u32, Error> {
-        unsafe {
-            let metadata_buf = some_string_to_cstring!(metadata);
-            let key_buf = some_string_to_cstring!(key);
-            let uri_buf = some_string_to_cstring!(uri);
-            let ret = sys::virDomainSetMetadata(
+        let metadata_buf = some_string_to_cstring!(metadata);
+        let key_buf = some_string_to_cstring!(key);
+        let uri_buf = some_string_to_cstring!(uri);
+        let ret = unsafe {
+            sys::virDomainSetMetadata(
                 self.as_ptr(),
                 kind as libc::c_int,
                 some_cstring_to_c_chars!(metadata_buf),
                 some_cstring_to_c_chars!(key_buf),
                 some_cstring_to_c_chars!(uri_buf),
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn get_metadata(&self, kind: i32, uri: Option<&str>, flags: u32) -> Result<String, Error> {
-        unsafe {
-            let uri_buf = some_string_to_cstring!(uri);
-            let n = sys::virDomainGetMetadata(
+        let uri_buf = some_string_to_cstring!(uri);
+        let n = unsafe {
+            sys::virDomainGetMetadata(
                 self.as_ptr(),
                 kind as libc::c_int,
                 some_cstring_to_c_chars!(uri_buf),
                 flags as libc::c_uint,
-            );
-            if n.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(c_chars_to_string!(n))
+            )
+        };
+        if n.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { c_chars_to_string!(n) })
     }
 
     pub fn block_resize(&self, disk: &str, size: u64, flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let disk_buf = CString::new(disk).unwrap();
-            let ret = sys::virDomainBlockResize(
+        let disk_buf = CString::new(disk).unwrap();
+        let ret = unsafe {
+            sys::virDomainBlockResize(
                 self.as_ptr(),
                 disk_buf.as_ptr(),
                 size as libc::c_ulonglong,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn get_memory_parameters(&self, flags: u32) -> Result<MemoryParameters, Error> {
-        unsafe {
-            let mut nparams: libc::c_int = 0;
-            let ret = sys::virDomainGetMemoryParameters(
+        let mut nparams: libc::c_int = 0;
+        let ret = unsafe {
+            sys::virDomainGetMemoryParameters(
                 self.as_ptr(),
                 ptr::null_mut(),
                 &mut nparams,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            let mut params: Vec<sys::virTypedParameter> = Vec::with_capacity(nparams as usize);
-            let ret = sys::virDomainGetMemoryParameters(
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
+        }
+        let mut params: Vec<sys::virTypedParameter> = Vec::with_capacity(nparams as usize);
+        let ret = unsafe {
+            sys::virDomainGetMemoryParameters(
                 self.as_ptr(),
                 &mut params[0],
                 &mut nparams,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            params.set_len(nparams as usize);
-            Ok(MemoryParameters::from_vec(params))
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        unsafe { params.set_len(nparams as usize) };
+        Ok(MemoryParameters::from_vec(params))
     }
 
     pub fn set_memory_parameters(
@@ -1607,56 +1503,56 @@ impl Domain {
         params: MemoryParameters,
         flags: u32,
     ) -> Result<u32, Error> {
-        unsafe {
-            let mut cparams: Vec<sys::virTypedParameter> = Vec::new();
-            if params.hard_limit.is_some() {
-                cparams.push(sys::virTypedParameter {
-                    field: to_arr("hard_limit\0"),
-                    type_: sys::VIR_TYPED_PARAM_ULLONG as libc::c_int,
-                    value: sys::_virTypedParameterValue {
-                        ul: params.hard_limit.unwrap(),
-                    },
-                })
-            }
-            if params.soft_limit.is_some() {
-                cparams.push(sys::virTypedParameter {
-                    field: to_arr("soft_limit\0"),
-                    type_: sys::VIR_TYPED_PARAM_ULLONG as libc::c_int,
-                    value: sys::_virTypedParameterValue {
-                        ul: params.soft_limit.unwrap(),
-                    },
-                })
-            }
-            if params.min_guarantee.is_some() {
-                cparams.push(sys::virTypedParameter {
-                    field: to_arr("min_guarantee\0"),
-                    type_: sys::VIR_TYPED_PARAM_ULLONG as libc::c_int,
-                    value: sys::_virTypedParameterValue {
-                        ul: params.min_guarantee.unwrap(),
-                    },
-                })
-            }
-            if params.swap_hard_limit.is_some() {
-                cparams.push(sys::virTypedParameter {
-                    field: to_arr("swap_hard_limit\0"),
-                    type_: sys::VIR_TYPED_PARAM_ULLONG as libc::c_int,
-                    value: sys::_virTypedParameterValue {
-                        ul: params.swap_hard_limit.unwrap(),
-                    },
-                })
-            }
+        let mut cparams: Vec<sys::virTypedParameter> = Vec::new();
+        if params.hard_limit.is_some() {
+            cparams.push(sys::virTypedParameter {
+                field: to_arr("hard_limit\0"),
+                type_: sys::VIR_TYPED_PARAM_ULLONG as libc::c_int,
+                value: sys::_virTypedParameterValue {
+                    ul: params.hard_limit.unwrap(),
+                },
+            })
+        }
+        if params.soft_limit.is_some() {
+            cparams.push(sys::virTypedParameter {
+                field: to_arr("soft_limit\0"),
+                type_: sys::VIR_TYPED_PARAM_ULLONG as libc::c_int,
+                value: sys::_virTypedParameterValue {
+                    ul: params.soft_limit.unwrap(),
+                },
+            })
+        }
+        if params.min_guarantee.is_some() {
+            cparams.push(sys::virTypedParameter {
+                field: to_arr("min_guarantee\0"),
+                type_: sys::VIR_TYPED_PARAM_ULLONG as libc::c_int,
+                value: sys::_virTypedParameterValue {
+                    ul: params.min_guarantee.unwrap(),
+                },
+            })
+        }
+        if params.swap_hard_limit.is_some() {
+            cparams.push(sys::virTypedParameter {
+                field: to_arr("swap_hard_limit\0"),
+                type_: sys::VIR_TYPED_PARAM_ULLONG as libc::c_int,
+                value: sys::_virTypedParameterValue {
+                    ul: params.swap_hard_limit.unwrap(),
+                },
+            })
+        }
 
-            let ret = sys::virDomainSetMemoryParameters(
+        let ret = unsafe {
+            sys::virDomainSetMemoryParameters(
                 self.as_ptr(),
                 &mut cparams[0],
                 cparams.len() as libc::c_int,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn migrate(
@@ -1667,22 +1563,22 @@ impl Domain {
         uri: Option<&str>,
         bandwidth: u64,
     ) -> Result<Domain, Error> {
-        unsafe {
-            let dname_buf = some_string_to_cstring!(dname);
-            let uri_buf = some_string_to_cstring!(uri);
-            let ptr = sys::virDomainMigrate(
+        let dname_buf = some_string_to_cstring!(dname);
+        let uri_buf = some_string_to_cstring!(uri);
+        let ptr = unsafe {
+            sys::virDomainMigrate(
                 self.as_ptr(),
                 dconn.as_ptr(),
                 flags as libc::c_ulong,
                 some_cstring_to_c_chars!(dname_buf),
                 some_cstring_to_c_chars!(uri_buf),
                 bandwidth as libc::c_ulong,
-            );
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(Domain::from_ptr(ptr))
+            )
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { Domain::from_ptr(ptr) })
     }
 
     pub fn migrate2(
@@ -1694,11 +1590,11 @@ impl Domain {
         uri: Option<&str>,
         bandwidth: u64,
     ) -> Result<Domain, Error> {
-        unsafe {
-            let dxml_buf = some_string_to_cstring!(dxml);
-            let dname_buf = some_string_to_cstring!(dname);
-            let uri_buf = some_string_to_cstring!(uri);
-            let ptr = sys::virDomainMigrate2(
+        let dxml_buf = some_string_to_cstring!(dxml);
+        let dname_buf = some_string_to_cstring!(dname);
+        let uri_buf = some_string_to_cstring!(uri);
+        let ptr = unsafe {
+            sys::virDomainMigrate2(
                 self.as_ptr(),
                 dconn.as_ptr(),
                 some_cstring_to_c_chars!(dxml_buf),
@@ -1706,12 +1602,12 @@ impl Domain {
                 some_cstring_to_c_chars!(dname_buf),
                 some_cstring_to_c_chars!(uri_buf),
                 bandwidth as libc::c_ulong,
-            );
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(Domain::from_ptr(ptr))
+            )
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { Domain::from_ptr(ptr) })
     }
 
     pub fn migrate_to_uri(
@@ -1721,21 +1617,21 @@ impl Domain {
         dname: Option<&str>,
         bandwidth: u64,
     ) -> Result<(), Error> {
-        unsafe {
-            let duri_buf = CString::new(duri).unwrap();
-            let dname_buf = some_string_to_cstring!(dname);
-            let ret = sys::virDomainMigrateToURI(
+        let duri_buf = CString::new(duri).unwrap();
+        let dname_buf = some_string_to_cstring!(dname);
+        let ret = unsafe {
+            sys::virDomainMigrateToURI(
                 self.as_ptr(),
                 duri_buf.as_ptr(),
                 flags as libc::c_ulong,
                 some_cstring_to_c_chars!(dname_buf),
                 bandwidth as libc::c_ulong,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(())
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(())
     }
 
     pub fn migrate_to_uri2(
@@ -1747,12 +1643,12 @@ impl Domain {
         dname: Option<&str>,
         bandwidth: u64,
     ) -> Result<(), Error> {
-        unsafe {
-            let dconn_uri_buf = some_string_to_cstring!(dconn_uri);
-            let mig_uri_buf = some_string_to_cstring!(mig_uri);
-            let dxml_buf = some_string_to_cstring!(dxml);
-            let dname_buf = some_string_to_cstring!(dname);
-            let ret = sys::virDomainMigrateToURI2(
+        let dconn_uri_buf = some_string_to_cstring!(dconn_uri);
+        let mig_uri_buf = some_string_to_cstring!(mig_uri);
+        let dxml_buf = some_string_to_cstring!(dxml);
+        let dname_buf = some_string_to_cstring!(dname);
+        let ret = unsafe {
+            sys::virDomainMigrateToURI2(
                 self.as_ptr(),
                 some_cstring_to_c_chars!(dconn_uri_buf),
                 some_cstring_to_c_chars!(mig_uri_buf),
@@ -1760,122 +1656,120 @@ impl Domain {
                 flags as libc::c_ulong,
                 some_cstring_to_c_chars!(dname_buf),
                 bandwidth as libc::c_ulong,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(())
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(())
     }
 
     pub fn get_numa_parameters(&self, flags: u32) -> Result<NUMAParameters, Error> {
-        unsafe {
-            let mut nparams: libc::c_int = 0;
-            let ret = sys::virDomainGetNumaParameters(
+        let mut nparams: libc::c_int = 0;
+        let ret = unsafe {
+            sys::virDomainGetNumaParameters(
                 self.as_ptr(),
                 ptr::null_mut(),
                 &mut nparams,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            let mut params: Vec<sys::virTypedParameter> = Vec::with_capacity(nparams as usize);
-            let ret = sys::virDomainGetNumaParameters(
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
+        }
+        let mut params: Vec<sys::virTypedParameter> = Vec::with_capacity(nparams as usize);
+        let ret = unsafe {
+            sys::virDomainGetNumaParameters(
                 self.as_ptr(),
                 &mut params[0],
                 &mut nparams,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            params.set_len(nparams as usize);
-            Ok(NUMAParameters::from_vec(params))
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        unsafe { params.set_len(nparams as usize) };
+        Ok(NUMAParameters::from_vec(params))
     }
 
     pub fn set_numa_parameters(&self, params: NUMAParameters, flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let mut cparams: Vec<sys::virTypedParameter> = Vec::new();
-            if params.node_set.is_some() {
-                cparams.push(sys::virTypedParameter {
-                    field: to_arr("numa_nodeset\0"),
-                    type_: sys::VIR_TYPED_PARAM_STRING as libc::c_int,
-                    value: sys::_virTypedParameterValue {
-                        s: string_to_mut_c_chars!(params.node_set.unwrap()),
-                    },
-                })
-            }
-            if params.mode.is_some() {
-                cparams.push(sys::virTypedParameter {
-                    field: to_arr("numa_mode\0"),
-                    type_: sys::VIR_TYPED_PARAM_INT as libc::c_int,
-                    value: sys::_virTypedParameterValue {
-                        ui: params.mode.unwrap(),
-                    },
-                })
-            }
+        let mut cparams: Vec<sys::virTypedParameter> = Vec::new();
+        if params.node_set.is_some() {
+            cparams.push(sys::virTypedParameter {
+                field: to_arr("numa_nodeset\0"),
+                type_: sys::VIR_TYPED_PARAM_STRING as libc::c_int,
+                value: sys::_virTypedParameterValue {
+                    s: string_to_mut_c_chars!(params.node_set.unwrap()),
+                },
+            })
+        }
+        if params.mode.is_some() {
+            cparams.push(sys::virTypedParameter {
+                field: to_arr("numa_mode\0"),
+                type_: sys::VIR_TYPED_PARAM_INT as libc::c_int,
+                value: sys::_virTypedParameterValue {
+                    ui: params.mode.unwrap(),
+                },
+            })
+        }
 
-            let ret = sys::virDomainSetNumaParameters(
+        let ret = unsafe {
+            sys::virDomainSetNumaParameters(
                 self.as_ptr(),
                 &mut cparams[0],
                 cparams.len() as libc::c_int,
                 flags as libc::c_uint,
-            );
-            typed_params_release_c_chars!(cparams);
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+            )
+        };
+        unsafe { typed_params_release_c_chars!(cparams) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn list_all_snapshots(&self, flags: u32) -> Result<Vec<DomainSnapshot>, Error> {
-        unsafe {
-            let mut snaps: *mut sys::virDomainSnapshotPtr = ptr::null_mut();
-            let size =
-                sys::virDomainListAllSnapshots(self.as_ptr(), &mut snaps, flags as libc::c_uint);
-            if size == -1 {
-                return Err(Error::last_error());
-            }
-
-            let mut array: Vec<DomainSnapshot> = Vec::new();
-            for x in 0..size as isize {
-                array.push(DomainSnapshot::from_ptr(*snaps.offset(x)));
-            }
-            libc::free(snaps as *mut libc::c_void);
-
-            Ok(array)
+        let mut snaps: *mut sys::virDomainSnapshotPtr = ptr::null_mut();
+        let size = unsafe {
+            sys::virDomainListAllSnapshots(self.as_ptr(), &mut snaps, flags as libc::c_uint)
+        };
+        if size == -1 {
+            return Err(Error::last_error());
         }
+
+        let mut array: Vec<DomainSnapshot> = Vec::new();
+        for x in 0..size as isize {
+            array.push(unsafe { DomainSnapshot::from_ptr(*snaps.offset(x)) });
+        }
+        unsafe { libc::free(snaps as *mut libc::c_void) };
+
+        Ok(array)
     }
 
     /// Get the cpu scheduler type for the domain
     pub fn get_scheduler_type(&self) -> Result<(String, i32), Error> {
-        unsafe {
-            let mut nparams: libc::c_int = -1;
-            let sched_type = sys::virDomainGetSchedulerType(self.as_ptr(), &mut nparams);
-            if sched_type.is_null() {
-                return Err(Error::last_error());
-            }
-
-            Ok((c_chars_to_string!(sched_type), nparams))
+        let mut nparams: libc::c_int = -1;
+        let sched_type = unsafe { sys::virDomainGetSchedulerType(self.as_ptr(), &mut nparams) };
+        if sched_type.is_null() {
+            return Err(Error::last_error());
         }
+
+        Ok((unsafe { c_chars_to_string!(sched_type) }, nparams))
     }
 
     /// Get the scheduler parameters for the domain.
     pub fn get_scheduler_parameters(&self) -> Result<SchedulerInfo, Error> {
         let (sched_type, mut nparams) = self.get_scheduler_type()?;
-        unsafe {
-            let mut params: Vec<sys::virTypedParameter> = Vec::with_capacity(nparams as usize);
-            let ret =
-                sys::virDomainGetSchedulerParameters(self.as_ptr(), &mut params[0], &mut nparams);
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            params.set_len(nparams as usize);
-            Ok(SchedulerInfo::from_vec(params, sched_type))
+        let mut params: Vec<sys::virTypedParameter> = Vec::with_capacity(nparams as usize);
+        let ret = unsafe {
+            sys::virDomainGetSchedulerParameters(self.as_ptr(), &mut params[0], &mut nparams)
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        unsafe { params.set_len(nparams as usize) };
+        Ok(SchedulerInfo::from_vec(params, sched_type))
     }
 
     /// Get the scheduler parameters for the domain for the configuration
@@ -1894,36 +1788,36 @@ impl Domain {
         flags: sys::virDomainModificationImpact,
     ) -> Result<SchedulerInfo, Error> {
         let (sched_type, mut nparams) = self.get_scheduler_type()?;
-        unsafe {
-            let mut params: Vec<sys::virTypedParameter> = Vec::with_capacity(nparams as usize);
-            let ret = sys::virDomainGetSchedulerParametersFlags(
+        let mut params: Vec<sys::virTypedParameter> = Vec::with_capacity(nparams as usize);
+        let ret = unsafe {
+            sys::virDomainGetSchedulerParametersFlags(
                 self.as_ptr(),
                 &mut params[0],
                 &mut nparams,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            params.set_len(nparams as usize);
-            Ok(SchedulerInfo::from_vec(params, sched_type))
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        unsafe { params.set_len(nparams as usize) };
+        Ok(SchedulerInfo::from_vec(params, sched_type))
     }
 
     /// Set the scheduler parameters for the domain.
     pub fn set_scheduler_parameters(&self, sched_info: &SchedulerInfo) -> Result<i32, Error> {
-        unsafe {
-            let mut params = sched_info.to_vec();
-            let ret = sys::virDomainSetSchedulerParameters(
+        let mut params = sched_info.to_vec();
+        let ret = unsafe {
+            sys::virDomainSetSchedulerParameters(
                 self.as_ptr(),
                 &mut params[0],
                 params.len() as libc::c_int,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret)
     }
 
     /// Set the scheduler parameters for the domain for the configuration
@@ -1942,19 +1836,19 @@ impl Domain {
         sched_info: &SchedulerInfo,
         flags: sys::virDomainModificationImpact,
     ) -> Result<i32, Error> {
-        unsafe {
-            let mut params = sched_info.to_vec();
-            let ret = sys::virDomainSetSchedulerParametersFlags(
+        let mut params = sched_info.to_vec();
+        let ret = unsafe {
+            sys::virDomainSetSchedulerParametersFlags(
                 self.as_ptr(),
                 &mut params[0],
                 params.len() as libc::c_int,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret)
     }
 
     /// Send key(s) to the guest.
@@ -1973,20 +1867,20 @@ impl Domain {
         nkeycodes: i32,
         flags: u32,
     ) -> Result<(), Error> {
-        unsafe {
-            if sys::virDomainSendKey(
+        let ret = unsafe {
+            sys::virDomainSendKey(
                 self.as_ptr(),
                 codeset as libc::c_uint,
                 holdtime as libc::c_uint,
                 keycodes as *mut libc::c_uint,
                 nkeycodes as libc::c_int,
                 flags as libc::c_uint,
-            ) == -1
-            {
-                return Err(Error::last_error());
-            }
-            Ok(())
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(())
     }
 
     /// Take a screenshot of current domain console as a stream.
@@ -1998,18 +1892,18 @@ impl Domain {
     /// * `screen` - monitor ID to take screenshot from
     /// * `flags` - extra flags; not used yet, so callers should always pass 0
     pub fn screenshot(&self, stream: &Stream, screen: u32, flags: u32) -> Result<String, Error> {
-        unsafe {
-            let n = sys::virDomainScreenshot(
+        let n = unsafe {
+            sys::virDomainScreenshot(
                 self.as_ptr(),
                 stream.as_ptr(),
                 screen as libc::c_uint,
                 flags as libc::c_uint,
-            );
-            if n.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(c_chars_to_string!(n))
+            )
+        };
+        if n.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { c_chars_to_string!(n) })
     }
 
     /// Send an arbitrary monitor command cmd to domain through the QEMU monitor.
@@ -2020,19 +1914,19 @@ impl Domain {
     /// [`virDomainQemuMonitorCommandFlags`]: sys::virDomainQemuMonitorCommandFlags
     #[cfg(feature = "qemu")]
     pub fn qemu_monitor_command(&self, cmd: &str, flags: u32) -> Result<String, Error> {
-        unsafe {
-            let mut result: *mut libc::c_char = std::ptr::null_mut();
-            let cmd_buf = CString::new(cmd).unwrap();
-            let ret = sys::virDomainQemuMonitorCommand(
+        let mut result: *mut libc::c_char = std::ptr::null_mut();
+        let cmd_buf = CString::new(cmd).unwrap();
+        let ret = unsafe {
+            sys::virDomainQemuMonitorCommand(
                 self.as_ptr(),
                 cmd_buf.as_ptr(),
                 &mut result,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(c_chars_to_string!(result))
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { c_chars_to_string!(result) })
     }
 }
