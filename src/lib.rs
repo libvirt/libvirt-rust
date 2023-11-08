@@ -139,6 +139,7 @@ macro_rules! typed_params_release_c_chars {
     };
 }
 
+mod typedparams;
 mod util;
 
 pub mod connect;
