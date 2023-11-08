@@ -56,124 +56,104 @@ impl Interface {
     }
 
     pub fn get_connect(&self) -> Result<Connect, Error> {
-        unsafe {
-            let ptr = sys::virInterfaceGetConnect(self.as_ptr());
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(Connect::from_ptr(ptr))
+        let ptr = unsafe { sys::virInterfaceGetConnect(self.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { Connect::from_ptr(ptr) })
     }
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<Interface, Error> {
-        unsafe {
-            let id_buf = CString::new(id).unwrap();
-            let ptr = sys::virInterfaceLookupByName(conn.as_ptr(), id_buf.as_ptr());
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(Interface::from_ptr(ptr))
+        let id_buf = CString::new(id).unwrap();
+        let ptr = unsafe { sys::virInterfaceLookupByName(conn.as_ptr(), id_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { Interface::from_ptr(ptr) })
     }
 
     pub fn define_xml(conn: &Connect, xml: &str, flags: u32) -> Result<Interface, Error> {
-        unsafe {
-            let xml_buf = CString::new(xml).unwrap();
-            let ptr =
-                sys::virInterfaceDefineXML(conn.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint);
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(Interface::from_ptr(ptr))
+        let xml_buf = CString::new(xml).unwrap();
+        let ptr = unsafe {
+            sys::virInterfaceDefineXML(conn.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { Interface::from_ptr(ptr) })
     }
 
     pub fn lookup_by_mac_string(conn: &Connect, id: &str) -> Result<Interface, Error> {
-        unsafe {
-            let id_buf = CString::new(id).unwrap();
-            let ptr = sys::virInterfaceLookupByMACString(conn.as_ptr(), id_buf.as_ptr());
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(Interface::from_ptr(ptr))
+        let id_buf = CString::new(id).unwrap();
+        let ptr = unsafe { sys::virInterfaceLookupByMACString(conn.as_ptr(), id_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { Interface::from_ptr(ptr) })
     }
 
     pub fn get_name(&self) -> Result<String, Error> {
-        unsafe {
-            let n = sys::virInterfaceGetName(self.as_ptr());
-            if n.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(c_chars_to_string!(n, nofree))
+        let n = unsafe { sys::virInterfaceGetName(self.as_ptr()) };
+        if n.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { c_chars_to_string!(n, nofree) })
     }
 
     pub fn get_mac_string(&self) -> Result<String, Error> {
-        unsafe {
-            let mac = sys::virInterfaceGetMACString(self.as_ptr());
-            if mac.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(c_chars_to_string!(mac, nofree))
+        let mac = unsafe { sys::virInterfaceGetMACString(self.as_ptr()) };
+        if mac.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { c_chars_to_string!(mac, nofree) })
     }
 
     pub fn get_xml_desc(&self, flags: sys::virInterfaceXMLFlags) -> Result<String, Error> {
-        unsafe {
-            let xml = sys::virInterfaceGetXMLDesc(self.as_ptr(), flags);
-            if xml.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(c_chars_to_string!(xml))
+        let xml = unsafe { sys::virInterfaceGetXMLDesc(self.as_ptr(), flags) };
+        if xml.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { c_chars_to_string!(xml) })
     }
 
     pub fn create(&self, flags: sys::virInterfaceXMLFlags) -> Result<u32, Error> {
-        unsafe {
-            let ret = sys::virInterfaceCreate(self.as_ptr(), flags);
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+        let ret = unsafe { sys::virInterfaceCreate(self.as_ptr(), flags) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn destroy(&self, flags: u32) -> Result<(), Error> {
-        unsafe {
-            if sys::virInterfaceDestroy(self.as_ptr(), flags) == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(())
+        let ret = unsafe { sys::virInterfaceDestroy(self.as_ptr(), flags) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(())
     }
 
     pub fn undefine(&self) -> Result<(), Error> {
-        unsafe {
-            if sys::virInterfaceUndefine(self.as_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(())
+        let ret = unsafe { sys::virInterfaceUndefine(self.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(())
     }
 
     pub fn free(&mut self) -> Result<(), Error> {
-        unsafe {
-            if sys::virInterfaceFree(self.as_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-            self.ptr = None;
-            Ok(())
+        let ret = unsafe { sys::virInterfaceFree(self.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        self.ptr = None;
+        Ok(())
     }
 
     pub fn is_active(&self) -> Result<bool, Error> {
-        unsafe {
-            let ret = sys::virInterfaceIsActive(self.as_ptr());
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret == 1)
+        let ret = unsafe { sys::virInterfaceIsActive(self.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret == 1)
     }
 }
