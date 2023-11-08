@@ -81,13 +81,11 @@ impl StorageVol {
     }
 
     pub fn get_connect(&self) -> Result<Connect, Error> {
-        unsafe {
-            let ptr = sys::virStorageVolGetConnect(self.as_ptr());
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(Connect::from_ptr(ptr))
+        let ptr = unsafe { sys::virStorageVolGetConnect(self.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { Connect::from_ptr(ptr) })
     }
 
     pub fn create_xml(
@@ -95,15 +93,14 @@ impl StorageVol {
         xml: &str,
         flags: sys::virStorageVolCreateFlags,
     ) -> Result<StorageVol, Error> {
-        unsafe {
-            let xml_buf = CString::new(xml).unwrap();
-            let ptr =
-                sys::virStorageVolCreateXML(pool.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint);
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(StorageVol::from_ptr(ptr))
+        let xml_buf = CString::new(xml).unwrap();
+        let ptr = unsafe {
+            sys::virStorageVolCreateXML(pool.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { StorageVol::from_ptr(ptr) })
     }
 
     pub fn create_xml_from(
@@ -112,110 +109,94 @@ impl StorageVol {
         vol: &StorageVol,
         flags: sys::virStorageVolCreateFlags,
     ) -> Result<StorageVol, Error> {
-        unsafe {
-            let xml_buf = CString::new(xml).unwrap();
-            let ptr = sys::virStorageVolCreateXMLFrom(
+        let xml_buf = CString::new(xml).unwrap();
+        let ptr = unsafe {
+            sys::virStorageVolCreateXMLFrom(
                 pool.as_ptr(),
                 xml_buf.as_ptr(),
                 vol.as_ptr(),
                 flags as libc::c_uint,
-            );
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(StorageVol::from_ptr(ptr))
+            )
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { StorageVol::from_ptr(ptr) })
     }
 
     pub fn lookup_by_name(pool: &StoragePool, name: &str) -> Result<StorageVol, Error> {
-        unsafe {
-            let name_buf = CString::new(name).unwrap();
-            let ptr = sys::virStorageVolLookupByName(pool.as_ptr(), name_buf.as_ptr());
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(StorageVol::from_ptr(ptr))
+        let name_buf = CString::new(name).unwrap();
+        let ptr = unsafe { sys::virStorageVolLookupByName(pool.as_ptr(), name_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { StorageVol::from_ptr(ptr) })
     }
 
     pub fn lookup_by_key(conn: &Connect, key: &str) -> Result<StorageVol, Error> {
-        unsafe {
-            let key_buf = CString::new(key).unwrap();
-            let ptr = sys::virStorageVolLookupByKey(conn.as_ptr(), key_buf.as_ptr());
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(StorageVol::from_ptr(ptr))
+        let key_buf = CString::new(key).unwrap();
+        let ptr = unsafe { sys::virStorageVolLookupByKey(conn.as_ptr(), key_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { StorageVol::from_ptr(ptr) })
     }
 
     pub fn lookup_by_path(conn: &Connect, path: &str) -> Result<StorageVol, Error> {
-        unsafe {
-            let path_buf = CString::new(path).unwrap();
-            let ptr = sys::virStorageVolLookupByPath(conn.as_ptr(), path_buf.as_ptr());
-            if ptr.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(StorageVol::from_ptr(ptr))
+        let path_buf = CString::new(path).unwrap();
+        let ptr = unsafe { sys::virStorageVolLookupByPath(conn.as_ptr(), path_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { StorageVol::from_ptr(ptr) })
     }
 
     pub fn get_name(&self) -> Result<String, Error> {
-        unsafe {
-            let n = sys::virStorageVolGetName(self.as_ptr());
-            if n.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(c_chars_to_string!(n, nofree))
+        let n = unsafe { sys::virStorageVolGetName(self.as_ptr()) };
+        if n.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { c_chars_to_string!(n, nofree) })
     }
 
     pub fn get_key(&self) -> Result<String, Error> {
-        unsafe {
-            let n = sys::virStorageVolGetKey(self.as_ptr());
-            if n.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(c_chars_to_string!(n, nofree))
+        let n = unsafe { sys::virStorageVolGetKey(self.as_ptr()) };
+        if n.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { c_chars_to_string!(n, nofree) })
     }
 
     pub fn get_path(&self) -> Result<String, Error> {
-        unsafe {
-            let n = sys::virStorageVolGetPath(self.as_ptr());
-            if n.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(c_chars_to_string!(n))
+        let n = unsafe { sys::virStorageVolGetPath(self.as_ptr()) };
+        if n.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { c_chars_to_string!(n) })
     }
 
     pub fn get_xml_desc(&self, flags: u32) -> Result<String, Error> {
-        unsafe {
-            let xml = sys::virStorageVolGetXMLDesc(self.as_ptr(), flags);
-            if xml.is_null() {
-                return Err(Error::last_error());
-            }
-            Ok(c_chars_to_string!(xml))
+        let xml = unsafe { sys::virStorageVolGetXMLDesc(self.as_ptr(), flags) };
+        if xml.is_null() {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { c_chars_to_string!(xml) })
     }
 
     pub fn delete(&self, flags: u32) -> Result<(), Error> {
-        unsafe {
-            if sys::virStorageVolDelete(self.as_ptr(), flags as libc::c_uint) == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(())
+        let ret = unsafe { sys::virStorageVolDelete(self.as_ptr(), flags as libc::c_uint) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(())
     }
 
     pub fn wipe(&self, flags: u32) -> Result<(), Error> {
-        unsafe {
-            if sys::virStorageVolWipe(self.as_ptr(), flags as libc::c_uint) == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(())
+        let ret = unsafe { sys::virStorageVolWipe(self.as_ptr(), flags as libc::c_uint) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(())
     }
 
     pub fn wipe_pattern(
@@ -223,67 +204,60 @@ impl StorageVol {
         algo: sys::virStorageVolWipeAlgorithm,
         flags: u32,
     ) -> Result<(), Error> {
-        unsafe {
-            if sys::virStorageVolWipePattern(
+        let ret = unsafe {
+            sys::virStorageVolWipePattern(
                 self.as_ptr(),
                 algo as libc::c_uint,
                 flags as libc::c_uint,
-            ) == -1
-            {
-                return Err(Error::last_error());
-            }
-            Ok(())
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(())
     }
 
     pub fn free(&mut self) -> Result<(), Error> {
-        unsafe {
-            if sys::virStorageVolFree(self.as_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-            self.ptr = None;
-            Ok(())
+        let ret = unsafe { sys::virStorageVolFree(self.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        self.ptr = None;
+        Ok(())
     }
 
     pub fn resize(&self, capacity: u64, flags: u32) -> Result<u32, Error> {
-        unsafe {
-            let ret = sys::virStorageVolResize(
+        let ret = unsafe {
+            sys::virStorageVolResize(
                 self.as_ptr(),
                 capacity as libc::c_ulonglong,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(ret as u32)
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(ret as u32)
     }
 
     pub fn get_info(&self) -> Result<StorageVolInfo, Error> {
-        unsafe {
-            let mut pinfo = mem::MaybeUninit::uninit();
-            let res = sys::virStorageVolGetInfo(self.as_ptr(), pinfo.as_mut_ptr());
-            if res == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(StorageVolInfo::from_ptr(&mut pinfo.assume_init()))
+        let mut pinfo = mem::MaybeUninit::uninit();
+        let res = unsafe { sys::virStorageVolGetInfo(self.as_ptr(), pinfo.as_mut_ptr()) };
+        if res == -1 {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { StorageVolInfo::from_ptr(&mut pinfo.assume_init()) })
     }
 
     pub fn get_info_flags(&self, flags: u32) -> Result<StorageVolInfo, Error> {
-        unsafe {
-            let mut pinfo = mem::MaybeUninit::uninit();
-            let res = sys::virStorageVolGetInfoFlags(
-                self.as_ptr(),
-                pinfo.as_mut_ptr(),
-                flags as libc::c_uint,
-            );
-            if res == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(StorageVolInfo::from_ptr(&mut pinfo.assume_init()))
+        let mut pinfo = mem::MaybeUninit::uninit();
+        let res = unsafe {
+            sys::virStorageVolGetInfoFlags(self.as_ptr(), pinfo.as_mut_ptr(), flags as libc::c_uint)
+        };
+        if res == -1 {
+            return Err(Error::last_error());
         }
+        Ok(unsafe { StorageVolInfo::from_ptr(&mut pinfo.assume_init()) })
     }
 
     pub fn download(
@@ -293,19 +267,19 @@ impl StorageVol {
         length: u64,
         flags: u32,
     ) -> Result<(), Error> {
-        unsafe {
-            let ret = sys::virStorageVolDownload(
+        let ret = unsafe {
+            sys::virStorageVolDownload(
                 self.as_ptr(),
                 stream.as_ptr(),
                 offset as libc::c_ulonglong,
                 length as libc::c_ulonglong,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(())
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(())
     }
 
     pub fn upload(
@@ -315,18 +289,18 @@ impl StorageVol {
         length: u64,
         flags: u32,
     ) -> Result<(), Error> {
-        unsafe {
-            let ret = sys::virStorageVolUpload(
+        let ret = unsafe {
+            sys::virStorageVolUpload(
                 self.as_ptr(),
                 stream.as_ptr(),
                 offset as libc::c_ulonglong,
                 length as libc::c_ulonglong,
                 flags as libc::c_uint,
-            );
-            if ret == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(())
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(())
     }
 }
