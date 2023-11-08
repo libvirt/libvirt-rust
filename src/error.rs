@@ -636,18 +636,16 @@ impl Error {
     /// This function is typically called by the safe wrappers in this library. It should only be
     /// used if you call [virt_sys] functions directly.
     pub fn last_error() -> Error {
-        unsafe {
-            let ptr: sys::virErrorPtr = sys::virGetLastError();
-            if ptr.is_null() {
-                Error {
-                    code: sys::VIR_ERR_INTERNAL_ERROR,
-                    domain: sys::VIR_FROM_NONE,
-                    message: "an unknown libvirt error occurred".into(),
-                    level: sys::VIR_ERR_ERROR,
-                }
-            } else {
-                Error::from_raw(ptr)
+        let ptr: sys::virErrorPtr = unsafe { sys::virGetLastError() };
+        if ptr.is_null() {
+            Error {
+                code: sys::VIR_ERR_INTERNAL_ERROR,
+                domain: sys::VIR_FROM_NONE,
+                message: "an unknown libvirt error occurred".into(),
+                level: sys::VIR_ERR_ERROR,
             }
+        } else {
+            unsafe { Error::from_raw(ptr) }
         }
     }
 
