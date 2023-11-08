@@ -48,7 +48,10 @@ fn main() {
 
     if let Ok(dom) = Domain::lookup_by_name(&conn, &dname) {
         let flags = sys::VIR_MIGRATE_LIVE | sys::VIR_MIGRATE_PEER2PEER | sys::VIR_MIGRATE_TUNNELLED;
-        if dom.migrate(&conn, flags, dst_uri.as_deref(), 0).is_ok() {
+        if dom
+            .migrate(&conn, flags, None, dst_uri.as_deref(), 0)
+            .is_ok()
+        {
             println!("Domain migrated");
         }
     }

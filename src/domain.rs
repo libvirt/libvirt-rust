@@ -1660,17 +1660,18 @@ impl Domain {
         &self,
         dconn: &Connect,
         flags: u32,
+        dname: Option<&str>,
         uri: Option<&str>,
         bandwidth: u64,
     ) -> Result<Domain, Error> {
         unsafe {
-            let dname_buf = CString::new("").unwrap();
+            let dname_buf = some_string_to_cstring!(dname);
             let uri_buf = some_string_to_cstring!(uri);
             let ptr = sys::virDomainMigrate(
                 self.as_ptr(),
                 dconn.as_ptr(),
                 flags as libc::c_ulong,
-                dname_buf.as_ptr(),
+                some_cstring_to_c_chars!(dname_buf),
                 some_cstring_to_c_chars!(uri_buf),
                 bandwidth as libc::c_ulong,
             );
