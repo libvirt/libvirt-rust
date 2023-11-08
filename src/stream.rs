@@ -79,31 +79,28 @@ impl Stream {
     }
 
     pub fn free(&mut self) -> Result<(), Error> {
-        unsafe {
-            if sys::virStreamFree(self.as_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
+        let ret = unsafe { sys::virStreamFree(self.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
         self.ptr = None;
         Ok(())
     }
 
     pub fn finish(self) -> Result<(), Error> {
-        unsafe {
-            if sys::virStreamFinish(self.as_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(())
+        let ret = unsafe { sys::virStreamFinish(self.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(())
     }
 
     pub fn abort(self) -> Result<(), Error> {
-        unsafe {
-            if sys::virStreamAbort(self.as_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(())
+        let ret = unsafe { sys::virStreamAbort(self.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(())
     }
 
     pub fn send(&self, data: &[u8]) -> Result<usize, Error> {
@@ -160,11 +157,10 @@ impl Stream {
     }
 
     pub fn event_remove_callback(&self) -> Result<(), Error> {
-        unsafe {
-            if sys::virStreamEventRemoveCallback(self.as_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-            Ok(())
+        let ret = unsafe { sys::virStreamEventRemoveCallback(self.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
         }
+        Ok(())
     }
 }
