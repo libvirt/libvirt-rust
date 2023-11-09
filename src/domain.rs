@@ -24,7 +24,9 @@ use crate::connect::Connect;
 use crate::domain_snapshot::DomainSnapshot;
 use crate::error::Error;
 use crate::stream::Stream;
+use crate::typedparams::{from_params, to_params};
 use crate::util::c_ulong_to_u64;
+use crate::{param_field_in, param_field_out};
 
 #[derive(Clone, Debug)]
 pub struct DomainInfo {
@@ -261,99 +263,72 @@ pub struct SchedulerInfo {
     pub iothread_bw: SchedBandwidth,
 }
 
+macro_rules! scheduler_info_fields {
+    ($dir:ident, $var:ident) => {
+        vec![
+            $dir!(
+                sys::VIR_DOMAIN_SCHEDULER_CPU_SHARES,
+                UInt64,
+                $var.cpu_shares
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_SCHEDULER_VCPU_PERIOD,
+                UInt64,
+                $var.vcpu_bw.period
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_SCHEDULER_VCPU_QUOTA,
+                Int64,
+                $var.vcpu_bw.quota
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_SCHEDULER_EMULATOR_PERIOD,
+                UInt64,
+                $var.emulator_bw.period
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_SCHEDULER_EMULATOR_QUOTA,
+                Int64,
+                $var.emulator_bw.quota
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_SCHEDULER_GLOBAL_PERIOD,
+                UInt64,
+                $var.global_bw.period
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_SCHEDULER_GLOBAL_QUOTA,
+                Int64,
+                $var.global_bw.quota
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_SCHEDULER_IOTHREAD_PERIOD,
+                UInt64,
+                $var.iothread_bw.period
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_SCHEDULER_IOTHREAD_QUOTA,
+                Int64,
+                $var.iothread_bw.quota
+            ),
+        ]
+    };
+}
+
 impl SchedulerInfo {
     pub fn from_vec(vec: Vec<sys::virTypedParameter>, scheduler_type: String) -> SchedulerInfo {
-        unsafe {
-            let mut ret = SchedulerInfo {
-                scheduler_type,
-                ..Default::default()
-            };
-            for param in vec {
-                match str::from_utf8(CStr::from_ptr(param.field.as_ptr()).to_bytes()).unwrap() {
-                    "cpu_shares" => ret.cpu_shares = Some(param.value.ul),
-                    "vcpu_period" => ret.vcpu_bw.period = Some(param.value.ul),
-                    "vcpu_quota" => ret.vcpu_bw.quota = Some(param.value.l),
-                    "emulator_period" => ret.emulator_bw.period = Some(param.value.ul),
-                    "emulator_quota" => ret.emulator_bw.quota = Some(param.value.l),
-                    "global_period" => ret.global_bw.period = Some(param.value.ul),
-                    "global_quota" => ret.global_bw.quota = Some(param.value.l),
-                    "iothread_period" => ret.iothread_bw.period = Some(param.value.ul),
-                    "iothread_quota" => ret.iothread_bw.quota = Some(param.value.l),
-                    unknow => panic!("Field not implemented for SchedulerInfo, {:?}", unknow),
-                }
-            }
-            ret
-        }
+        let mut ret = SchedulerInfo {
+            scheduler_type,
+            ..Default::default()
+        };
+        let fields = scheduler_info_fields!(param_field_in, ret);
+        from_params(vec, fields);
+        ret
     }
 
     pub fn to_vec(&self) -> Vec<sys::virTypedParameter> {
-        let mut cparams: Vec<sys::virTypedParameter> = Vec::new();
-
-        if let Some(shares) = self.cpu_shares {
-            cparams.push(sys::virTypedParameter {
-                field: to_arr("cpu_shares\0"),
-                type_: sys::VIR_TYPED_PARAM_ULLONG as libc::c_int,
-                value: sys::_virTypedParameterValue { ul: shares },
-            });
-        }
-        if let Some(period) = self.vcpu_bw.period {
-            cparams.push(sys::virTypedParameter {
-                field: to_arr("vcpu_period\0"),
-                type_: sys::VIR_TYPED_PARAM_ULLONG as libc::c_int,
-                value: sys::_virTypedParameterValue { ul: period },
-            });
-        }
-        if let Some(quota) = self.vcpu_bw.quota {
-            cparams.push(sys::virTypedParameter {
-                field: to_arr("vcpu_quota\0"),
-                type_: sys::VIR_TYPED_PARAM_LLONG as libc::c_int,
-                value: sys::_virTypedParameterValue { l: quota },
-            });
-        }
-        if let Some(period) = self.emulator_bw.period {
-            cparams.push(sys::virTypedParameter {
-                field: to_arr("emulator_period\0"),
-                type_: sys::VIR_TYPED_PARAM_ULLONG as libc::c_int,
-                value: sys::_virTypedParameterValue { ul: period },
-            });
-        }
-        if let Some(quota) = self.emulator_bw.quota {
-            cparams.push(sys::virTypedParameter {
-                field: to_arr("emulator_quota\0"),
-                type_: sys::VIR_TYPED_PARAM_LLONG as libc::c_int,
-                value: sys::_virTypedParameterValue { l: quota },
-            });
-        }
-        if let Some(period) = self.global_bw.period {
-            cparams.push(sys::virTypedParameter {
-                field: to_arr("global_period\0"),
-                type_: sys::VIR_TYPED_PARAM_ULLONG as libc::c_int,
-                value: sys::_virTypedParameterValue { ul: period },
-            });
-        }
-        if let Some(quota) = self.global_bw.quota {
-            cparams.push(sys::virTypedParameter {
-                field: to_arr("global_quota\0"),
-                type_: sys::VIR_TYPED_PARAM_LLONG as libc::c_int,
-                value: sys::_virTypedParameterValue { l: quota },
-            });
-        }
-        if let Some(period) = self.iothread_bw.period {
-            cparams.push(sys::virTypedParameter {
-                field: to_arr("iothread_period\0"),
-                type_: sys::VIR_TYPED_PARAM_ULLONG as libc::c_int,
-                value: sys::_virTypedParameterValue { ul: period },
-            });
-        }
-        if let Some(quota) = self.iothread_bw.quota {
-            cparams.push(sys::virTypedParameter {
-                field: to_arr("iothread_quota\0"),
-                type_: sys::VIR_TYPED_PARAM_LLONG as libc::c_int,
-                value: sys::_virTypedParameterValue { l: quota },
-            });
-        }
-
-        cparams
+        let fields = scheduler_info_fields!(param_field_out, self);
+        to_params(fields)
     }
 }
 

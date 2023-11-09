@@ -1,15 +1,12 @@
 use std::ffi::CStr;
 use std::str;
 
-#[allow(dead_code)]
 pub enum ParamIn<'a> {
     #[allow(dead_code)]
     Int32(&'a mut Option<i32>),
     #[allow(dead_code)]
     UInt32(&'a mut Option<u32>),
-    #[allow(dead_code)]
     Int64(&'a mut Option<i64>),
-    #[allow(dead_code)]
     UInt64(&'a mut Option<u64>),
     #[allow(dead_code)]
     Float64(&'a mut Option<f64>),
@@ -19,15 +16,12 @@ pub enum ParamIn<'a> {
     String(&'a mut Option<String>),
 }
 
-#[allow(dead_code)]
 pub enum ParamOut<'a> {
     #[allow(dead_code)]
     Int32(&'a Option<i32>),
     #[allow(dead_code)]
     UInt32(&'a Option<u32>),
-    #[allow(dead_code)]
     Int64(&'a Option<i64>),
-    #[allow(dead_code)]
     UInt64(&'a Option<u64>),
     #[allow(dead_code)]
     Float64(&'a Option<f64>),
@@ -37,13 +31,11 @@ pub enum ParamOut<'a> {
     String(&'a Option<String>),
 }
 
-#[allow(dead_code)]
 pub struct FieldIn<'a> {
     pub name: String,
     pub value: ParamIn<'a>,
 }
 
-#[allow(dead_code)]
 pub struct FieldOut<'a> {
     pub name: String,
     pub value: ParamOut<'a>,
@@ -80,7 +72,6 @@ macro_rules! valid_type {
     };
 }
 
-#[allow(dead_code)]
 pub fn from_params(mut params: Vec<sys::virTypedParameter>, mut fields: Vec<FieldIn>) {
     for param in params.iter_mut() {
         let param_name =
@@ -123,7 +114,6 @@ pub fn from_params(mut params: Vec<sys::virTypedParameter>, mut fields: Vec<Fiel
     }
 }
 
-#[allow(dead_code)]
 pub fn to_params(mut fields: Vec<FieldOut>) -> Vec<sys::virTypedParameter> {
     let mut params: Vec<sys::virTypedParameter> = Vec::new();
 
@@ -174,7 +164,6 @@ pub fn to_params(mut fields: Vec<FieldOut>) -> Vec<sys::virTypedParameter> {
     params
 }
 
-#[allow(dead_code)]
 fn to_arr(name: &str) -> [libc::c_char; 80] {
     let mut field: [libc::c_char; 80] = [0; 80];
     for (a, c) in field.iter_mut().zip(name.as_bytes()) {
