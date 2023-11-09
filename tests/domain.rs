@@ -18,7 +18,7 @@
 
 mod common;
 
-use virt::domain::Domain;
+use virt::domain::{Domain, SchedulerInfo};
 use virt::error::ErrorNumber;
 use virt::sys;
 
@@ -86,6 +86,35 @@ fn test_get_info() {
 fn test_get_vcpus_flags() {
     fn t(dom: Domain) {
         assert_eq!(2, dom.get_vcpus_flags(0).unwrap_or(0));
+    }
+    tdom(t);
+}
+
+#[test]
+fn test_schedinfo() {
+    fn t(dom: Domain) {
+        let info = dom.get_scheduler_parameters().unwrap();
+        assert_eq!(info.scheduler_type, "fair");
+        assert_eq!(info.weight, Some(50));
+        assert_eq!(info.shares, None);
+        assert_eq!(info.reservation, None);
+        assert_eq!(info.limit, None);
+        assert_eq!(info.cap, None);
+
+        let newinfo = SchedulerInfo {
+            weight: Some(37),
+            ..Default::default()
+        };
+        dom.set_scheduler_parameters(&newinfo).unwrap();
+
+        /*
+         * XXX test:///default driver doesn't currently persist the
+         * changes made with 'set', so we can't test roundtrip
+         *
+         *  let newerinfo = dom.get_scheduler_parameters().unwrap();
+         *
+         *  assert_eq!(newerinfo.weight, Some(37));
+         */
     }
     tdom(t);
 }
