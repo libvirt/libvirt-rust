@@ -18,7 +18,7 @@
 
 mod common;
 
-use virt::domain::{Domain, SchedulerInfo};
+use virt::domain::{Domain, MemoryParameters, SchedulerInfo};
 use virt::error::ErrorNumber;
 use virt::sys;
 
@@ -115,6 +115,36 @@ fn test_schedinfo() {
          *
          *  assert_eq!(newerinfo.weight, Some(37));
          */
+    }
+    tdom(t);
+}
+
+#[test]
+fn test_memory_params() {
+    fn t(dom: Domain) {
+        let info = dom.get_memory_parameters(0).unwrap();
+        assert_eq!(info.hard_limit, Some(MemoryParameters::VALUE_UNLIMITED));
+        assert_eq!(info.soft_limit, Some(MemoryParameters::VALUE_UNLIMITED));
+        assert_eq!(
+            info.swap_hard_limit,
+            Some(MemoryParameters::VALUE_UNLIMITED)
+        );
+        assert_eq!(info.min_guarantee, None);
+
+        let newinfo = MemoryParameters {
+            soft_limit: Some(87539319),
+            ..Default::default()
+        };
+        dom.set_memory_parameters(newinfo, 0).unwrap();
+
+        let info = dom.get_memory_parameters(0).unwrap();
+        assert_eq!(info.hard_limit, Some(MemoryParameters::VALUE_UNLIMITED));
+        assert_eq!(info.soft_limit, Some(87539319));
+        assert_eq!(
+            info.swap_hard_limit,
+            Some(MemoryParameters::VALUE_UNLIMITED)
+        );
+        assert_eq!(info.min_guarantee, None);
     }
     tdom(t);
 }
