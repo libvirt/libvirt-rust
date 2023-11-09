@@ -18,7 +18,7 @@
 
 mod common;
 
-use virt::domain::{Domain, MemoryParameters, SchedulerInfo};
+use virt::domain::{Domain, MemoryParameters, NUMAParameters, SchedulerInfo};
 use virt::error::ErrorNumber;
 use virt::sys;
 
@@ -145,6 +145,30 @@ fn test_memory_params() {
             Some(MemoryParameters::VALUE_UNLIMITED)
         );
         assert_eq!(info.min_guarantee, None);
+    }
+    tdom(t);
+}
+
+#[test]
+fn test_numa_params() {
+    fn t(dom: Domain) {
+        let info = dom.get_numa_parameters(0).unwrap();
+        assert_eq!(info.mode, Some(sys::VIR_DOMAIN_NUMATUNE_MEM_STRICT as i32));
+        assert_eq!(info.node_set, Some("".to_string()));
+
+        let newinfo = NUMAParameters {
+            node_set: Some("1,2".to_string()),
+            mode: Some(sys::VIR_DOMAIN_NUMATUNE_MEM_PREFERRED as i32),
+        };
+        dom.set_numa_parameters(newinfo, 0).unwrap();
+
+        let newerinfo = dom.get_numa_parameters(0).unwrap();
+        assert_eq!(
+            newerinfo.mode,
+            Some(sys::VIR_DOMAIN_NUMATUNE_MEM_PREFERRED as i32)
+        );
+        // Libvirt canonicalizes the pair of nodes to a range
+        assert_eq!(newerinfo.node_set, Some("1-2".to_string()));
     }
     tdom(t);
 }
