@@ -1663,7 +1663,10 @@ impl Domain {
             return Err(Error::last_error());
         }
         unsafe { params.set_len(nparams as usize) };
-        Ok(NUMAParameters::from_vec(params))
+        let nparams = NUMAParameters::from_vec(params.clone());
+        unsafe { typed_params_release_c_chars!(params) };
+
+        Ok(nparams)
     }
 
     pub fn set_numa_parameters(&self, params: NUMAParameters, flags: u32) -> Result<u32, Error> {
