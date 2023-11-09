@@ -1480,7 +1480,7 @@ impl Domain {
         let ret = unsafe {
             sys::virDomainGetMemoryParameters(
                 self.as_ptr(),
-                &mut params[0],
+                params.as_mut_ptr(),
                 &mut nparams,
                 flags as libc::c_uint,
             )
@@ -1538,7 +1538,7 @@ impl Domain {
         let ret = unsafe {
             sys::virDomainSetMemoryParameters(
                 self.as_ptr(),
-                &mut cparams[0],
+                cparams.as_mut_ptr(),
                 cparams.len() as libc::c_int,
                 flags as libc::c_uint,
             )
@@ -1675,7 +1675,7 @@ impl Domain {
         let ret = unsafe {
             sys::virDomainGetNumaParameters(
                 self.as_ptr(),
-                &mut params[0],
+                params.as_mut_ptr(),
                 &mut nparams,
                 flags as libc::c_uint,
             )
@@ -1711,7 +1711,7 @@ impl Domain {
         let ret = unsafe {
             sys::virDomainSetNumaParameters(
                 self.as_ptr(),
-                &mut cparams[0],
+                cparams.as_mut_ptr(),
                 cparams.len() as libc::c_int,
                 flags as libc::c_uint,
             )
@@ -1757,7 +1757,7 @@ impl Domain {
         let (sched_type, mut nparams) = self.get_scheduler_type()?;
         let mut params: Vec<sys::virTypedParameter> = Vec::with_capacity(nparams as usize);
         let ret = unsafe {
-            sys::virDomainGetSchedulerParameters(self.as_ptr(), &mut params[0], &mut nparams)
+            sys::virDomainGetSchedulerParameters(self.as_ptr(), params.as_mut_ptr(), &mut nparams)
         };
         if ret == -1 {
             return Err(Error::last_error());
@@ -1786,7 +1786,7 @@ impl Domain {
         let ret = unsafe {
             sys::virDomainGetSchedulerParametersFlags(
                 self.as_ptr(),
-                &mut params[0],
+                params.as_mut_ptr(),
                 &mut nparams,
                 flags as libc::c_uint,
             )
@@ -1804,7 +1804,7 @@ impl Domain {
         let ret = unsafe {
             sys::virDomainSetSchedulerParameters(
                 self.as_ptr(),
-                &mut params[0],
+                params.as_mut_ptr(),
                 params.len() as libc::c_int,
             )
         };
@@ -1834,7 +1834,7 @@ impl Domain {
         let ret = unsafe {
             sys::virDomainSetSchedulerParametersFlags(
                 self.as_ptr(),
-                &mut params[0],
+                params.as_mut_ptr(),
                 params.len() as libc::c_int,
                 flags as libc::c_uint,
             )
