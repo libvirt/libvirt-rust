@@ -16,7 +16,6 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-use std::ffi::CStr;
 use std::ffi::CString;
 use std::{mem, ptr, str};
 
@@ -137,28 +136,35 @@ impl MemoryParameters {
     }
 }
 
+macro_rules! numa_parameters_fields {
+    ($dir:ident, $var:ident) => {
+        vec![
+            $dir!(sys::VIR_DOMAIN_NUMA_NODESET, String, $var.node_set),
+            $dir!(sys::VIR_DOMAIN_NUMA_MODE, Int32, $var.mode),
+        ]
+    };
+}
+
 #[derive(Clone, Debug, Default)]
 pub struct NUMAParameters {
     /// Lists the numa nodeset of a domain.
     pub node_set: Option<String>,
     /// Numa mode of a domain, as an int containing a
     /// DomainNumatuneMemMode value.
-    pub mode: Option<sys::virDomainNumatuneMemMode>,
+    pub mode: Option<i32>,
 }
 
 impl NUMAParameters {
     pub fn from_vec(vec: Vec<sys::virTypedParameter>) -> NUMAParameters {
-        unsafe {
-            let mut ret = NUMAParameters::default();
-            for param in vec {
-                match str::from_utf8(CStr::from_ptr(param.field.as_ptr()).to_bytes()).unwrap() {
-                    "numa_nodeset" => ret.node_set = Some(c_chars_to_string!(param.value.s)),
-                    "numa_mode" => ret.mode = Some(param.value.ui),
-                    unknow => panic!("Field not implemented for NUMAParameters, {:?}", unknow),
-                }
-            }
-            ret
-        }
+        let mut ret = NUMAParameters::default();
+        let fields = numa_parameters_fields!(param_field_in, ret);
+        from_params(vec, fields);
+        ret
+    }
+
+    pub fn to_vec(&self) -> Vec<sys::virTypedParameter> {
+        let fields = numa_parameters_fields!(param_field_out, self);
+        to_params(fields)
     }
 }
 
@@ -387,14 +393,6 @@ impl Drop for Domain {
             }
         }
     }
-}
-
-fn to_arr(name: &str) -> [libc::c_char; 80] {
-    let mut field: [libc::c_char; 80] = [0; 80];
-    for (a, c) in field.iter_mut().zip(name.as_bytes()) {
-        *a = *c as libc::c_char
-    }
-    field
 }
 
 impl Domain {
@@ -1669,26 +1667,7 @@ impl Domain {
     }
 
     pub fn set_numa_parameters(&self, params: NUMAParameters, flags: u32) -> Result<u32, Error> {
-        let mut cparams: Vec<sys::virTypedParameter> = Vec::new();
-        if params.node_set.is_some() {
-            cparams.push(sys::virTypedParameter {
-                field: to_arr("numa_nodeset\0"),
-                type_: sys::VIR_TYPED_PARAM_STRING as libc::c_int,
-                value: sys::_virTypedParameterValue {
-                    s: string_to_mut_c_chars!(params.node_set.unwrap()),
-                },
-            })
-        }
-        if params.mode.is_some() {
-            cparams.push(sys::virTypedParameter {
-                field: to_arr("numa_mode\0"),
-                type_: sys::VIR_TYPED_PARAM_INT as libc::c_int,
-                value: sys::_virTypedParameterValue {
-                    ui: params.mode.unwrap(),
-                },
-            })
-        }
-
+        let mut cparams = params.to_vec();
         let ret = unsafe {
             sys::virDomainSetNumaParameters(
                 self.as_ptr(),

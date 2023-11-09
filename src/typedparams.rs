@@ -10,7 +10,6 @@ pub enum ParamIn<'a> {
     Float64(&'a mut Option<f64>),
     #[allow(dead_code)]
     Bool(&'a mut Option<bool>),
-    #[allow(dead_code)]
     String(&'a mut Option<String>),
 }
 
@@ -23,7 +22,6 @@ pub enum ParamOut<'a> {
     Float64(&'a Option<f64>),
     #[allow(dead_code)]
     Bool(&'a Option<bool>),
-    #[allow(dead_code)]
     String(&'a Option<String>),
 }
 
