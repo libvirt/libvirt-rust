@@ -102,21 +102,38 @@ pub struct MemoryParameters {
     pub swap_hard_limit: Option<u64>,
 }
 
+macro_rules! memory_parameters_fields {
+    ($dir:ident, $var:ident) => {
+        vec![
+            $dir!(sys::VIR_DOMAIN_MEMORY_HARD_LIMIT, UInt64, $var.hard_limit),
+            $dir!(sys::VIR_DOMAIN_MEMORY_SOFT_LIMIT, UInt64, $var.soft_limit),
+            $dir!(
+                sys::VIR_DOMAIN_MEMORY_MIN_GUARANTEE,
+                UInt64,
+                $var.min_guarantee
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_MEMORY_SWAP_HARD_LIMIT,
+                UInt64,
+                $var.swap_hard_limit
+            ),
+        ]
+    };
+}
+
 impl MemoryParameters {
+    pub const VALUE_UNLIMITED: u64 = sys::VIR_DOMAIN_MEMORY_PARAM_UNLIMITED;
+
     pub fn from_vec(vec: Vec<sys::virTypedParameter>) -> MemoryParameters {
-        unsafe {
-            let mut ret = MemoryParameters::default();
-            for param in vec {
-                match str::from_utf8(CStr::from_ptr(param.field.as_ptr()).to_bytes()).unwrap() {
-                    "hard_limit" => ret.hard_limit = Some(param.value.ul),
-                    "soft_limit" => ret.soft_limit = Some(param.value.ul),
-                    "min_guarantee" => ret.min_guarantee = Some(param.value.ul),
-                    "swap_hard_limit" => ret.swap_hard_limit = Some(param.value.ul),
-                    unknow => panic!("Field not implemented for MemoryParameters, {:?}", unknow),
-                }
-            }
-            ret
-        }
+        let mut ret = MemoryParameters::default();
+        let fields = memory_parameters_fields!(param_field_in, ret);
+        from_params(vec, fields);
+        ret
+    }
+
+    pub fn to_vec(&self) -> Vec<sys::virTypedParameter> {
+        let fields = memory_parameters_fields!(param_field_out, self);
+        to_params(fields)
     }
 }
 
@@ -1497,43 +1514,7 @@ impl Domain {
         params: MemoryParameters,
         flags: u32,
     ) -> Result<u32, Error> {
-        let mut cparams: Vec<sys::virTypedParameter> = Vec::new();
-        if params.hard_limit.is_some() {
-            cparams.push(sys::virTypedParameter {
-                field: to_arr("hard_limit\0"),
-                type_: sys::VIR_TYPED_PARAM_ULLONG as libc::c_int,
-                value: sys::_virTypedParameterValue {
-                    ul: params.hard_limit.unwrap(),
-                },
-            })
-        }
-        if params.soft_limit.is_some() {
-            cparams.push(sys::virTypedParameter {
-                field: to_arr("soft_limit\0"),
-                type_: sys::VIR_TYPED_PARAM_ULLONG as libc::c_int,
-                value: sys::_virTypedParameterValue {
-                    ul: params.soft_limit.unwrap(),
-                },
-            })
-        }
-        if params.min_guarantee.is_some() {
-            cparams.push(sys::virTypedParameter {
-                field: to_arr("min_guarantee\0"),
-                type_: sys::VIR_TYPED_PARAM_ULLONG as libc::c_int,
-                value: sys::_virTypedParameterValue {
-                    ul: params.min_guarantee.unwrap(),
-                },
-            })
-        }
-        if params.swap_hard_limit.is_some() {
-            cparams.push(sys::virTypedParameter {
-                field: to_arr("swap_hard_limit\0"),
-                type_: sys::VIR_TYPED_PARAM_ULLONG as libc::c_int,
-                value: sys::_virTypedParameterValue {
-                    ul: params.swap_hard_limit.unwrap(),
-                },
-            })
-        }
+        let mut cparams = params.to_vec();
 
         let ret = unsafe {
             sys::virDomainSetMemoryParameters(
