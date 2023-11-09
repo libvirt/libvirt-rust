@@ -2,9 +2,7 @@ use std::ffi::CStr;
 use std::str;
 
 pub enum ParamIn<'a> {
-    #[allow(dead_code)]
     Int32(&'a mut Option<i32>),
-    #[allow(dead_code)]
     UInt32(&'a mut Option<u32>),
     Int64(&'a mut Option<i64>),
     UInt64(&'a mut Option<u64>),
@@ -17,9 +15,7 @@ pub enum ParamIn<'a> {
 }
 
 pub enum ParamOut<'a> {
-    #[allow(dead_code)]
     Int32(&'a Option<i32>),
-    #[allow(dead_code)]
     UInt32(&'a Option<u32>),
     Int64(&'a Option<i64>),
     UInt64(&'a Option<u64>),

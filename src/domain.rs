@@ -261,6 +261,16 @@ pub struct SchedulerInfo {
     pub global_bw: SchedBandwidth,
     // Bandwidth allocated for the io threads..
     pub iothread_bw: SchedBandwidth,
+    // Credit scheduler relative weight
+    pub weight: Option<u32>,
+    // Credit scheduler cap
+    pub cap: Option<u32>,
+    // Allocation scheduler reservation
+    pub reservation: Option<i64>,
+    // Allocation scheduler limit
+    pub limit: Option<i64>,
+    // Allocation scheduler shares
+    pub shares: Option<i32>,
 }
 
 macro_rules! scheduler_info_fields {
@@ -311,6 +321,15 @@ macro_rules! scheduler_info_fields {
                 Int64,
                 $var.iothread_bw.quota
             ),
+            $dir!(sys::VIR_DOMAIN_SCHEDULER_WEIGHT, UInt32, $var.weight),
+            $dir!(sys::VIR_DOMAIN_SCHEDULER_CAP, UInt32, $var.cap),
+            $dir!(
+                sys::VIR_DOMAIN_SCHEDULER_RESERVATION,
+                Int64,
+                $var.reservation
+            ),
+            $dir!(sys::VIR_DOMAIN_SCHEDULER_LIMIT, Int64, $var.limit),
+            $dir!(sys::VIR_DOMAIN_SCHEDULER_SHARES, Int32, $var.shares),
         ]
     };
 }
