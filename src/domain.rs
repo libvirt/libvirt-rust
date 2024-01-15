@@ -81,8 +81,8 @@ impl BlockInfo {
     pub unsafe fn from_ptr(ptr: sys::virDomainBlockInfoPtr) -> BlockInfo {
         BlockInfo {
             capacity: (*ptr).capacity,
-            allocation: (*ptr).capacity,
-            physical: (*ptr).capacity,
+            allocation: (*ptr).allocation,
+            physical: (*ptr).physical,
         }
     }
 }
