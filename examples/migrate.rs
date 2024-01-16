@@ -53,6 +53,16 @@ fn main() {
             .is_ok()
         {
             println!("Domain migrated");
+
+            if let Ok(job_stats) = dom.get_job_stats(sys::VIR_DOMAIN_JOB_STATS_COMPLETED) {
+                println!(
+                    "Migration completed in {}ms",
+                    job_stats
+                        .time_elapsed
+                        .map(|time| time.to_string())
+                        .unwrap_or("?".into())
+                );
+            }
         }
     }
 

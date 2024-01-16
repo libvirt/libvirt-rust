@@ -265,6 +265,204 @@ impl MemoryStat {
     }
 }
 
+/// Information about the progress of a background job that is
+/// affecting a domain.
+#[derive(Clone, Debug, Default)]
+pub struct JobStats {
+    pub r#type: i32,
+
+    pub auto_converge_throttle: Option<i32>,
+
+    pub compression_bytes: Option<u64>,
+    pub compression_cache: Option<u64>,
+    pub compression_cache_misses: Option<u64>,
+    pub compression_overflow: Option<u64>,
+    pub compression_pages: Option<u64>,
+
+    pub data_processed: Option<u64>,
+    pub data_remaining: Option<u64>,
+    pub data_total: Option<u64>,
+
+    pub disk_bps: Option<u64>,
+    pub disk_processed: Option<u64>,
+    pub disk_remaining: Option<u64>,
+    pub disk_temp_total: Option<u64>,
+    pub disk_temp_used: Option<u64>,
+    pub disk_total: Option<u64>,
+
+    pub downtime: Option<u64>,
+    pub downtime_net: Option<u64>,
+
+    pub error_message: Option<String>,
+
+    pub mem_bps: Option<u64>,
+    pub mem_constant: Option<u64>,
+    pub mem_dirty_rate: Option<u64>,
+    pub mem_iteration: Option<u64>,
+    pub mem_normal: Option<u64>,
+    pub mem_normal_bytes: Option<u64>,
+    pub mem_page_size: Option<u64>,
+    pub mem_postcopy_reqs: Option<u64>,
+    pub mem_processed: Option<u64>,
+    pub mem_remaining: Option<u64>,
+    pub mem_total: Option<u64>,
+
+    pub operation: Option<i32>,
+
+    pub setup_time: Option<u64>,
+
+    pub success: Option<bool>,
+
+    pub time_elapsed: Option<u64>,
+    pub time_elapsed_net: Option<u64>,
+    pub time_remaining: Option<u64>,
+}
+
+macro_rules! job_stats_fields {
+    ($dir:ident, $var:ident) => {
+        vec![
+            $dir!(
+                sys::VIR_DOMAIN_JOB_AUTO_CONVERGE_THROTTLE,
+                Int32,
+                $var.auto_converge_throttle
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_JOB_COMPRESSION_BYTES,
+                UInt64,
+                $var.compression_bytes
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_JOB_COMPRESSION_CACHE,
+                UInt64,
+                $var.compression_cache
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_JOB_COMPRESSION_CACHE_MISSES,
+                UInt64,
+                $var.compression_cache_misses
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_JOB_COMPRESSION_OVERFLOW,
+                UInt64,
+                $var.compression_overflow
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_JOB_COMPRESSION_PAGES,
+                UInt64,
+                $var.compression_pages
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_JOB_DATA_PROCESSED,
+                UInt64,
+                $var.data_processed
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_JOB_DATA_REMAINING,
+                UInt64,
+                $var.data_remaining
+            ),
+            $dir!(sys::VIR_DOMAIN_JOB_DATA_TOTAL, UInt64, $var.data_total),
+            $dir!(sys::VIR_DOMAIN_JOB_DISK_BPS, UInt64, $var.disk_bps),
+            $dir!(
+                sys::VIR_DOMAIN_JOB_DISK_PROCESSED,
+                UInt64,
+                $var.disk_processed
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_JOB_DISK_REMAINING,
+                UInt64,
+                $var.disk_remaining
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_JOB_DISK_TEMP_TOTAL,
+                UInt64,
+                $var.disk_temp_total
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_JOB_DISK_TEMP_USED,
+                UInt64,
+                $var.disk_temp_used
+            ),
+            $dir!(sys::VIR_DOMAIN_JOB_DISK_TOTAL, UInt64, $var.disk_total),
+            $dir!(sys::VIR_DOMAIN_JOB_DOWNTIME, UInt64, $var.downtime),
+            $dir!(sys::VIR_DOMAIN_JOB_DOWNTIME_NET, UInt64, $var.downtime_net),
+            $dir!(sys::VIR_DOMAIN_JOB_ERRMSG, String, $var.error_message),
+            $dir!(sys::VIR_DOMAIN_JOB_MEMORY_BPS, UInt64, $var.mem_bps),
+            $dir!(
+                sys::VIR_DOMAIN_JOB_MEMORY_CONSTANT,
+                UInt64,
+                $var.mem_constant
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_JOB_MEMORY_DIRTY_RATE,
+                UInt64,
+                $var.mem_dirty_rate
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_JOB_MEMORY_ITERATION,
+                UInt64,
+                $var.mem_iteration
+            ),
+            $dir!(sys::VIR_DOMAIN_JOB_MEMORY_NORMAL, UInt64, $var.mem_normal),
+            $dir!(
+                sys::VIR_DOMAIN_JOB_MEMORY_NORMAL_BYTES,
+                UInt64,
+                $var.mem_normal_bytes
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_JOB_MEMORY_PAGE_SIZE,
+                UInt64,
+                $var.mem_page_size
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_JOB_MEMORY_POSTCOPY_REQS,
+                UInt64,
+                $var.mem_postcopy_reqs
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_JOB_MEMORY_PROCESSED,
+                UInt64,
+                $var.mem_processed
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_JOB_MEMORY_REMAINING,
+                UInt64,
+                $var.mem_remaining
+            ),
+            $dir!(sys::VIR_DOMAIN_JOB_MEMORY_TOTAL, UInt64, $var.mem_total),
+            $dir!(sys::VIR_DOMAIN_JOB_OPERATION, Int32, $var.operation),
+            $dir!(sys::VIR_DOMAIN_JOB_SETUP_TIME, UInt64, $var.setup_time),
+            $dir!(sys::VIR_DOMAIN_JOB_SUCCESS, Bool, $var.success),
+            $dir!(sys::VIR_DOMAIN_JOB_TIME_ELAPSED, UInt64, $var.time_elapsed),
+            $dir!(
+                sys::VIR_DOMAIN_JOB_TIME_ELAPSED_NET,
+                UInt64,
+                $var.time_elapsed_net
+            ),
+            $dir!(
+                sys::VIR_DOMAIN_JOB_TIME_REMAINING,
+                UInt64,
+                $var.time_remaining
+            ),
+        ]
+    };
+}
+
+impl From<(i32, Vec<sys::virTypedParameter>)> for JobStats {
+    fn from((r#type, params): (i32, Vec<sys::virTypedParameter>)) -> Self {
+        let mut stats = Self {
+            r#type,
+            ..Default::default()
+        };
+
+        let fields = job_stats_fields!(param_field_in, stats);
+
+        from_params(params, fields);
+
+        stats
+    }
+}
+
 /// Structure representing the CFS scheduler cpu bandwidth parameters
 /// see <https://www.kernel.org/doc/html/latest/scheduler/sched-bwc.html>
 #[derive(Clone, Debug, Default)]
@@ -1348,6 +1546,36 @@ impl Domain {
             stats.push(unsafe { MemoryStat::from_ptr(x) });
         }
         Ok(stats)
+    }
+
+    /// Get progress statistics about a background job running on this domain.
+    /// This method will return an error if the domain isn't active
+    pub fn get_job_stats(&self, flags: sys::virDomainGetJobStatsFlags) -> Result<JobStats, Error> {
+        let mut r#type: libc::c_int = 0;
+
+        // We allow libvirt to allocate the params structure for us. libvirt will populate
+        // nparams with the number of typed params returned.
+        let mut nparams: libc::c_int = 0;
+        let mut params: sys::virTypedParameterPtr = ptr::null_mut();
+
+        let ret = unsafe {
+            sys::virDomainGetJobStats(
+                self.as_ptr(),
+                &mut r#type,
+                &mut params,
+                &mut nparams,
+                flags as libc::c_uint,
+            )
+        };
+
+        if ret == -1 {
+            return Err(Error::last_error());
+        }
+
+        let res: Vec<sys::virTypedParameter> =
+            unsafe { Vec::from_raw_parts(params, nparams as usize, nparams as usize) };
+
+        Ok((r#type, res).into())
     }
 
     pub fn save_image_get_xml_desc(
