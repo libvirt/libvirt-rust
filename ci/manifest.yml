@@ -26,8 +26,6 @@ targets:
 
   centos-stream-9: x86_64
 
-  debian-11: x86_64
-
   debian-12: x86_64
 
   debian-sid:
