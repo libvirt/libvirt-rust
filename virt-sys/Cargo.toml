@@ -14,7 +14,7 @@ links = "virt"
 libc = "0.2.122"
 
 [build-dependencies]
-bindgen = { version = "0.59.2", optional = true }
+bindgen = { version = "0.69.2", optional = true }
 pkg-config = "0.3.25"
 
 [features]
