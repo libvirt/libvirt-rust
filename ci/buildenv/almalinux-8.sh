@@ -37,7 +37,6 @@ function install_buildenv() {
         pkgconfig \
         python3 \
         python3-docutils \
-        rpcgen \
         rust
     rpm -qa | sort > /packages.txt
     mkdir -p /usr/libexec/ccache-wrappers

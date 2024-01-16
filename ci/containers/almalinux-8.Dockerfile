@@ -38,7 +38,6 @@ RUN dnf update -y && \
         pkgconfig \
         python3 \
         python3-docutils \
-        rpcgen \
         rust && \
     dnf autoremove -y && \
     dnf clean all -y && \
