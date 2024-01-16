@@ -500,11 +500,11 @@ pub enum ErrorNumber {
     NetworkPortExists,
     /// Network port not found
     NoNetworkPort,
-    /// no domain's hostname found
+    /// No domain's hostname found
     NoHostname,
-    /// checkpoint can't be used
+    /// Checkpoint can't be used
     CheckpointInconsistent,
-    /// more than one matching domain found
+    /// More than one matching domain found
     MultipleDomains,
     /// Network metadata is not present
     NoNetworkMetadata,
@@ -624,7 +624,7 @@ impl_enum! {
         sys::VIR_ERR_INVALID_NETWORK_PORT => ErrorNumber::InvalidNetworkPort,
         sys::VIR_ERR_NETWORK_PORT_EXIST => ErrorNumber::NetworkPortExists,
         sys::VIR_ERR_NO_NETWORK_PORT => ErrorNumber::NoNetworkPort,
-    sys::VIR_ERR_NO_HOSTNAME => ErrorNumber::NoHostname,
+        sys::VIR_ERR_NO_HOSTNAME => ErrorNumber::NoHostname,
         sys::VIR_ERR_CHECKPOINT_INCONSISTENT => ErrorNumber::CheckpointInconsistent,
         sys::VIR_ERR_MULTIPLE_DOMAINS => ErrorNumber::MultipleDomains,
         sys::VIR_ERR_NO_NETWORK_METADATA => ErrorNumber::NoNetworkMetadata,
