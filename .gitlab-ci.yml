@@ -5,6 +5,8 @@ stages:
   - sanity_checks
 
 .native_git_build_job:
+  extends:
+    - .gitlab_native_build_job
   script:
     - export MAKEFLAGS="-j$(getconf _NPROCESSORS_ONLN)"
     - export SCRATCH_DIR="/tmp/scratch"
@@ -31,17 +33,9 @@ stages:
     - cargo doc
     - cargo doc --features qemu
 
-.native_git_build_job_prebuilt_env:
-  extends:
-    - .native_git_build_job
-    - .gitlab_native_build_job_prebuilt_env
-
-.native_git_build_job_local_env:
-  extends:
-    - .native_git_build_job
-    - .gitlab_native_build_job_local_env
-
 .native_build_job:
+  extends:
+    - .gitlab_native_build_job
   script:
     - export RUSTFLAGS="-D warnings"
     - export RUSTDOCFLAGS="-D warnings"
@@ -67,15 +61,5 @@ stages:
       - cargo-doc.txt
     expire_in: 1 week
     when: on_failure
-
-.native_build_job_prebuilt_env:
-  extends:
-    - .native_build_job
-    - .gitlab_native_build_job_prebuilt_env
-
-.native_build_job_local_env:
-  extends:
-    - .native_build_job
-    - .gitlab_native_build_job_local_env
 
 include: '/ci/gitlab.yml'
