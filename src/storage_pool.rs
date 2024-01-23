@@ -19,6 +19,8 @@
 use std::ffi::CString;
 use std::{mem, ptr, str};
 
+use uuid::Uuid;
+
 use crate::connect::Connect;
 use crate::error::Error;
 use crate::storage_vol::StorageVol;
@@ -191,6 +193,16 @@ impl StoragePool {
         unsafe { libc::free(volumes as *mut libc::c_void) };
 
         Ok(array)
+    }
+
+    pub fn get_uuid(&self) -> Result<Uuid, Error> {
+        let mut uuid: [libc::c_uchar; sys::VIR_UUID_BUFLEN as usize] =
+            [0; sys::VIR_UUID_BUFLEN as usize];
+        let ret = unsafe { sys::virStoragePoolGetUUID(self.as_ptr(), uuid.as_mut_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
+        }
+        Ok(Uuid::from_bytes(uuid))
     }
 
     pub fn get_uuid_string(&self) -> Result<String, Error> {

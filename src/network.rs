@@ -19,6 +19,8 @@
 use std::ffi::CString;
 use std::str;
 
+use uuid::Uuid;
+
 use crate::connect::Connect;
 use crate::error::Error;
 
@@ -87,6 +89,16 @@ impl Network {
             return Err(Error::last_error());
         }
         Ok(unsafe { c_chars_to_string!(n, nofree) })
+    }
+
+    pub fn get_uuid(&self) -> Result<Uuid, Error> {
+        let mut uuid: [libc::c_uchar; sys::VIR_UUID_BUFLEN as usize] =
+            [0; sys::VIR_UUID_BUFLEN as usize];
+        let ret = unsafe { sys::virNetworkGetUUID(self.as_ptr(), uuid.as_mut_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
+        }
+        Ok(Uuid::from_bytes(uuid))
     }
 
     pub fn get_uuid_string(&self) -> Result<String, Error> {

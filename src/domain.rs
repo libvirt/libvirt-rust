@@ -19,6 +19,8 @@
 use std::ffi::CString;
 use std::{mem, ptr, str};
 
+use uuid::Uuid;
+
 use crate::connect::Connect;
 use crate::domain_snapshot::DomainSnapshot;
 use crate::error::Error;
@@ -480,6 +482,16 @@ impl Domain {
             return Err(Error::last_error());
         }
         Ok(unsafe { c_chars_to_string!(n) })
+    }
+
+    pub fn get_uuid(&self) -> Result<Uuid, Error> {
+        let mut uuid: [libc::c_uchar; sys::VIR_UUID_BUFLEN as usize] =
+            [0; sys::VIR_UUID_BUFLEN as usize];
+        let ret = unsafe { sys::virDomainGetUUID(self.as_ptr(), uuid.as_mut_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
+        }
+        Ok(Uuid::from_bytes(uuid))
     }
 
     /// Get the UUID for a domain as string.
