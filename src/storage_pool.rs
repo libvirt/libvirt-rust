@@ -150,6 +150,16 @@ impl StoragePool {
         Ok(unsafe { StoragePool::from_ptr(ptr) })
     }
 
+    pub fn lookup_by_target_path(conn: &Connect, path: &str) -> Result<StoragePool, Error> {
+        let path_buf = CString::new(path).unwrap();
+        let ptr =
+            unsafe { sys::virStoragePoolLookupByTargetPath(conn.as_ptr(), path_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { StoragePool::from_ptr(ptr) })
+    }
+
     pub fn lookup_by_volume(vol: &StorageVol) -> Result<StoragePool, Error> {
         let ptr = unsafe { sys::virStoragePoolLookupByVolume(vol.as_ptr()) };
         if ptr.is_null() {
