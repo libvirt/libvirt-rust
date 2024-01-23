@@ -82,7 +82,8 @@ impl NWFilter {
     }
 
     pub fn get_uuid_string(&self) -> Result<String, Error> {
-        let mut uuid: [libc::c_char; 37] = [0; 37];
+        let mut uuid: [libc::c_char; sys::VIR_UUID_STRING_BUFLEN as usize] =
+            [0; sys::VIR_UUID_STRING_BUFLEN as usize];
         let ret = unsafe { sys::virNWFilterGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) };
         if ret == -1 {
             return Err(Error::last_error());
