@@ -34,6 +34,7 @@ fn exercices() {
                         .get_uuid_string()
                         .unwrap_or_default()
                         .is_empty());
+                    assert!(storage_pool.get_uuid().is_ok());
                     assert!(!storage_pool.get_xml_desc(0).unwrap_or_default().is_empty());
                 }
                 Err(e) => panic!("{}", e),

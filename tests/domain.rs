@@ -18,6 +18,8 @@
 
 mod common;
 
+use uuid::Uuid;
+
 use virt::domain::{Domain, MemoryParameters, NUMAParameters, SchedulerInfo};
 use virt::error::ErrorNumber;
 use virt::sys;
@@ -50,6 +52,19 @@ fn test_uuid_string() {
         );
     }
     tdom(t);
+}
+
+#[test]
+fn test_uuid() {
+    let uuid = Uuid::parse_str("6695eb01-f6a4-8304-79aa-97f2502e193f").unwrap_or_default();
+    let c = common::conn();
+    match Domain::lookup_by_uuid(&c, uuid) {
+        Ok(dom) => {
+            assert_eq!(uuid, dom.get_uuid().unwrap_or_default());
+        }
+        Err(e) => panic!("{}", e),
+    };
+    common::close(c);
 }
 
 #[test]

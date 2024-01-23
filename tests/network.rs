@@ -24,6 +24,7 @@ fn test_create() {
     let n = common::build_network(&c, "wipes", false);
     assert_eq!(Ok(0), n.create());
     assert_eq!(Ok(String::from("libvirt-rs-test-wipes")), n.get_name());
+    assert!(n.get_uuid().is_ok());
     assert!(!n.get_uuid_string().unwrap_or_default().is_empty());
     assert!(!n.get_xml_desc(0).unwrap_or_default().is_empty());
     common::clean_net(n);
