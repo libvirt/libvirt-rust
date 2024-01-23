@@ -44,12 +44,35 @@ impl Drop for DomainSnapshot {
     }
 }
 
+impl Clone for DomainSnapshot {
+    /// Creates a copy of a domain snapshot.
+    ///
+    /// Increments the internal reference counter on the given
+    /// snapshot. For each call to this method, there shall be a
+    /// corresponding call to [`free()`].
+    ///
+    /// [`free()`]: DomainSnapshot::free
+    fn clone(&self) -> Self {
+        self.add_ref().unwrap()
+    }
+}
+
 impl DomainSnapshot {
     /// # Safety
     ///
     /// The caller must ensure that the pointer is valid.
     pub unsafe fn from_ptr(ptr: sys::virDomainSnapshotPtr) -> DomainSnapshot {
         DomainSnapshot { ptr: Some(ptr) }
+    }
+
+    fn add_ref(&self) -> Result<DomainSnapshot, Error> {
+        unsafe {
+            if sys::virDomainSnapshotRef(self.as_ptr()) == -1 {
+                return Err(Error::last_error());
+            }
+        }
+
+        Ok(unsafe { DomainSnapshot::from_ptr(self.as_ptr()) })
     }
 
     pub fn as_ptr(&self) -> sys::virDomainSnapshotPtr {

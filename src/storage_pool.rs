@@ -72,12 +72,35 @@ impl Drop for StoragePool {
     }
 }
 
+impl Clone for StoragePool {
+    /// Creates a copy of a storage pool.
+    ///
+    /// Increments the internal reference counter on the given
+    /// pool. For each call to this method, there shall be a
+    /// corresponding call to [`free()`].
+    ///
+    /// [`free()`]: StoragePool::free
+    fn clone(&self) -> Self {
+        self.add_ref().unwrap()
+    }
+}
+
 impl StoragePool {
     /// # Safety
     ///
     /// The caller must ensure that the pointer is valid.
     pub unsafe fn from_ptr(ptr: sys::virStoragePoolPtr) -> StoragePool {
         StoragePool { ptr: Some(ptr) }
+    }
+
+    fn add_ref(&self) -> Result<StoragePool, Error> {
+        unsafe {
+            if sys::virStoragePoolRef(self.as_ptr()) == -1 {
+                return Err(Error::last_error());
+            }
+        }
+
+        Ok(unsafe { StoragePool::from_ptr(self.as_ptr()) })
     }
 
     pub fn as_ptr(&self) -> sys::virStoragePoolPtr {

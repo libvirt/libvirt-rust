@@ -45,12 +45,35 @@ impl Drop for Network {
     }
 }
 
+impl Clone for Network {
+    /// Creates a copy of a network.
+    ///
+    /// Increments the internal reference counter on the given
+    /// network. For each call to this method, there shall be a
+    /// corresponding call to [`free()`].
+    ///
+    /// [`free()`]: Network::free
+    fn clone(&self) -> Self {
+        self.add_ref().unwrap()
+    }
+}
+
 impl Network {
     /// # Safety
     ///
     /// The caller must ensure that the pointer is valid.
     pub unsafe fn from_ptr(ptr: sys::virNetworkPtr) -> Network {
         Network { ptr: Some(ptr) }
+    }
+
+    fn add_ref(&self) -> Result<Network, Error> {
+        unsafe {
+            if sys::virNetworkRef(self.as_ptr()) == -1 {
+                return Err(Error::last_error());
+            }
+        }
+
+        Ok(unsafe { Network::from_ptr(self.as_ptr()) })
     }
 
     pub fn as_ptr(&self) -> sys::virNetworkPtr {

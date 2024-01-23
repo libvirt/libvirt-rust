@@ -43,12 +43,35 @@ impl Drop for NodeDevice {
     }
 }
 
+impl Clone for NodeDevice {
+    /// Creates a copy of a node device.
+    ///
+    /// Increments the internal reference counter on the given
+    /// device. For each call to this method, there shall be a
+    /// corresponding call to [`free()`].
+    ///
+    /// [`free()`]: NodeDevice::free
+    fn clone(&self) -> Self {
+        self.add_ref().unwrap()
+    }
+}
+
 impl NodeDevice {
     /// # Safety
     ///
     /// The caller must ensure that the pointer is valid.
     pub unsafe fn from_ptr(ptr: sys::virNodeDevicePtr) -> NodeDevice {
         NodeDevice { ptr: Some(ptr) }
+    }
+
+    fn add_ref(&self) -> Result<NodeDevice, Error> {
+        unsafe {
+            if sys::virNodeDeviceRef(self.as_ptr()) == -1 {
+                return Err(Error::last_error());
+            }
+        }
+
+        Ok(unsafe { NodeDevice::from_ptr(self.as_ptr()) })
     }
 
     pub fn as_ptr(&self) -> sys::virNodeDevicePtr {

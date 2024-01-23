@@ -45,12 +45,35 @@ impl Drop for NWFilter {
     }
 }
 
+impl Clone for NWFilter {
+    /// Creates a copy of a network filter.
+    ///
+    /// Increments the internal reference counter on the given
+    /// filter. For each call to this method, there shall be a
+    /// corresponding call to [`free()`].
+    ///
+    /// [`free()`]: NWFilter::free
+    fn clone(&self) -> Self {
+        self.add_ref().unwrap()
+    }
+}
+
 impl NWFilter {
     /// # Safety
     ///
     /// The caller must ensure that the pointer is valid.
     pub unsafe fn from_ptr(ptr: sys::virNWFilterPtr) -> NWFilter {
         NWFilter { ptr: Some(ptr) }
+    }
+
+    fn add_ref(&self) -> Result<NWFilter, Error> {
+        unsafe {
+            if sys::virNWFilterRef(self.as_ptr()) == -1 {
+                return Err(Error::last_error());
+            }
+        }
+
+        Ok(unsafe { NWFilter::from_ptr(self.as_ptr()) })
     }
 
     pub fn as_ptr(&self) -> sys::virNWFilterPtr {

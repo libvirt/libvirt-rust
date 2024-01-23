@@ -44,12 +44,35 @@ impl Drop for Secret {
     }
 }
 
+impl Clone for Secret {
+    /// Creates a copy of a secret.
+    ///
+    /// Increments the internal reference counter on the given
+    /// secret. For each call to this method, there shall be a
+    /// corresponding call to [`free()`].
+    ///
+    /// [`free()`]: Secret::free
+    fn clone(&self) -> Self {
+        self.add_ref().unwrap()
+    }
+}
+
 impl Secret {
     /// # Safety
     ///
     /// The caller must ensure that the pointer is valid.
     pub unsafe fn from_ptr(ptr: sys::virSecretPtr) -> Secret {
         Secret { ptr: Some(ptr) }
+    }
+
+    fn add_ref(&self) -> Result<Secret, Error> {
+        unsafe {
+            if sys::virSecretRef(self.as_ptr()) == -1 {
+                return Err(Error::last_error());
+            }
+        }
+
+        Ok(unsafe { Secret::from_ptr(self.as_ptr()) })
     }
 
     pub fn as_ptr(&self) -> sys::virSecretPtr {

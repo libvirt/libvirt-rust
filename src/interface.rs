@@ -43,12 +43,35 @@ impl Drop for Interface {
     }
 }
 
+impl Clone for Interface {
+    /// Creates a copy of a interface.
+    ///
+    /// Increments the internal reference counter on the given
+    /// interface. For each call to this method, there shall be a
+    /// corresponding call to [`free()`].
+    ///
+    /// [`free()`]: Interface::free
+    fn clone(&self) -> Self {
+        self.add_ref().unwrap()
+    }
+}
+
 impl Interface {
     /// # Safety
     ///
     /// The caller must ensure that the pointer is valid.
     pub unsafe fn from_ptr(ptr: sys::virInterfacePtr) -> Interface {
         Interface { ptr: Some(ptr) }
+    }
+
+    fn add_ref(&self) -> Result<Interface, Error> {
+        unsafe {
+            if sys::virInterfaceRef(self.as_ptr()) == -1 {
+                return Err(Error::last_error());
+            }
+        }
+
+        Ok(unsafe { Interface::from_ptr(self.as_ptr()) })
     }
 
     pub fn as_ptr(&self) -> sys::virInterfacePtr {

@@ -58,6 +58,19 @@ impl Drop for Stream {
     }
 }
 
+impl Clone for Stream {
+    /// Creates a copy of a stream.
+    ///
+    /// Increments the internal reference counter on the given
+    /// stream. For each call to this method, there shall be a
+    /// corresponding call to [`free()`].
+    ///
+    /// [`free()`]: Stream::free
+    fn clone(&self) -> Self {
+        self.add_ref().unwrap()
+    }
+}
+
 impl Stream {
     pub fn new(conn: &Connect, flags: sys::virStreamFlags) -> Result<Stream, Error> {
         let ptr = unsafe { sys::virStreamNew(conn.as_ptr(), flags as libc::c_uint) };
@@ -65,6 +78,16 @@ impl Stream {
             return Err(Error::last_error());
         }
         Ok(unsafe { Stream::from_ptr(ptr) })
+    }
+
+    fn add_ref(&self) -> Result<Stream, Error> {
+        unsafe {
+            if sys::virStreamRef(self.as_ptr()) == -1 {
+                return Err(Error::last_error());
+            }
+        }
+
+        Ok(unsafe { Stream::from_ptr(self.as_ptr()) })
     }
 
     unsafe fn from_ptr(ptr: sys::virStreamPtr) -> Stream {
