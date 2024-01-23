@@ -26,7 +26,7 @@ stages:
     - ninja -C build install
     - popd
     - cargo test --verbose
-    - cargo test --verbose --features qemu
+    - cargo test --verbose --features ${LIBVIRT_RUST_TEST_FEATURES:-qemu}
     - cargo test --verbose --manifest-path=virt-sys/Cargo.toml
     - cargo test --doc --verbose --features qemu
     - cargo test --doc --verbose --manifest-path=virt-sys/Cargo.toml
@@ -39,7 +39,7 @@ stages:
   script:
     - export RUSTFLAGS="-D warnings"
     - export RUSTDOCFLAGS="-D warnings"
-    - cargo test --verbose
+    - cargo test --verbose --features ${LIBVIRT_RUST_TEST_FEATURES:-qemu}
     - cargo test --verbose --manifest-path=virt-sys/Cargo.toml
     - if test "$CLIPPY" = "enable"; then
         cargo clippy --quiet --no-deps --all-targets >cargo-clippy.txt 2>&1 || true ;
