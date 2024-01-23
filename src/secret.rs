@@ -75,6 +75,14 @@ impl Secret {
         Ok(unsafe { Secret::from_ptr(ptr) })
     }
 
+    pub fn lookup_by_uuid(conn: &Connect, uuid: Uuid) -> Result<Secret, Error> {
+        let ptr = unsafe { sys::virSecretLookupByUUID(conn.as_ptr(), uuid.as_bytes().as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { Secret::from_ptr(ptr) })
+    }
+
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Secret, Error> {
         let uuid_buf = CString::new(uuid).unwrap();
         let ptr = unsafe { sys::virSecretLookupByUUIDString(conn.as_ptr(), uuid_buf.as_ptr()) };

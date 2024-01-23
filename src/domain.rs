@@ -434,6 +434,14 @@ impl Domain {
         Ok(unsafe { Domain::from_ptr(ptr) })
     }
 
+    pub fn lookup_by_uuid(conn: &Connect, uuid: Uuid) -> Result<Domain, Error> {
+        let ptr = unsafe { sys::virDomainLookupByUUID(conn.as_ptr(), uuid.as_bytes().as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { Domain::from_ptr(ptr) })
+    }
+
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Domain, Error> {
         let uuid_buf = CString::new(uuid).unwrap();
         let ptr = unsafe { sys::virDomainLookupByUUIDString(conn.as_ptr(), uuid_buf.as_ptr()) };
