@@ -193,6 +193,8 @@ pub enum ErrorDomain {
     Tpm,
     /// Error from BPF code
     Bpf,
+    /// Error from Cloud Hypervisor driver
+    Ch,
     /// Indicates an error domain not yet supported by the Rust bindings
     Last,
 }
@@ -273,6 +275,7 @@ impl_enum! {
         sys::VIR_FROM_DOMAIN_CHECKPOINT => ErrorDomain::DomainCheckpoint,
         sys::VIR_FROM_TPM => ErrorDomain::Tpm,
         sys::VIR_FROM_BPF => ErrorDomain::Bpf,
+        sys::VIR_FROM_CH => ErrorDomain::Ch,
         _ => ErrorDomain::Last => sys::VIR_FROM_NONE,
     }
 }
@@ -497,6 +500,14 @@ pub enum ErrorNumber {
     NetworkPortExists,
     /// Network port not found
     NoNetworkPort,
+    /// no domain's hostname found
+    NoHostname,
+    /// checkpoint can't be used
+    CheckpointInconsistent,
+    /// more than one matching domain found
+    MultipleDomains,
+    /// Network metadata is not present
+    NoNetworkMetadata,
     /// Indicates an error number not yet supported by the Rust bindings
     Last,
 }
@@ -613,6 +624,10 @@ impl_enum! {
         sys::VIR_ERR_INVALID_NETWORK_PORT => ErrorNumber::InvalidNetworkPort,
         sys::VIR_ERR_NETWORK_PORT_EXIST => ErrorNumber::NetworkPortExists,
         sys::VIR_ERR_NO_NETWORK_PORT => ErrorNumber::NoNetworkPort,
+    sys::VIR_ERR_NO_HOSTNAME => ErrorNumber::NoHostname,
+        sys::VIR_ERR_CHECKPOINT_INCONSISTENT => ErrorNumber::CheckpointInconsistent,
+        sys::VIR_ERR_MULTIPLE_DOMAINS => ErrorNumber::MultipleDomains,
+        sys::VIR_ERR_NO_NETWORK_METADATA => ErrorNumber::NoNetworkMetadata,
         _ => ErrorNumber::Last => sys::VIR_ERR_INTERNAL_ERROR,
     }
 }
