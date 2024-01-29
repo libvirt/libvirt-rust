@@ -732,6 +732,37 @@ impl Domain {
         Ok(ret as u32)
     }
 
+    /// Shutdown a domain, the domain object is still usable thereafter
+    /// but the domain OS is being stopped. Note that the guest OS may
+    /// ignore the request. Additionally, the hypervisor may check and
+    /// support the domain 'on_poweroff' XML setting resulting in a domain
+    /// that reboots instead of shutting down. For guests that react to a
+    /// shutdown request, the differences from [`Domain::destroy()`] are that
+    /// the guest's disk storage will be in a stable state rather
+    /// than having the (virtual) power cord pulled, and this command returns
+    /// as soon as the shutdown request is issued rather than blocking until
+    /// the guest is no longer running.
+    ///
+    /// If the domain is transient and has any snapshot metadata
+    /// (see virDomainSnapshotNum()), then that metadata will automatically
+    /// be deleted when the domain quits.
+    ///
+    /// If flags is set to zero, then the hypervisor will choose the method of
+    /// shutdown it considers best. To have greater control pass one or more of
+    /// the [`sys::virDomainShutdownFlagValues`]. The order in which the hypervisor tries
+    /// each shutdown method is undefined, and a hypervisor is not required to
+    /// support all methods.
+    ///
+    /// To use guest agent [`sys::VIR_DOMAIN_SHUTDOWN_GUEST_AGENT`] the domain XML must
+    /// have \<channel\> configured.
+    pub fn shutdown_flags(&self, flags: sys::virDomainShutdownFlagValues) -> Result<u32, Error> {
+        let ret = unsafe { sys::virDomainShutdownFlags(self.as_ptr(), flags as libc::c_uint) };
+        if ret == -1 {
+            return Err(Error::last_error());
+        }
+        Ok(ret as u32)
+    }
+
     /// Reboot a domain.
     ///
     /// The domain object is still usable thereafter.
