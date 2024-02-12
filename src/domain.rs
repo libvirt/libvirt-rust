@@ -1578,6 +1578,38 @@ impl Domain {
         Ok((r#type, res).into())
     }
 
+    /// Get progress information about a background job running on this domain.
+    /// NOTE: Only a subset of the fields in JobStats are populated by this method. If you want to
+    /// populate more fields then you should use [`Self::get_job_stats`].
+    pub fn get_job_info(&self) -> Result<JobStats, Error> {
+        unsafe {
+            let mut job_info = mem::MaybeUninit::uninit();
+            let ret = sys::virDomainGetJobInfo(self.as_ptr(), job_info.as_mut_ptr());
+
+            if ret == -1 {
+                return Err(Error::last_error());
+            }
+
+            let ptr: sys::virDomainJobInfoPtr = &mut job_info.assume_init();
+
+            Ok(JobStats {
+                r#type: (*ptr).type_,
+                time_elapsed: Some(c_ulong_to_u64((*ptr).timeElapsed)),
+                time_remaining: Some(c_ulong_to_u64((*ptr).timeRemaining)),
+                data_total: Some(c_ulong_to_u64((*ptr).dataTotal)),
+                data_processed: Some(c_ulong_to_u64((*ptr).dataProcessed)),
+                data_remaining: Some(c_ulong_to_u64((*ptr).dataRemaining)),
+                mem_total: Some(c_ulong_to_u64((*ptr).memTotal)),
+                mem_processed: Some(c_ulong_to_u64((*ptr).memProcessed)),
+                mem_remaining: Some(c_ulong_to_u64((*ptr).memRemaining)),
+                disk_total: Some(c_ulong_to_u64((*ptr).fileTotal)),
+                disk_processed: Some(c_ulong_to_u64((*ptr).fileProcessed)),
+                disk_remaining: Some(c_ulong_to_u64((*ptr).fileRemaining)),
+                ..Default::default()
+            })
+        }
+    }
+
     pub fn save_image_get_xml_desc(
         conn: &Connect,
         file: &str,
