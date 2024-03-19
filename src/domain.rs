@@ -1594,17 +1594,17 @@ impl Domain {
 
             Ok(JobStats {
                 r#type: (*ptr).type_,
-                time_elapsed: Some(c_ulong_to_u64((*ptr).timeElapsed)),
-                time_remaining: Some(c_ulong_to_u64((*ptr).timeRemaining)),
-                data_total: Some(c_ulong_to_u64((*ptr).dataTotal)),
-                data_processed: Some(c_ulong_to_u64((*ptr).dataProcessed)),
-                data_remaining: Some(c_ulong_to_u64((*ptr).dataRemaining)),
-                mem_total: Some(c_ulong_to_u64((*ptr).memTotal)),
-                mem_processed: Some(c_ulong_to_u64((*ptr).memProcessed)),
-                mem_remaining: Some(c_ulong_to_u64((*ptr).memRemaining)),
-                disk_total: Some(c_ulong_to_u64((*ptr).fileTotal)),
-                disk_processed: Some(c_ulong_to_u64((*ptr).fileProcessed)),
-                disk_remaining: Some(c_ulong_to_u64((*ptr).fileRemaining)),
+                time_elapsed: Some((*ptr).timeElapsed as u64),
+                time_remaining: Some((*ptr).timeRemaining as u64),
+                data_total: Some((*ptr).dataTotal as u64),
+                data_processed: Some((*ptr).dataProcessed as u64),
+                data_remaining: Some((*ptr).dataRemaining as u64),
+                mem_total: Some((*ptr).memTotal as u64),
+                mem_processed: Some((*ptr).memProcessed as u64),
+                mem_remaining: Some((*ptr).memRemaining as u64),
+                disk_total: Some((*ptr).fileTotal as u64),
+                disk_processed: Some((*ptr).fileProcessed as u64),
+                disk_remaining: Some((*ptr).fileRemaining as u64),
                 ..Default::default()
             })
         }
