@@ -62,7 +62,7 @@ extern "C" fn connect_callback(
                     // Safe because ccreds is allocated and the result
                     // is comming from Rust calls.
                     (*ccreds.offset(i)).resultlen = result.len() as libc::c_uint;
-                    (*ccreds.offset(i)).result = buffer as *mut i8;
+                    (*ccreds.offset(i)).result = buffer as *mut libc::c_char;
                 }
             }
         }
