@@ -1239,7 +1239,7 @@ impl Domain {
         let ret = unsafe {
             sys::virDomainMigrateSetCompressionCache(
                 self.as_ptr(),
-                size as libc::c_ulong,
+                size as libc::c_ulonglong,
                 flags as libc::c_uint,
             )
         };
@@ -1250,7 +1250,7 @@ impl Domain {
     }
 
     pub fn migrate_get_compression_cache(&self, flags: u32) -> Result<u64, Error> {
-        let mut size: libc::c_ulong = 0;
+        let mut size: libc::c_ulonglong = 0;
         let ret = unsafe {
             sys::virDomainMigrateGetCompressionCache(
                 self.as_ptr(),
@@ -1268,7 +1268,7 @@ impl Domain {
         let ret = unsafe {
             sys::virDomainMigrateSetMaxDowntime(
                 self.as_ptr(),
-                downtime as libc::c_ulong,
+                downtime as libc::c_ulonglong,
                 flags as libc::c_uint,
             )
         };
@@ -1282,7 +1282,7 @@ impl Domain {
         let ret = unsafe {
             sys::virDomainSetTime(
                 self.as_ptr(),
-                seconds as libc::c_long,
+                seconds as libc::c_longlong,
                 nseconds as libc::c_uint,
                 flags as libc::c_uint,
             )
@@ -1294,7 +1294,7 @@ impl Domain {
     }
 
     pub fn get_time(&self, flags: u32) -> Result<(i64, i32), Error> {
-        let mut seconds: libc::c_long = 0;
+        let mut seconds: libc::c_longlong = 0;
         let mut nseconds: libc::c_uint = 0;
         let ret = unsafe {
             sys::virDomainGetTime(
