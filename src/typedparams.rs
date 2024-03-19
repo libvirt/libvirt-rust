@@ -39,7 +39,8 @@ pub struct FieldOut<'a> {
 macro_rules! param_field_in {
     ($name:expr, $type:ident, $field:expr) => {
         $crate::typedparams::FieldIn {
-            name: unsafe { c_chars_to_string!($name.as_ptr() as *const i8, nofree) }.to_string(),
+            name: unsafe { c_chars_to_string!($name.as_ptr() as *const libc::c_char, nofree) }
+                .to_string(),
             value: $crate::typedparams::ParamIn::$type(&mut $field),
         }
     };
@@ -49,7 +50,8 @@ macro_rules! param_field_in {
 macro_rules! param_field_out {
     ($name:expr, $type:ident, $field:expr) => {
         $crate::typedparams::FieldOut {
-            name: unsafe { c_chars_to_string!($name.as_ptr() as *const i8, nofree) }.to_string(),
+            name: unsafe { c_chars_to_string!($name.as_ptr() as *const libc::c_char, nofree) }
+                .to_string(),
             value: $crate::typedparams::ParamOut::$type(&$field),
         }
     };
@@ -141,7 +143,9 @@ pub fn to_params(mut fields: Vec<FieldOut>) -> Vec<sys::virTypedParameter> {
             ParamOut::Bool(i) => i.map(|v| sys::virTypedParameter {
                 field: to_arr(&field.name),
                 type_: sys::VIR_TYPED_PARAM_BOOLEAN as i32,
-                value: sys::_virTypedParameterValue { b: v as i8 },
+                value: sys::_virTypedParameterValue {
+                    b: v as libc::c_char,
+                },
             }),
             ParamOut::String(i) => i.clone().map(|v| sys::virTypedParameter {
                 field: to_arr(&field.name),
