@@ -5,26 +5,20 @@
 # https://gitlab.com/libvirt/libvirt-ci
 
 function install_buildenv() {
-    dnf distro-sync -y
-    dnf install 'dnf-command(config-manager)' -y
-    dnf config-manager --set-enabled -y powertools
-    dnf install -y centos-release-advanced-virtualization
-    dnf install -y epel-release
-    dnf install -y epel-next-release
-    dnf install -y \
+    apk update
+    apk upgrade
+    apk add \
         ca-certificates \
         cargo \
         ccache \
-        clang-devel \
-        clippy \
+        clang-dev \
         gcc \
         git \
-        glibc-langpack-en \
-        libvirt-devel \
-        pkgconfig \
+        libvirt-dev \
+        pkgconf \
         rust \
-        rust-std-static
-    rpm -qa | sort > /packages.txt
+        rust-clippy
+    apk list --installed | sort > /packages.txt
     mkdir -p /usr/libexec/ccache-wrappers
     ln -s /usr/bin/ccache /usr/libexec/ccache-wrappers/cc
     ln -s /usr/bin/ccache /usr/libexec/ccache-wrappers/gcc

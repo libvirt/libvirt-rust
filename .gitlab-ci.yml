@@ -62,4 +62,12 @@ stages:
     expire_in: 1 week
     when: on_failure
 
+.cross_build_job:
+  extends:
+    - .gitlab_cross_build_job
+  script:
+    - export RUSTFLAGS="-D warnings"
+    - export RUSTDOCFLAGS="-D warnings"
+    - cargo build --verbose --target $RUST_TARGET
+
 include: '/ci/gitlab.yml'

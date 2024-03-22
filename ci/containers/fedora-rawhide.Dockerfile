@@ -29,7 +29,8 @@ exec "$@"\n' > /usr/bin/nosync && \
                glibc-langpack-en \
                libvirt-devel \
                pkgconfig \
-               rust && \
+               rust \
+               rust-std-static && \
     nosync dnf autoremove -y && \
     nosync dnf clean all -y && \
     rpm -qa | sort > /packages.txt && \

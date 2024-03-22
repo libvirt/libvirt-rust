@@ -15,6 +15,7 @@ function install_buildenv() {
             gcc \
             git \
             libclang-dev \
+            libstd-rust-dev \
             libvirt-dev \
             locales \
             pkgconf \

@@ -17,7 +17,8 @@ function install_buildenv() {
         glibc-langpack-en \
         libvirt-devel \
         pkgconfig \
-        rust
+        rust \
+        rust-std-static
     rpm -qa | sort > /packages.txt
     mkdir -p /usr/libexec/ccache-wrappers
     ln -s /usr/bin/ccache /usr/libexec/ccache-wrappers/cc

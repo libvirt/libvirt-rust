@@ -10,6 +10,13 @@ gitlab:
 
 targets:
 
+  alpine-319: x86_64
+
+  alpine-edge:
+    jobs:
+      - arch: x86_64
+        allow-failure: true
+
   almalinux-8:
     projects:
       - libvirt-rust
@@ -26,7 +33,17 @@ targets:
 
   centos-stream-9: x86_64
 
-  debian-12: x86_64
+  debian-12:
+    jobs:
+      - arch: x86_64
+      - arch: aarch64
+      - arch: armv6l
+      - arch: armv7l
+      - arch: i686
+      - arch: mips64el
+      - arch: mipsel
+      - arch: ppc64le
+      - arch: s390x
 
   debian-sid:
     jobs:
@@ -47,12 +64,20 @@ targets:
       - arch: x86_64
         allow-failure: true
 
+  freebsd-13: x86_64
+
+  freebsd-14: x86_64
+
   opensuse-leap-15: x86_64
 
   opensuse-tumbleweed:
     jobs:
       - arch: x86_64
         allow-failure: true
+
+  macos-13: aarch64
+
+  macos-14: aarch64
 
   ubuntu-2004: x86_64
 

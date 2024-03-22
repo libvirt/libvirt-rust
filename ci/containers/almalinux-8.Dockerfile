@@ -38,7 +38,8 @@ RUN dnf update -y && \
         pkgconfig \
         python3 \
         python3-docutils \
-        rust && \
+        rust \
+        rust-std-static && \
     dnf autoremove -y && \
     dnf clean all -y && \
     rm -f /usr/lib*/python3*/EXTERNALLY-MANAGED && \

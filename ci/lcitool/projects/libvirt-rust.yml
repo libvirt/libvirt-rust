@@ -7,3 +7,4 @@ packages:
   - libclang
   - pkg-config
   - rust
+  - rust-std

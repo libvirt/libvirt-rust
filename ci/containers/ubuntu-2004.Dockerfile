@@ -17,6 +17,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
                       gcc \
                       git \
                       libclang-dev \
+                      libstd-rust-dev \
                       libvirt-dev \
                       locales \
                       pkgconf \

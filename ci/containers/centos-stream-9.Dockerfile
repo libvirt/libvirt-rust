@@ -22,7 +22,8 @@ RUN dnf distro-sync -y && \
         glibc-langpack-en \
         libvirt-devel \
         pkgconfig \
-        rust && \
+        rust \
+        rust-std-static && \
     dnf autoremove -y && \
     dnf clean all -y && \
     rpm -qa | sort > /packages.txt && \
