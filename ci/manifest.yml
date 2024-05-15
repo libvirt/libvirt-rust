@@ -17,7 +17,7 @@ targets:
       - arch: x86_64
         allow-failure: true
 
-  almalinux-8:
+  almalinux-9:
     projects:
       - libvirt-rust
       - libvirt+minimal
@@ -28,8 +28,6 @@ targets:
       - arch: x86_64
         template: .native_git_build_job
         suffix: -git
-
-  centos-stream-8: x86_64
 
   centos-stream-9: x86_64
 
@@ -50,9 +48,9 @@ targets:
       - arch: x86_64
         allow-failure: true
 
-  fedora-38: x86_64
+  fedora-39: x86_64
 
-  fedora-39:
+  fedora-40:
     jobs:
       - arch: x86_64
         variables:
@@ -79,6 +77,6 @@ targets:
 
   macos-14: aarch64
 
-  ubuntu-2004: x86_64
-
   ubuntu-2204: x86_64
+
+  ubuntu-2404: x86_64
