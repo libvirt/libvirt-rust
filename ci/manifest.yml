@@ -1,6 +1,6 @@
 projects:
   - libvirt-rust
-  - libvirt+dist
+  - https://gitlab.com/libvirt/libvirt/-/raw/master/ci/lcitool/projects/libvirt+dist.yml
 
 gitlab:
   namespace: libvirt
@@ -10,7 +10,7 @@ gitlab:
 
 targets:
 
-  alpine-319: x86_64
+  alpine-320: x86_64
 
   alpine-edge:
     jobs:
@@ -20,8 +20,8 @@ targets:
   almalinux-9:
     projects:
       - libvirt-rust
-      - libvirt+minimal
-      - libvirt+dist
+      - https://gitlab.com/libvirt/libvirt/-/raw/master/ci/lcitool/projects/libvirt+minimal.yml
+      - https://gitlab.com/libvirt/libvirt/-/raw/master/ci/lcitool/projects/libvirt+dist.yml
 
     jobs:
       - arch: x86_64

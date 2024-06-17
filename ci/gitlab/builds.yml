@@ -7,15 +7,15 @@
 
 # Native build jobs
 
-x86_64-alpine-319:
+x86_64-alpine-320:
   extends: .native_build_job
   needs:
-    - job: x86_64-alpine-319-container
+    - job: x86_64-alpine-320-container
       optional: true
   allow_failure: false
   variables:
-    NAME: alpine-319
-    TARGET_BASE_IMAGE: docker.io/library/alpine:3.19
+    NAME: alpine-320
+    TARGET_BASE_IMAGE: docker.io/library/alpine:3.20
 
 
 x86_64-alpine-edge:

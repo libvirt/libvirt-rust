@@ -7,11 +7,11 @@
 
 # Native container jobs
 
-x86_64-alpine-319-container:
+x86_64-alpine-320-container:
   extends: .container_job
   allow_failure: false
   variables:
-    NAME: alpine-319
+    NAME: alpine-320
 
 
 x86_64-alpine-edge-container:
