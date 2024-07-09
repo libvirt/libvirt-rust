@@ -60,10 +60,7 @@ fn fetch_domains(conn: &Connect) -> Result<(), Error> {
 
 fn main() {
     let uri = env::args().nth(1);
-    let name = match env::args().nth(2) {
-        Some(n) => n,
-        None => String::from(""),
-    };
+    let name = env::args().nth(2).unwrap_or_default();
 
     println!("Attempting to connect to hypervisor: '{:?}'", uri);
     let mut conn = match Connect::open(uri.as_deref()) {
