@@ -1,6 +1,6 @@
 [package]
 name = "virt"
-version = "0.3.1"
+version = "0.3.2"
 edition = "2018"
 authors = ["Sahid Orentino Ferdjaoui <sahid.ferdjaoui@libremel.fr>",]
 license = "LGPL-2.1"
