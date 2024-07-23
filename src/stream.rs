@@ -26,7 +26,13 @@ extern "C" fn event_callback(c: sys::virStreamPtr, flags: libc::c_int, opaque: *
     let flags = flags as sys::virStreamFlags;
     let shadow_self = unsafe { &mut *(opaque as *mut Stream) };
     if let Some(callback) = &mut shadow_self.callback {
-        callback(unsafe { &Stream::from_ptr(c) }, flags);
+        callback(
+            unsafe {
+                sys::virStreamRef(c);
+                &Stream::from_ptr(c)
+            },
+            flags,
+        );
     }
 }
 
