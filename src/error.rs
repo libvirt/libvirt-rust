@@ -20,7 +20,7 @@ use std::error::Error as StdError;
 use std::ffi::CStr;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 
-use crate::util::impl_enum;
+use crate::enumutil::impl_enum;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 /// The level of an error.
