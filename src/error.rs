@@ -706,12 +706,11 @@ impl Display for Error {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         match self.level() {
             ErrorLevel::None => {}
-            ErrorLevel::Warning => write!(f, "warning: ")?,
-            ErrorLevel::Error => write!(f, "error: ")?,
+            _ => write!(f, "{}: ", self.level())?,
         }
         write!(
             f,
-            "{} [code={:?} ({}), domain={:?} ({})]",
+            "{} [code={} ({}), domain={} ({})]",
             self.message,
             self.code(),
             self.code,
