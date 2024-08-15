@@ -40,9 +40,12 @@
 use std::{env, io};
 
 use virt::connect::{Connect, ConnectAuth, ConnectCredential};
+use virt::error::clear_error_callback;
 use virt::sys;
 
 fn main() {
+    clear_error_callback();
+
     let uri = env::args().nth(1);
 
     fn callback(creds: &mut Vec<ConnectCredential>) {

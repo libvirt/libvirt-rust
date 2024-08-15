@@ -24,7 +24,7 @@ use std::{env, thread, time};
 
 use virt::connect::Connect;
 use virt::domain::Domain;
-use virt::error::Error;
+use virt::error::{clear_error_callback, Error};
 use virt::sys;
 
 fn suspend_and_resume(conn: &Connect, name: &str, sec: u64) -> Result<(), Error> {
@@ -59,6 +59,8 @@ fn fetch_domains(conn: &Connect) -> Result<(), Error> {
 }
 
 fn main() {
+    clear_error_callback();
+
     let uri = env::args().nth(1);
     let name = env::args().nth(2).unwrap_or_default();
 

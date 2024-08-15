@@ -32,6 +32,7 @@ use std::env;
 use virt::{
     connect::Connect,
     domain::Domain,
+    error::clear_error_callback,
     stream::Stream,
     sys::{
         virEventRegisterDefaultImpl, virEventRunDefaultImpl, virStreamEventType,
@@ -66,6 +67,7 @@ fn event_run_default_impl() {
 }
 
 fn main() {
+    clear_error_callback();
     event_register_default_impl();
 
     let uri = env::args().nth(1);

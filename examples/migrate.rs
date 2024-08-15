@@ -23,9 +23,12 @@ use std::env;
 use virt::connect::Connect;
 use virt::domain::Domain;
 use virt::domain::MigrateParameters;
+use virt::error::clear_error_callback;
 use virt::sys;
 
 fn main() {
+    clear_error_callback();
+
     if env::args().len() < 4 {
         panic!(
             "Usage: {} <src uri> <dst uri> <domain name>",

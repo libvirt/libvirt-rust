@@ -25,7 +25,7 @@
 use std::env;
 
 use virt::connect::Connect;
-use virt::error::Error;
+use virt::error::{clear_error_callback, Error};
 use virt::sys;
 
 fn show_hypervisor_info(conn: &Connect) -> Result<(), Error> {
@@ -132,6 +132,8 @@ fn show_domains(conn: &Connect) -> Result<(), Error> {
 }
 
 fn main() {
+    clear_error_callback();
+
     let uri = env::args().nth(1);
     println!("Attempting to connect to hypervisor: '{:?}'", uri);
 
