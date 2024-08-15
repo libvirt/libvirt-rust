@@ -15,14 +15,14 @@ macro_rules! impl_enum {
 }
 
 macro_rules! impl_enum_from {
-    (@acc ($e:expr, _ => $type:path => $_raw:path,) -> ($($body:tt)*)) => {
-        $crate::enumutil::impl_enum_from!(@final ($e) -> ($($body)* _ => $type,))
+    (@acc ($e:expr, _ => $type:ident => $_raw:path,) -> ($($body:tt)*)) => {
+        $crate::enumutil::impl_enum_from!(@final ($e) -> ($($body)* _ => Self::$type,))
     };
-    (@acc ($e:expr, _ => $type:path,) -> ($($body:tt)*)) => {
-        $crate::enumutil::impl_enum_from!(@final ($e) -> ($($body)* _ => $type,))
+    (@acc ($e:expr, _ => $type:ident,) -> ($($body:tt)*)) => {
+        $crate::enumutil::impl_enum_from!(@final ($e) -> ($($body)* _ => Self::$type,))
     };
-    (@acc ($e:expr, $(#[$attr:meta])* $raw:path => $type:path, $($match_arms:tt)*) -> ($($body:tt)*)) => {
-        $crate::enumutil::impl_enum_from!(@acc ($e, $($match_arms)*) -> ($($body)* $(#[$attr])* $raw => $type,))
+    (@acc ($e:expr, $(#[$attr:meta])* $raw:path => $type:ident, $($match_arms:tt)*) -> ($($body:tt)*)) => {
+        $crate::enumutil::impl_enum_from!(@acc ($e, $($match_arms)*) -> ($($body)* $(#[$attr])* $raw => Self::$type,))
     };
     (@final ($e:expr) -> ($($body:tt)*)) => {
         match $e { $($body)* }
@@ -33,14 +33,14 @@ macro_rules! impl_enum_from {
 }
 
 macro_rules! impl_enum_to {
-    (@acc ($e:expr, _ => $type:path => $raw:path,) -> ($($body:tt)*)) => {
-        $crate::enumutil::impl_enum_to!(@final ($e) -> ($($body)* $type => $raw,))
+    (@acc ($e:expr, _ => $type:ident => $raw:path,) -> ($($body:tt)*)) => {
+        $crate::enumutil::impl_enum_to!(@final ($e) -> ($($body)* Self::$type => $raw,))
     };
-    (@acc ($e:expr, _ => $_type:path,) -> ($($body:tt)*)) => {
+    (@acc ($e:expr, _ => $_type:ident,) -> ($($body:tt)*)) => {
         $crate::enumutil::impl_enum_to!(@final ($e) -> ($($body)*))
     };
-    (@acc ($e:expr, $(#[$attr:meta])* $raw:path => $type:path, $($match_arms:tt)*) -> ($($body:tt)*)) => {
-        $crate::enumutil::impl_enum_to!(@acc ($e, $($match_arms)*) -> ($($body)* $(#[$attr])* $type => $raw,))
+    (@acc ($e:expr, $(#[$attr:meta])* $raw:path => $type:ident, $($match_arms:tt)*) -> ($($body:tt)*)) => {
+        $crate::enumutil::impl_enum_to!(@acc ($e, $($match_arms)*) -> ($($body)* $(#[$attr])* Self::$type => $raw,))
     };
     (@final ($e:expr) -> ($($body:tt)*)) => {
         match $e { $($body)* }
@@ -81,10 +81,10 @@ mod tests {
         enum: WithoutLast,
         raw: u32,
         match: {
-            FOO => WithoutLast::Foo,
-            BAR => WithoutLast::Bar,
-            BAZ => WithoutLast::Baz,
-            _ => WithoutLast::Foo,
+            FOO => Foo,
+            BAR => Bar,
+            BAZ => Baz,
+            _ => Foo,
         }
     }
 
@@ -92,10 +92,10 @@ mod tests {
         enum: WithLast,
         raw: u32,
         match: {
-            FOO => WithLast::Foo,
-            BAR => WithLast::Bar,
-            BAZ => WithLast::Baz,
-            _ => WithLast::Last => FOO,
+            FOO => Foo,
+            BAR => Bar,
+            BAZ => Baz,
+            _ => Last => FOO,
         }
     }
 
