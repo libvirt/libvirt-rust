@@ -2069,7 +2069,7 @@ impl Domain {
     /// # Arguments
     ///
     /// * `flags` - Specifies the domain modification [`Impact`]: [`VIR_DOMAIN_AFFECT_CURRENT`],
-    /// [`VIR_DOMAIN_AFFECT_LIVE`] or [`VIR_DOMAIN_AFFECT_CONFIG`].
+    ///   [`VIR_DOMAIN_AFFECT_LIVE`] or [`VIR_DOMAIN_AFFECT_CONFIG`].
     ///
     /// [`Impact`]: sys::virDomainModificationImpact
     /// [`VIR_DOMAIN_AFFECT_CURRENT`]: sys::VIR_DOMAIN_AFFECT_CURRENT
@@ -2117,7 +2117,7 @@ impl Domain {
     /// # Arguments
     ///
     /// * `flags` - Specifies the domain modification [`Impact`]: [`VIR_DOMAIN_AFFECT_CURRENT`],
-    /// [`VIR_DOMAIN_AFFECT_LIVE`] or [`VIR_DOMAIN_AFFECT_CONFIG`].
+    ///   [`VIR_DOMAIN_AFFECT_LIVE`] or [`VIR_DOMAIN_AFFECT_CONFIG`].
     ///
     /// [`Impact`]: sys::virDomainModificationImpact
     /// [`VIR_DOMAIN_AFFECT_CURRENT`]: sys::VIR_DOMAIN_AFFECT_CURRENT
