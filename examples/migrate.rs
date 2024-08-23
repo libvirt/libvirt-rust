@@ -22,6 +22,7 @@ use std::env;
 
 use virt::connect::Connect;
 use virt::domain::Domain;
+use virt::domain::MigrateParameters;
 use virt::sys;
 
 fn main() {
@@ -46,15 +47,19 @@ fn main() {
         Err(e) => panic!("No connection to source hypervisor: {}", e),
     };
 
-    if let Ok(dom) = Domain::lookup_by_name(&conn, &dname) {
-        let flags = sys::VIR_MIGRATE_LIVE | sys::VIR_MIGRATE_PEER2PEER | sys::VIR_MIGRATE_TUNNELLED;
-        if dom
-            .migrate(&conn, flags, None, dst_uri.as_deref(), 0)
-            .is_ok()
-        {
-            println!("Domain migrated");
+    let mut dconn = match Connect::open(dst_uri.as_deref()) {
+        Ok(c) => c,
+        Err(e) => panic!("No connection to destination hypervisor: {}", e),
+    };
 
-            if let Ok(job_stats) = dom.get_job_stats(sys::VIR_DOMAIN_JOB_STATS_COMPLETED) {
+    if let Ok(dom) = Domain::lookup_by_name(&conn, &dname) {
+        let flags = sys::VIR_MIGRATE_LIVE;
+        let migrate_parameters = MigrateParameters {
+            dest_name: Some(dname.clone()),
+            ..Default::default()
+        };
+        if let Ok(new_dom) = dom.migrate3(&dconn, migrate_parameters, flags) {
+            if let Ok(job_stats) = new_dom.get_job_stats(sys::VIR_DOMAIN_JOB_STATS_COMPLETED) {
                 println!(
                     "Migration completed in {}ms",
                     job_stats
@@ -67,7 +72,11 @@ fn main() {
     }
 
     if let Err(e) = conn.close() {
-        panic!("Failed to disconnect from hypervisor: {}", e);
+        panic!("Failed to disconnect from source hypervisor: {}", e);
     }
-    println!("Disconnected from source hypervisor");
+
+    if let Err(e) = dconn.close() {
+        panic!("Failed to disconnect from destination hypervisor: {}", e);
+    }
+    println!("Disconnected from source and destination hypervisors");
 }

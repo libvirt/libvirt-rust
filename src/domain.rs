@@ -170,6 +170,131 @@ impl NUMAParameters {
     }
 }
 
+macro_rules! migrate_parameters_fields {
+    ($dir:ident, $var:ident) => {
+        vec![
+            $dir!(
+                sys::VIR_MIGRATE_PARAM_AUTO_CONVERGE_INCREMENT,
+                Int32,
+                $var.auto_converge_increment
+            ),
+            $dir!(
+                sys::VIR_MIGRATE_PARAM_AUTO_CONVERGE_INITIAL,
+                Int32,
+                $var.auto_converge_initial
+            ),
+            $dir!(sys::VIR_MIGRATE_PARAM_BANDWIDTH, UInt64, $var.bandwidth),
+            $dir!(
+                sys::VIR_MIGRATE_PARAM_BANDWIDTH_POSTCOPY,
+                UInt64,
+                $var.bandwidth_postcopy
+            ),
+            $dir!(sys::VIR_MIGRATE_PARAM_COMPRESSION, String, $var.compression),
+            $dir!(
+                sys::VIR_MIGRATE_PARAM_COMPRESSION_MT_DTHREADS,
+                Int32,
+                $var.compression_mt_dthreads
+            ),
+            $dir!(
+                sys::VIR_MIGRATE_PARAM_COMPRESSION_MT_LEVEL,
+                Int32,
+                $var.compression_mt_level
+            ),
+            $dir!(
+                sys::VIR_MIGRATE_PARAM_COMPRESSION_MT_THREADS,
+                Int32,
+                $var.compression_mt_threads
+            ),
+            $dir!(
+                sys::VIR_MIGRATE_PARAM_COMPRESSION_XBZRLE_CACHE,
+                UInt64,
+                $var.compression_xbzrle_cache
+            ),
+            $dir!(
+                sys::VIR_MIGRATE_PARAM_COMPRESSION_ZLIB_LEVEL,
+                Int32,
+                $var.compression_zlib_level
+            ),
+            $dir!(
+                sys::VIR_MIGRATE_PARAM_COMPRESSION_ZSTD_LEVEL,
+                Int32,
+                $var.compression_zstd_level
+            ),
+            $dir!(sys::VIR_MIGRATE_PARAM_DEST_NAME, String, $var.dest_name),
+            $dir!(sys::VIR_MIGRATE_PARAM_DEST_XML, String, $var.dest_xml),
+            $dir!(sys::VIR_MIGRATE_PARAM_DISKS_PORT, Int32, $var.disks_port),
+            $dir!(sys::VIR_MIGRATE_PARAM_DISKS_URI, String, $var.disks_uri),
+            $dir!(
+                sys::VIR_MIGRATE_PARAM_GRAPHICS_URI,
+                String,
+                $var.graphics_uri
+            ),
+            $dir!(
+                sys::VIR_MIGRATE_PARAM_LISTEN_ADDRESS,
+                String,
+                $var.listen_address
+            ),
+            $dir!(
+                sys::VIR_MIGRATE_PARAM_MIGRATE_DISKS,
+                VecString,
+                $var.migrate_disks
+            ),
+            $dir!(
+                sys::VIR_MIGRATE_PARAM_PARALLEL_CONNECTIONS,
+                Int32,
+                $var.parallel_connections
+            ),
+            $dir!(sys::VIR_MIGRATE_PARAM_PERSIST_XML, String, $var.persist_xml),
+            $dir!(
+                sys::VIR_MIGRATE_PARAM_TLS_DESTINATION,
+                String,
+                $var.tls_destination
+            ),
+            $dir!(sys::VIR_MIGRATE_PARAM_URI, String, $var.uri),
+        ]
+    };
+}
+
+#[derive(Clone, Debug, Default)]
+pub struct MigrateParameters {
+    pub auto_converge_increment: Option<i32>,
+    pub auto_converge_initial: Option<i32>,
+    pub bandwidth: Option<u64>,
+    pub bandwidth_postcopy: Option<u64>,
+    pub compression: Option<String>,
+    pub compression_mt_dthreads: Option<i32>,
+    pub compression_mt_level: Option<i32>,
+    pub compression_mt_threads: Option<i32>,
+    pub compression_xbzrle_cache: Option<u64>,
+    pub compression_zlib_level: Option<i32>,
+    pub compression_zstd_level: Option<i32>,
+    pub dest_name: Option<String>,
+    pub dest_xml: Option<String>,
+    pub disks_port: Option<i32>,
+    pub disks_uri: Option<String>,
+    pub graphics_uri: Option<String>,
+    pub listen_address: Option<String>,
+    pub migrate_disks: Vec<String>,
+    pub parallel_connections: Option<i32>,
+    pub persist_xml: Option<String>,
+    pub tls_destination: Option<String>,
+    pub uri: Option<String>,
+}
+
+impl MigrateParameters {
+    pub fn from_vec(vec: Vec<sys::virTypedParameter>) -> MigrateParameters {
+        let mut ret = MigrateParameters::default();
+        let fields = migrate_parameters_fields!(param_field_in, ret);
+        from_params(vec, fields);
+        ret
+    }
+
+    pub fn to_vec(&self) -> Vec<sys::virTypedParameter> {
+        let fields = migrate_parameters_fields!(param_field_out, self);
+        to_params(fields)
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct IPAddress {
     pub typed: i64,
@@ -1928,6 +2053,28 @@ impl Domain {
         Ok(unsafe { Domain::from_ptr(ptr) })
     }
 
+    pub fn migrate3(
+        &self,
+        dconn: &Connect,
+        parameters: MigrateParameters,
+        flags: u32,
+    ) -> Result<Domain, Error> {
+        let params = parameters.to_vec();
+        let ptr = unsafe {
+            sys::virDomainMigrate3(
+                self.as_ptr(),
+                dconn.as_ptr(),
+                params.clone().as_mut_ptr(),
+                params.len() as libc::c_uint,
+                flags as libc::c_uint,
+            )
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { Domain::from_ptr(ptr) })
+    }
+
     pub fn migrate_to_uri(
         &self,
         duri: &str,
@@ -1974,6 +2121,29 @@ impl Domain {
                 flags as libc::c_ulong,
                 some_cstring_to_c_chars!(dname_buf),
                 bandwidth as libc::c_ulong,
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
+        }
+        Ok(())
+    }
+
+    pub fn migrate_to_uri3(
+        &self,
+        dconn_uri: Option<&str>,
+        parameters: MigrateParameters,
+        flags: u32,
+    ) -> Result<(), Error> {
+        let params = parameters.to_vec();
+        let dconn_uri_buf = some_string_to_cstring!(dconn_uri);
+        let ret = unsafe {
+            sys::virDomainMigrateToURI3(
+                self.as_ptr(),
+                some_cstring_to_c_chars!(dconn_uri_buf),
+                params.clone().as_mut_ptr(),
+                params.len() as libc::c_uint,
+                flags as libc::c_uint,
             )
         };
         if ret == -1 {
