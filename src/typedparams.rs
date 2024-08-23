@@ -11,6 +11,8 @@ pub enum ParamIn<'a> {
     #[allow(dead_code)]
     Bool(&'a mut Option<bool>),
     String(&'a mut Option<String>),
+    #[allow(dead_code)]
+    VecString(&'a mut Vec<String>),
 }
 
 pub enum ParamOut<'a> {
@@ -23,6 +25,7 @@ pub enum ParamOut<'a> {
     #[allow(dead_code)]
     Bool(&'a Option<bool>),
     String(&'a Option<String>),
+    VecString(&'a Vec<String>),
 }
 
 pub struct FieldIn<'a> {
@@ -103,6 +106,11 @@ pub fn from_params(mut params: Vec<sys::virTypedParameter>, mut fields: Vec<Fiel
                         valid_type!(param.type_ as u32, sys::VIR_TYPED_PARAM_STRING, param_name);
                         **s = unsafe { Some(c_chars_to_string!(param.value.s, nofree)) }
                     }
+                    ParamIn::VecString(v) => {
+                        valid_type!(param.type_ as u32, sys::VIR_TYPED_PARAM_STRING, param_name);
+                        let s = unsafe { c_chars_to_string!(param.value.s, nofree) };
+                        v.push(s);
+                    }
                 }
                 break;
             }
@@ -114,49 +122,77 @@ pub fn to_params(mut fields: Vec<FieldOut>) -> Vec<sys::virTypedParameter> {
     let mut params: Vec<sys::virTypedParameter> = Vec::new();
 
     for field in fields.iter_mut() {
-        let param = match &mut field.value {
-            ParamOut::Int32(i) => i.map(|v| sys::virTypedParameter {
-                field: to_arr(&field.name),
-                type_: sys::VIR_TYPED_PARAM_INT as i32,
-                value: sys::_virTypedParameterValue { i: v },
+        match &mut field.value {
+            ParamOut::Int32(i) => i.map(|v| {
+                let p = sys::virTypedParameter {
+                    field: to_arr(&field.name),
+                    type_: sys::VIR_TYPED_PARAM_INT as i32,
+                    value: sys::_virTypedParameterValue { i: v },
+                };
+                params.push(p);
             }),
-            ParamOut::UInt32(i) => i.map(|v| sys::virTypedParameter {
-                field: to_arr(&field.name),
-                type_: sys::VIR_TYPED_PARAM_UINT as i32,
-                value: sys::_virTypedParameterValue { ui: v },
+            ParamOut::UInt32(i) => i.map(|v| {
+                let p = sys::virTypedParameter {
+                    field: to_arr(&field.name),
+                    type_: sys::VIR_TYPED_PARAM_UINT as i32,
+                    value: sys::_virTypedParameterValue { ui: v },
+                };
+                params.push(p);
             }),
-            ParamOut::Int64(i) => i.map(|v| sys::virTypedParameter {
-                field: to_arr(&field.name),
-                type_: sys::VIR_TYPED_PARAM_LLONG as i32,
-                value: sys::_virTypedParameterValue { l: v },
+            ParamOut::Int64(i) => i.map(|v| {
+                let p = sys::virTypedParameter {
+                    field: to_arr(&field.name),
+                    type_: sys::VIR_TYPED_PARAM_LLONG as i32,
+                    value: sys::_virTypedParameterValue { l: v },
+                };
+                params.push(p);
             }),
-            ParamOut::UInt64(i) => i.map(|v| sys::virTypedParameter {
-                field: to_arr(&field.name),
-                type_: sys::VIR_TYPED_PARAM_ULLONG as i32,
-                value: sys::_virTypedParameterValue { ul: v },
+            ParamOut::UInt64(i) => i.map(|v| {
+                let p = sys::virTypedParameter {
+                    field: to_arr(&field.name),
+                    type_: sys::VIR_TYPED_PARAM_ULLONG as i32,
+                    value: sys::_virTypedParameterValue { ul: v },
+                };
+                params.push(p);
             }),
-            ParamOut::Float64(i) => i.map(|v| sys::virTypedParameter {
-                field: to_arr(&field.name),
-                type_: sys::VIR_TYPED_PARAM_DOUBLE as i32,
-                value: sys::_virTypedParameterValue { d: v },
+            ParamOut::Float64(i) => i.map(|v| {
+                let p = sys::virTypedParameter {
+                    field: to_arr(&field.name),
+                    type_: sys::VIR_TYPED_PARAM_DOUBLE as i32,
+                    value: sys::_virTypedParameterValue { d: v },
+                };
+                params.push(p);
             }),
-            ParamOut::Bool(i) => i.map(|v| sys::virTypedParameter {
-                field: to_arr(&field.name),
-                type_: sys::VIR_TYPED_PARAM_BOOLEAN as i32,
-                value: sys::_virTypedParameterValue {
-                    b: v as libc::c_char,
-                },
+            ParamOut::Bool(i) => i.map(|v| {
+                let p = sys::virTypedParameter {
+                    field: to_arr(&field.name),
+                    type_: sys::VIR_TYPED_PARAM_BOOLEAN as i32,
+                    value: sys::_virTypedParameterValue {
+                        b: v as libc::c_char,
+                    },
+                };
+                params.push(p);
             }),
-            ParamOut::String(i) => i.clone().map(|v| sys::virTypedParameter {
-                field: to_arr(&field.name),
-                type_: sys::VIR_TYPED_PARAM_STRING as i32,
-                value: sys::_virTypedParameterValue {
-                    s: string_to_mut_c_chars!(v),
-                },
+            ParamOut::String(i) => i.clone().map(|v| {
+                let p = sys::virTypedParameter {
+                    field: to_arr(&field.name),
+                    type_: sys::VIR_TYPED_PARAM_STRING as i32,
+                    value: sys::_virTypedParameterValue {
+                        s: string_to_mut_c_chars!(v),
+                    },
+                };
+                params.push(p);
             }),
-        };
-        if let Some(p) = param {
-            params.push(p)
+            ParamOut::VecString(v) => {
+                params.extend(v.clone().into_iter().map(|s| sys::virTypedParameter {
+                    field: to_arr(&field.name),
+                    type_: sys::VIR_TYPED_PARAM_STRING as i32,
+                    value: sys::_virTypedParameterValue {
+                        s: string_to_mut_c_chars!(s),
+                    },
+                }));
+                None
+            }
         };
     }
     params
