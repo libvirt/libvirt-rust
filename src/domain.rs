@@ -1017,6 +1017,16 @@ impl Domain {
         Ok(ret == 1)
     }
 
+    /// Determine if the domain has a persistent configuration which means it will still exist
+    /// after shutting down.
+    pub fn is_persistent(&self) -> Result<bool, Error> {
+        let ret = unsafe { sys::virDomainIsPersistent(self.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
+        }
+        Ok(ret == 1)
+    }
+
     /// Undefine a domain.
     ///
     /// If the domain is running, it's converted to transient domain,
