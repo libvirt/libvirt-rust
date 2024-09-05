@@ -2401,4 +2401,29 @@ impl Domain {
         }
         Ok(unsafe { c_chars_to_string!(result) })
     }
+
+    /// Send an arbitrary agent command to the domain through the QEMU guest agent.
+    ///
+    /// * `cmd` - the QEMU guest agent command string
+    /// * `flags` - bitwise-or of supported execution flags
+    /// * `timeout` - the timeout in seconds, or one of the [`virDomainQemuAgentCommandTimeoutValues`] flags
+    ///
+    /// [`virDomainQemuAgentCommandTimeoutValues`]: sys::virDomainQemuAgentCommandTimeoutValues
+    #[cfg(feature = "qemu")]
+    pub fn qemu_agent_command(&self, cmd: &str, timeout: i32, flags: u32) -> Result<String, Error> {
+        let cmd_buf = CString::new(cmd).unwrap();
+        let ret = unsafe {
+            sys::virDomainQemuAgentCommand(
+                self.as_ptr(),
+                cmd_buf.as_ptr(),
+                timeout as libc::c_int,
+                flags as libc::c_uint,
+            )
+        };
+
+        if ret.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { c_chars_to_string!(ret) })
+    }
 }

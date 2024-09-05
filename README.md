@@ -71,6 +71,7 @@ and enter "pass" as the password.
 ```
 # cargo run --example hello
 # cargo run --example migrate -- qemu:///system tcp+qemu://192.168.0.1/system myguest
+# cargo run -F qemu --example guest_agent -- qemu:///system myguest
 
 ```
 

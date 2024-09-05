@@ -27,3 +27,8 @@ regex = { version = "~1.9.0" }
 qemu = ["virt-sys/qemu"]
 bindgen_regenerate = ["virt-sys/bindgen_regenerate"]
 api_coverage = []
+
+[[example]]
+name = "guest_agent"
+path = "examples/guest_agent.rs"
+required-features = [ "qemu" ]
