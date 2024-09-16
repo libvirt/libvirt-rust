@@ -579,6 +579,9 @@ pub const VIR_DOMAIN_JOB_DISK_TEMP_USED: &::std::ffi::CStr =
 pub const VIR_DOMAIN_JOB_DISK_TEMP_TOTAL: &::std::ffi::CStr =
     unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"disk_temp_total\0") };
 #[allow(unsafe_code)]
+pub const VIR_DOMAIN_JOB_VFIO_DATA_TRANSFERRED: &::std::ffi::CStr =
+    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"vfio_data_transferred\0") };
+#[allow(unsafe_code)]
 pub const VIR_DOMAIN_TUNABLE_CPU_VCPUPIN: &::std::ffi::CStr =
     unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.vcpupin%u\0") };
 #[allow(unsafe_code)]
