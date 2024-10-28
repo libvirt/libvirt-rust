@@ -127,7 +127,7 @@ x86_64-opensuse-leap-15:
   allow_failure: false
   variables:
     NAME: opensuse-leap-15
-    TARGET_BASE_IMAGE: registry.opensuse.org/opensuse/leap:15.5
+    TARGET_BASE_IMAGE: registry.opensuse.org/opensuse/leap:15.6
 
 
 x86_64-opensuse-tumbleweed:
@@ -267,7 +267,8 @@ s390x-debian-12:
 x86_64-freebsd-13:
   extends: .cirrus_build_job
   needs: []
-  allow_failure: false
+  allow_failure:
+    exit_codes: 3
   variables:
     CIRRUS_VM_IMAGE_NAME: freebsd-13-3
     CIRRUS_VM_IMAGE_SELECTOR: image_family
@@ -281,9 +282,10 @@ x86_64-freebsd-13:
 x86_64-freebsd-14:
   extends: .cirrus_build_job
   needs: []
-  allow_failure: false
+  allow_failure:
+    exit_codes: 3
   variables:
-    CIRRUS_VM_IMAGE_NAME: freebsd-14-0
+    CIRRUS_VM_IMAGE_NAME: freebsd-14-1
     CIRRUS_VM_IMAGE_SELECTOR: image_family
     CIRRUS_VM_INSTANCE_TYPE: freebsd_instance
     INSTALL_COMMAND: pkg install -y
@@ -292,26 +294,13 @@ x86_64-freebsd-14:
     UPGRADE_COMMAND: pkg upgrade -y
 
 
-aarch64-macos-13:
-  extends: .cirrus_build_job
-  needs: []
-  allow_failure: false
-  variables:
-    CIRRUS_VM_IMAGE_NAME: ghcr.io/cirruslabs/macos-ventura-base:latest
-    CIRRUS_VM_IMAGE_SELECTOR: image
-    CIRRUS_VM_INSTANCE_TYPE: macos_instance
-    INSTALL_COMMAND: brew install
-    NAME: macos-13
-    UPDATE_COMMAND: brew update
-    UPGRADE_COMMAND: brew upgrade
-
-
 aarch64-macos-14:
   extends: .cirrus_build_job
   needs: []
-  allow_failure: false
+  allow_failure:
+    exit_codes: 3
   variables:
-    CIRRUS_VM_IMAGE_NAME: ghcr.io/cirruslabs/macos-sonoma-base:latest
+    CIRRUS_VM_IMAGE_NAME: ghcr.io/cirruslabs/macos-runner:sonoma
     CIRRUS_VM_IMAGE_SELECTOR: image
     CIRRUS_VM_INSTANCE_TYPE: macos_instance
     INSTALL_COMMAND: brew install

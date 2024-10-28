@@ -73,8 +73,6 @@ targets:
       - arch: x86_64
         allow-failure: true
 
-  macos-13: aarch64
-
   macos-14: aarch64
 
   ubuntu-2204: x86_64
