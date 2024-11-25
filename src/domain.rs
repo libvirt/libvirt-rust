@@ -1133,6 +1133,14 @@ impl Domain {
         Ok(ret as u32)
     }
 
+    pub fn pm_wakeup(&self, flags: u32) -> Result<u32, Error> {
+        let ret = unsafe { sys::virDomainPMWakeup(self.as_ptr(), flags as libc::c_uint) };
+        if ret == -1 {
+            return Err(Error::last_error());
+        }
+        Ok(ret as u32)
+    }
+
     /// Determine if the domain is currently running.
     pub fn is_active(&self) -> Result<bool, Error> {
         let ret = unsafe { sys::virDomainIsActive(self.as_ptr()) };
