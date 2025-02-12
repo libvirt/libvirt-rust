@@ -11,6 +11,7 @@ keywords = ["libvirt", "virtualization", "KVM", "QEMU", "Xen",]
 categories = ["api-bindings", "emulators",]
 repository = "https://gitlab.com/libvirt/libvirt-rust"
 homepage  = "https://libvirt.org/"
+rust-version = "1.63"
 
 [dependencies]
 libc = "0.2.0"
