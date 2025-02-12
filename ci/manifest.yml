@@ -48,9 +48,9 @@ targets:
       - arch: x86_64
         allow-failure: true
 
-  fedora-39: x86_64
+  fedora-40: x86_64
 
-  fedora-40:
+  fedora-41:
     jobs:
       - arch: x86_64
         variables:

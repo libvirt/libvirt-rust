@@ -84,17 +84,6 @@ x86_64-debian-sid:
     TARGET_BASE_IMAGE: docker.io/library/debian:sid-slim
 
 
-x86_64-fedora-39:
-  extends: .native_build_job
-  needs:
-    - job: x86_64-fedora-39-container
-      optional: true
-  allow_failure: false
-  variables:
-    NAME: fedora-39
-    TARGET_BASE_IMAGE: registry.fedoraproject.org/fedora:39
-
-
 x86_64-fedora-40:
   extends: .native_build_job
   needs:
@@ -102,10 +91,21 @@ x86_64-fedora-40:
       optional: true
   allow_failure: false
   variables:
-    CLIPPY: enable
-    DOC: enable
     NAME: fedora-40
     TARGET_BASE_IMAGE: registry.fedoraproject.org/fedora:40
+
+
+x86_64-fedora-41:
+  extends: .native_build_job
+  needs:
+    - job: x86_64-fedora-41-container
+      optional: true
+  allow_failure: false
+  variables:
+    CLIPPY: enable
+    DOC: enable
+    NAME: fedora-41
+    TARGET_BASE_IMAGE: registry.fedoraproject.org/fedora:41
 
 
 x86_64-fedora-rawhide:
@@ -270,7 +270,7 @@ x86_64-freebsd-13:
   allow_failure:
     exit_codes: 3
   variables:
-    CIRRUS_VM_IMAGE_NAME: freebsd-13-3
+    CIRRUS_VM_IMAGE_NAME: freebsd-13-4
     CIRRUS_VM_IMAGE_SELECTOR: image_family
     CIRRUS_VM_INSTANCE_TYPE: freebsd_instance
     INSTALL_COMMAND: pkg install -y
@@ -285,7 +285,7 @@ x86_64-freebsd-14:
   allow_failure:
     exit_codes: 3
   variables:
-    CIRRUS_VM_IMAGE_NAME: freebsd-14-1
+    CIRRUS_VM_IMAGE_NAME: freebsd-14-2
     CIRRUS_VM_IMAGE_SELECTOR: image_family
     CIRRUS_VM_INSTANCE_TYPE: freebsd_instance
     INSTALL_COMMAND: pkg install -y
