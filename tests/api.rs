@@ -24,7 +24,6 @@ use std::fs::read_to_string;
 use std::path::PathBuf;
 
 use pkg_config::get_variable;
-use regex::Regex;
 use serde::{Deserialize, Serialize};
 use serde_xml_rs::from_str;
 
@@ -174,6 +173,21 @@ fn get_api_symbols(
     }
 }
 
+fn find_sym(line: &str) -> Option<String> {
+    match line.find("sys::") {
+        None => None,
+        Some(start) => {
+            let tail = line.get(start + 5..).unwrap();
+            for (i, c) in tail.char_indices() {
+                if !c.is_ascii_alphanumeric() && c != '_' {
+                    return Some(tail.get(..i).unwrap().to_string());
+                }
+            }
+            Some(tail.to_string())
+        }
+    }
+}
+
 fn load_file(
     src: PathBuf,
     funcs: &mut HashSet<String>,
@@ -182,17 +196,20 @@ fn load_file(
 ) {
     let code = read_to_string(src.clone()).unwrap();
 
-    let re = Regex::new("sys::(vir|VIR_)[_a-zA-Z0-9]+").unwrap();
-    for m in re.find_iter(&code) {
-        let sym = m.as_str()[5..].to_string();
-        if funcs.contains(&sym) {
-            funcs.remove(&sym);
-        }
-        if macros.contains(&sym) {
-            macros.remove(&sym);
-        }
-        if enums.contains(&sym) {
-            enums.remove(&sym);
+    for line in code.lines() {
+        match find_sym(line) {
+            None => {}
+            Some(sym) => {
+                if funcs.contains(&sym) {
+                    funcs.remove(&sym);
+                }
+                if macros.contains(&sym) {
+                    macros.remove(&sym);
+                }
+                if enums.contains(&sym) {
+                    enums.remove(&sym);
+                }
+            }
         }
     }
 }

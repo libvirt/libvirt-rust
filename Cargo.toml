@@ -22,7 +22,6 @@ uuid = "1.7.0"
 serde = { version = "1.0.0", features = ["derive"] }
 serde-xml-rs = { version = "0.6.0" }
 pkg-config = { version = "0.3.0" }
-regex = { version = "~1.9.0" }
 
 [features]
 qemu = ["virt-sys/qemu"]
