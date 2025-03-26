@@ -508,6 +508,10 @@ pub enum ErrorNumber {
     MultipleDomains,
     /// Network metadata is not present
     NoNetworkMetadata,
+    /// Guest agent didn't respond to a non-sync command within timeout
+    AgentCommandTimeout,
+    /// Guest agent responded with failure to a command
+    AgentCommandFailed,
     /// Indicates an error number not yet supported by the Rust bindings
     Last,
 }
@@ -628,6 +632,8 @@ impl_enum! {
         sys::VIR_ERR_CHECKPOINT_INCONSISTENT => CheckpointInconsistent,
         sys::VIR_ERR_MULTIPLE_DOMAINS => MultipleDomains,
         sys::VIR_ERR_NO_NETWORK_METADATA => NoNetworkMetadata,
+        sys::VIR_ERR_AGENT_COMMAND_TIMEOUT => AgentCommandTimeout,
+        sys::VIR_ERR_AGENT_COMMAND_FAILED => AgentCommandFailed,
         _ => Last => sys::VIR_ERR_INTERNAL_ERROR,
     }
 }

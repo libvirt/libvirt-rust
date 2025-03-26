@@ -7498,6 +7498,8 @@ pub const VIR_ERR_NO_HOSTNAME: virErrorNumber = 108;
 pub const VIR_ERR_CHECKPOINT_INCONSISTENT: virErrorNumber = 109;
 pub const VIR_ERR_MULTIPLE_DOMAINS: virErrorNumber = 110;
 pub const VIR_ERR_NO_NETWORK_METADATA: virErrorNumber = 111;
+pub const VIR_ERR_AGENT_COMMAND_TIMEOUT: virErrorNumber = 112;
+pub const VIR_ERR_AGENT_COMMAND_FAILED: virErrorNumber = 113;
 pub type virErrorNumber = ::libc::c_uint;
 pub type virErrorFunc =
     ::std::option::Option<unsafe extern "C" fn(userData: *mut ::libc::c_void, error: virErrorPtr)>;
