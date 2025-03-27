@@ -6,644 +6,1320 @@ pub const VIR_SECURITY_MODEL_BUFLEN: u32 = 257;
 pub const VIR_SECURITY_DOI_BUFLEN: u32 = 257;
 pub const VIR_NODE_CPU_STATS_FIELD_LENGTH: u32 = 80;
 #[allow(unsafe_code)]
-pub const VIR_NODE_CPU_STATS_KERNEL: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"kernel\0") };
+pub const VIR_NODE_CPU_STATS_KERNEL: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"kernel\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_CPU_STATS_USER: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"user\0") };
+pub const VIR_NODE_CPU_STATS_USER: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"user\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_CPU_STATS_IDLE: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"idle\0") };
+pub const VIR_NODE_CPU_STATS_IDLE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"idle\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_CPU_STATS_IOWAIT: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"iowait\0") };
+pub const VIR_NODE_CPU_STATS_IOWAIT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"iowait\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_CPU_STATS_INTR: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"intr\0") };
+pub const VIR_NODE_CPU_STATS_INTR: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"intr\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_CPU_STATS_UTILIZATION: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"utilization\0") };
+pub const VIR_NODE_CPU_STATS_UTILIZATION: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"utilization\0")
+};
 pub const VIR_NODE_MEMORY_STATS_FIELD_LENGTH: u32 = 80;
 #[allow(unsafe_code)]
-pub const VIR_NODE_MEMORY_STATS_TOTAL: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"total\0") };
+pub const VIR_NODE_MEMORY_STATS_TOTAL: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"total\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_MEMORY_STATS_FREE: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"free\0") };
+pub const VIR_NODE_MEMORY_STATS_FREE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"free\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_MEMORY_STATS_BUFFERS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"buffers\0") };
+pub const VIR_NODE_MEMORY_STATS_BUFFERS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"buffers\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_MEMORY_STATS_CACHED: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cached\0") };
+pub const VIR_NODE_MEMORY_STATS_CACHED: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cached\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_MEMORY_SHARED_PAGES_TO_SCAN: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"shm_pages_to_scan\0") };
+pub const VIR_NODE_MEMORY_SHARED_PAGES_TO_SCAN: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"shm_pages_to_scan\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_MEMORY_SHARED_SLEEP_MILLISECS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"shm_sleep_millisecs\0") };
+pub const VIR_NODE_MEMORY_SHARED_SLEEP_MILLISECS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"shm_sleep_millisecs\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_MEMORY_SHARED_PAGES_SHARED: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"shm_pages_shared\0") };
+pub const VIR_NODE_MEMORY_SHARED_PAGES_SHARED: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"shm_pages_shared\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_MEMORY_SHARED_PAGES_SHARING: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"shm_pages_sharing\0") };
+pub const VIR_NODE_MEMORY_SHARED_PAGES_SHARING: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"shm_pages_sharing\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_MEMORY_SHARED_PAGES_UNSHARED: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"shm_pages_unshared\0") };
+pub const VIR_NODE_MEMORY_SHARED_PAGES_UNSHARED: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"shm_pages_unshared\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_MEMORY_SHARED_PAGES_VOLATILE: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"shm_pages_volatile\0") };
+pub const VIR_NODE_MEMORY_SHARED_PAGES_VOLATILE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"shm_pages_volatile\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_MEMORY_SHARED_FULL_SCANS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"shm_full_scans\0") };
+pub const VIR_NODE_MEMORY_SHARED_FULL_SCANS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"shm_full_scans\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_MEMORY_SHARED_MERGE_ACROSS_NODES: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"shm_merge_across_nodes\0") };
+pub const VIR_NODE_MEMORY_SHARED_MERGE_ACROSS_NODES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"shm_merge_across_nodes\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_SEV_PDH: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"pdh\0") };
+pub const VIR_NODE_SEV_PDH: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"pdh\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_SEV_CERT_CHAIN: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cert-chain\0") };
+pub const VIR_NODE_SEV_CERT_CHAIN: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cert-chain\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_SEV_CPU0_ID: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cpu0-id\0") };
+pub const VIR_NODE_SEV_CPU0_ID: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cpu0-id\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_SEV_CBITPOS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cbitpos\0") };
+pub const VIR_NODE_SEV_CBITPOS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cbitpos\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_SEV_REDUCED_PHYS_BITS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"reduced-phys-bits\0") };
+pub const VIR_NODE_SEV_REDUCED_PHYS_BITS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"reduced-phys-bits\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_SEV_MAX_GUESTS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"max-guests\0") };
+pub const VIR_NODE_SEV_MAX_GUESTS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"max-guests\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NODE_SEV_MAX_ES_GUESTS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"max-es-guests\0") };
+pub const VIR_NODE_SEV_MAX_ES_GUESTS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"max-es-guests\0")
+};
 pub const VIR_UUID_BUFLEN: u32 = 16;
 pub const VIR_UUID_STRING_BUFLEN: u32 = 37;
 #[allow(unsafe_code)]
-pub const VIR_CONNECT_IDENTITY_USER_NAME: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"user-name\0") };
+pub const VIR_CONNECT_IDENTITY_USER_NAME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"user-name\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_CONNECT_IDENTITY_UNIX_USER_ID: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"unix-user-id\0") };
+pub const VIR_CONNECT_IDENTITY_UNIX_USER_ID: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"unix-user-id\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_CONNECT_IDENTITY_GROUP_NAME: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"group-name\0") };
+pub const VIR_CONNECT_IDENTITY_GROUP_NAME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"group-name\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_CONNECT_IDENTITY_UNIX_GROUP_ID: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"unix-group-id\0") };
+pub const VIR_CONNECT_IDENTITY_UNIX_GROUP_ID: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"unix-group-id\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_CONNECT_IDENTITY_PROCESS_ID: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"process-id\0") };
+pub const VIR_CONNECT_IDENTITY_PROCESS_ID: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"process-id\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_CONNECT_IDENTITY_PROCESS_TIME: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"process-time\0") };
+pub const VIR_CONNECT_IDENTITY_PROCESS_TIME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"process-time\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_CONNECT_IDENTITY_SASL_USER_NAME: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"sasl-user-name\0") };
+pub const VIR_CONNECT_IDENTITY_SASL_USER_NAME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"sasl-user-name\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_CONNECT_IDENTITY_X509_DISTINGUISHED_NAME: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"x509-distinguished-name\0") };
+pub const VIR_CONNECT_IDENTITY_X509_DISTINGUISHED_NAME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"x509-distinguished-name\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_CONNECT_IDENTITY_SELINUX_CONTEXT: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"selinux-context\0") };
+pub const VIR_CONNECT_IDENTITY_SELINUX_CONTEXT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"selinux-context\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_SCHEDULER_CPU_SHARES: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cpu_shares\0") };
+pub const VIR_DOMAIN_SCHEDULER_CPU_SHARES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cpu_shares\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_SCHEDULER_GLOBAL_PERIOD: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"global_period\0") };
+pub const VIR_DOMAIN_SCHEDULER_GLOBAL_PERIOD: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"global_period\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_SCHEDULER_GLOBAL_QUOTA: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"global_quota\0") };
+pub const VIR_DOMAIN_SCHEDULER_GLOBAL_QUOTA: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"global_quota\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_SCHEDULER_VCPU_PERIOD: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"vcpu_period\0") };
+pub const VIR_DOMAIN_SCHEDULER_VCPU_PERIOD: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"vcpu_period\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_SCHEDULER_VCPU_QUOTA: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"vcpu_quota\0") };
+pub const VIR_DOMAIN_SCHEDULER_VCPU_QUOTA: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"vcpu_quota\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_SCHEDULER_EMULATOR_PERIOD: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"emulator_period\0") };
+pub const VIR_DOMAIN_SCHEDULER_EMULATOR_PERIOD: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"emulator_period\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_SCHEDULER_EMULATOR_QUOTA: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"emulator_quota\0") };
+pub const VIR_DOMAIN_SCHEDULER_EMULATOR_QUOTA: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"emulator_quota\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_SCHEDULER_IOTHREAD_PERIOD: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"iothread_period\0") };
+pub const VIR_DOMAIN_SCHEDULER_IOTHREAD_PERIOD: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"iothread_period\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_SCHEDULER_IOTHREAD_QUOTA: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"iothread_quota\0") };
+pub const VIR_DOMAIN_SCHEDULER_IOTHREAD_QUOTA: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"iothread_quota\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_SCHEDULER_WEIGHT: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"weight\0") };
+pub const VIR_DOMAIN_SCHEDULER_WEIGHT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"weight\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_SCHEDULER_CAP: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cap\0") };
+pub const VIR_DOMAIN_SCHEDULER_CAP: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cap\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_SCHEDULER_RESERVATION: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"reservation\0") };
+pub const VIR_DOMAIN_SCHEDULER_RESERVATION: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"reservation\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_SCHEDULER_LIMIT: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"limit\0") };
+pub const VIR_DOMAIN_SCHEDULER_LIMIT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"limit\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_SCHEDULER_SHARES: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"shares\0") };
+pub const VIR_DOMAIN_SCHEDULER_SHARES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"shares\0")
+};
 pub const VIR_DOMAIN_BLOCK_STATS_FIELD_LENGTH: u32 = 80;
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_STATS_READ_BYTES: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"rd_bytes\0") };
+pub const VIR_DOMAIN_BLOCK_STATS_READ_BYTES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"rd_bytes\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_STATS_READ_REQ: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"rd_operations\0") };
+pub const VIR_DOMAIN_BLOCK_STATS_READ_REQ: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"rd_operations\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_STATS_READ_TOTAL_TIMES: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"rd_total_times\0") };
+pub const VIR_DOMAIN_BLOCK_STATS_READ_TOTAL_TIMES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"rd_total_times\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_STATS_WRITE_BYTES: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"wr_bytes\0") };
+pub const VIR_DOMAIN_BLOCK_STATS_WRITE_BYTES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"wr_bytes\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_STATS_WRITE_REQ: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"wr_operations\0") };
+pub const VIR_DOMAIN_BLOCK_STATS_WRITE_REQ: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"wr_operations\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_STATS_WRITE_TOTAL_TIMES: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"wr_total_times\0") };
+pub const VIR_DOMAIN_BLOCK_STATS_WRITE_TOTAL_TIMES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"wr_total_times\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_STATS_FLUSH_REQ: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"flush_operations\0") };
+pub const VIR_DOMAIN_BLOCK_STATS_FLUSH_REQ: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"flush_operations\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_STATS_FLUSH_TOTAL_TIMES: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"flush_total_times\0") };
+pub const VIR_DOMAIN_BLOCK_STATS_FLUSH_TOTAL_TIMES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"flush_total_times\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_STATS_ERRS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"errs\0") };
+pub const VIR_DOMAIN_BLOCK_STATS_ERRS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"errs\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_URI: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"migrate_uri\0") };
+pub const VIR_MIGRATE_PARAM_URI: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"migrate_uri\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_DEST_NAME: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"destination_name\0") };
+pub const VIR_MIGRATE_PARAM_DEST_NAME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"destination_name\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_DEST_XML: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"destination_xml\0") };
+pub const VIR_MIGRATE_PARAM_DEST_XML: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"destination_xml\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_PERSIST_XML: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"persistent_xml\0") };
+pub const VIR_MIGRATE_PARAM_PERSIST_XML: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"persistent_xml\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_BANDWIDTH: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"bandwidth\0") };
+pub const VIR_MIGRATE_PARAM_BANDWIDTH: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"bandwidth\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_BANDWIDTH_POSTCOPY: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"bandwidth.postcopy\0") };
+pub const VIR_MIGRATE_PARAM_BANDWIDTH_POSTCOPY: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"bandwidth.postcopy\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_GRAPHICS_URI: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"graphics_uri\0") };
+pub const VIR_MIGRATE_PARAM_BANDWIDTH_AVAIL_SWITCHOVER: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"bandwidth.avail.switchover\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_LISTEN_ADDRESS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"listen_address\0") };
+pub const VIR_MIGRATE_PARAM_GRAPHICS_URI: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"graphics_uri\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_MIGRATE_DISKS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"migrate_disks\0") };
+pub const VIR_MIGRATE_PARAM_LISTEN_ADDRESS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"listen_address\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_MIGRATE_DISKS_DETECT_ZEROES: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"migrate_disks_detect_zeroes\0") };
+pub const VIR_MIGRATE_PARAM_MIGRATE_DISKS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"migrate_disks\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_DISKS_PORT: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"disks_port\0") };
+pub const VIR_MIGRATE_PARAM_MIGRATE_DISKS_DETECT_ZEROES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"migrate_disks_detect_zeroes\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_DISKS_URI: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"disks_uri\0") };
+pub const VIR_MIGRATE_PARAM_DISKS_PORT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"disks_port\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_COMPRESSION: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression\0") };
+pub const VIR_MIGRATE_PARAM_DISKS_URI: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"disks_uri\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_COMPRESSION_MT_LEVEL: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression.mt.level\0") };
+pub const VIR_MIGRATE_PARAM_COMPRESSION: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_COMPRESSION_MT_THREADS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression.mt.threads\0") };
+pub const VIR_MIGRATE_PARAM_COMPRESSION_MT_LEVEL: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression.mt.level\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_COMPRESSION_MT_DTHREADS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression.mt.dthreads\0") };
+pub const VIR_MIGRATE_PARAM_COMPRESSION_MT_THREADS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression.mt.threads\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_COMPRESSION_XBZRLE_CACHE: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression.xbzrle.cache\0") };
+pub const VIR_MIGRATE_PARAM_COMPRESSION_MT_DTHREADS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression.mt.dthreads\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_COMPRESSION_ZLIB_LEVEL: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression.zlib.level\0") };
+pub const VIR_MIGRATE_PARAM_COMPRESSION_XBZRLE_CACHE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression.xbzrle.cache\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_COMPRESSION_ZSTD_LEVEL: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression.zstd.level\0") };
+pub const VIR_MIGRATE_PARAM_COMPRESSION_ZLIB_LEVEL: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression.zlib.level\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_AUTO_CONVERGE_INITIAL: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"auto_converge.initial\0") };
+pub const VIR_MIGRATE_PARAM_COMPRESSION_ZSTD_LEVEL: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression.zstd.level\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_AUTO_CONVERGE_INCREMENT: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"auto_converge.increment\0") };
+pub const VIR_MIGRATE_PARAM_AUTO_CONVERGE_INITIAL: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"auto_converge.initial\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_PARALLEL_CONNECTIONS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"parallel.connections\0") };
+pub const VIR_MIGRATE_PARAM_AUTO_CONVERGE_INCREMENT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"auto_converge.increment\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_MIGRATE_PARAM_TLS_DESTINATION: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"tls.destination\0") };
+pub const VIR_MIGRATE_PARAM_PARALLEL_CONNECTIONS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"parallel.connections\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_SAVE_PARAM_FILE: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"file\0") };
+pub const VIR_MIGRATE_PARAM_TLS_DESTINATION: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"tls.destination\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_SAVE_PARAM_DXML: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"dxml\0") };
+pub const VIR_DOMAIN_SAVE_PARAM_FILE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"file\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_CPU_STATS_CPUTIME: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cpu_time\0") };
+pub const VIR_DOMAIN_SAVE_PARAM_DXML: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"dxml\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_CPU_STATS_USERTIME: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"user_time\0") };
+pub const VIR_DOMAIN_SAVE_PARAM_IMAGE_FORMAT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"image_format\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_CPU_STATS_SYSTEMTIME: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"system_time\0") };
+pub const VIR_DOMAIN_SAVE_PARAM_PARALLEL_CHANNELS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"parallel.channels\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_CPU_STATS_VCPUTIME: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"vcpu_time\0") };
+pub const VIR_DOMAIN_CPU_STATS_CPUTIME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cpu_time\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLKIO_WEIGHT: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"weight\0") };
+pub const VIR_DOMAIN_CPU_STATS_USERTIME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"user_time\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLKIO_DEVICE_WEIGHT: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"device_weight\0") };
+pub const VIR_DOMAIN_CPU_STATS_SYSTEMTIME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"system_time\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLKIO_DEVICE_READ_IOPS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"device_read_iops_sec\0") };
+pub const VIR_DOMAIN_CPU_STATS_VCPUTIME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"vcpu_time\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLKIO_DEVICE_WRITE_IOPS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"device_write_iops_sec\0") };
+pub const VIR_DOMAIN_BLKIO_WEIGHT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"weight\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLKIO_DEVICE_READ_BPS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"device_read_bytes_sec\0") };
+pub const VIR_DOMAIN_BLKIO_DEVICE_WEIGHT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"device_weight\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLKIO_DEVICE_WRITE_BPS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"device_write_bytes_sec\0") };
+pub const VIR_DOMAIN_BLKIO_DEVICE_READ_IOPS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"device_read_iops_sec\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLKIO_DEVICE_WRITE_IOPS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"device_write_iops_sec\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLKIO_DEVICE_READ_BPS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"device_read_bytes_sec\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLKIO_DEVICE_WRITE_BPS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"device_write_bytes_sec\0")
+};
 pub const VIR_DOMAIN_MEMORY_PARAM_UNLIMITED: u64 = 9007199254740991;
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_MEMORY_HARD_LIMIT: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"hard_limit\0") };
+pub const VIR_DOMAIN_MEMORY_HARD_LIMIT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"hard_limit\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_MEMORY_SOFT_LIMIT: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"soft_limit\0") };
+pub const VIR_DOMAIN_MEMORY_SOFT_LIMIT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"soft_limit\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_MEMORY_MIN_GUARANTEE: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"min_guarantee\0") };
+pub const VIR_DOMAIN_MEMORY_MIN_GUARANTEE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"min_guarantee\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_MEMORY_SWAP_HARD_LIMIT: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"swap_hard_limit\0") };
+pub const VIR_DOMAIN_MEMORY_SWAP_HARD_LIMIT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"swap_hard_limit\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_NUMA_NODESET: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"numa_nodeset\0") };
+pub const VIR_DOMAIN_NUMA_NODESET: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"numa_nodeset\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_NUMA_MODE: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"numa_mode\0") };
+pub const VIR_DOMAIN_NUMA_MODE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"numa_mode\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BANDWIDTH_IN_AVERAGE: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"inbound.average\0") };
+pub const VIR_DOMAIN_BANDWIDTH_IN_AVERAGE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"inbound.average\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BANDWIDTH_IN_PEAK: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"inbound.peak\0") };
+pub const VIR_DOMAIN_BANDWIDTH_IN_PEAK: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"inbound.peak\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BANDWIDTH_IN_BURST: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"inbound.burst\0") };
+pub const VIR_DOMAIN_BANDWIDTH_IN_BURST: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"inbound.burst\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BANDWIDTH_IN_FLOOR: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"inbound.floor\0") };
+pub const VIR_DOMAIN_BANDWIDTH_IN_FLOOR: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"inbound.floor\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BANDWIDTH_OUT_AVERAGE: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"outbound.average\0") };
+pub const VIR_DOMAIN_BANDWIDTH_OUT_AVERAGE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"outbound.average\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BANDWIDTH_OUT_PEAK: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"outbound.peak\0") };
+pub const VIR_DOMAIN_BANDWIDTH_OUT_PEAK: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"outbound.peak\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BANDWIDTH_OUT_BURST: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"outbound.burst\0") };
+pub const VIR_DOMAIN_BANDWIDTH_OUT_BURST: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"outbound.burst\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_IOTHREAD_POLL_MAX_NS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"poll_max_ns\0") };
+pub const VIR_DOMAIN_IOTHREAD_POLL_MAX_NS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"poll_max_ns\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_IOTHREAD_POLL_GROW: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"poll_grow\0") };
+pub const VIR_DOMAIN_IOTHREAD_POLL_GROW: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"poll_grow\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_IOTHREAD_POLL_SHRINK: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"poll_shrink\0") };
+pub const VIR_DOMAIN_IOTHREAD_POLL_SHRINK: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"poll_shrink\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_IOTHREAD_THREAD_POOL_MIN: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"thread_pool_min\0") };
+pub const VIR_DOMAIN_IOTHREAD_THREAD_POOL_MIN: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"thread_pool_min\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_IOTHREAD_THREAD_POOL_MAX: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"thread_pool_max\0") };
+pub const VIR_DOMAIN_IOTHREAD_THREAD_POOL_MAX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"thread_pool_max\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_PERF_PARAM_CMT: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cmt\0") };
+pub const VIR_DOMAIN_STATS_STATE_STATE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"state.state\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_PERF_PARAM_MBMT: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"mbmt\0") };
+pub const VIR_DOMAIN_STATS_STATE_REASON: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"state.reason\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_PERF_PARAM_MBML: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"mbml\0") };
+pub const VIR_DOMAIN_STATS_CPU_TIME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cpu.time\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_PERF_PARAM_CACHE_MISSES: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cache_misses\0") };
+pub const VIR_DOMAIN_STATS_CPU_USER: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cpu.user\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_PERF_PARAM_CACHE_REFERENCES: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cache_references\0") };
+pub const VIR_DOMAIN_STATS_CPU_SYSTEM: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cpu.system\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_PERF_PARAM_INSTRUCTIONS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"instructions\0") };
+pub const VIR_DOMAIN_STATS_CPU_HALTPOLL_SUCCESS_TIME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cpu.haltpoll.success.time\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_PERF_PARAM_CPU_CYCLES: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cpu_cycles\0") };
+pub const VIR_DOMAIN_STATS_CPU_HALTPOLL_FAIL_TIME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cpu.haltpoll.fail.time\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_PERF_PARAM_BRANCH_INSTRUCTIONS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"branch_instructions\0") };
+pub const VIR_DOMAIN_STATS_CPU_CACHE_MONITOR_COUNT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cpu.cache.monitor.count\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_PERF_PARAM_BRANCH_MISSES: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"branch_misses\0") };
+pub const VIR_DOMAIN_STATS_CPU_CACHE_MONITOR_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cpu.cache.monitor.\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_PERF_PARAM_BUS_CYCLES: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"bus_cycles\0") };
+pub const VIR_DOMAIN_STATS_CPU_CACHE_MONITOR_SUFFIX_NAME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".name\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_PERF_PARAM_STALLED_CYCLES_FRONTEND: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"stalled_cycles_frontend\0") };
+pub const VIR_DOMAIN_STATS_CPU_CACHE_MONITOR_SUFFIX_VCPUS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".vcpus\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_PERF_PARAM_STALLED_CYCLES_BACKEND: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"stalled_cycles_backend\0") };
+pub const VIR_DOMAIN_STATS_CPU_CACHE_MONITOR_SUFFIX_BANK_COUNT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".bank.count\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_PERF_PARAM_REF_CPU_CYCLES: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"ref_cpu_cycles\0") };
+pub const VIR_DOMAIN_STATS_CPU_CACHE_MONITOR_SUFFIX_BANK_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".bank.\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_PERF_PARAM_CPU_CLOCK: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cpu_clock\0") };
+pub const VIR_DOMAIN_STATS_CPU_CACHE_MONITOR_SUFFIX_BANK_SUFFIX_ID: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".id\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_PERF_PARAM_TASK_CLOCK: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"task_clock\0") };
+pub const VIR_DOMAIN_STATS_CPU_CACHE_MONITOR_SUFFIX_BANK_SUFFIX_BYTES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".bytes\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_PERF_PARAM_PAGE_FAULTS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"page_faults\0") };
+pub const VIR_DOMAIN_STATS_BALLOON_CURRENT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"balloon.current\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_PERF_PARAM_CONTEXT_SWITCHES: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"context_switches\0") };
+pub const VIR_DOMAIN_STATS_BALLOON_MAXIMUM: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"balloon.maximum\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_PERF_PARAM_CPU_MIGRATIONS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cpu_migrations\0") };
+pub const VIR_DOMAIN_STATS_BALLOON_SWAP_IN: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"balloon.swap_in\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_PERF_PARAM_PAGE_FAULTS_MIN: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"page_faults_min\0") };
+pub const VIR_DOMAIN_STATS_BALLOON_SWAP_OUT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"balloon.swap_out\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_PERF_PARAM_PAGE_FAULTS_MAJ: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"page_faults_maj\0") };
+pub const VIR_DOMAIN_STATS_BALLOON_MAJOR_FAULT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"balloon.major_fault\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_PERF_PARAM_ALIGNMENT_FAULTS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"alignment_faults\0") };
+pub const VIR_DOMAIN_STATS_BALLOON_MINOR_FAULT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"balloon.minor_fault\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_PERF_PARAM_EMULATION_FAULTS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"emulation_faults\0") };
+pub const VIR_DOMAIN_STATS_BALLOON_UNUSED: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"balloon.unused\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_COPY_BANDWIDTH: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"bandwidth\0") };
+pub const VIR_DOMAIN_STATS_BALLOON_AVAILABLE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"balloon.available\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_COPY_GRANULARITY: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"granularity\0") };
+pub const VIR_DOMAIN_STATS_BALLOON_RSS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"balloon.rss\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_COPY_BUF_SIZE: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"buf-size\0") };
+pub const VIR_DOMAIN_STATS_BALLOON_USABLE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"balloon.usable\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_IOTUNE_TOTAL_BYTES_SEC: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"total_bytes_sec\0") };
+pub const VIR_DOMAIN_STATS_BALLOON_LAST_UPDATE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"balloon.last-update\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_IOTUNE_READ_BYTES_SEC: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"read_bytes_sec\0") };
+pub const VIR_DOMAIN_STATS_BALLOON_DISK_CACHES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"balloon.disk_caches\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_IOTUNE_WRITE_BYTES_SEC: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"write_bytes_sec\0") };
+pub const VIR_DOMAIN_STATS_BALLOON_HUGETLB_PGALLOC: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"balloon.hugetlb_pgalloc\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_IOTUNE_TOTAL_IOPS_SEC: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"total_iops_sec\0") };
+pub const VIR_DOMAIN_STATS_BALLOON_HUGETLB_PGFAIL: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"balloon.hugetlb_pgfail\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_IOTUNE_READ_IOPS_SEC: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"read_iops_sec\0") };
+pub const VIR_DOMAIN_STATS_VCPU_CURRENT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"vcpu.current\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_IOTUNE_WRITE_IOPS_SEC: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"write_iops_sec\0") };
+pub const VIR_DOMAIN_STATS_VCPU_MAXIMUM: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"vcpu.maximum\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_IOTUNE_TOTAL_BYTES_SEC_MAX: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"total_bytes_sec_max\0") };
+pub const VIR_DOMAIN_STATS_VCPU_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"vcpu.\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_IOTUNE_READ_BYTES_SEC_MAX: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"read_bytes_sec_max\0") };
+pub const VIR_DOMAIN_STATS_VCPU_SUFFIX_STATE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".state\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_IOTUNE_WRITE_BYTES_SEC_MAX: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"write_bytes_sec_max\0") };
+pub const VIR_DOMAIN_STATS_VCPU_SUFFIX_TIME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".time\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_IOTUNE_TOTAL_IOPS_SEC_MAX: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"total_iops_sec_max\0") };
+pub const VIR_DOMAIN_STATS_VCPU_SUFFIX_WAIT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".wait\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_IOTUNE_READ_IOPS_SEC_MAX: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"read_iops_sec_max\0") };
+pub const VIR_DOMAIN_STATS_VCPU_SUFFIX_HALTED: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".halted\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_IOTUNE_WRITE_IOPS_SEC_MAX: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"write_iops_sec_max\0") };
+pub const VIR_DOMAIN_STATS_VCPU_SUFFIX_DELAY: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".delay\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_IOTUNE_TOTAL_BYTES_SEC_MAX_LENGTH: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"total_bytes_sec_max_length\0") };
+pub const VIR_DOMAIN_STATS_CUSTOM_SUFFIX_TYPE_CUR: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".cur\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_IOTUNE_READ_BYTES_SEC_MAX_LENGTH: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"read_bytes_sec_max_length\0") };
+pub const VIR_DOMAIN_STATS_CUSTOM_SUFFIX_TYPE_SUM: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".sum\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_IOTUNE_WRITE_BYTES_SEC_MAX_LENGTH: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"write_bytes_sec_max_length\0") };
+pub const VIR_DOMAIN_STATS_CUSTOM_SUFFIX_TYPE_MAX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".max\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_IOTUNE_TOTAL_IOPS_SEC_MAX_LENGTH: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"total_iops_sec_max_length\0") };
+pub const VIR_DOMAIN_STATS_NET_COUNT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"net.count\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_IOTUNE_READ_IOPS_SEC_MAX_LENGTH: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"read_iops_sec_max_length\0") };
+pub const VIR_DOMAIN_STATS_NET_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"net.\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_IOTUNE_WRITE_IOPS_SEC_MAX_LENGTH: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"write_iops_sec_max_length\0") };
+pub const VIR_DOMAIN_STATS_NET_SUFFIX_NAME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".name\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_IOTUNE_SIZE_IOPS_SEC: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"size_iops_sec\0") };
+pub const VIR_DOMAIN_STATS_NET_SUFFIX_RX_BYTES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".rx.bytes\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_BLOCK_IOTUNE_GROUP_NAME: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"group_name\0") };
+pub const VIR_DOMAIN_STATS_NET_SUFFIX_RX_PKTS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".rx.pkts\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_NET_SUFFIX_RX_ERRS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".rx.errs\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_NET_SUFFIX_RX_DROP: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".rx.drop\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_NET_SUFFIX_TX_BYTES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".tx.bytes\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_NET_SUFFIX_TX_PKTS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".tx.pkts\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_NET_SUFFIX_TX_ERRS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".tx.errs\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_NET_SUFFIX_TX_DROP: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".tx.drop\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_COUNT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"block.count\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"block.\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_NAME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".name\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_BACKINGINDEX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".backingIndex\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_PATH: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".path\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_RD_REQS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".rd.reqs\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_RD_BYTES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".rd.bytes\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_RD_TIMES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".rd.times\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_WR_REQS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".wr.reqs\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_WR_BYTES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".wr.bytes\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_WR_TIMES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".wr.times\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_FL_REQS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".fl.reqs\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_FL_TIMES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".fl.times\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_ERRORS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".errors\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_ALLOCATION: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".allocation\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_CAPACITY: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".capacity\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_PHYSICAL: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".physical\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_THRESHOLD: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".threshold\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_PERF_CMT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"perf.cmt\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_PERF_MBMT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"perf.mbmt\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_PERF_MBML: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"perf.mbml\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_PERF_CACHE_MISSES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"perf.cache_misses\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_PERF_CACHE_REFERENCES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"perf.cache_references\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_PERF_INSTRUCTIONS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"perf.instructions\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_PERF_CPU_CYCLES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"perf.cpu_cycles\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_PERF_BRANCH_INSTRUCTIONS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"perf.branch_instructions\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_PERF_BRANCH_MISSES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"perf.branch_misses\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_PERF_BUS_CYCLES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"perf.bus_cycles\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_PERF_STALLED_CYCLES_FRONTEND: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"perf.stalled_cycles_frontend\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_PERF_STALLED_CYCLES_BACKEND: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"perf.stalled_cycles_backend\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_PERF_REF_CPU_CYCLES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"perf.ref_cpu_cycles\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_PERF_CPU_CLOCK: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"perf.cpu_clock\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_PERF_TASK_CLOCK: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"perf.task_clock\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_PERF_PAGE_FAULTS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"perf.page_faults\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_PERF_CONTEXT_SWITCHES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"perf.context_switches\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_PERF_CPU_MIGRATIONS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"perf.cpu_migrations\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_PERF_PAGE_FAULTS_MIN: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"perf.page_faults_min\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_PERF_PAGE_FAULTS_MAJ: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"perf.page_faults_maj\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_PERF_ALIGNMENT_FAULTS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"perf.alignment_faults\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_PERF_EMULATION_FAULTS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"perf.emulation_faults\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_IOTHREAD_COUNT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"iothread.count\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_IOTHREAD_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"iothread.\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_IOTHREAD_SUFFIX_POLL_MAX_NS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".poll-max-ns\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_IOTHREAD_SUFFIX_POLL_GROW: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".poll-grow\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_IOTHREAD_SUFFIX_POLL_SHRINK: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".poll-shrink\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_MEMORY_BANDWIDTH_MONITOR_COUNT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory.bandwidth.monitor.count\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_MEMORY_BANDWIDTH_MONITOR_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory.bandwidth.monitor.\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_MEMORY_BANDWIDTH_MONITOR_SUFFIX_NAME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".name\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_MEMORY_BANDWIDTH_MONITOR_SUFFIX_VCPUS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".vcpus\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_MEMORY_BANDWIDTH_MONITOR_SUFFIX_NODE_COUNT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".node.count\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_MEMORY_BANDWIDTH_MONITOR_SUFFIX_NODE_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".node.\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_MEMORY_BANDWIDTH_MONITOR_SUFFIX_NODE_SUFFIX_ID: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".id\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_MEMORY_BANDWIDTH_MONITOR_SUFFIX_NODE_SUFFIX_BYTES_LOCAL: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".bytes.local\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_MEMORY_BANDWIDTH_MONITOR_SUFFIX_NODE_SUFFIX_BYTES_TOTAL: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".bytes.total\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_DIRTYRATE_CALC_STATUS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"dirtyrate.calc_status\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_DIRTYRATE_CALC_START_TIME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"dirtyrate.calc_start_time\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_DIRTYRATE_CALC_PERIOD: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"dirtyrate.calc_period\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_DIRTYRATE_MEGABYTES_PER_SECOND: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"dirtyrate.megabytes_per_second\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_DIRTYRATE_CALC_MODE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"dirtyrate.calc_mode\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_DIRTYRATE_VCPU_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"dirtyrate.vcpu.\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_DIRTYRATE_VCPU_SUFFIX_MEGABYTES_PER_SECOND: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".megabytes_per_second\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_VM_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"vm.\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_PERF_PARAM_CMT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cmt\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_PERF_PARAM_MBMT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"mbmt\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_PERF_PARAM_MBML: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"mbml\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_PERF_PARAM_CACHE_MISSES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cache_misses\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_PERF_PARAM_CACHE_REFERENCES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cache_references\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_PERF_PARAM_INSTRUCTIONS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"instructions\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_PERF_PARAM_CPU_CYCLES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cpu_cycles\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_PERF_PARAM_BRANCH_INSTRUCTIONS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"branch_instructions\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_PERF_PARAM_BRANCH_MISSES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"branch_misses\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_PERF_PARAM_BUS_CYCLES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"bus_cycles\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_PERF_PARAM_STALLED_CYCLES_FRONTEND: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"stalled_cycles_frontend\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_PERF_PARAM_STALLED_CYCLES_BACKEND: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"stalled_cycles_backend\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_PERF_PARAM_REF_CPU_CYCLES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"ref_cpu_cycles\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_PERF_PARAM_CPU_CLOCK: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cpu_clock\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_PERF_PARAM_TASK_CLOCK: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"task_clock\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_PERF_PARAM_PAGE_FAULTS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"page_faults\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_PERF_PARAM_CONTEXT_SWITCHES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"context_switches\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_PERF_PARAM_CPU_MIGRATIONS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cpu_migrations\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_PERF_PARAM_PAGE_FAULTS_MIN: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"page_faults_min\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_PERF_PARAM_PAGE_FAULTS_MAJ: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"page_faults_maj\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_PERF_PARAM_ALIGNMENT_FAULTS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"alignment_faults\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_PERF_PARAM_EMULATION_FAULTS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"emulation_faults\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_COPY_BANDWIDTH: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"bandwidth\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_COPY_GRANULARITY: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"granularity\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_COPY_BUF_SIZE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"buf-size\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_IOTUNE_TOTAL_BYTES_SEC: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"total_bytes_sec\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_IOTUNE_READ_BYTES_SEC: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"read_bytes_sec\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_IOTUNE_WRITE_BYTES_SEC: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"write_bytes_sec\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_IOTUNE_TOTAL_IOPS_SEC: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"total_iops_sec\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_IOTUNE_READ_IOPS_SEC: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"read_iops_sec\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_IOTUNE_WRITE_IOPS_SEC: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"write_iops_sec\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_IOTUNE_TOTAL_BYTES_SEC_MAX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"total_bytes_sec_max\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_IOTUNE_READ_BYTES_SEC_MAX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"read_bytes_sec_max\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_IOTUNE_WRITE_BYTES_SEC_MAX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"write_bytes_sec_max\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_IOTUNE_TOTAL_IOPS_SEC_MAX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"total_iops_sec_max\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_IOTUNE_READ_IOPS_SEC_MAX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"read_iops_sec_max\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_IOTUNE_WRITE_IOPS_SEC_MAX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"write_iops_sec_max\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_IOTUNE_TOTAL_BYTES_SEC_MAX_LENGTH: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"total_bytes_sec_max_length\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_IOTUNE_READ_BYTES_SEC_MAX_LENGTH: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"read_bytes_sec_max_length\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_IOTUNE_WRITE_BYTES_SEC_MAX_LENGTH: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"write_bytes_sec_max_length\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_IOTUNE_TOTAL_IOPS_SEC_MAX_LENGTH: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"total_iops_sec_max_length\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_IOTUNE_READ_IOPS_SEC_MAX_LENGTH: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"read_iops_sec_max_length\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_IOTUNE_WRITE_IOPS_SEC_MAX_LENGTH: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"write_iops_sec_max_length\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_IOTUNE_SIZE_IOPS_SEC: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"size_iops_sec\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_BLOCK_IOTUNE_GROUP_NAME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"group_name\0")
+};
 pub const VIR_DOMAIN_SEND_KEY_MAX_KEYS: u32 = 16;
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_OPERATION: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"operation\0") };
+pub const VIR_DOMAIN_JOB_OPERATION: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"operation\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_TIME_ELAPSED: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"time_elapsed\0") };
+pub const VIR_DOMAIN_JOB_TIME_ELAPSED: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"time_elapsed\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_TIME_ELAPSED_NET: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"time_elapsed_net\0") };
+pub const VIR_DOMAIN_JOB_TIME_ELAPSED_NET: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"time_elapsed_net\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_TIME_REMAINING: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"time_remaining\0") };
+pub const VIR_DOMAIN_JOB_TIME_REMAINING: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"time_remaining\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_DOWNTIME: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"downtime\0") };
+pub const VIR_DOMAIN_JOB_DOWNTIME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"downtime\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_DOWNTIME_NET: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"downtime_net\0") };
+pub const VIR_DOMAIN_JOB_DOWNTIME_NET: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"downtime_net\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_SETUP_TIME: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"setup_time\0") };
+pub const VIR_DOMAIN_JOB_SETUP_TIME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"setup_time\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_DATA_TOTAL: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"data_total\0") };
+pub const VIR_DOMAIN_JOB_DATA_TOTAL: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"data_total\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_DATA_PROCESSED: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"data_processed\0") };
+pub const VIR_DOMAIN_JOB_DATA_PROCESSED: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"data_processed\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_DATA_REMAINING: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"data_remaining\0") };
+pub const VIR_DOMAIN_JOB_DATA_REMAINING: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"data_remaining\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_MEMORY_TOTAL: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory_total\0") };
+pub const VIR_DOMAIN_JOB_MEMORY_TOTAL: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory_total\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_MEMORY_PROCESSED: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory_processed\0") };
+pub const VIR_DOMAIN_JOB_MEMORY_PROCESSED: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory_processed\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_MEMORY_REMAINING: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory_remaining\0") };
+pub const VIR_DOMAIN_JOB_MEMORY_REMAINING: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory_remaining\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_MEMORY_CONSTANT: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory_constant\0") };
+pub const VIR_DOMAIN_JOB_MEMORY_CONSTANT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory_constant\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_MEMORY_NORMAL: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory_normal\0") };
+pub const VIR_DOMAIN_JOB_MEMORY_NORMAL: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory_normal\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_MEMORY_NORMAL_BYTES: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory_normal_bytes\0") };
+pub const VIR_DOMAIN_JOB_MEMORY_NORMAL_BYTES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory_normal_bytes\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_MEMORY_BPS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory_bps\0") };
+pub const VIR_DOMAIN_JOB_MEMORY_BPS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory_bps\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_MEMORY_DIRTY_RATE: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory_dirty_rate\0") };
+pub const VIR_DOMAIN_JOB_MEMORY_DIRTY_RATE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory_dirty_rate\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_MEMORY_PAGE_SIZE: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory_page_size\0") };
+pub const VIR_DOMAIN_JOB_MEMORY_PAGE_SIZE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory_page_size\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_MEMORY_ITERATION: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory_iteration\0") };
+pub const VIR_DOMAIN_JOB_MEMORY_ITERATION: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory_iteration\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_MEMORY_POSTCOPY_REQS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory_postcopy_requests\0") };
+pub const VIR_DOMAIN_JOB_MEMORY_POSTCOPY_REQS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"memory_postcopy_requests\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_DISK_TOTAL: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"disk_total\0") };
+pub const VIR_DOMAIN_JOB_DISK_TOTAL: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"disk_total\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_DISK_PROCESSED: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"disk_processed\0") };
+pub const VIR_DOMAIN_JOB_DISK_PROCESSED: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"disk_processed\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_DISK_REMAINING: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"disk_remaining\0") };
+pub const VIR_DOMAIN_JOB_DISK_REMAINING: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"disk_remaining\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_DISK_BPS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"disk_bps\0") };
+pub const VIR_DOMAIN_JOB_DISK_BPS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"disk_bps\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_COMPRESSION_CACHE: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression_cache\0") };
+pub const VIR_DOMAIN_JOB_COMPRESSION_CACHE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression_cache\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_COMPRESSION_BYTES: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression_bytes\0") };
+pub const VIR_DOMAIN_JOB_COMPRESSION_BYTES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression_bytes\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_COMPRESSION_PAGES: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression_pages\0") };
+pub const VIR_DOMAIN_JOB_COMPRESSION_PAGES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression_pages\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_COMPRESSION_CACHE_MISSES: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression_cache_misses\0") };
+pub const VIR_DOMAIN_JOB_COMPRESSION_CACHE_MISSES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression_cache_misses\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_COMPRESSION_OVERFLOW: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression_overflow\0") };
+pub const VIR_DOMAIN_JOB_COMPRESSION_OVERFLOW: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"compression_overflow\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_AUTO_CONVERGE_THROTTLE: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"auto_converge_throttle\0") };
+pub const VIR_DOMAIN_JOB_AUTO_CONVERGE_THROTTLE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"auto_converge_throttle\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_SUCCESS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"success\0") };
+pub const VIR_DOMAIN_JOB_SUCCESS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"success\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_ERRMSG: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"errmsg\0") };
+pub const VIR_DOMAIN_JOB_ERRMSG: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"errmsg\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_DISK_TEMP_USED: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"disk_temp_used\0") };
+pub const VIR_DOMAIN_JOB_DISK_TEMP_USED: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"disk_temp_used\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_DISK_TEMP_TOTAL: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"disk_temp_total\0") };
+pub const VIR_DOMAIN_JOB_DISK_TEMP_TOTAL: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"disk_temp_total\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_JOB_VFIO_DATA_TRANSFERRED: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"vfio_data_transferred\0") };
+pub const VIR_DOMAIN_JOB_VFIO_DATA_TRANSFERRED: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"vfio_data_transferred\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_TUNABLE_CPU_VCPUPIN: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.vcpupin%u\0") };
+pub const VIR_DOMAIN_TUNABLE_CPU_VCPUPIN: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.vcpupin%u\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_TUNABLE_CPU_EMULATORPIN: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.emulatorpin\0") };
+pub const VIR_DOMAIN_TUNABLE_CPU_EMULATORPIN: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.emulatorpin\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_TUNABLE_CPU_IOTHREADSPIN: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.iothreadpin%u\0") };
+pub const VIR_DOMAIN_TUNABLE_CPU_IOTHREADSPIN: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.iothreadpin%u\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_TUNABLE_CPU_CPU_SHARES: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.cpu_shares\0") };
+pub const VIR_DOMAIN_TUNABLE_CPU_CPU_SHARES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.cpu_shares\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_TUNABLE_CPU_GLOBAL_PERIOD: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.global_period\0") };
+pub const VIR_DOMAIN_TUNABLE_CPU_GLOBAL_PERIOD: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.global_period\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_TUNABLE_CPU_GLOBAL_QUOTA: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.global_quota\0") };
+pub const VIR_DOMAIN_TUNABLE_CPU_GLOBAL_QUOTA: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.global_quota\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_TUNABLE_CPU_VCPU_PERIOD: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.vcpu_period\0") };
+pub const VIR_DOMAIN_TUNABLE_CPU_VCPU_PERIOD: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.vcpu_period\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_TUNABLE_CPU_VCPU_QUOTA: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.vcpu_quota\0") };
+pub const VIR_DOMAIN_TUNABLE_CPU_VCPU_QUOTA: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.vcpu_quota\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_TUNABLE_CPU_EMULATOR_PERIOD: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.emulator_period\0") };
+pub const VIR_DOMAIN_TUNABLE_CPU_EMULATOR_PERIOD: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.emulator_period\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_TUNABLE_CPU_EMULATOR_QUOTA: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.emulator_quota\0") };
+pub const VIR_DOMAIN_TUNABLE_CPU_EMULATOR_QUOTA: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.emulator_quota\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_TUNABLE_CPU_IOTHREAD_PERIOD: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.iothread_period\0") };
+pub const VIR_DOMAIN_TUNABLE_CPU_IOTHREAD_PERIOD: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.iothread_period\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_TUNABLE_CPU_IOTHREAD_QUOTA: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.iothread_quota\0") };
+pub const VIR_DOMAIN_TUNABLE_CPU_IOTHREAD_QUOTA: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cputune.iothread_quota\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_TUNABLE_BLKDEV_DISK: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.disk\0") };
+pub const VIR_DOMAIN_TUNABLE_BLKDEV_DISK: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.disk\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_TUNABLE_BLKDEV_TOTAL_BYTES_SEC: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.total_bytes_sec\0") };
+pub const VIR_DOMAIN_TUNABLE_BLKDEV_TOTAL_BYTES_SEC: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.total_bytes_sec\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_TUNABLE_BLKDEV_READ_BYTES_SEC: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.read_bytes_sec\0") };
+pub const VIR_DOMAIN_TUNABLE_BLKDEV_READ_BYTES_SEC: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.read_bytes_sec\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_TUNABLE_BLKDEV_WRITE_BYTES_SEC: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.write_bytes_sec\0") };
+pub const VIR_DOMAIN_TUNABLE_BLKDEV_WRITE_BYTES_SEC: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.write_bytes_sec\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_TUNABLE_BLKDEV_TOTAL_IOPS_SEC: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.total_iops_sec\0") };
+pub const VIR_DOMAIN_TUNABLE_BLKDEV_TOTAL_IOPS_SEC: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.total_iops_sec\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_TUNABLE_BLKDEV_READ_IOPS_SEC: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.read_iops_sec\0") };
+pub const VIR_DOMAIN_TUNABLE_BLKDEV_READ_IOPS_SEC: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.read_iops_sec\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_TUNABLE_BLKDEV_WRITE_IOPS_SEC: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.write_iops_sec\0") };
+pub const VIR_DOMAIN_TUNABLE_BLKDEV_WRITE_IOPS_SEC: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.write_iops_sec\0")
+};
 #[allow(unsafe_code)]
 pub const VIR_DOMAIN_TUNABLE_BLKDEV_TOTAL_BYTES_SEC_MAX: &::std::ffi::CStr = unsafe {
-    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.total_bytes_sec_max\0")
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(
+        b"blkdeviotune.total_bytes_sec_max\0",
+    )
 };
 #[allow(unsafe_code)]
 pub const VIR_DOMAIN_TUNABLE_BLKDEV_READ_BYTES_SEC_MAX: &::std::ffi::CStr = unsafe {
@@ -651,101 +1327,348 @@ pub const VIR_DOMAIN_TUNABLE_BLKDEV_READ_BYTES_SEC_MAX: &::std::ffi::CStr = unsa
 };
 #[allow(unsafe_code)]
 pub const VIR_DOMAIN_TUNABLE_BLKDEV_WRITE_BYTES_SEC_MAX: &::std::ffi::CStr = unsafe {
-    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.write_bytes_sec_max\0")
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(
+        b"blkdeviotune.write_bytes_sec_max\0",
+    )
 };
 #[allow(unsafe_code)]
 pub const VIR_DOMAIN_TUNABLE_BLKDEV_TOTAL_IOPS_SEC_MAX: &::std::ffi::CStr = unsafe {
     ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.total_iops_sec_max\0")
 };
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_TUNABLE_BLKDEV_READ_IOPS_SEC_MAX: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.read_iops_sec_max\0") };
+pub const VIR_DOMAIN_TUNABLE_BLKDEV_READ_IOPS_SEC_MAX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.read_iops_sec_max\0")
+};
 #[allow(unsafe_code)]
 pub const VIR_DOMAIN_TUNABLE_BLKDEV_WRITE_IOPS_SEC_MAX: &::std::ffi::CStr = unsafe {
     ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.write_iops_sec_max\0")
 };
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_TUNABLE_BLKDEV_SIZE_IOPS_SEC: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.size_iops_sec\0") };
+pub const VIR_DOMAIN_TUNABLE_BLKDEV_SIZE_IOPS_SEC: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.size_iops_sec\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_TUNABLE_BLKDEV_GROUP_NAME: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.group_name\0") };
+pub const VIR_DOMAIN_TUNABLE_BLKDEV_GROUP_NAME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.group_name\0")
+};
 #[allow(unsafe_code)]
 pub const VIR_DOMAIN_TUNABLE_BLKDEV_TOTAL_BYTES_SEC_MAX_LENGTH: &::std::ffi::CStr = unsafe {
-    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.total_bytes_sec_max_length\0")
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(
+        b"blkdeviotune.total_bytes_sec_max_length\0",
+    )
 };
 #[allow(unsafe_code)]
 pub const VIR_DOMAIN_TUNABLE_BLKDEV_READ_BYTES_SEC_MAX_LENGTH: &::std::ffi::CStr = unsafe {
-    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.read_bytes_sec_max_length\0")
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(
+        b"blkdeviotune.read_bytes_sec_max_length\0",
+    )
 };
 #[allow(unsafe_code)]
 pub const VIR_DOMAIN_TUNABLE_BLKDEV_WRITE_BYTES_SEC_MAX_LENGTH: &::std::ffi::CStr = unsafe {
-    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.write_bytes_sec_max_length\0")
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(
+        b"blkdeviotune.write_bytes_sec_max_length\0",
+    )
 };
 #[allow(unsafe_code)]
 pub const VIR_DOMAIN_TUNABLE_BLKDEV_TOTAL_IOPS_SEC_MAX_LENGTH: &::std::ffi::CStr = unsafe {
-    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.total_iops_sec_max_length\0")
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(
+        b"blkdeviotune.total_iops_sec_max_length\0",
+    )
 };
 #[allow(unsafe_code)]
 pub const VIR_DOMAIN_TUNABLE_BLKDEV_READ_IOPS_SEC_MAX_LENGTH: &::std::ffi::CStr = unsafe {
-    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.read_iops_sec_max_length\0")
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(
+        b"blkdeviotune.read_iops_sec_max_length\0",
+    )
 };
 #[allow(unsafe_code)]
 pub const VIR_DOMAIN_TUNABLE_BLKDEV_WRITE_IOPS_SEC_MAX_LENGTH: &::std::ffi::CStr = unsafe {
-    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"blkdeviotune.write_iops_sec_max_length\0")
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(
+        b"blkdeviotune.write_iops_sec_max_length\0",
+    )
 };
 pub const VIR_DOMAIN_SCHED_FIELD_LENGTH: u32 = 80;
 pub const VIR_DOMAIN_BLKIO_FIELD_LENGTH: u32 = 80;
 pub const VIR_DOMAIN_MEMORY_FIELD_LENGTH: u32 = 80;
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_LAUNCH_SECURITY_SEV_MEASUREMENT: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"sev-measurement\0") };
+pub const VIR_DOMAIN_LAUNCH_SECURITY_SEV_MEASUREMENT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"sev-measurement\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_LAUNCH_SECURITY_SEV_API_MAJOR: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"sev-api-major\0") };
+pub const VIR_DOMAIN_LAUNCH_SECURITY_SEV_API_MAJOR: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"sev-api-major\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_LAUNCH_SECURITY_SEV_API_MINOR: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"sev-api-minor\0") };
+pub const VIR_DOMAIN_LAUNCH_SECURITY_SEV_API_MINOR: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"sev-api-minor\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_LAUNCH_SECURITY_SEV_BUILD_ID: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"sev-build-id\0") };
+pub const VIR_DOMAIN_LAUNCH_SECURITY_SEV_BUILD_ID: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"sev-build-id\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_LAUNCH_SECURITY_SEV_POLICY: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"sev-policy\0") };
+pub const VIR_DOMAIN_LAUNCH_SECURITY_SEV_POLICY: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"sev-policy\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_LAUNCH_SECURITY_SEV_SNP_POLICY: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"sev-snp-policy\0") };
+pub const VIR_DOMAIN_LAUNCH_SECURITY_SEV_SNP_POLICY: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"sev-snp-policy\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_LAUNCH_SECURITY_SEV_SECRET_HEADER: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"sev-secret-header\0") };
+pub const VIR_DOMAIN_LAUNCH_SECURITY_SEV_SECRET_HEADER: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"sev-secret-header\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_LAUNCH_SECURITY_SEV_SECRET: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"sev-secret\0") };
+pub const VIR_DOMAIN_LAUNCH_SECURITY_SEV_SECRET: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"sev-secret\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_DOMAIN_LAUNCH_SECURITY_SEV_SECRET_SET_ADDRESS: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"sev-secret-set-address\0") };
+pub const VIR_DOMAIN_LAUNCH_SECURITY_SEV_SECRET_SET_ADDRESS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"sev-secret-set-address\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NETWORK_PORT_BANDWIDTH_IN_AVERAGE: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"inbound.average\0") };
+pub const VIR_DOMAIN_GUEST_INFO_USER_COUNT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"user.count\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NETWORK_PORT_BANDWIDTH_IN_PEAK: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"inbound.peak\0") };
+pub const VIR_DOMAIN_GUEST_INFO_USER_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"user.\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NETWORK_PORT_BANDWIDTH_IN_BURST: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"inbound.burst\0") };
+pub const VIR_DOMAIN_GUEST_INFO_USER_SUFFIX_NAME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".name\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NETWORK_PORT_BANDWIDTH_IN_FLOOR: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"inbound.floor\0") };
+pub const VIR_DOMAIN_GUEST_INFO_USER_SUFFIX_DOMAIN: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".domain\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NETWORK_PORT_BANDWIDTH_OUT_AVERAGE: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"outbound.average\0") };
+pub const VIR_DOMAIN_GUEST_INFO_USER_SUFFIX_LOGIN_TIME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".login-time\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NETWORK_PORT_BANDWIDTH_OUT_PEAK: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"outbound.peak\0") };
+pub const VIR_DOMAIN_GUEST_INFO_OS_ID: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"os.id\0")
+};
 #[allow(unsafe_code)]
-pub const VIR_NETWORK_PORT_BANDWIDTH_OUT_BURST: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"outbound.burst\0") };
-pub type virFreeCallback = ::std::option::Option<unsafe extern "C" fn(opaque: *mut ::libc::c_void)>;
+pub const VIR_DOMAIN_GUEST_INFO_OS_NAME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"os.name\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_OS_PRETTY_NAME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"os.pretty-name\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_OS_VERSION: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"os.version\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_OS_VERSION_ID: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"os.version-id\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_OS_KERNEL_RELEASE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"os.kernel-release\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_OS_KERNEL_VERSION: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"os.kernel-version\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_OS_MACHINE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"os.machine\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_OS_VARIANT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"os.variant\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_OS_VARIANT_ID: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"os.variant-id\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_TIMEZONE_NAME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"timezone.name\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_TIMEZONE_OFFSET: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"timezone.offset\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_HOSTNAME_HOSTNAME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"hostname\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_FS_COUNT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"fs.count\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_FS_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"fs.\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_FS_SUFFIX_MOUNTPOINT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".mountpoint\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_FS_SUFFIX_NAME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".name\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_FS_SUFFIX_FSTYPE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".fstype\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_FS_SUFFIX_TOTAL_BYTES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".total-bytes\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_FS_SUFFIX_USED_BYTES: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".used-bytes\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_FS_SUFFIX_DISK_COUNT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".disk.count\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_FS_SUFFIX_DISK_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".disk.\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_FS_SUFFIX_DISK_SUFFIX_ALIAS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".alias\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_FS_SUFFIX_DISK_SUFFIX_SERIAL: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".serial\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_FS_SUFFIX_DISK_SUFFIX_DEVICE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".device\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_DISK_COUNT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"disk.count\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_DISK_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"disk.\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_DISK_SUFFIX_NAME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".name\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_DISK_SUFFIX_PARTITION: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".partition\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_DISK_SUFFIX_DEPENDENCY_COUNT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".dependency.count\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_DISK_SUFFIX_DEPENDENCY_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".dependency.\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_DISK_SUFFIX_DEPENDENCY_SUFFIX_NAME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".name\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_DISK_SUFFIX_SERIAL: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".serial\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_DISK_SUFFIX_ALIAS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".alias\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_DISK_SUFFIX_GUEST_ALIAS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".guest_alias\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_DISK_SUFFIX_GUEST_BUS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".guest_bus\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_IF_COUNT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"if.count\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_IF_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"if.\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_IF_SUFFIX_NAME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".name\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_IF_SUFFIX_HWADDR: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".hwaddr\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_IF_SUFFIX_ADDR_COUNT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".addr.count\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_IF_SUFFIX_ADDR_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".addr.\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_IF_SUFFIX_ADDR_SUFFIX_TYPE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".type\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_IF_SUFFIX_ADDR_SUFFIX_ADDR: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".addr\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_IF_SUFFIX_ADDR_SUFFIX_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".prefix\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_LOAD_1M: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"load.1m\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_LOAD_5M: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"load.5m\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_GUEST_INFO_LOAD_15M: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"load.15m\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_NETWORK_PORT_BANDWIDTH_IN_AVERAGE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"inbound.average\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_NETWORK_PORT_BANDWIDTH_IN_PEAK: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"inbound.peak\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_NETWORK_PORT_BANDWIDTH_IN_BURST: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"inbound.burst\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_NETWORK_PORT_BANDWIDTH_IN_FLOOR: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"inbound.floor\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_NETWORK_PORT_BANDWIDTH_OUT_AVERAGE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"outbound.average\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_NETWORK_PORT_BANDWIDTH_OUT_PEAK: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"outbound.peak\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_NETWORK_PORT_BANDWIDTH_OUT_BURST: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"outbound.burst\0")
+};
+pub type virFreeCallback = ::std::option::Option<
+    unsafe extern "C" fn(opaque: *mut ::libc::c_void),
+>;
 pub const VIR_CONNECT_CLOSE_REASON_ERROR: virConnectCloseReason = 0;
 pub const VIR_CONNECT_CLOSE_REASON_EOF: virConnectCloseReason = 1;
 pub const VIR_CONNECT_CLOSE_REASON_KEEPALIVE: virConnectCloseReason = 2;
@@ -782,21 +1705,17 @@ pub union _virTypedParameter__bindgen_ty_1 {
 }
 #[test]
 fn bindgen_test_layout__virTypedParameter__bindgen_ty_1() {
-    const UNINIT: ::std::mem::MaybeUninit<_virTypedParameter__bindgen_ty_1> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::std::mem::MaybeUninit<_virTypedParameter__bindgen_ty_1> = ::std::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<_virTypedParameter__bindgen_ty_1>(),
         8usize,
-        concat!("Size of: ", stringify!(_virTypedParameter__bindgen_ty_1))
+        concat!("Size of: ", stringify!(_virTypedParameter__bindgen_ty_1)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virTypedParameter__bindgen_ty_1>(),
         8usize,
-        concat!(
-            "Alignment of ",
-            stringify!(_virTypedParameter__bindgen_ty_1)
-        )
+        concat!("Alignment of ", stringify!(_virTypedParameter__bindgen_ty_1)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).i) as usize - ptr as usize },
@@ -805,8 +1724,8 @@ fn bindgen_test_layout__virTypedParameter__bindgen_ty_1() {
             "Offset of field: ",
             stringify!(_virTypedParameter__bindgen_ty_1),
             "::",
-            stringify!(i)
-        )
+            stringify!(i),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).ui) as usize - ptr as usize },
@@ -815,8 +1734,8 @@ fn bindgen_test_layout__virTypedParameter__bindgen_ty_1() {
             "Offset of field: ",
             stringify!(_virTypedParameter__bindgen_ty_1),
             "::",
-            stringify!(ui)
-        )
+            stringify!(ui),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).l) as usize - ptr as usize },
@@ -825,8 +1744,8 @@ fn bindgen_test_layout__virTypedParameter__bindgen_ty_1() {
             "Offset of field: ",
             stringify!(_virTypedParameter__bindgen_ty_1),
             "::",
-            stringify!(l)
-        )
+            stringify!(l),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).ul) as usize - ptr as usize },
@@ -835,8 +1754,8 @@ fn bindgen_test_layout__virTypedParameter__bindgen_ty_1() {
             "Offset of field: ",
             stringify!(_virTypedParameter__bindgen_ty_1),
             "::",
-            stringify!(ul)
-        )
+            stringify!(ul),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).d) as usize - ptr as usize },
@@ -845,8 +1764,8 @@ fn bindgen_test_layout__virTypedParameter__bindgen_ty_1() {
             "Offset of field: ",
             stringify!(_virTypedParameter__bindgen_ty_1),
             "::",
-            stringify!(d)
-        )
+            stringify!(d),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).b) as usize - ptr as usize },
@@ -855,8 +1774,8 @@ fn bindgen_test_layout__virTypedParameter__bindgen_ty_1() {
             "Offset of field: ",
             stringify!(_virTypedParameter__bindgen_ty_1),
             "::",
-            stringify!(b)
-        )
+            stringify!(b),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).s) as usize - ptr as usize },
@@ -865,8 +1784,8 @@ fn bindgen_test_layout__virTypedParameter__bindgen_ty_1() {
             "Offset of field: ",
             stringify!(_virTypedParameter__bindgen_ty_1),
             "::",
-            stringify!(s)
-        )
+            stringify!(s),
+        ),
     );
 }
 #[test]
@@ -876,12 +1795,12 @@ fn bindgen_test_layout__virTypedParameter() {
     assert_eq!(
         ::std::mem::size_of::<_virTypedParameter>(),
         96usize,
-        concat!("Size of: ", stringify!(_virTypedParameter))
+        concat!("Size of: ", stringify!(_virTypedParameter)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virTypedParameter>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virTypedParameter))
+        concat!("Alignment of ", stringify!(_virTypedParameter)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).field) as usize - ptr as usize },
@@ -890,8 +1809,8 @@ fn bindgen_test_layout__virTypedParameter() {
             "Offset of field: ",
             stringify!(_virTypedParameter),
             "::",
-            stringify!(field)
-        )
+            stringify!(field),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
@@ -900,8 +1819,8 @@ fn bindgen_test_layout__virTypedParameter() {
             "Offset of field: ",
             stringify!(_virTypedParameter),
             "::",
-            stringify!(type_)
-        )
+            stringify!(type_),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).value) as usize - ptr as usize },
@@ -910,8 +1829,8 @@ fn bindgen_test_layout__virTypedParameter() {
             "Offset of field: ",
             stringify!(_virTypedParameter),
             "::",
-            stringify!(value)
-        )
+            stringify!(value),
+        ),
     );
 }
 pub type virTypedParameterPtr = *mut virTypedParameter;
@@ -1098,12 +2017,12 @@ fn bindgen_test_layout__virSecurityLabel() {
     assert_eq!(
         ::std::mem::size_of::<_virSecurityLabel>(),
         4104usize,
-        concat!("Size of: ", stringify!(_virSecurityLabel))
+        concat!("Size of: ", stringify!(_virSecurityLabel)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virSecurityLabel>(),
         4usize,
-        concat!("Alignment of ", stringify!(_virSecurityLabel))
+        concat!("Alignment of ", stringify!(_virSecurityLabel)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).label) as usize - ptr as usize },
@@ -1112,8 +2031,8 @@ fn bindgen_test_layout__virSecurityLabel() {
             "Offset of field: ",
             stringify!(_virSecurityLabel),
             "::",
-            stringify!(label)
-        )
+            stringify!(label),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).enforcing) as usize - ptr as usize },
@@ -1122,8 +2041,8 @@ fn bindgen_test_layout__virSecurityLabel() {
             "Offset of field: ",
             stringify!(_virSecurityLabel),
             "::",
-            stringify!(enforcing)
-        )
+            stringify!(enforcing),
+        ),
     );
 }
 pub type virSecurityLabelPtr = *mut virSecurityLabel;
@@ -1141,12 +2060,12 @@ fn bindgen_test_layout__virSecurityModel() {
     assert_eq!(
         ::std::mem::size_of::<_virSecurityModel>(),
         514usize,
-        concat!("Size of: ", stringify!(_virSecurityModel))
+        concat!("Size of: ", stringify!(_virSecurityModel)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virSecurityModel>(),
         1usize,
-        concat!("Alignment of ", stringify!(_virSecurityModel))
+        concat!("Alignment of ", stringify!(_virSecurityModel)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).model) as usize - ptr as usize },
@@ -1155,8 +2074,8 @@ fn bindgen_test_layout__virSecurityModel() {
             "Offset of field: ",
             stringify!(_virSecurityModel),
             "::",
-            stringify!(model)
-        )
+            stringify!(model),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).doi) as usize - ptr as usize },
@@ -1165,8 +2084,8 @@ fn bindgen_test_layout__virSecurityModel() {
             "Offset of field: ",
             stringify!(_virSecurityModel),
             "::",
-            stringify!(doi)
-        )
+            stringify!(doi),
+        ),
     );
 }
 pub type virSecurityModelPtr = *mut virSecurityModel;
@@ -1190,92 +2109,52 @@ fn bindgen_test_layout__virNodeInfo() {
     assert_eq!(
         ::std::mem::size_of::<_virNodeInfo>(),
         64usize,
-        concat!("Size of: ", stringify!(_virNodeInfo))
+        concat!("Size of: ", stringify!(_virNodeInfo)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virNodeInfo>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virNodeInfo))
+        concat!("Alignment of ", stringify!(_virNodeInfo)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).model) as usize - ptr as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virNodeInfo),
-            "::",
-            stringify!(model)
-        )
+        concat!("Offset of field: ", stringify!(_virNodeInfo), "::", stringify!(model)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).memory) as usize - ptr as usize },
         32usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virNodeInfo),
-            "::",
-            stringify!(memory)
-        )
+        concat!("Offset of field: ", stringify!(_virNodeInfo), "::", stringify!(memory)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).cpus) as usize - ptr as usize },
         40usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virNodeInfo),
-            "::",
-            stringify!(cpus)
-        )
+        concat!("Offset of field: ", stringify!(_virNodeInfo), "::", stringify!(cpus)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).mhz) as usize - ptr as usize },
         44usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virNodeInfo),
-            "::",
-            stringify!(mhz)
-        )
+        concat!("Offset of field: ", stringify!(_virNodeInfo), "::", stringify!(mhz)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).nodes) as usize - ptr as usize },
         48usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virNodeInfo),
-            "::",
-            stringify!(nodes)
-        )
+        concat!("Offset of field: ", stringify!(_virNodeInfo), "::", stringify!(nodes)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).sockets) as usize - ptr as usize },
         52usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virNodeInfo),
-            "::",
-            stringify!(sockets)
-        )
+        concat!("Offset of field: ", stringify!(_virNodeInfo), "::", stringify!(sockets)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).cores) as usize - ptr as usize },
         56usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virNodeInfo),
-            "::",
-            stringify!(cores)
-        )
+        concat!("Offset of field: ", stringify!(_virNodeInfo), "::", stringify!(cores)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).threads) as usize - ptr as usize },
         60usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virNodeInfo),
-            "::",
-            stringify!(threads)
-        )
+        concat!("Offset of field: ", stringify!(_virNodeInfo), "::", stringify!(threads)),
     );
 }
 pub const VIR_NODE_CPU_STATS_ALL_CPUS: virNodeGetCPUStatsAllCPUs = -1;
@@ -1294,12 +2173,12 @@ fn bindgen_test_layout__virNodeCPUStats() {
     assert_eq!(
         ::std::mem::size_of::<_virNodeCPUStats>(),
         88usize,
-        concat!("Size of: ", stringify!(_virNodeCPUStats))
+        concat!("Size of: ", stringify!(_virNodeCPUStats)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virNodeCPUStats>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virNodeCPUStats))
+        concat!("Alignment of ", stringify!(_virNodeCPUStats)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).field) as usize - ptr as usize },
@@ -1308,8 +2187,8 @@ fn bindgen_test_layout__virNodeCPUStats() {
             "Offset of field: ",
             stringify!(_virNodeCPUStats),
             "::",
-            stringify!(field)
-        )
+            stringify!(field),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).value) as usize - ptr as usize },
@@ -1318,8 +2197,8 @@ fn bindgen_test_layout__virNodeCPUStats() {
             "Offset of field: ",
             stringify!(_virNodeCPUStats),
             "::",
-            stringify!(value)
-        )
+            stringify!(value),
+        ),
     );
 }
 pub const VIR_NODE_MEMORY_STATS_ALL_CELLS: virNodeGetMemoryStatsAllCells = -1;
@@ -1338,12 +2217,12 @@ fn bindgen_test_layout__virNodeMemoryStats() {
     assert_eq!(
         ::std::mem::size_of::<_virNodeMemoryStats>(),
         88usize,
-        concat!("Size of: ", stringify!(_virNodeMemoryStats))
+        concat!("Size of: ", stringify!(_virNodeMemoryStats)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virNodeMemoryStats>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virNodeMemoryStats))
+        concat!("Alignment of ", stringify!(_virNodeMemoryStats)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).field) as usize - ptr as usize },
@@ -1352,8 +2231,8 @@ fn bindgen_test_layout__virNodeMemoryStats() {
             "Offset of field: ",
             stringify!(_virNodeMemoryStats),
             "::",
-            stringify!(field)
-        )
+            stringify!(field),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).value) as usize - ptr as usize },
@@ -1362,8 +2241,8 @@ fn bindgen_test_layout__virNodeMemoryStats() {
             "Offset of field: ",
             stringify!(_virNodeMemoryStats),
             "::",
-            stringify!(value)
-        )
+            stringify!(value),
+        ),
     );
 }
 extern "C" {
@@ -1426,18 +2305,17 @@ pub struct _virConnectCredential {
 }
 #[test]
 fn bindgen_test_layout__virConnectCredential() {
-    const UNINIT: ::std::mem::MaybeUninit<_virConnectCredential> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::std::mem::MaybeUninit<_virConnectCredential> = ::std::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<_virConnectCredential>(),
         48usize,
-        concat!("Size of: ", stringify!(_virConnectCredential))
+        concat!("Size of: ", stringify!(_virConnectCredential)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virConnectCredential>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virConnectCredential))
+        concat!("Alignment of ", stringify!(_virConnectCredential)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
@@ -1446,8 +2324,8 @@ fn bindgen_test_layout__virConnectCredential() {
             "Offset of field: ",
             stringify!(_virConnectCredential),
             "::",
-            stringify!(type_)
-        )
+            stringify!(type_),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).prompt) as usize - ptr as usize },
@@ -1456,8 +2334,8 @@ fn bindgen_test_layout__virConnectCredential() {
             "Offset of field: ",
             stringify!(_virConnectCredential),
             "::",
-            stringify!(prompt)
-        )
+            stringify!(prompt),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).challenge) as usize - ptr as usize },
@@ -1466,8 +2344,8 @@ fn bindgen_test_layout__virConnectCredential() {
             "Offset of field: ",
             stringify!(_virConnectCredential),
             "::",
-            stringify!(challenge)
-        )
+            stringify!(challenge),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).defresult) as usize - ptr as usize },
@@ -1476,8 +2354,8 @@ fn bindgen_test_layout__virConnectCredential() {
             "Offset of field: ",
             stringify!(_virConnectCredential),
             "::",
-            stringify!(defresult)
-        )
+            stringify!(defresult),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).result) as usize - ptr as usize },
@@ -1486,8 +2364,8 @@ fn bindgen_test_layout__virConnectCredential() {
             "Offset of field: ",
             stringify!(_virConnectCredential),
             "::",
-            stringify!(result)
-        )
+            stringify!(result),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).resultlen) as usize - ptr as usize },
@@ -1496,8 +2374,8 @@ fn bindgen_test_layout__virConnectCredential() {
             "Offset of field: ",
             stringify!(_virConnectCredential),
             "::",
-            stringify!(resultlen)
-        )
+            stringify!(resultlen),
+        ),
     );
 }
 pub type virConnectCredential = _virConnectCredential;
@@ -1524,12 +2402,12 @@ fn bindgen_test_layout__virConnectAuth() {
     assert_eq!(
         ::std::mem::size_of::<_virConnectAuth>(),
         32usize,
-        concat!("Size of: ", stringify!(_virConnectAuth))
+        concat!("Size of: ", stringify!(_virConnectAuth)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virConnectAuth>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virConnectAuth))
+        concat!("Alignment of ", stringify!(_virConnectAuth)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).credtype) as usize - ptr as usize },
@@ -1538,8 +2416,8 @@ fn bindgen_test_layout__virConnectAuth() {
             "Offset of field: ",
             stringify!(_virConnectAuth),
             "::",
-            stringify!(credtype)
-        )
+            stringify!(credtype),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).ncredtype) as usize - ptr as usize },
@@ -1548,18 +2426,13 @@ fn bindgen_test_layout__virConnectAuth() {
             "Offset of field: ",
             stringify!(_virConnectAuth),
             "::",
-            stringify!(ncredtype)
-        )
+            stringify!(ncredtype),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).cb) as usize - ptr as usize },
         16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virConnectAuth),
-            "::",
-            stringify!(cb)
-        )
+        concat!("Offset of field: ", stringify!(_virConnectAuth), "::", stringify!(cb)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).cbdata) as usize - ptr as usize },
@@ -1568,8 +2441,8 @@ fn bindgen_test_layout__virConnectAuth() {
             "Offset of field: ",
             stringify!(_virConnectAuth),
             "::",
-            stringify!(cbdata)
-        )
+            stringify!(cbdata),
+        ),
     );
 }
 pub type virConnectAuth = _virConnectAuth;
@@ -1618,7 +2491,10 @@ extern "C" {
     pub fn virConnectGetType(conn: virConnectPtr) -> *const ::libc::c_char;
 }
 extern "C" {
-    pub fn virConnectGetVersion(conn: virConnectPtr, hvVer: *mut ::libc::c_ulong) -> ::libc::c_int;
+    pub fn virConnectGetVersion(
+        conn: virConnectPtr,
+        hvVer: *mut ::libc::c_ulong,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virConnectGetLibVersion(
@@ -1633,7 +2509,10 @@ extern "C" {
     pub fn virConnectGetURI(conn: virConnectPtr) -> *mut ::libc::c_char;
 }
 extern "C" {
-    pub fn virConnectGetSysinfo(conn: virConnectPtr, flags: ::libc::c_uint) -> *mut ::libc::c_char;
+    pub fn virConnectGetSysinfo(
+        conn: virConnectPtr,
+        flags: ::libc::c_uint,
+    ) -> *mut ::libc::c_char;
 }
 extern "C" {
     pub fn virConnectSetKeepAlive(
@@ -1643,7 +2522,11 @@ extern "C" {
     ) -> ::libc::c_int;
 }
 pub type virConnectCloseFunc = ::std::option::Option<
-    unsafe extern "C" fn(conn: virConnectPtr, reason: ::libc::c_int, opaque: *mut ::libc::c_void),
+    unsafe extern "C" fn(
+        conn: virConnectPtr,
+        reason: ::libc::c_int,
+        opaque: *mut ::libc::c_void,
+    ),
 >;
 extern "C" {
     pub fn virConnectRegisterCloseCallback(
@@ -1894,18 +2777,17 @@ pub struct _virDomainControlInfo {
 }
 #[test]
 fn bindgen_test_layout__virDomainControlInfo() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainControlInfo> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::std::mem::MaybeUninit<_virDomainControlInfo> = ::std::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<_virDomainControlInfo>(),
         16usize,
-        concat!("Size of: ", stringify!(_virDomainControlInfo))
+        concat!("Size of: ", stringify!(_virDomainControlInfo)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virDomainControlInfo>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virDomainControlInfo))
+        concat!("Alignment of ", stringify!(_virDomainControlInfo)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).state) as usize - ptr as usize },
@@ -1914,8 +2796,8 @@ fn bindgen_test_layout__virDomainControlInfo() {
             "Offset of field: ",
             stringify!(_virDomainControlInfo),
             "::",
-            stringify!(state)
-        )
+            stringify!(state),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).details) as usize - ptr as usize },
@@ -1924,8 +2806,8 @@ fn bindgen_test_layout__virDomainControlInfo() {
             "Offset of field: ",
             stringify!(_virDomainControlInfo),
             "::",
-            stringify!(details)
-        )
+            stringify!(details),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).stateTime) as usize - ptr as usize },
@@ -1934,8 +2816,8 @@ fn bindgen_test_layout__virDomainControlInfo() {
             "Offset of field: ",
             stringify!(_virDomainControlInfo),
             "::",
-            stringify!(stateTime)
-        )
+            stringify!(stateTime),
+        ),
     );
 }
 pub type virDomainControlInfoPtr = *mut virDomainControlInfo;
@@ -1960,22 +2842,17 @@ fn bindgen_test_layout__virDomainInfo() {
     assert_eq!(
         ::std::mem::size_of::<_virDomainInfo>(),
         40usize,
-        concat!("Size of: ", stringify!(_virDomainInfo))
+        concat!("Size of: ", stringify!(_virDomainInfo)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virDomainInfo>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virDomainInfo))
+        concat!("Alignment of ", stringify!(_virDomainInfo)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).state) as usize - ptr as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virDomainInfo),
-            "::",
-            stringify!(state)
-        )
+        concat!("Offset of field: ", stringify!(_virDomainInfo), "::", stringify!(state)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).maxMem) as usize - ptr as usize },
@@ -1984,8 +2861,8 @@ fn bindgen_test_layout__virDomainInfo() {
             "Offset of field: ",
             stringify!(_virDomainInfo),
             "::",
-            stringify!(maxMem)
-        )
+            stringify!(maxMem),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).memory) as usize - ptr as usize },
@@ -1994,8 +2871,8 @@ fn bindgen_test_layout__virDomainInfo() {
             "Offset of field: ",
             stringify!(_virDomainInfo),
             "::",
-            stringify!(memory)
-        )
+            stringify!(memory),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).nrVirtCpu) as usize - ptr as usize },
@@ -2004,8 +2881,8 @@ fn bindgen_test_layout__virDomainInfo() {
             "Offset of field: ",
             stringify!(_virDomainInfo),
             "::",
-            stringify!(nrVirtCpu)
-        )
+            stringify!(nrVirtCpu),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).cpuTime) as usize - ptr as usize },
@@ -2014,8 +2891,8 @@ fn bindgen_test_layout__virDomainInfo() {
             "Offset of field: ",
             stringify!(_virDomainInfo),
             "::",
-            stringify!(cpuTime)
-        )
+            stringify!(cpuTime),
+        ),
     );
 }
 pub type virDomainInfoPtr = *mut virDomainInfo;
@@ -2074,12 +2951,12 @@ fn bindgen_test_layout__virDomainBlockStats() {
     assert_eq!(
         ::std::mem::size_of::<_virDomainBlockStats>(),
         40usize,
-        concat!("Size of: ", stringify!(_virDomainBlockStats))
+        concat!("Size of: ", stringify!(_virDomainBlockStats)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virDomainBlockStats>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virDomainBlockStats))
+        concat!("Alignment of ", stringify!(_virDomainBlockStats)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).rd_req) as usize - ptr as usize },
@@ -2088,8 +2965,8 @@ fn bindgen_test_layout__virDomainBlockStats() {
             "Offset of field: ",
             stringify!(_virDomainBlockStats),
             "::",
-            stringify!(rd_req)
-        )
+            stringify!(rd_req),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).rd_bytes) as usize - ptr as usize },
@@ -2098,8 +2975,8 @@ fn bindgen_test_layout__virDomainBlockStats() {
             "Offset of field: ",
             stringify!(_virDomainBlockStats),
             "::",
-            stringify!(rd_bytes)
-        )
+            stringify!(rd_bytes),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).wr_req) as usize - ptr as usize },
@@ -2108,8 +2985,8 @@ fn bindgen_test_layout__virDomainBlockStats() {
             "Offset of field: ",
             stringify!(_virDomainBlockStats),
             "::",
-            stringify!(wr_req)
-        )
+            stringify!(wr_req),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).wr_bytes) as usize - ptr as usize },
@@ -2118,8 +2995,8 @@ fn bindgen_test_layout__virDomainBlockStats() {
             "Offset of field: ",
             stringify!(_virDomainBlockStats),
             "::",
-            stringify!(wr_bytes)
-        )
+            stringify!(wr_bytes),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).errs) as usize - ptr as usize },
@@ -2128,8 +3005,8 @@ fn bindgen_test_layout__virDomainBlockStats() {
             "Offset of field: ",
             stringify!(_virDomainBlockStats),
             "::",
-            stringify!(errs)
-        )
+            stringify!(errs),
+        ),
     );
 }
 pub type virDomainBlockStatsPtr = *mut virDomainBlockStatsStruct;
@@ -2148,18 +3025,17 @@ pub struct _virDomainInterfaceStats {
 }
 #[test]
 fn bindgen_test_layout__virDomainInterfaceStats() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainInterfaceStats> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::std::mem::MaybeUninit<_virDomainInterfaceStats> = ::std::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<_virDomainInterfaceStats>(),
         64usize,
-        concat!("Size of: ", stringify!(_virDomainInterfaceStats))
+        concat!("Size of: ", stringify!(_virDomainInterfaceStats)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virDomainInterfaceStats>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virDomainInterfaceStats))
+        concat!("Alignment of ", stringify!(_virDomainInterfaceStats)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).rx_bytes) as usize - ptr as usize },
@@ -2168,8 +3044,8 @@ fn bindgen_test_layout__virDomainInterfaceStats() {
             "Offset of field: ",
             stringify!(_virDomainInterfaceStats),
             "::",
-            stringify!(rx_bytes)
-        )
+            stringify!(rx_bytes),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).rx_packets) as usize - ptr as usize },
@@ -2178,8 +3054,8 @@ fn bindgen_test_layout__virDomainInterfaceStats() {
             "Offset of field: ",
             stringify!(_virDomainInterfaceStats),
             "::",
-            stringify!(rx_packets)
-        )
+            stringify!(rx_packets),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).rx_errs) as usize - ptr as usize },
@@ -2188,8 +3064,8 @@ fn bindgen_test_layout__virDomainInterfaceStats() {
             "Offset of field: ",
             stringify!(_virDomainInterfaceStats),
             "::",
-            stringify!(rx_errs)
-        )
+            stringify!(rx_errs),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).rx_drop) as usize - ptr as usize },
@@ -2198,8 +3074,8 @@ fn bindgen_test_layout__virDomainInterfaceStats() {
             "Offset of field: ",
             stringify!(_virDomainInterfaceStats),
             "::",
-            stringify!(rx_drop)
-        )
+            stringify!(rx_drop),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).tx_bytes) as usize - ptr as usize },
@@ -2208,8 +3084,8 @@ fn bindgen_test_layout__virDomainInterfaceStats() {
             "Offset of field: ",
             stringify!(_virDomainInterfaceStats),
             "::",
-            stringify!(tx_bytes)
-        )
+            stringify!(tx_bytes),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).tx_packets) as usize - ptr as usize },
@@ -2218,8 +3094,8 @@ fn bindgen_test_layout__virDomainInterfaceStats() {
             "Offset of field: ",
             stringify!(_virDomainInterfaceStats),
             "::",
-            stringify!(tx_packets)
-        )
+            stringify!(tx_packets),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).tx_errs) as usize - ptr as usize },
@@ -2228,8 +3104,8 @@ fn bindgen_test_layout__virDomainInterfaceStats() {
             "Offset of field: ",
             stringify!(_virDomainInterfaceStats),
             "::",
-            stringify!(tx_errs)
-        )
+            stringify!(tx_errs),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).tx_drop) as usize - ptr as usize },
@@ -2238,8 +3114,8 @@ fn bindgen_test_layout__virDomainInterfaceStats() {
             "Offset of field: ",
             stringify!(_virDomainInterfaceStats),
             "::",
-            stringify!(tx_drop)
-        )
+            stringify!(tx_drop),
+        ),
     );
 }
 pub type virDomainInterfaceStatsPtr = *mut virDomainInterfaceStatsStruct;
@@ -2272,12 +3148,12 @@ fn bindgen_test_layout__virDomainMemoryStat() {
     assert_eq!(
         ::std::mem::size_of::<_virDomainMemoryStat>(),
         16usize,
-        concat!("Size of: ", stringify!(_virDomainMemoryStat))
+        concat!("Size of: ", stringify!(_virDomainMemoryStat)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virDomainMemoryStat>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virDomainMemoryStat))
+        concat!("Alignment of ", stringify!(_virDomainMemoryStat)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).tag) as usize - ptr as usize },
@@ -2286,8 +3162,8 @@ fn bindgen_test_layout__virDomainMemoryStat() {
             "Offset of field: ",
             stringify!(_virDomainMemoryStat),
             "::",
-            stringify!(tag)
-        )
+            stringify!(tag),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).val) as usize - ptr as usize },
@@ -2296,8 +3172,8 @@ fn bindgen_test_layout__virDomainMemoryStat() {
             "Offset of field: ",
             stringify!(_virDomainMemoryStat),
             "::",
-            stringify!(val)
-        )
+            stringify!(val),
+        ),
     );
 }
 pub type virDomainMemoryStatPtr = *mut virDomainMemoryStatStruct;
@@ -2444,6 +3320,8 @@ extern "C" {
         flags: ::libc::c_uint,
     ) -> ::libc::c_int;
 }
+pub const VIR_CONNECT_GET_DOMAIN_CAPABILITIES_DISABLE_DEPRECATED_FEATURES: virConnectGetDomainCapabilitiesFlags = 1;
+pub type virConnectGetDomainCapabilitiesFlags = ::libc::c_uint;
 extern "C" {
     pub fn virConnectGetDomainCapabilities(
         conn: virConnectPtr,
@@ -2484,14 +3362,19 @@ extern "C" {
     ) -> virDomainPtr;
 }
 extern "C" {
-    pub fn virDomainLookupByName(conn: virConnectPtr, name: *const ::libc::c_char) -> virDomainPtr;
+    pub fn virDomainLookupByName(
+        conn: virConnectPtr,
+        name: *const ::libc::c_char,
+    ) -> virDomainPtr;
 }
 extern "C" {
     pub fn virDomainLookupByID(conn: virConnectPtr, id: ::libc::c_int) -> virDomainPtr;
 }
 extern "C" {
-    pub fn virDomainLookupByUUID(conn: virConnectPtr, uuid: *const ::libc::c_uchar)
-        -> virDomainPtr;
+    pub fn virDomainLookupByUUID(
+        conn: virConnectPtr,
+        uuid: *const ::libc::c_uchar,
+    ) -> virDomainPtr;
 }
 extern "C" {
     pub fn virDomainLookupByUUIDString(
@@ -2510,7 +3393,10 @@ extern "C" {
     pub fn virDomainShutdown(domain: virDomainPtr) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virDomainShutdownFlags(domain: virDomainPtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virDomainShutdownFlags(
+        domain: virDomainPtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 pub const VIR_DOMAIN_REBOOT_DEFAULT: virDomainRebootFlagValues = 0;
 pub const VIR_DOMAIN_REBOOT_ACPI_POWER_BTN: virDomainRebootFlagValues = 1;
@@ -2533,7 +3419,10 @@ pub const VIR_DOMAIN_DESTROY_GRACEFUL: virDomainDestroyFlagsValues = 1;
 pub const VIR_DOMAIN_DESTROY_REMOVE_LOGS: virDomainDestroyFlagsValues = 2;
 pub type virDomainDestroyFlagsValues = ::libc::c_uint;
 extern "C" {
-    pub fn virDomainDestroyFlags(domain: virDomainPtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virDomainDestroyFlags(
+        domain: virDomainPtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virDomainRef(domain: virDomainPtr) -> ::libc::c_int;
@@ -2556,7 +3445,10 @@ extern "C" {
     ) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virDomainPMWakeup(domain: virDomainPtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virDomainPMWakeup(
+        domain: virDomainPtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 pub const VIR_DOMAIN_SAVE_BYPASS_CACHE: virDomainSaveRestoreFlags = 1;
 pub const VIR_DOMAIN_SAVE_RUNNING: virDomainSaveRestoreFlags = 2;
@@ -2564,7 +3456,10 @@ pub const VIR_DOMAIN_SAVE_PAUSED: virDomainSaveRestoreFlags = 4;
 pub const VIR_DOMAIN_SAVE_RESET_NVRAM: virDomainSaveRestoreFlags = 8;
 pub type virDomainSaveRestoreFlags = ::libc::c_uint;
 extern "C" {
-    pub fn virDomainSave(domain: virDomainPtr, to: *const ::libc::c_char) -> ::libc::c_int;
+    pub fn virDomainSave(
+        domain: virDomainPtr,
+        to: *const ::libc::c_char,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virDomainSaveFlags(
@@ -2583,7 +3478,10 @@ extern "C" {
     ) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virDomainRestore(conn: virConnectPtr, from: *const ::libc::c_char) -> ::libc::c_int;
+    pub fn virDomainRestore(
+        conn: virConnectPtr,
+        from: *const ::libc::c_char,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virDomainRestoreFlags(
@@ -2617,13 +3515,22 @@ extern "C" {
     ) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virDomainManagedSave(dom: virDomainPtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virDomainManagedSave(
+        dom: virDomainPtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virDomainHasManagedSaveImage(dom: virDomainPtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virDomainHasManagedSaveImage(
+        dom: virDomainPtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virDomainManagedSaveRemove(dom: virDomainPtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virDomainManagedSaveRemove(
+        dom: virDomainPtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virDomainManagedSaveGetXMLDesc(
@@ -2662,7 +3569,10 @@ extern "C" {
     ) -> *mut ::libc::c_char;
 }
 extern "C" {
-    pub fn virDomainGetInfo(domain: virDomainPtr, info: virDomainInfoPtr) -> ::libc::c_int;
+    pub fn virDomainGetInfo(
+        domain: virDomainPtr,
+        info: virDomainInfoPtr,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virDomainGetState(
@@ -2760,10 +3670,16 @@ extern "C" {
     pub fn virDomainGetID(domain: virDomainPtr) -> ::libc::c_uint;
 }
 extern "C" {
-    pub fn virDomainGetUUID(domain: virDomainPtr, uuid: *mut ::libc::c_uchar) -> ::libc::c_int;
+    pub fn virDomainGetUUID(
+        domain: virDomainPtr,
+        uuid: *mut ::libc::c_uchar,
+    ) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virDomainGetUUIDString(domain: virDomainPtr, buf: *mut ::libc::c_char) -> ::libc::c_int;
+    pub fn virDomainGetUUIDString(
+        domain: virDomainPtr,
+        buf: *mut ::libc::c_char,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virDomainGetOSType(domain: virDomainPtr) -> *mut ::libc::c_char;
@@ -2772,10 +3688,16 @@ extern "C" {
     pub fn virDomainGetMaxMemory(domain: virDomainPtr) -> ::libc::c_ulong;
 }
 extern "C" {
-    pub fn virDomainSetMaxMemory(domain: virDomainPtr, memory: ::libc::c_ulong) -> ::libc::c_int;
+    pub fn virDomainSetMaxMemory(
+        domain: virDomainPtr,
+        memory: ::libc::c_ulong,
+    ) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virDomainSetMemory(domain: virDomainPtr, memory: ::libc::c_ulong) -> ::libc::c_int;
+    pub fn virDomainSetMemory(
+        domain: virDomainPtr,
+        memory: ::libc::c_ulong,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virDomainSetMemoryFlags(
@@ -2804,8 +3726,10 @@ pub const VIR_DOMAIN_GET_HOSTNAME_LEASE: virDomainGetHostnameFlags = 1;
 pub const VIR_DOMAIN_GET_HOSTNAME_AGENT: virDomainGetHostnameFlags = 2;
 pub type virDomainGetHostnameFlags = ::libc::c_uint;
 extern "C" {
-    pub fn virDomainGetHostname(domain: virDomainPtr, flags: ::libc::c_uint)
-        -> *mut ::libc::c_char;
+    pub fn virDomainGetHostname(
+        domain: virDomainPtr,
+        flags: ::libc::c_uint,
+    ) -> *mut ::libc::c_char;
 }
 extern "C" {
     pub fn virDomainGetSecurityLabelList(
@@ -2843,7 +3767,10 @@ pub type virDomainXMLFlags = ::libc::c_uint;
 pub const VIR_DOMAIN_SAVE_IMAGE_XML_SECURE: virDomainSaveImageXMLFlags = 1;
 pub type virDomainSaveImageXMLFlags = ::libc::c_uint;
 extern "C" {
-    pub fn virDomainGetXMLDesc(domain: virDomainPtr, flags: ::libc::c_uint) -> *mut ::libc::c_char;
+    pub fn virDomainGetXMLDesc(
+        domain: virDomainPtr,
+        flags: ::libc::c_uint,
+    ) -> *mut ::libc::c_char;
 }
 extern "C" {
     pub fn virConnectDomainXMLFromNative(
@@ -2941,12 +3868,12 @@ fn bindgen_test_layout__virDomainBlockInfo() {
     assert_eq!(
         ::std::mem::size_of::<_virDomainBlockInfo>(),
         24usize,
-        concat!("Size of: ", stringify!(_virDomainBlockInfo))
+        concat!("Size of: ", stringify!(_virDomainBlockInfo)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virDomainBlockInfo>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virDomainBlockInfo))
+        concat!("Alignment of ", stringify!(_virDomainBlockInfo)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).capacity) as usize - ptr as usize },
@@ -2955,8 +3882,8 @@ fn bindgen_test_layout__virDomainBlockInfo() {
             "Offset of field: ",
             stringify!(_virDomainBlockInfo),
             "::",
-            stringify!(capacity)
-        )
+            stringify!(capacity),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).allocation) as usize - ptr as usize },
@@ -2965,8 +3892,8 @@ fn bindgen_test_layout__virDomainBlockInfo() {
             "Offset of field: ",
             stringify!(_virDomainBlockInfo),
             "::",
-            stringify!(allocation)
-        )
+            stringify!(allocation),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).physical) as usize - ptr as usize },
@@ -2975,8 +3902,8 @@ fn bindgen_test_layout__virDomainBlockInfo() {
             "Offset of field: ",
             stringify!(_virDomainBlockInfo),
             "::",
-            stringify!(physical)
-        )
+            stringify!(physical),
+        ),
     );
 }
 extern "C" {
@@ -3010,7 +3937,10 @@ extern "C" {
 pub const VIR_DOMAIN_DEFINE_VALIDATE: virDomainDefineFlags = 1;
 pub type virDomainDefineFlags = ::libc::c_uint;
 extern "C" {
-    pub fn virDomainDefineXML(conn: virConnectPtr, xml: *const ::libc::c_char) -> virDomainPtr;
+    pub fn virDomainDefineXML(
+        conn: virConnectPtr,
+        xml: *const ::libc::c_char,
+    ) -> virDomainPtr;
 }
 extern "C" {
     pub fn virDomainDefineXMLFlags(
@@ -3031,7 +3961,10 @@ pub const VIR_DOMAIN_UNDEFINE_TPM: virDomainUndefineFlagsValues = 32;
 pub const VIR_DOMAIN_UNDEFINE_KEEP_TPM: virDomainUndefineFlagsValues = 64;
 pub type virDomainUndefineFlagsValues = ::libc::c_uint;
 extern "C" {
-    pub fn virDomainUndefineFlags(domain: virDomainPtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virDomainUndefineFlags(
+        domain: virDomainPtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virConnectNumOfDefinedDomains(conn: virConnectPtr) -> ::libc::c_int;
@@ -3071,7 +4004,10 @@ extern "C" {
     pub fn virDomainCreate(domain: virDomainPtr) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virDomainCreateWithFlags(domain: virDomainPtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virDomainCreateWithFlags(
+        domain: virDomainPtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virDomainCreateWithFiles(
@@ -3088,7 +4024,22 @@ extern "C" {
     ) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virDomainSetAutostart(domain: virDomainPtr, autostart: ::libc::c_int) -> ::libc::c_int;
+    pub fn virDomainSetAutostart(
+        domain: virDomainPtr,
+        autostart: ::libc::c_int,
+    ) -> ::libc::c_int;
+}
+extern "C" {
+    pub fn virDomainGetAutostartOnce(
+        domain: virDomainPtr,
+        autostart: *mut ::libc::c_int,
+    ) -> ::libc::c_int;
+}
+extern "C" {
+    pub fn virDomainSetAutostartOnce(
+        domain: virDomainPtr,
+        autostart: ::libc::c_int,
+    ) -> ::libc::c_int;
 }
 pub const VIR_VCPU_OFFLINE: virVcpuState = 0;
 pub const VIR_VCPU_RUNNING: virVcpuState = 1;
@@ -3113,52 +4064,32 @@ fn bindgen_test_layout__virVcpuInfo() {
     assert_eq!(
         ::std::mem::size_of::<_virVcpuInfo>(),
         24usize,
-        concat!("Size of: ", stringify!(_virVcpuInfo))
+        concat!("Size of: ", stringify!(_virVcpuInfo)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virVcpuInfo>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virVcpuInfo))
+        concat!("Alignment of ", stringify!(_virVcpuInfo)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).number) as usize - ptr as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virVcpuInfo),
-            "::",
-            stringify!(number)
-        )
+        concat!("Offset of field: ", stringify!(_virVcpuInfo), "::", stringify!(number)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).state) as usize - ptr as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virVcpuInfo),
-            "::",
-            stringify!(state)
-        )
+        concat!("Offset of field: ", stringify!(_virVcpuInfo), "::", stringify!(state)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).cpuTime) as usize - ptr as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virVcpuInfo),
-            "::",
-            stringify!(cpuTime)
-        )
+        concat!("Offset of field: ", stringify!(_virVcpuInfo), "::", stringify!(cpuTime)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).cpu) as usize - ptr as usize },
         16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virVcpuInfo),
-            "::",
-            stringify!(cpu)
-        )
+        concat!("Offset of field: ", stringify!(_virVcpuInfo), "::", stringify!(cpu)),
     );
 }
 pub type virVcpuInfoPtr = *mut virVcpuInfo;
@@ -3170,7 +4101,10 @@ pub const VIR_DOMAIN_VCPU_GUEST: virDomainVcpuFlags = 8;
 pub const VIR_DOMAIN_VCPU_HOTPLUGGABLE: virDomainVcpuFlags = 16;
 pub type virDomainVcpuFlags = ::libc::c_uint;
 extern "C" {
-    pub fn virDomainSetVcpus(domain: virDomainPtr, nvcpus: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virDomainSetVcpus(
+        domain: virDomainPtr,
+        nvcpus: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virDomainSetVcpusFlags(
@@ -3180,7 +4114,10 @@ extern "C" {
     ) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virDomainGetVcpusFlags(domain: virDomainPtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virDomainGetVcpusFlags(
+        domain: virDomainPtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virDomainPinVcpu(
@@ -3235,18 +4172,17 @@ pub struct _virDomainIOThreadInfo {
 }
 #[test]
 fn bindgen_test_layout__virDomainIOThreadInfo() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainIOThreadInfo> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::std::mem::MaybeUninit<_virDomainIOThreadInfo> = ::std::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<_virDomainIOThreadInfo>(),
         24usize,
-        concat!("Size of: ", stringify!(_virDomainIOThreadInfo))
+        concat!("Size of: ", stringify!(_virDomainIOThreadInfo)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virDomainIOThreadInfo>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virDomainIOThreadInfo))
+        concat!("Alignment of ", stringify!(_virDomainIOThreadInfo)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).iothread_id) as usize - ptr as usize },
@@ -3255,8 +4191,8 @@ fn bindgen_test_layout__virDomainIOThreadInfo() {
             "Offset of field: ",
             stringify!(_virDomainIOThreadInfo),
             "::",
-            stringify!(iothread_id)
-        )
+            stringify!(iothread_id),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).cpumap) as usize - ptr as usize },
@@ -3265,8 +4201,8 @@ fn bindgen_test_layout__virDomainIOThreadInfo() {
             "Offset of field: ",
             stringify!(_virDomainIOThreadInfo),
             "::",
-            stringify!(cpumap)
-        )
+            stringify!(cpumap),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).cpumaplen) as usize - ptr as usize },
@@ -3275,8 +4211,8 @@ fn bindgen_test_layout__virDomainIOThreadInfo() {
             "Offset of field: ",
             stringify!(_virDomainIOThreadInfo),
             "::",
-            stringify!(cpumaplen)
-        )
+            stringify!(cpumaplen),
+        ),
     );
 }
 extern "C" {
@@ -3336,12 +4272,16 @@ pub const VIR_DOMAIN_DEVICE_MODIFY_CONFIG: virDomainDeviceModifyFlags = 2;
 pub const VIR_DOMAIN_DEVICE_MODIFY_FORCE: virDomainDeviceModifyFlags = 4;
 pub type virDomainDeviceModifyFlags = ::libc::c_uint;
 extern "C" {
-    pub fn virDomainAttachDevice(domain: virDomainPtr, xml: *const ::libc::c_char)
-        -> ::libc::c_int;
+    pub fn virDomainAttachDevice(
+        domain: virDomainPtr,
+        xml: *const ::libc::c_char,
+    ) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virDomainDetachDevice(domain: virDomainPtr, xml: *const ::libc::c_char)
-        -> ::libc::c_int;
+    pub fn virDomainDetachDevice(
+        domain: virDomainPtr,
+        xml: *const ::libc::c_char,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virDomainAttachDeviceFlags(
@@ -3382,18 +4322,17 @@ pub struct _virDomainStatsRecord {
 }
 #[test]
 fn bindgen_test_layout__virDomainStatsRecord() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainStatsRecord> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::std::mem::MaybeUninit<_virDomainStatsRecord> = ::std::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<_virDomainStatsRecord>(),
         24usize,
-        concat!("Size of: ", stringify!(_virDomainStatsRecord))
+        concat!("Size of: ", stringify!(_virDomainStatsRecord)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virDomainStatsRecord>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virDomainStatsRecord))
+        concat!("Alignment of ", stringify!(_virDomainStatsRecord)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).dom) as usize - ptr as usize },
@@ -3402,8 +4341,8 @@ fn bindgen_test_layout__virDomainStatsRecord() {
             "Offset of field: ",
             stringify!(_virDomainStatsRecord),
             "::",
-            stringify!(dom)
-        )
+            stringify!(dom),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).params) as usize - ptr as usize },
@@ -3412,8 +4351,8 @@ fn bindgen_test_layout__virDomainStatsRecord() {
             "Offset of field: ",
             stringify!(_virDomainStatsRecord),
             "::",
-            stringify!(params)
-        )
+            stringify!(params),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).nparams) as usize - ptr as usize },
@@ -3422,8 +4361,8 @@ fn bindgen_test_layout__virDomainStatsRecord() {
             "Offset of field: ",
             stringify!(_virDomainStatsRecord),
             "::",
-            stringify!(nparams)
-        )
+            stringify!(nparams),
+        ),
     );
 }
 pub const VIR_DOMAIN_STATS_STATE: virDomainStatsTypes = 1;
@@ -3448,8 +4387,7 @@ pub const VIR_CONNECT_GET_ALL_DOMAINS_STATS_SHUTOFF: virConnectGetAllDomainStats
 pub const VIR_CONNECT_GET_ALL_DOMAINS_STATS_OTHER: virConnectGetAllDomainStatsFlags = 128;
 pub const VIR_CONNECT_GET_ALL_DOMAINS_STATS_NOWAIT: virConnectGetAllDomainStatsFlags = 536870912;
 pub const VIR_CONNECT_GET_ALL_DOMAINS_STATS_BACKING: virConnectGetAllDomainStatsFlags = 1073741824;
-pub const VIR_CONNECT_GET_ALL_DOMAINS_STATS_ENFORCE_STATS: virConnectGetAllDomainStatsFlags =
-    2147483648;
+pub const VIR_CONNECT_GET_ALL_DOMAINS_STATS_ENFORCE_STATS: virConnectGetAllDomainStatsFlags = 2147483648;
 pub type virConnectGetAllDomainStatsFlags = ::libc::c_uint;
 extern "C" {
     pub fn virConnectGetAllDomainStats(
@@ -3517,18 +4455,17 @@ pub struct _virDomainBlockJobInfo {
 }
 #[test]
 fn bindgen_test_layout__virDomainBlockJobInfo() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainBlockJobInfo> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::std::mem::MaybeUninit<_virDomainBlockJobInfo> = ::std::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<_virDomainBlockJobInfo>(),
         32usize,
-        concat!("Size of: ", stringify!(_virDomainBlockJobInfo))
+        concat!("Size of: ", stringify!(_virDomainBlockJobInfo)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virDomainBlockJobInfo>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virDomainBlockJobInfo))
+        concat!("Alignment of ", stringify!(_virDomainBlockJobInfo)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
@@ -3537,8 +4474,8 @@ fn bindgen_test_layout__virDomainBlockJobInfo() {
             "Offset of field: ",
             stringify!(_virDomainBlockJobInfo),
             "::",
-            stringify!(type_)
-        )
+            stringify!(type_),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).bandwidth) as usize - ptr as usize },
@@ -3547,8 +4484,8 @@ fn bindgen_test_layout__virDomainBlockJobInfo() {
             "Offset of field: ",
             stringify!(_virDomainBlockJobInfo),
             "::",
-            stringify!(bandwidth)
-        )
+            stringify!(bandwidth),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).cur) as usize - ptr as usize },
@@ -3557,8 +4494,8 @@ fn bindgen_test_layout__virDomainBlockJobInfo() {
             "Offset of field: ",
             stringify!(_virDomainBlockJobInfo),
             "::",
-            stringify!(cur)
-        )
+            stringify!(cur),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).end) as usize - ptr as usize },
@@ -3567,8 +4504,8 @@ fn bindgen_test_layout__virDomainBlockJobInfo() {
             "Offset of field: ",
             stringify!(_virDomainBlockJobInfo),
             "::",
-            stringify!(end)
-        )
+            stringify!(end),
+        ),
     );
 }
 pub type virDomainBlockJobInfoPtr = *mut virDomainBlockJobInfo;
@@ -3685,12 +4622,12 @@ fn bindgen_test_layout__virDomainDiskError() {
     assert_eq!(
         ::std::mem::size_of::<_virDomainDiskError>(),
         16usize,
-        concat!("Size of: ", stringify!(_virDomainDiskError))
+        concat!("Size of: ", stringify!(_virDomainDiskError)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virDomainDiskError>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virDomainDiskError))
+        concat!("Alignment of ", stringify!(_virDomainDiskError)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).disk) as usize - ptr as usize },
@@ -3699,8 +4636,8 @@ fn bindgen_test_layout__virDomainDiskError() {
             "Offset of field: ",
             stringify!(_virDomainDiskError),
             "::",
-            stringify!(disk)
-        )
+            stringify!(disk),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).error) as usize - ptr as usize },
@@ -3709,8 +4646,8 @@ fn bindgen_test_layout__virDomainDiskError() {
             "Offset of field: ",
             stringify!(_virDomainDiskError),
             "::",
-            stringify!(error)
-        )
+            stringify!(error),
+        ),
     );
 }
 extern "C" {
@@ -3881,8 +4818,7 @@ pub type virDomainEventPMSuspendedDetailType = ::libc::c_uint;
 pub const VIR_DOMAIN_EVENT_CRASHED_PANICKED: virDomainEventCrashedDetailType = 0;
 pub const VIR_DOMAIN_EVENT_CRASHED_CRASHLOADED: virDomainEventCrashedDetailType = 1;
 pub type virDomainEventCrashedDetailType = ::libc::c_uint;
-pub const VIR_DOMAIN_EVENT_MEMORY_FAILURE_RECIPIENT_HYPERVISOR:
-    virDomainMemoryFailureRecipientType = 0;
+pub const VIR_DOMAIN_EVENT_MEMORY_FAILURE_RECIPIENT_HYPERVISOR: virDomainMemoryFailureRecipientType = 0;
 pub const VIR_DOMAIN_EVENT_MEMORY_FAILURE_RECIPIENT_GUEST: virDomainMemoryFailureRecipientType = 1;
 pub type virDomainMemoryFailureRecipientType = ::libc::c_uint;
 pub const VIR_DOMAIN_EVENT_MEMORY_FAILURE_ACTION_IGNORE: virDomainMemoryFailureActionType = 0;
@@ -3957,12 +4893,12 @@ fn bindgen_test_layout__virDomainJobInfo() {
     assert_eq!(
         ::std::mem::size_of::<_virDomainJobInfo>(),
         96usize,
-        concat!("Size of: ", stringify!(_virDomainJobInfo))
+        concat!("Size of: ", stringify!(_virDomainJobInfo)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virDomainJobInfo>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virDomainJobInfo))
+        concat!("Alignment of ", stringify!(_virDomainJobInfo)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
@@ -3971,8 +4907,8 @@ fn bindgen_test_layout__virDomainJobInfo() {
             "Offset of field: ",
             stringify!(_virDomainJobInfo),
             "::",
-            stringify!(type_)
-        )
+            stringify!(type_),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).timeElapsed) as usize - ptr as usize },
@@ -3981,8 +4917,8 @@ fn bindgen_test_layout__virDomainJobInfo() {
             "Offset of field: ",
             stringify!(_virDomainJobInfo),
             "::",
-            stringify!(timeElapsed)
-        )
+            stringify!(timeElapsed),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).timeRemaining) as usize - ptr as usize },
@@ -3991,8 +4927,8 @@ fn bindgen_test_layout__virDomainJobInfo() {
             "Offset of field: ",
             stringify!(_virDomainJobInfo),
             "::",
-            stringify!(timeRemaining)
-        )
+            stringify!(timeRemaining),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).dataTotal) as usize - ptr as usize },
@@ -4001,8 +4937,8 @@ fn bindgen_test_layout__virDomainJobInfo() {
             "Offset of field: ",
             stringify!(_virDomainJobInfo),
             "::",
-            stringify!(dataTotal)
-        )
+            stringify!(dataTotal),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).dataProcessed) as usize - ptr as usize },
@@ -4011,8 +4947,8 @@ fn bindgen_test_layout__virDomainJobInfo() {
             "Offset of field: ",
             stringify!(_virDomainJobInfo),
             "::",
-            stringify!(dataProcessed)
-        )
+            stringify!(dataProcessed),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).dataRemaining) as usize - ptr as usize },
@@ -4021,8 +4957,8 @@ fn bindgen_test_layout__virDomainJobInfo() {
             "Offset of field: ",
             stringify!(_virDomainJobInfo),
             "::",
-            stringify!(dataRemaining)
-        )
+            stringify!(dataRemaining),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).memTotal) as usize - ptr as usize },
@@ -4031,8 +4967,8 @@ fn bindgen_test_layout__virDomainJobInfo() {
             "Offset of field: ",
             stringify!(_virDomainJobInfo),
             "::",
-            stringify!(memTotal)
-        )
+            stringify!(memTotal),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).memProcessed) as usize - ptr as usize },
@@ -4041,8 +4977,8 @@ fn bindgen_test_layout__virDomainJobInfo() {
             "Offset of field: ",
             stringify!(_virDomainJobInfo),
             "::",
-            stringify!(memProcessed)
-        )
+            stringify!(memProcessed),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).memRemaining) as usize - ptr as usize },
@@ -4051,8 +4987,8 @@ fn bindgen_test_layout__virDomainJobInfo() {
             "Offset of field: ",
             stringify!(_virDomainJobInfo),
             "::",
-            stringify!(memRemaining)
-        )
+            stringify!(memRemaining),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).fileTotal) as usize - ptr as usize },
@@ -4061,8 +4997,8 @@ fn bindgen_test_layout__virDomainJobInfo() {
             "Offset of field: ",
             stringify!(_virDomainJobInfo),
             "::",
-            stringify!(fileTotal)
-        )
+            stringify!(fileTotal),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).fileProcessed) as usize - ptr as usize },
@@ -4071,8 +5007,8 @@ fn bindgen_test_layout__virDomainJobInfo() {
             "Offset of field: ",
             stringify!(_virDomainJobInfo),
             "::",
-            stringify!(fileProcessed)
-        )
+            stringify!(fileProcessed),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).fileRemaining) as usize - ptr as usize },
@@ -4081,15 +5017,18 @@ fn bindgen_test_layout__virDomainJobInfo() {
             "Offset of field: ",
             stringify!(_virDomainJobInfo),
             "::",
-            stringify!(fileRemaining)
-        )
+            stringify!(fileRemaining),
+        ),
     );
 }
 pub const VIR_DOMAIN_JOB_STATS_COMPLETED: virDomainGetJobStatsFlags = 1;
 pub const VIR_DOMAIN_JOB_STATS_KEEP_COMPLETED: virDomainGetJobStatsFlags = 2;
 pub type virDomainGetJobStatsFlags = ::libc::c_uint;
 extern "C" {
-    pub fn virDomainGetJobInfo(dom: virDomainPtr, info: virDomainJobInfoPtr) -> ::libc::c_int;
+    pub fn virDomainGetJobInfo(
+        dom: virDomainPtr,
+        info: virDomainJobInfoPtr,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virDomainGetJobStats(
@@ -4106,7 +5045,10 @@ extern "C" {
 pub const VIR_DOMAIN_ABORT_JOB_POSTCOPY: virDomainAbortJobFlagsValues = 1;
 pub type virDomainAbortJobFlagsValues = ::libc::c_uint;
 extern "C" {
-    pub fn virDomainAbortJobFlags(dom: virDomainPtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virDomainAbortJobFlags(
+        dom: virDomainPtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 pub const VIR_DOMAIN_JOB_OPERATION_UNKNOWN: virDomainJobOperation = 0;
 pub const VIR_DOMAIN_JOB_OPERATION_START: virDomainJobOperation = 1;
@@ -4121,7 +5063,11 @@ pub const VIR_DOMAIN_JOB_OPERATION_BACKUP: virDomainJobOperation = 9;
 pub const VIR_DOMAIN_JOB_OPERATION_SNAPSHOT_DELETE: virDomainJobOperation = 10;
 pub type virDomainJobOperation = ::libc::c_uint;
 pub type virConnectDomainEventGenericCallback = ::std::option::Option<
-    unsafe extern "C" fn(conn: virConnectPtr, dom: virDomainPtr, opaque: *mut ::libc::c_void),
+    unsafe extern "C" fn(
+        conn: virConnectPtr,
+        dom: virDomainPtr,
+        opaque: *mut ::libc::c_void,
+    ),
 >;
 pub type virConnectDomainEventRTCChangeCallback = ::std::option::Option<
     unsafe extern "C" fn(
@@ -4189,18 +5135,17 @@ pub struct _virDomainEventGraphicsAddress {
 }
 #[test]
 fn bindgen_test_layout__virDomainEventGraphicsAddress() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainEventGraphicsAddress> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::std::mem::MaybeUninit<_virDomainEventGraphicsAddress> = ::std::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<_virDomainEventGraphicsAddress>(),
         24usize,
-        concat!("Size of: ", stringify!(_virDomainEventGraphicsAddress))
+        concat!("Size of: ", stringify!(_virDomainEventGraphicsAddress)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virDomainEventGraphicsAddress>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virDomainEventGraphicsAddress))
+        concat!("Alignment of ", stringify!(_virDomainEventGraphicsAddress)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).family) as usize - ptr as usize },
@@ -4209,8 +5154,8 @@ fn bindgen_test_layout__virDomainEventGraphicsAddress() {
             "Offset of field: ",
             stringify!(_virDomainEventGraphicsAddress),
             "::",
-            stringify!(family)
-        )
+            stringify!(family),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).node) as usize - ptr as usize },
@@ -4219,8 +5164,8 @@ fn bindgen_test_layout__virDomainEventGraphicsAddress() {
             "Offset of field: ",
             stringify!(_virDomainEventGraphicsAddress),
             "::",
-            stringify!(node)
-        )
+            stringify!(node),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).service) as usize - ptr as usize },
@@ -4229,8 +5174,8 @@ fn bindgen_test_layout__virDomainEventGraphicsAddress() {
             "Offset of field: ",
             stringify!(_virDomainEventGraphicsAddress),
             "::",
-            stringify!(service)
-        )
+            stringify!(service),
+        ),
     );
 }
 pub type virDomainEventGraphicsAddress = _virDomainEventGraphicsAddress;
@@ -4243,24 +5188,17 @@ pub struct _virDomainEventGraphicsSubjectIdentity {
 }
 #[test]
 fn bindgen_test_layout__virDomainEventGraphicsSubjectIdentity() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainEventGraphicsSubjectIdentity> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::std::mem::MaybeUninit<_virDomainEventGraphicsSubjectIdentity> = ::std::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<_virDomainEventGraphicsSubjectIdentity>(),
         16usize,
-        concat!(
-            "Size of: ",
-            stringify!(_virDomainEventGraphicsSubjectIdentity)
-        )
+        concat!("Size of: ", stringify!(_virDomainEventGraphicsSubjectIdentity)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virDomainEventGraphicsSubjectIdentity>(),
         8usize,
-        concat!(
-            "Alignment of ",
-            stringify!(_virDomainEventGraphicsSubjectIdentity)
-        )
+        concat!("Alignment of ", stringify!(_virDomainEventGraphicsSubjectIdentity)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
@@ -4269,8 +5207,8 @@ fn bindgen_test_layout__virDomainEventGraphicsSubjectIdentity() {
             "Offset of field: ",
             stringify!(_virDomainEventGraphicsSubjectIdentity),
             "::",
-            stringify!(type_)
-        )
+            stringify!(type_),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).name) as usize - ptr as usize },
@@ -4279,8 +5217,8 @@ fn bindgen_test_layout__virDomainEventGraphicsSubjectIdentity() {
             "Offset of field: ",
             stringify!(_virDomainEventGraphicsSubjectIdentity),
             "::",
-            stringify!(name)
-        )
+            stringify!(name),
+        ),
     );
 }
 pub type virDomainEventGraphicsSubjectIdentity = _virDomainEventGraphicsSubjectIdentity;
@@ -4293,18 +5231,17 @@ pub struct _virDomainEventGraphicsSubject {
 }
 #[test]
 fn bindgen_test_layout__virDomainEventGraphicsSubject() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainEventGraphicsSubject> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::std::mem::MaybeUninit<_virDomainEventGraphicsSubject> = ::std::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<_virDomainEventGraphicsSubject>(),
         16usize,
-        concat!("Size of: ", stringify!(_virDomainEventGraphicsSubject))
+        concat!("Size of: ", stringify!(_virDomainEventGraphicsSubject)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virDomainEventGraphicsSubject>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virDomainEventGraphicsSubject))
+        concat!("Alignment of ", stringify!(_virDomainEventGraphicsSubject)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).nidentity) as usize - ptr as usize },
@@ -4313,8 +5250,8 @@ fn bindgen_test_layout__virDomainEventGraphicsSubject() {
             "Offset of field: ",
             stringify!(_virDomainEventGraphicsSubject),
             "::",
-            stringify!(nidentity)
-        )
+            stringify!(nidentity),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).identities) as usize - ptr as usize },
@@ -4323,8 +5260,8 @@ fn bindgen_test_layout__virDomainEventGraphicsSubject() {
             "Offset of field: ",
             stringify!(_virDomainEventGraphicsSubject),
             "::",
-            stringify!(identities)
-        )
+            stringify!(identities),
+        ),
     );
 }
 pub type virDomainEventGraphicsSubject = _virDomainEventGraphicsSubject;
@@ -4473,17 +5410,12 @@ pub type virConnectDomainEventTunableCallback = ::std::option::Option<
         opaque: *mut ::libc::c_void,
     ),
 >;
-pub const VIR_CONNECT_DOMAIN_EVENT_AGENT_LIFECYCLE_STATE_CONNECTED:
-    virConnectDomainEventAgentLifecycleState = 1;
-pub const VIR_CONNECT_DOMAIN_EVENT_AGENT_LIFECYCLE_STATE_DISCONNECTED:
-    virConnectDomainEventAgentLifecycleState = 2;
+pub const VIR_CONNECT_DOMAIN_EVENT_AGENT_LIFECYCLE_STATE_CONNECTED: virConnectDomainEventAgentLifecycleState = 1;
+pub const VIR_CONNECT_DOMAIN_EVENT_AGENT_LIFECYCLE_STATE_DISCONNECTED: virConnectDomainEventAgentLifecycleState = 2;
 pub type virConnectDomainEventAgentLifecycleState = ::libc::c_uint;
-pub const VIR_CONNECT_DOMAIN_EVENT_AGENT_LIFECYCLE_REASON_UNKNOWN:
-    virConnectDomainEventAgentLifecycleReason = 0;
-pub const VIR_CONNECT_DOMAIN_EVENT_AGENT_LIFECYCLE_REASON_DOMAIN_STARTED:
-    virConnectDomainEventAgentLifecycleReason = 1;
-pub const VIR_CONNECT_DOMAIN_EVENT_AGENT_LIFECYCLE_REASON_CHANNEL:
-    virConnectDomainEventAgentLifecycleReason = 2;
+pub const VIR_CONNECT_DOMAIN_EVENT_AGENT_LIFECYCLE_REASON_UNKNOWN: virConnectDomainEventAgentLifecycleReason = 0;
+pub const VIR_CONNECT_DOMAIN_EVENT_AGENT_LIFECYCLE_REASON_DOMAIN_STARTED: virConnectDomainEventAgentLifecycleReason = 1;
+pub const VIR_CONNECT_DOMAIN_EVENT_AGENT_LIFECYCLE_REASON_CHANNEL: virConnectDomainEventAgentLifecycleReason = 2;
 pub type virConnectDomainEventAgentLifecycleReason = ::libc::c_uint;
 pub type virConnectDomainEventAgentLifecycleCallback = ::std::option::Option<
     unsafe extern "C" fn(
@@ -4524,6 +5456,16 @@ pub type virConnectDomainEventMemoryDeviceSizeChangeCallback = ::std::option::Op
         opaque: *mut ::libc::c_void,
     ),
 >;
+pub type virConnectDomainEventNICMACChangeCallback = ::std::option::Option<
+    unsafe extern "C" fn(
+        conn: virConnectPtr,
+        dom: virDomainPtr,
+        alias: *const ::libc::c_char,
+        oldMAC: *const ::libc::c_char,
+        newMAC: *const ::libc::c_char,
+        opaque: *mut ::libc::c_void,
+    ),
+>;
 pub const VIR_DOMAIN_EVENT_ID_LIFECYCLE: virDomainEventID = 0;
 pub const VIR_DOMAIN_EVENT_ID_REBOOT: virDomainEventID = 1;
 pub const VIR_DOMAIN_EVENT_ID_RTC_CHANGE: virDomainEventID = 2;
@@ -4551,6 +5493,7 @@ pub const VIR_DOMAIN_EVENT_ID_METADATA_CHANGE: virDomainEventID = 23;
 pub const VIR_DOMAIN_EVENT_ID_BLOCK_THRESHOLD: virDomainEventID = 24;
 pub const VIR_DOMAIN_EVENT_ID_MEMORY_FAILURE: virDomainEventID = 25;
 pub const VIR_DOMAIN_EVENT_ID_MEMORY_DEVICE_SIZE_CHANGE: virDomainEventID = 26;
+pub const VIR_DOMAIN_EVENT_ID_NIC_MAC_CHANGE: virDomainEventID = 27;
 pub type virDomainEventID = ::libc::c_uint;
 extern "C" {
     pub fn virConnectDomainEventRegisterAny(
@@ -4607,7 +5550,10 @@ extern "C" {
     ) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virDomainInjectNMI(domain: virDomainPtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virDomainInjectNMI(
+        domain: virDomainPtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virDomainFSTrim(
@@ -4651,12 +5597,12 @@ fn bindgen_test_layout__virDomainFSInfo() {
     assert_eq!(
         ::std::mem::size_of::<_virDomainFSInfo>(),
         40usize,
-        concat!("Size of: ", stringify!(_virDomainFSInfo))
+        concat!("Size of: ", stringify!(_virDomainFSInfo)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virDomainFSInfo>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virDomainFSInfo))
+        concat!("Alignment of ", stringify!(_virDomainFSInfo)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).mountpoint) as usize - ptr as usize },
@@ -4665,8 +5611,8 @@ fn bindgen_test_layout__virDomainFSInfo() {
             "Offset of field: ",
             stringify!(_virDomainFSInfo),
             "::",
-            stringify!(mountpoint)
-        )
+            stringify!(mountpoint),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).name) as usize - ptr as usize },
@@ -4675,8 +5621,8 @@ fn bindgen_test_layout__virDomainFSInfo() {
             "Offset of field: ",
             stringify!(_virDomainFSInfo),
             "::",
-            stringify!(name)
-        )
+            stringify!(name),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).fstype) as usize - ptr as usize },
@@ -4685,8 +5631,8 @@ fn bindgen_test_layout__virDomainFSInfo() {
             "Offset of field: ",
             stringify!(_virDomainFSInfo),
             "::",
-            stringify!(fstype)
-        )
+            stringify!(fstype),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).ndevAlias) as usize - ptr as usize },
@@ -4695,8 +5641,8 @@ fn bindgen_test_layout__virDomainFSInfo() {
             "Offset of field: ",
             stringify!(_virDomainFSInfo),
             "::",
-            stringify!(ndevAlias)
-        )
+            stringify!(ndevAlias),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).devAlias) as usize - ptr as usize },
@@ -4705,8 +5651,8 @@ fn bindgen_test_layout__virDomainFSInfo() {
             "Offset of field: ",
             stringify!(_virDomainFSInfo),
             "::",
-            stringify!(devAlias)
-        )
+            stringify!(devAlias),
+        ),
     );
 }
 extern "C" {
@@ -4779,18 +5725,17 @@ pub struct _virDomainInterfaceIPAddress {
 }
 #[test]
 fn bindgen_test_layout__virDomainInterfaceIPAddress() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainInterfaceIPAddress> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::std::mem::MaybeUninit<_virDomainInterfaceIPAddress> = ::std::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<_virDomainInterfaceIPAddress>(),
         24usize,
-        concat!("Size of: ", stringify!(_virDomainInterfaceIPAddress))
+        concat!("Size of: ", stringify!(_virDomainInterfaceIPAddress)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virDomainInterfaceIPAddress>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virDomainInterfaceIPAddress))
+        concat!("Alignment of ", stringify!(_virDomainInterfaceIPAddress)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
@@ -4799,8 +5744,8 @@ fn bindgen_test_layout__virDomainInterfaceIPAddress() {
             "Offset of field: ",
             stringify!(_virDomainInterfaceIPAddress),
             "::",
-            stringify!(type_)
-        )
+            stringify!(type_),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).addr) as usize - ptr as usize },
@@ -4809,8 +5754,8 @@ fn bindgen_test_layout__virDomainInterfaceIPAddress() {
             "Offset of field: ",
             stringify!(_virDomainInterfaceIPAddress),
             "::",
-            stringify!(addr)
-        )
+            stringify!(addr),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).prefix) as usize - ptr as usize },
@@ -4819,8 +5764,8 @@ fn bindgen_test_layout__virDomainInterfaceIPAddress() {
             "Offset of field: ",
             stringify!(_virDomainInterfaceIPAddress),
             "::",
-            stringify!(prefix)
-        )
+            stringify!(prefix),
+        ),
     );
 }
 pub type virDomainInterface = _virDomainInterface;
@@ -4840,12 +5785,12 @@ fn bindgen_test_layout__virDomainInterface() {
     assert_eq!(
         ::std::mem::size_of::<_virDomainInterface>(),
         32usize,
-        concat!("Size of: ", stringify!(_virDomainInterface))
+        concat!("Size of: ", stringify!(_virDomainInterface)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virDomainInterface>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virDomainInterface))
+        concat!("Alignment of ", stringify!(_virDomainInterface)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).name) as usize - ptr as usize },
@@ -4854,8 +5799,8 @@ fn bindgen_test_layout__virDomainInterface() {
             "Offset of field: ",
             stringify!(_virDomainInterface),
             "::",
-            stringify!(name)
-        )
+            stringify!(name),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).hwaddr) as usize - ptr as usize },
@@ -4864,8 +5809,8 @@ fn bindgen_test_layout__virDomainInterface() {
             "Offset of field: ",
             stringify!(_virDomainInterface),
             "::",
-            stringify!(hwaddr)
-        )
+            stringify!(hwaddr),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).naddrs) as usize - ptr as usize },
@@ -4874,8 +5819,8 @@ fn bindgen_test_layout__virDomainInterface() {
             "Offset of field: ",
             stringify!(_virDomainInterface),
             "::",
-            stringify!(naddrs)
-        )
+            stringify!(naddrs),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).addrs) as usize - ptr as usize },
@@ -4884,8 +5829,8 @@ fn bindgen_test_layout__virDomainInterface() {
             "Offset of field: ",
             stringify!(_virDomainInterface),
             "::",
-            stringify!(addrs)
-        )
+            stringify!(addrs),
+        ),
     );
 }
 extern "C" {
@@ -4990,6 +5935,7 @@ pub const VIR_DOMAIN_GUEST_INFO_HOSTNAME: virDomainGuestInfoTypes = 8;
 pub const VIR_DOMAIN_GUEST_INFO_FILESYSTEM: virDomainGuestInfoTypes = 16;
 pub const VIR_DOMAIN_GUEST_INFO_DISKS: virDomainGuestInfoTypes = 32;
 pub const VIR_DOMAIN_GUEST_INFO_INTERFACES: virDomainGuestInfoTypes = 64;
+pub const VIR_DOMAIN_GUEST_INFO_LOAD: virDomainGuestInfoTypes = 128;
 pub type virDomainGuestInfoTypes = ::libc::c_uint;
 extern "C" {
     pub fn virDomainGetGuestInfo(
@@ -5049,6 +5995,7 @@ extern "C" {
 }
 pub const VIR_DOMAIN_MESSAGE_DEPRECATION: virDomainMessageType = 1;
 pub const VIR_DOMAIN_MESSAGE_TAINTING: virDomainMessageType = 2;
+pub const VIR_DOMAIN_MESSAGE_IOERRORS: virDomainMessageType = 4;
 pub type virDomainMessageType = ::libc::c_uint;
 extern "C" {
     pub fn virDomainGetMessages(
@@ -5094,6 +6041,22 @@ extern "C" {
         flags: ::libc::c_uint,
     ) -> ::libc::c_int;
 }
+extern "C" {
+    pub fn virDomainSetThrottleGroup(
+        dom: virDomainPtr,
+        group: *const ::libc::c_char,
+        params: virTypedParameterPtr,
+        nparams: ::libc::c_int,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
+}
+extern "C" {
+    pub fn virDomainDelThrottleGroup(
+        dom: virDomainPtr,
+        group: *const ::libc::c_char,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
+}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct _virDomainCheckpoint {
@@ -5102,13 +6065,19 @@ pub struct _virDomainCheckpoint {
 pub type virDomainCheckpoint = _virDomainCheckpoint;
 pub type virDomainCheckpointPtr = *mut virDomainCheckpoint;
 extern "C" {
-    pub fn virDomainCheckpointGetName(checkpoint: virDomainCheckpointPtr) -> *const ::libc::c_char;
+    pub fn virDomainCheckpointGetName(
+        checkpoint: virDomainCheckpointPtr,
+    ) -> *const ::libc::c_char;
 }
 extern "C" {
-    pub fn virDomainCheckpointGetDomain(checkpoint: virDomainCheckpointPtr) -> virDomainPtr;
+    pub fn virDomainCheckpointGetDomain(
+        checkpoint: virDomainCheckpointPtr,
+    ) -> virDomainPtr;
 }
 extern "C" {
-    pub fn virDomainCheckpointGetConnect(checkpoint: virDomainCheckpointPtr) -> virConnectPtr;
+    pub fn virDomainCheckpointGetConnect(
+        checkpoint: virDomainCheckpointPtr,
+    ) -> virConnectPtr;
 }
 pub const VIR_DOMAIN_CHECKPOINT_CREATE_REDEFINE: virDomainCheckpointCreateFlags = 1;
 pub const VIR_DOMAIN_CHECKPOINT_CREATE_QUIESCE: virDomainCheckpointCreateFlags = 2;
@@ -5188,7 +6157,9 @@ pub struct _virDomainSnapshot {
 pub type virDomainSnapshot = _virDomainSnapshot;
 pub type virDomainSnapshotPtr = *mut virDomainSnapshot;
 extern "C" {
-    pub fn virDomainSnapshotGetName(snapshot: virDomainSnapshotPtr) -> *const ::libc::c_char;
+    pub fn virDomainSnapshotGetName(
+        snapshot: virDomainSnapshotPtr,
+    ) -> *const ::libc::c_char;
 }
 extern "C" {
     pub fn virDomainSnapshotGetDomain(snapshot: virDomainSnapshotPtr) -> virDomainPtr;
@@ -5236,7 +6207,10 @@ pub const VIR_DOMAIN_SNAPSHOT_LIST_EXTERNAL: virDomainSnapshotListFlags = 512;
 pub const VIR_DOMAIN_SNAPSHOT_LIST_TOPOLOGICAL: virDomainSnapshotListFlags = 1024;
 pub type virDomainSnapshotListFlags = ::libc::c_uint;
 extern "C" {
-    pub fn virDomainSnapshotNum(domain: virDomainPtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virDomainSnapshotNum(
+        domain: virDomainPtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virDomainSnapshotListNames(
@@ -5360,12 +6334,15 @@ pub type virEventAddHandleFunc = ::std::option::Option<
         ff: virFreeCallback,
     ) -> ::libc::c_int,
 >;
-pub type virEventUpdateHandleFunc =
-    ::std::option::Option<unsafe extern "C" fn(watch: ::libc::c_int, event: ::libc::c_int)>;
-pub type virEventRemoveHandleFunc =
-    ::std::option::Option<unsafe extern "C" fn(watch: ::libc::c_int) -> ::libc::c_int>;
-pub type virEventTimeoutCallback =
-    ::std::option::Option<unsafe extern "C" fn(timer: ::libc::c_int, opaque: *mut ::libc::c_void)>;
+pub type virEventUpdateHandleFunc = ::std::option::Option<
+    unsafe extern "C" fn(watch: ::libc::c_int, event: ::libc::c_int),
+>;
+pub type virEventRemoveHandleFunc = ::std::option::Option<
+    unsafe extern "C" fn(watch: ::libc::c_int) -> ::libc::c_int,
+>;
+pub type virEventTimeoutCallback = ::std::option::Option<
+    unsafe extern "C" fn(timer: ::libc::c_int, opaque: *mut ::libc::c_void),
+>;
 pub type virEventAddTimeoutFunc = ::std::option::Option<
     unsafe extern "C" fn(
         timeout: ::libc::c_int,
@@ -5374,10 +6351,12 @@ pub type virEventAddTimeoutFunc = ::std::option::Option<
         ff: virFreeCallback,
     ) -> ::libc::c_int,
 >;
-pub type virEventUpdateTimeoutFunc =
-    ::std::option::Option<unsafe extern "C" fn(timer: ::libc::c_int, timeout: ::libc::c_int)>;
-pub type virEventRemoveTimeoutFunc =
-    ::std::option::Option<unsafe extern "C" fn(timer: ::libc::c_int) -> ::libc::c_int>;
+pub type virEventUpdateTimeoutFunc = ::std::option::Option<
+    unsafe extern "C" fn(timer: ::libc::c_int, timeout: ::libc::c_int),
+>;
+pub type virEventRemoveTimeoutFunc = ::std::option::Option<
+    unsafe extern "C" fn(timer: ::libc::c_int) -> ::libc::c_int,
+>;
 extern "C" {
     pub fn virEventRegisterImpl(
         addHandle: virEventAddHandleFunc,
@@ -5502,10 +6481,16 @@ extern "C" {
     pub fn virInterfaceUndefine(iface: virInterfacePtr) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virInterfaceCreate(iface: virInterfacePtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virInterfaceCreate(
+        iface: virInterfacePtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virInterfaceDestroy(iface: virInterfacePtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virInterfaceDestroy(
+        iface: virInterfacePtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virInterfaceRef(iface: virInterfacePtr) -> ::libc::c_int;
@@ -5514,13 +6499,22 @@ extern "C" {
     pub fn virInterfaceFree(iface: virInterfacePtr) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virInterfaceChangeBegin(conn: virConnectPtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virInterfaceChangeBegin(
+        conn: virConnectPtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virInterfaceChangeCommit(conn: virConnectPtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virInterfaceChangeCommit(
+        conn: virConnectPtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virInterfaceChangeRollback(conn: virConnectPtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virInterfaceChangeRollback(
+        conn: virConnectPtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virInterfaceIsActive(iface: virInterfacePtr) -> ::libc::c_int;
@@ -5679,7 +6673,10 @@ extern "C" {
     pub fn virNetworkGetName(network: virNetworkPtr) -> *const ::libc::c_char;
 }
 extern "C" {
-    pub fn virNetworkGetUUID(network: virNetworkPtr, uuid: *mut ::libc::c_uchar) -> ::libc::c_int;
+    pub fn virNetworkGetUUID(
+        network: virNetworkPtr,
+        uuid: *mut ::libc::c_uchar,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virNetworkGetUUIDString(
@@ -5756,12 +6753,12 @@ fn bindgen_test_layout__virNetworkDHCPLease() {
     assert_eq!(
         ::std::mem::size_of::<_virNetworkDHCPLease>(),
         72usize,
-        concat!("Size of: ", stringify!(_virNetworkDHCPLease))
+        concat!("Size of: ", stringify!(_virNetworkDHCPLease)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virNetworkDHCPLease>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virNetworkDHCPLease))
+        concat!("Alignment of ", stringify!(_virNetworkDHCPLease)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).iface) as usize - ptr as usize },
@@ -5770,8 +6767,8 @@ fn bindgen_test_layout__virNetworkDHCPLease() {
             "Offset of field: ",
             stringify!(_virNetworkDHCPLease),
             "::",
-            stringify!(iface)
-        )
+            stringify!(iface),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).expirytime) as usize - ptr as usize },
@@ -5780,8 +6777,8 @@ fn bindgen_test_layout__virNetworkDHCPLease() {
             "Offset of field: ",
             stringify!(_virNetworkDHCPLease),
             "::",
-            stringify!(expirytime)
-        )
+            stringify!(expirytime),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
@@ -5790,8 +6787,8 @@ fn bindgen_test_layout__virNetworkDHCPLease() {
             "Offset of field: ",
             stringify!(_virNetworkDHCPLease),
             "::",
-            stringify!(type_)
-        )
+            stringify!(type_),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).mac) as usize - ptr as usize },
@@ -5800,8 +6797,8 @@ fn bindgen_test_layout__virNetworkDHCPLease() {
             "Offset of field: ",
             stringify!(_virNetworkDHCPLease),
             "::",
-            stringify!(mac)
-        )
+            stringify!(mac),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).iaid) as usize - ptr as usize },
@@ -5810,8 +6807,8 @@ fn bindgen_test_layout__virNetworkDHCPLease() {
             "Offset of field: ",
             stringify!(_virNetworkDHCPLease),
             "::",
-            stringify!(iaid)
-        )
+            stringify!(iaid),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).ipaddr) as usize - ptr as usize },
@@ -5820,8 +6817,8 @@ fn bindgen_test_layout__virNetworkDHCPLease() {
             "Offset of field: ",
             stringify!(_virNetworkDHCPLease),
             "::",
-            stringify!(ipaddr)
-        )
+            stringify!(ipaddr),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).prefix) as usize - ptr as usize },
@@ -5830,8 +6827,8 @@ fn bindgen_test_layout__virNetworkDHCPLease() {
             "Offset of field: ",
             stringify!(_virNetworkDHCPLease),
             "::",
-            stringify!(prefix)
-        )
+            stringify!(prefix),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).hostname) as usize - ptr as usize },
@@ -5840,8 +6837,8 @@ fn bindgen_test_layout__virNetworkDHCPLease() {
             "Offset of field: ",
             stringify!(_virNetworkDHCPLease),
             "::",
-            stringify!(hostname)
-        )
+            stringify!(hostname),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).clientid) as usize - ptr as usize },
@@ -5850,8 +6847,8 @@ fn bindgen_test_layout__virNetworkDHCPLease() {
             "Offset of field: ",
             stringify!(_virNetworkDHCPLease),
             "::",
-            stringify!(clientid)
-        )
+            stringify!(clientid),
+        ),
     );
 }
 extern "C" {
@@ -5866,7 +6863,11 @@ extern "C" {
     ) -> ::libc::c_int;
 }
 pub type virConnectNetworkEventGenericCallback = ::std::option::Option<
-    unsafe extern "C" fn(conn: virConnectPtr, net: virNetworkPtr, opaque: *mut ::libc::c_void),
+    unsafe extern "C" fn(
+        conn: virConnectPtr,
+        net: virNetworkPtr,
+        opaque: *mut ::libc::c_void,
+    ),
 >;
 extern "C" {
     pub fn virConnectNetworkEventRegisterAny(
@@ -5944,7 +6945,10 @@ extern "C" {
     ) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virNetworkPortDelete(port: virNetworkPortPtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virNetworkPortDelete(
+        port: virNetworkPortPtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virNetworkListAllPorts(
@@ -6035,6 +7039,8 @@ pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_AP_CARD: virConnectListAllNodeDevice
 pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_AP_QUEUE: virConnectListAllNodeDeviceFlags = 524288;
 pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_AP_MATRIX: virConnectListAllNodeDeviceFlags = 1048576;
 pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_VPD: virConnectListAllNodeDeviceFlags = 2097152;
+pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_CCWGROUP_DEV: virConnectListAllNodeDeviceFlags = 4194304;
+pub const VIR_CONNECT_LIST_NODE_DEVICES_CAP_CCWGROUP_MEMBER: virConnectListAllNodeDeviceFlags = 8388608;
 pub const VIR_CONNECT_LIST_NODE_DEVICES_PERSISTENT: virConnectListAllNodeDeviceFlags = 268435456;
 pub const VIR_CONNECT_LIST_NODE_DEVICES_TRANSIENT: virConnectListAllNodeDeviceFlags = 536870912;
 pub const VIR_CONNECT_LIST_NODE_DEVICES_INACTIVE: virConnectListAllNodeDeviceFlags = 1073741824;
@@ -6129,10 +7135,16 @@ extern "C" {
     ) -> virNodeDevicePtr;
 }
 extern "C" {
-    pub fn virNodeDeviceUndefine(dev: virNodeDevicePtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virNodeDeviceUndefine(
+        dev: virNodeDevicePtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virNodeDeviceCreate(dev: virNodeDevicePtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virNodeDeviceCreate(
+        dev: virNodeDevicePtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virNodeDeviceSetAutostart(
@@ -6167,7 +7179,11 @@ pub const VIR_NODE_DEVICE_EVENT_ID_LIFECYCLE: virNodeDeviceEventID = 0;
 pub const VIR_NODE_DEVICE_EVENT_ID_UPDATE: virNodeDeviceEventID = 1;
 pub type virNodeDeviceEventID = ::libc::c_uint;
 pub type virConnectNodeDeviceEventGenericCallback = ::std::option::Option<
-    unsafe extern "C" fn(conn: virConnectPtr, dev: virNodeDevicePtr, opaque: *mut ::libc::c_void),
+    unsafe extern "C" fn(
+        conn: virConnectPtr,
+        dev: virNodeDevicePtr,
+        opaque: *mut ::libc::c_void,
+    ),
 >;
 extern "C" {
     pub fn virConnectNodeDeviceEventRegisterAny(
@@ -6302,11 +7318,14 @@ extern "C" {
     ) -> virNWFilterBindingPtr;
 }
 extern "C" {
-    pub fn virNWFilterBindingGetPortDev(binding: virNWFilterBindingPtr) -> *const ::libc::c_char;
+    pub fn virNWFilterBindingGetPortDev(
+        binding: virNWFilterBindingPtr,
+    ) -> *const ::libc::c_char;
 }
 extern "C" {
-    pub fn virNWFilterBindingGetFilterName(binding: virNWFilterBindingPtr)
-        -> *const ::libc::c_char;
+    pub fn virNWFilterBindingGetFilterName(
+        binding: virNWFilterBindingPtr,
+    ) -> *const ::libc::c_char;
 }
 extern "C" {
     pub fn virConnectListAllNWFilterBindings(
@@ -6377,8 +7396,10 @@ extern "C" {
     ) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virSecretLookupByUUID(conn: virConnectPtr, uuid: *const ::libc::c_uchar)
-        -> virSecretPtr;
+    pub fn virSecretLookupByUUID(
+        conn: virConnectPtr,
+        uuid: *const ::libc::c_uchar,
+    ) -> virSecretPtr;
 }
 extern "C" {
     pub fn virSecretLookupByUUIDString(
@@ -6403,10 +7424,16 @@ extern "C" {
     ) -> virSecretPtr;
 }
 extern "C" {
-    pub fn virSecretGetUUID(secret: virSecretPtr, buf: *mut ::libc::c_uchar) -> ::libc::c_int;
+    pub fn virSecretGetUUID(
+        secret: virSecretPtr,
+        buf: *mut ::libc::c_uchar,
+    ) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virSecretGetUUIDString(secret: virSecretPtr, buf: *mut ::libc::c_char) -> ::libc::c_int;
+    pub fn virSecretGetUUIDString(
+        secret: virSecretPtr,
+        buf: *mut ::libc::c_char,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virSecretGetUsageType(secret: virSecretPtr) -> ::libc::c_int;
@@ -6415,7 +7442,10 @@ extern "C" {
     pub fn virSecretGetUsageID(secret: virSecretPtr) -> *const ::libc::c_char;
 }
 extern "C" {
-    pub fn virSecretGetXMLDesc(secret: virSecretPtr, flags: ::libc::c_uint) -> *mut ::libc::c_char;
+    pub fn virSecretGetXMLDesc(
+        secret: virSecretPtr,
+        flags: ::libc::c_uint,
+    ) -> *mut ::libc::c_char;
 }
 extern "C" {
     pub fn virSecretSetValue(
@@ -6445,7 +7475,11 @@ pub const VIR_SECRET_EVENT_ID_LIFECYCLE: virSecretEventID = 0;
 pub const VIR_SECRET_EVENT_ID_VALUE_CHANGED: virSecretEventID = 1;
 pub type virSecretEventID = ::libc::c_uint;
 pub type virConnectSecretEventGenericCallback = ::std::option::Option<
-    unsafe extern "C" fn(conn: virConnectPtr, secret: virSecretPtr, opaque: *mut ::libc::c_void),
+    unsafe extern "C" fn(
+        conn: virConnectPtr,
+        secret: virSecretPtr,
+        opaque: *mut ::libc::c_void,
+    ),
 >;
 extern "C" {
     pub fn virConnectSecretEventRegisterAny(
@@ -6518,12 +7552,12 @@ fn bindgen_test_layout__virStoragePoolInfo() {
     assert_eq!(
         ::std::mem::size_of::<_virStoragePoolInfo>(),
         32usize,
-        concat!("Size of: ", stringify!(_virStoragePoolInfo))
+        concat!("Size of: ", stringify!(_virStoragePoolInfo)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virStoragePoolInfo>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virStoragePoolInfo))
+        concat!("Alignment of ", stringify!(_virStoragePoolInfo)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).state) as usize - ptr as usize },
@@ -6532,8 +7566,8 @@ fn bindgen_test_layout__virStoragePoolInfo() {
             "Offset of field: ",
             stringify!(_virStoragePoolInfo),
             "::",
-            stringify!(state)
-        )
+            stringify!(state),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).capacity) as usize - ptr as usize },
@@ -6542,8 +7576,8 @@ fn bindgen_test_layout__virStoragePoolInfo() {
             "Offset of field: ",
             stringify!(_virStoragePoolInfo),
             "::",
-            stringify!(capacity)
-        )
+            stringify!(capacity),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).allocation) as usize - ptr as usize },
@@ -6552,8 +7586,8 @@ fn bindgen_test_layout__virStoragePoolInfo() {
             "Offset of field: ",
             stringify!(_virStoragePoolInfo),
             "::",
-            stringify!(allocation)
-        )
+            stringify!(allocation),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).available) as usize - ptr as usize },
@@ -6562,8 +7596,8 @@ fn bindgen_test_layout__virStoragePoolInfo() {
             "Offset of field: ",
             stringify!(_virStoragePoolInfo),
             "::",
-            stringify!(available)
-        )
+            stringify!(available),
+        ),
     );
 }
 pub type virStoragePoolInfoPtr = *mut virStoragePoolInfo;
@@ -6614,12 +7648,12 @@ fn bindgen_test_layout__virStorageVolInfo() {
     assert_eq!(
         ::std::mem::size_of::<_virStorageVolInfo>(),
         24usize,
-        concat!("Size of: ", stringify!(_virStorageVolInfo))
+        concat!("Size of: ", stringify!(_virStorageVolInfo)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virStorageVolInfo>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virStorageVolInfo))
+        concat!("Alignment of ", stringify!(_virStorageVolInfo)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
@@ -6628,8 +7662,8 @@ fn bindgen_test_layout__virStorageVolInfo() {
             "Offset of field: ",
             stringify!(_virStorageVolInfo),
             "::",
-            stringify!(type_)
-        )
+            stringify!(type_),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).capacity) as usize - ptr as usize },
@@ -6638,8 +7672,8 @@ fn bindgen_test_layout__virStorageVolInfo() {
             "Offset of field: ",
             stringify!(_virStorageVolInfo),
             "::",
-            stringify!(capacity)
-        )
+            stringify!(capacity),
+        ),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).allocation) as usize - ptr as usize },
@@ -6648,8 +7682,8 @@ fn bindgen_test_layout__virStorageVolInfo() {
             "Offset of field: ",
             stringify!(_virStorageVolInfo),
             "::",
-            stringify!(allocation)
-        )
+            stringify!(allocation),
+        ),
     );
 }
 pub type virStorageVolInfoPtr = *mut virStorageVolInfo;
@@ -6764,19 +7798,28 @@ extern "C" {
     ) -> virStoragePoolPtr;
 }
 extern "C" {
-    pub fn virStoragePoolBuild(pool: virStoragePoolPtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virStoragePoolBuild(
+        pool: virStoragePoolPtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virStoragePoolUndefine(pool: virStoragePoolPtr) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virStoragePoolCreate(pool: virStoragePoolPtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virStoragePoolCreate(
+        pool: virStoragePoolPtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virStoragePoolDestroy(pool: virStoragePoolPtr) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virStoragePoolDelete(pool: virStoragePoolPtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virStoragePoolDelete(
+        pool: virStoragePoolPtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virStoragePoolRef(pool: virStoragePoolPtr) -> ::libc::c_int;
@@ -6785,7 +7828,10 @@ extern "C" {
     pub fn virStoragePoolFree(pool: virStoragePoolPtr) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virStoragePoolRefresh(pool: virStoragePoolPtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virStoragePoolRefresh(
+        pool: virStoragePoolPtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virStoragePoolGetName(pool: virStoragePoolPtr) -> *const ::libc::c_char;
@@ -6912,10 +7958,16 @@ extern "C" {
     ) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virStorageVolDelete(vol: virStorageVolPtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virStorageVolDelete(
+        vol: virStorageVolPtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virStorageVolWipe(vol: virStorageVolPtr, flags: ::libc::c_uint) -> ::libc::c_int;
+    pub fn virStorageVolWipe(
+        vol: virStorageVolPtr,
+        flags: ::libc::c_uint,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virStorageVolWipePattern(
@@ -6931,8 +7983,10 @@ extern "C" {
     pub fn virStorageVolFree(vol: virStorageVolPtr) -> ::libc::c_int;
 }
 extern "C" {
-    pub fn virStorageVolGetInfo(vol: virStorageVolPtr, info: virStorageVolInfoPtr)
-        -> ::libc::c_int;
+    pub fn virStorageVolGetInfo(
+        vol: virStorageVolPtr,
+        info: virStorageVolInfoPtr,
+    ) -> ::libc::c_int;
 }
 extern "C" {
     pub fn virStorageVolGetInfoFlags(
@@ -6971,7 +8025,11 @@ pub const VIR_STORAGE_POOL_EVENT_ID_LIFECYCLE: virStoragePoolEventID = 0;
 pub const VIR_STORAGE_POOL_EVENT_ID_REFRESH: virStoragePoolEventID = 1;
 pub type virStoragePoolEventID = ::libc::c_uint;
 pub type virConnectStoragePoolEventGenericCallback = ::std::option::Option<
-    unsafe extern "C" fn(conn: virConnectPtr, pool: virStoragePoolPtr, opaque: *mut ::libc::c_void),
+    unsafe extern "C" fn(
+        conn: virConnectPtr,
+        pool: virStoragePoolPtr,
+        opaque: *mut ::libc::c_void,
+    ),
 >;
 extern "C" {
     pub fn virConnectStoragePoolEventRegisterAny(
@@ -7126,7 +8184,11 @@ pub const VIR_STREAM_EVENT_ERROR: virStreamEventType = 4;
 pub const VIR_STREAM_EVENT_HANGUP: virStreamEventType = 8;
 pub type virStreamEventType = ::libc::c_uint;
 pub type virStreamEventCallback = ::std::option::Option<
-    unsafe extern "C" fn(stream: virStreamPtr, events: ::libc::c_int, opaque: *mut ::libc::c_void),
+    unsafe extern "C" fn(
+        stream: virStreamPtr,
+        events: ::libc::c_int,
+        opaque: *mut ::libc::c_void,
+    ),
 >;
 extern "C" {
     pub fn virStreamEventAddCallback(
@@ -7258,132 +8320,72 @@ fn bindgen_test_layout__virError() {
     assert_eq!(
         ::std::mem::size_of::<_virError>(),
         80usize,
-        concat!("Size of: ", stringify!(_virError))
+        concat!("Size of: ", stringify!(_virError)),
     );
     assert_eq!(
         ::std::mem::align_of::<_virError>(),
         8usize,
-        concat!("Alignment of ", stringify!(_virError))
+        concat!("Alignment of ", stringify!(_virError)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).code) as usize - ptr as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virError),
-            "::",
-            stringify!(code)
-        )
+        concat!("Offset of field: ", stringify!(_virError), "::", stringify!(code)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).domain) as usize - ptr as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virError),
-            "::",
-            stringify!(domain)
-        )
+        concat!("Offset of field: ", stringify!(_virError), "::", stringify!(domain)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).message) as usize - ptr as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virError),
-            "::",
-            stringify!(message)
-        )
+        concat!("Offset of field: ", stringify!(_virError), "::", stringify!(message)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).level) as usize - ptr as usize },
         16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virError),
-            "::",
-            stringify!(level)
-        )
+        concat!("Offset of field: ", stringify!(_virError), "::", stringify!(level)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).conn) as usize - ptr as usize },
         24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virError),
-            "::",
-            stringify!(conn)
-        )
+        concat!("Offset of field: ", stringify!(_virError), "::", stringify!(conn)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).dom) as usize - ptr as usize },
         32usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virError),
-            "::",
-            stringify!(dom)
-        )
+        concat!("Offset of field: ", stringify!(_virError), "::", stringify!(dom)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).str1) as usize - ptr as usize },
         40usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virError),
-            "::",
-            stringify!(str1)
-        )
+        concat!("Offset of field: ", stringify!(_virError), "::", stringify!(str1)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).str2) as usize - ptr as usize },
         48usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virError),
-            "::",
-            stringify!(str2)
-        )
+        concat!("Offset of field: ", stringify!(_virError), "::", stringify!(str2)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).str3) as usize - ptr as usize },
         56usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virError),
-            "::",
-            stringify!(str3)
-        )
+        concat!("Offset of field: ", stringify!(_virError), "::", stringify!(str3)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).int1) as usize - ptr as usize },
         64usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virError),
-            "::",
-            stringify!(int1)
-        )
+        concat!("Offset of field: ", stringify!(_virError), "::", stringify!(int1)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).int2) as usize - ptr as usize },
         68usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virError),
-            "::",
-            stringify!(int2)
-        )
+        concat!("Offset of field: ", stringify!(_virError), "::", stringify!(int2)),
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).net) as usize - ptr as usize },
         72usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_virError),
-            "::",
-            stringify!(net)
-        )
+        concat!("Offset of field: ", stringify!(_virError), "::", stringify!(net)),
     );
 }
 pub const VIR_ERR_OK: virErrorNumber = 0;
@@ -7501,8 +8503,9 @@ pub const VIR_ERR_NO_NETWORK_METADATA: virErrorNumber = 111;
 pub const VIR_ERR_AGENT_COMMAND_TIMEOUT: virErrorNumber = 112;
 pub const VIR_ERR_AGENT_COMMAND_FAILED: virErrorNumber = 113;
 pub type virErrorNumber = ::libc::c_uint;
-pub type virErrorFunc =
-    ::std::option::Option<unsafe extern "C" fn(userData: *mut ::libc::c_void, error: virErrorPtr)>;
+pub type virErrorFunc = ::std::option::Option<
+    unsafe extern "C" fn(userData: *mut ::libc::c_void, error: virErrorPtr),
+>;
 extern "C" {
     pub fn virGetLastError() -> virErrorPtr;
 }
@@ -7607,10 +8610,8 @@ pub type virConnectDomainQemuMonitorEventCallback = ::std::option::Option<
         opaque: *mut ::libc::c_void,
     ),
 >;
-pub const VIR_CONNECT_DOMAIN_QEMU_MONITOR_EVENT_REGISTER_REGEX:
-    virConnectDomainQemuMonitorEventRegisterFlags = 1;
-pub const VIR_CONNECT_DOMAIN_QEMU_MONITOR_EVENT_REGISTER_NOCASE:
-    virConnectDomainQemuMonitorEventRegisterFlags = 2;
+pub const VIR_CONNECT_DOMAIN_QEMU_MONITOR_EVENT_REGISTER_REGEX: virConnectDomainQemuMonitorEventRegisterFlags = 1;
+pub const VIR_CONNECT_DOMAIN_QEMU_MONITOR_EVENT_REGISTER_NOCASE: virConnectDomainQemuMonitorEventRegisterFlags = 2;
 pub type virConnectDomainQemuMonitorEventRegisterFlags = ::libc::c_uint;
 extern "C" {
     pub fn virConnectDomainQemuMonitorEventRegister(
