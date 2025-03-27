@@ -34,7 +34,8 @@ fn bindgen_regenerate(bindgen_out_file: &PathBuf) -> Result<(), Box<dyn Error>> 
         .generate_comments(false)
         .prepend_enum_name(false)
         .generate_cstr(true)
-        .ctypes_prefix("::libc");
+        .ctypes_prefix("::libc")
+        .formatter(bindgen::Formatter::Prettyplease);
 
     bindings
         .generate()
