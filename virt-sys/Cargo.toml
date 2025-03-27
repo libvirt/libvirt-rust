@@ -1,7 +1,7 @@
 [package]
 name = "virt-sys"
 version = "0.3.0"
-edition = "2018"
+edition = "2021"
 authors = ["Wim de With <wf@dewith.io>",]
 license = "LGPL-2.1"
 description = "Native bindings to the libvirt C library"
