@@ -1158,12 +1158,12 @@ impl Connect {
         xmlcpus: &[&str],
         flags: sys::virConnectBaselineCPUFlags,
     ) -> Result<String, Error> {
-        let mut xcpus: [*mut CString; 512] = [ptr::null_mut(); 512];
-        let mut xcpus_buf: [*const libc::c_char; 512] = [ptr::null(); 512];
-        for x in 0..xmlcpus.len() {
-            let mut buf = CString::new(xmlcpus[x]).unwrap();
-            xcpus[x] = &mut buf;
-            xcpus_buf[x] = buf.as_ptr()
+        let mut xcpus: Vec<CString> = Vec::with_capacity(xmlcpus.len());
+        let mut xcpus_buf: Vec<*const libc::c_char> = Vec::with_capacity(xmlcpus.len());
+        for xml_cpu in xmlcpus {
+            let cstring = CString::new(*xml_cpu).unwrap();
+            xcpus_buf.push(cstring.as_ptr());
+            xcpus.push(cstring);
         }
         let ret = unsafe {
             sys::virConnectBaselineCPU(
