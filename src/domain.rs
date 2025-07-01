@@ -58,6 +58,35 @@ impl DomainInfo {
     }
 }
 
+#[derive(Clone, Debug)]
+pub struct BlockStats {
+    /// Number of read requests
+    pub rd_req: i64,
+    /// Number of read bytes
+    pub rd_bytes: i64,
+    /// Number of write requests
+    pub wr_req: i64,
+    /// Number of write bytes
+    pub wr_bytes: i64,
+    /// Xen specific oo_req
+    pub errs: i64,
+}
+
+impl BlockStats {
+    /// # Safety
+    ///
+    /// The caller must ensure that the pointer is valid.
+    pub unsafe fn from_ptr(ptr: sys::virDomainBlockStatsPtr) -> BlockStats {
+        BlockStats {
+            rd_req: (*ptr).rd_req,
+            rd_bytes: (*ptr).rd_bytes,
+            wr_req: (*ptr).wr_req,
+            wr_bytes: (*ptr).wr_bytes,
+            errs: (*ptr).errs,
+        }
+    }
+}
+
 pub struct DomainStatsRecord {
     // TODO(sahid): needs to be implemented
     pub ptr: sys::virDomainStatsRecordPtr,
@@ -1468,6 +1497,23 @@ impl Domain {
             return Err(Error::last_error());
         }
         Ok(unsafe { BlockInfo::from_ptr(&mut pinfo.assume_init()) })
+    }
+
+    pub fn get_block_stats(&self, disk: &str) -> Result<BlockStats, Error> {
+        let mut pinfo = mem::MaybeUninit::uninit();
+        let disk_buf = CString::new(disk).unwrap();
+        let ret = unsafe {
+            sys::virDomainBlockStats(
+                self.as_ptr(),
+                disk_buf.as_ptr(),
+                pinfo.as_mut_ptr(),
+                mem::size_of::<sys::virDomainBlockStatsStruct>(),
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { BlockStats::from_ptr(&mut pinfo.assume_init()) })
     }
 
     pub fn pin_vcpu(&self, vcpu: u32, cpumap: &[u8]) -> Result<u32, Error> {
