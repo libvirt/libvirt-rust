@@ -147,6 +147,7 @@ pub mod connect;
 pub mod domain;
 pub mod domain_snapshot;
 pub mod error;
+pub mod event;
 pub mod interface;
 pub mod network;
 pub mod nodedev;
