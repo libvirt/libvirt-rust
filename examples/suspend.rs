@@ -64,21 +64,21 @@ fn main() {
     let uri = env::args().nth(1);
     let name = env::args().nth(2).unwrap_or_default();
 
-    println!("Attempting to connect to hypervisor: '{:?}'", uri);
+    println!("Attempting to connect to hypervisor: '{uri:?}'");
     let mut conn = match Connect::open(uri.as_deref()) {
         Ok(c) => c,
-        Err(e) => panic!("No connection to hypervisor: {}", e),
+        Err(e) => panic!("No connection to hypervisor: {e}"),
     };
 
     if name.is_empty() {
         if let Err(e) = fetch_domains(&conn) {
-            println!("Failed to fetch domains: {}", e);
+            println!("Failed to fetch domains: {e}");
         }
     } else if let Err(e) = suspend_and_resume(&conn, &name, 1) {
-        println!("Failed to suspend/resume: {}", e);
+        println!("Failed to suspend/resume: {e}");
     }
 
     if let Err(e) = conn.close() {
-        panic!("Failed to disconnect from hypervisor: {}", e);
+        panic!("Failed to disconnect from hypervisor: {e}");
     }
 }

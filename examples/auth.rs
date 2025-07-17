@@ -73,15 +73,15 @@ fn main() {
         callback,
     );
 
-    println!("Attempting to connect to hypervisor: '{:?}'...", uri);
+    println!("Attempting to connect to hypervisor: '{uri:?}'...");
     let mut conn = match Connect::open_auth(uri.as_deref(), &mut auth, 0) {
         Ok(c) => {
             println!("Connected");
             c
         }
-        Err(e) => panic!("Not connected: {}", e),
+        Err(e) => panic!("Not connected: {e}"),
     };
     if let Err(e) = conn.close() {
-        panic!("Failed to disconnect from hypervisor: {}", e);
+        panic!("Failed to disconnect from hypervisor: {e}");
     }
 }

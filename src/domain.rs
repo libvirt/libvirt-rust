@@ -743,7 +743,7 @@ impl Drop for Domain {
     fn drop(&mut self) {
         if self.ptr.is_some() {
             if let Err(e) = self.free() {
-                panic!("Unable to drop memory for Domain: {}", e)
+                panic!("Unable to drop memory for Domain: {e}")
             }
         }
     }

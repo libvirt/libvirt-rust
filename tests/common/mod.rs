@@ -70,7 +70,7 @@ pub fn clean_vol(mut vol: StorageVol) {
 }
 
 pub fn build_qemu_domain(conn: &Connect, name: &str, transient: bool) -> Domain {
-    let name = format!("libvirt-rs-test-{}", name);
+    let name = format!("libvirt-rs-test-{name}");
 
     if let Ok(dom) = Domain::lookup_by_name(conn, &name) {
         clean(dom);
@@ -78,7 +78,7 @@ pub fn build_qemu_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
 
     let xml = format!(
         "<domain type=\"qemu\">
-		         <name>{}</name>
+		         <name>{name}</name>
                          <memory unit=\"KiB\">128</memory>
                          <features>
                            <acpi/>
@@ -87,8 +87,7 @@ pub fn build_qemu_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
                          <os>
                            <type>hvm</type>
                          </os>
-                       </domain>",
-        name
+                       </domain>"
     );
 
     let result: Result<Domain, Error> = if transient {
@@ -101,7 +100,7 @@ pub fn build_qemu_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
 }
 
 pub fn build_test_domain(conn: &Connect, name: &str, transient: bool) -> Domain {
-    let name = format!("libvirt-rs-test-{}", name);
+    let name = format!("libvirt-rs-test-{name}");
 
     if let Ok(dom) = Domain::lookup_by_name(conn, &name) {
         clean(dom);
@@ -109,7 +108,7 @@ pub fn build_test_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
 
     let xml = format!(
         "<domain type=\"test\">
-		         <name>{}</name>
+		         <name>{name}</name>
                          <memory unit=\"KiB\">128</memory>
                          <features>
                            <acpi/>
@@ -118,8 +117,7 @@ pub fn build_test_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
                          <os>
                            <type>hvm</type>
                          </os>
-                       </domain>",
-        name
+                       </domain>"
     );
 
     let result: Result<Domain, Error> = if transient {
@@ -132,7 +130,7 @@ pub fn build_test_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
 }
 
 pub fn build_storage_pool(conn: &Connect, name: &str, transient: bool) -> StoragePool {
-    let name = format!("libvirt-rs-test-{}", name);
+    let name = format!("libvirt-rs-test-{name}");
 
     if let Ok(pool) = StoragePool::lookup_by_name(conn, &name) {
         clean_pool(pool);
@@ -140,12 +138,11 @@ pub fn build_storage_pool(conn: &Connect, name: &str, transient: bool) -> Storag
 
     let xml = format!(
         "<pool type='dir'>
-                          <name>{}</name>
+                          <name>{name}</name>
                             <target>
                               <path>/var/lib/libvirt/images</path>
                             </target>
-                          </pool>",
-        name
+                          </pool>"
     );
 
     let result: Result<StoragePool, Error> = if transient {
@@ -164,17 +161,16 @@ pub fn build_storage_vol(pool: &StoragePool, name: &str, size: u64) -> StorageVo
 
     let xml = format!(
         "<volume type='file'>
-                         <name>{}</name>
-                         <allocation unit='Kib'>{}</allocation>
-                         <capacity unit='Kib'>{}</capacity>
-                       </volume>",
-        name, size, size
+                         <name>{name}</name>
+                         <allocation unit='Kib'>{size}</allocation>
+                         <capacity unit='Kib'>{size}</capacity>
+                       </volume>"
     );
     StorageVol::create_xml(pool, &xml, 0).unwrap()
 }
 
 pub fn build_network(conn: &Connect, name: &str, transient: bool) -> Network {
-    let name = format!("libvirt-rs-test-{}", name);
+    let name = format!("libvirt-rs-test-{name}");
 
     if let Ok(net) = Network::lookup_by_name(conn, &name) {
         clean_net(net);
@@ -182,12 +178,11 @@ pub fn build_network(conn: &Connect, name: &str, transient: bool) -> Network {
 
     let xml = format!(
         "<network>
-                         <name>{}</name>
+                         <name>{name}</name>
                          <bridge name='testbr0'/>
                          <forward/>
                          <ip address='192.168.0.1' netmask='255.255.255.0'></ip>
-                       </network>",
-        name
+                       </network>"
     );
 
     let result: Result<Network, Error> = if transient {
@@ -200,17 +195,16 @@ pub fn build_network(conn: &Connect, name: &str, transient: bool) -> Network {
 }
 
 pub fn build_interface(conn: &Connect, name: &str) -> Interface {
-    let name = format!("libvirt-rs-test-{}", name);
+    let name = format!("libvirt-rs-test-{name}");
 
     if let Ok(iface) = Interface::lookup_by_name(conn, &name) {
         clean_iface(iface);
     }
 
     let xml = format!(
-        "<interface type='ethernet' name='{}'>
+        "<interface type='ethernet' name='{name}'>
                          <mac address='aa:bb:cc:dd:ee:ff'/>
-                       </interface>",
-        name
+                       </interface>"
     );
 
     Interface::define_xml(conn, &xml, 0).unwrap()

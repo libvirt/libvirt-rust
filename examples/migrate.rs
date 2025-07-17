@@ -40,19 +40,16 @@ fn main() {
     let dst_uri = env::args().nth(2);
     let dname = env::args().nth(3).unwrap();
 
-    println!(
-        "Attempting to migrate domain '{}' from '{:?}' to '{:?}'...",
-        dname, src_uri, dst_uri
-    );
+    println!("Attempting to migrate domain '{dname}' from '{src_uri:?}' to '{dst_uri:?}'...");
 
     let mut conn = match Connect::open(src_uri.as_deref()) {
         Ok(c) => c,
-        Err(e) => panic!("No connection to source hypervisor: {}", e),
+        Err(e) => panic!("No connection to source hypervisor: {e}"),
     };
 
     let mut dconn = match Connect::open(dst_uri.as_deref()) {
         Ok(c) => c,
-        Err(e) => panic!("No connection to destination hypervisor: {}", e),
+        Err(e) => panic!("No connection to destination hypervisor: {e}"),
     };
 
     if let Ok(dom) = Domain::lookup_by_name(&conn, &dname) {
@@ -75,11 +72,11 @@ fn main() {
     }
 
     if let Err(e) = conn.close() {
-        panic!("Failed to disconnect from source hypervisor: {}", e);
+        panic!("Failed to disconnect from source hypervisor: {e}");
     }
 
     if let Err(e) = dconn.close() {
-        panic!("Failed to disconnect from destination hypervisor: {}", e);
+        panic!("Failed to disconnect from destination hypervisor: {e}");
     }
     println!("Disconnected from source and destination hypervisors");
 }

@@ -62,7 +62,7 @@ impl Drop for StorageVol {
     fn drop(&mut self) {
         if self.ptr.is_some() {
             if let Err(e) = self.free() {
-                panic!("Unable to drop memory for StorageVol: {}", e)
+                panic!("Unable to drop memory for StorageVol: {e}")
             }
         }
     }

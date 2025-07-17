@@ -16,7 +16,7 @@ fn main() {
         0,
     );
     match result {
-        Ok(r) => println!("Result: {}", r),
-        Err(e) => eprintln!("Error: {}", e),
+        Ok(r) => println!("Result: {r}"),
+        Err(e) => eprintln!("Error: {e}"),
     }
 }

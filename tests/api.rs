@@ -218,7 +218,7 @@ fn report_missing(symbols: HashSet<String>, symtype: &str) -> bool {
     let mut syms = symbols.iter().collect::<Vec<&String>>();
     syms.sort();
     for name in syms {
-        println!("Missing {}: {}", symtype, name);
+        println!("Missing {symtype}: {name}");
     }
 
     !symbols.is_empty()

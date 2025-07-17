@@ -53,12 +53,12 @@ impl Drop for Stream {
     fn drop(&mut self) {
         if self.callback.is_some() {
             if let Err(e) = self.event_remove_callback() {
-                panic!("Unable to remove event callback for Stream: {}", e)
+                panic!("Unable to remove event callback for Stream: {e}")
             }
         }
         if self.ptr.is_some() {
             if let Err(e) = self.free() {
-                panic!("Unable to drop memory for Stream: {}", e)
+                panic!("Unable to drop memory for Stream: {e}")
             }
         }
     }

@@ -242,7 +242,7 @@ impl Connect {
     ///
     /// let mut conn = match Connect::open(Some("test:///default")) {
     ///     Ok(c) => c,
-    ///     Err(e) => panic!("Unable to connect: {}", e),
+    ///     Err(e) => panic!("Unable to connect: {e}"),
     /// };
     ///
     /// conn.close();

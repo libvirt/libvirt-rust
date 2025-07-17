@@ -9,7 +9,7 @@ fn main() {
     match run() {
         Ok(()) => {}
         Err(e) => {
-            eprintln!("error: {}", e);
+            eprintln!("error: {e}");
             process::exit(1);
         }
     }

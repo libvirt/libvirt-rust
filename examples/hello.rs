@@ -35,10 +35,7 @@ fn show_hypervisor_info(conn: &Connect) -> Result<(), Error> {
             hv_ver %= 1000000;
             let minor = hv_ver / 1000;
             let release = hv_ver % 1000;
-            println!(
-                "Hypervisor: '{}' version: {}.{}.{}",
-                hv_type, major, minor, release
-            );
+            println!("Hypervisor: '{hv_type}' version: {major}.{minor}.{release}");
             return Ok(());
         }
     }
@@ -51,8 +48,7 @@ fn show_domains(conn: &Connect) -> Result<(), Error> {
     if let Ok(num_active_domains) = conn.num_of_domains() {
         if let Ok(num_inactive_domains) = conn.num_of_defined_domains() {
             println!(
-                "There are {} active and {} inactive domains",
-                num_active_domains, num_inactive_domains
+                "There are {num_active_domains} active and {num_inactive_domains} inactive domains",
             );
             /* Return a list of all active and inactive domains. Using this API
              * instead of virConnectListDomains() and virConnectListDefinedDomains()
@@ -63,7 +59,7 @@ fn show_domains(conn: &Connect) -> Result<(), Error> {
                     let id = dom.get_id().unwrap_or(0);
                     let name = dom.get_name().unwrap_or_else(|_| String::from("no-name"));
                     let active = dom.is_active().unwrap_or(false);
-                    println!("ID: {}, Name: {}, Active: {}", id, name, active);
+                    println!("ID: {id}, Name: {name}, Active: {active}");
                     if let Ok(dinfo) = dom.get_info() {
                         println!("Domain info:");
                         println!("    State: {}", dinfo.state);
@@ -89,38 +85,38 @@ fn show_domains(conn: &Connect) -> Result<(), Error> {
                     }
 
                     if let Ok((sched_type, nparams)) = dom.get_scheduler_type() {
-                        println!("SchedType: {}, nparams: {}", sched_type, nparams);
+                        println!("SchedType: {sched_type}, nparams: {nparams}");
                     }
 
                     if let Ok(sched_info) = dom.get_scheduler_parameters() {
                         println!("Schedule Information:");
                         println!("\tScheduler\t: {}", sched_info.scheduler_type);
                         if let Some(shares) = sched_info.cpu_shares {
-                            println!("\tcpu_shares\t: {}", shares);
+                            println!("\tcpu_shares\t: {shares}");
                         }
                         if let Some(period) = sched_info.vcpu_bw.period {
-                            println!("\tvcpu_period\t: {}", period);
+                            println!("\tvcpu_period\t: {period}");
                         }
                         if let Some(quota) = sched_info.vcpu_bw.quota {
-                            println!("\tvcpu_quota\t: {}", quota);
+                            println!("\tvcpu_quota\t: {quota}");
                         }
                         if let Some(period) = sched_info.emulator_bw.period {
-                            println!("\temulator_period\t: {}", period);
+                            println!("\temulator_period\t: {period}");
                         }
                         if let Some(quota) = sched_info.emulator_bw.quota {
-                            println!("\temulator_quota\t: {}", quota);
+                            println!("\temulator_quota\t: {quota}");
                         }
                         if let Some(period) = sched_info.global_bw.period {
-                            println!("\tglobal_period\t: {}", period);
+                            println!("\tglobal_period\t: {period}");
                         }
                         if let Some(quota) = sched_info.global_bw.quota {
-                            println!("\tglobal_quota\t: {}", quota);
+                            println!("\tglobal_quota\t: {quota}");
                         }
                         if let Some(period) = sched_info.global_bw.period {
-                            println!("\tiothread_period\t: {}", period);
+                            println!("\tiothread_period\t: {period}");
                         }
                         if let Some(quota) = sched_info.global_bw.quota {
-                            println!("\tiothread_quota\t: {}", quota);
+                            println!("\tiothread_quota\t: {quota}");
                         }
                     }
                 }
@@ -135,34 +131,34 @@ fn main() {
     clear_error_callback();
 
     let uri = env::args().nth(1);
-    println!("Attempting to connect to hypervisor: '{:?}'", uri);
+    println!("Attempting to connect to hypervisor: '{uri:?}'");
 
     let conn = match Connect::open(uri.as_deref()) {
         Ok(c) => c,
-        Err(e) => panic!("No connection to hypervisor: {}", e),
+        Err(e) => panic!("No connection to hypervisor: {e}"),
     };
 
     match conn.get_uri() {
-        Ok(u) => println!("Connected to hypervisor at '{}'", u),
+        Ok(u) => println!("Connected to hypervisor at '{u}'"),
         Err(e) => {
             disconnect(conn);
-            panic!("Failed to get URI for hypervisor connection: {}", e);
+            panic!("Failed to get URI for hypervisor connection: {e}");
         }
     };
 
     if let Err(e) = show_hypervisor_info(&conn) {
         disconnect(conn);
-        panic!("Failed to show hypervisor info: {}", e);
+        panic!("Failed to show hypervisor info: {e}");
     }
 
     if let Err(e) = show_domains(&conn) {
         disconnect(conn);
-        panic!("Failed to show domains info: {}", e);
+        panic!("Failed to show domains info: {e}");
     }
 
     fn disconnect(mut conn: Connect) {
         if let Err(e) = conn.close() {
-            panic!("Failed to disconnect from hypervisor: {}", e);
+            panic!("Failed to disconnect from hypervisor: {e}");
         }
         println!("Disconnected from hypervisor");
     }
