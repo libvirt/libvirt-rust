@@ -1,6 +1,6 @@
 [package]
 name = "virt-sys"
-version = "0.3.0"
+version = "0.3.1"
 edition = "2021"
 authors = ["Wim de With <wf@dewith.io>",]
 license = "LGPL-2.1"
