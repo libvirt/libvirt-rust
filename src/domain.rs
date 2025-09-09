@@ -119,6 +119,42 @@ impl BlockInfo {
 }
 
 #[derive(Clone, Debug, Default)]
+pub struct CpuStats {
+    /// cpu usage (sum of both vcpu and hypervisor usage) in nanoseconds
+    pub cpu_time: Option<u64>,
+    /// cpu time charged to user instructions in nanoseconds
+    pub user_time: Option<u64>,
+    /// cpu time charged to system instructions in nanoseconds
+    pub system_time: Option<u64>,
+    /// vcpu usage in nanoseconds (cpu_time excluding hypervisor time)
+    pub vcpu_time: Option<u64>,
+}
+
+macro_rules! cpu_stats_fields {
+    ($dir:ident, $var:ident) => {
+        vec![
+            $dir!(sys::VIR_DOMAIN_CPU_STATS_CPUTIME, UInt64, $var.cpu_time),
+            $dir!(sys::VIR_DOMAIN_CPU_STATS_USERTIME, UInt64, $var.user_time),
+            $dir!(
+                sys::VIR_DOMAIN_CPU_STATS_SYSTEMTIME,
+                UInt64,
+                $var.system_time
+            ),
+            $dir!(sys::VIR_DOMAIN_CPU_STATS_VCPUTIME, UInt64, $var.vcpu_time),
+        ]
+    };
+}
+
+impl CpuStats {
+    fn from_vec(vec: Vec<sys::virTypedParameter>) -> CpuStats {
+        let mut ret = CpuStats::default();
+        let fields = cpu_stats_fields!(param_field_in, ret);
+        from_params(vec, fields);
+        ret
+    }
+}
+
+#[derive(Clone, Debug, Default)]
 pub struct MemoryParameters {
     /// Represents the maximum memory the guest can use.
     pub hard_limit: Option<u64>,
@@ -1735,6 +1771,80 @@ impl Domain {
             stats.push(unsafe { MemoryStat::from_ptr(x) });
         }
         Ok(stats)
+    }
+
+    /// Get statistics for a single domain's CPU usage.
+    ///
+    /// This method will return an error if the hypervisor is using cgroups v2 and attempts
+    /// to retrieve per-cpu statistics `(start_cpu != -1 && ncpus != 1)`
+    /// ## Arguments
+    /// * `start_cpu` - which cpu to start with, or `-1` for summary
+    /// * `ncpus` - how many cpus to query
+    /// * `flags` - currently unused, caller should pass `0`
+    ///
+    /// ## Examples
+    /// Retrieve stats for all CPUs:
+    ///
+    /// [`domain::get_cpu_stats(-1, 1, 0)`]
+    ///
+    /// Retrieve stats for CPU 0 (cgroups v1 only):
+    ///
+    /// [`domain::get_cpu_stats(0, 1, 0)`]
+    pub fn get_cpu_stats(
+        &self,
+        start_cpu: i32,
+        ncpus: u32,
+        flags: u32,
+    ) -> Result<Vec<CpuStats>, Error> {
+        // As special cases, if params is NULL and nparams is 0 and ncpus is 1, and the return value
+        // will be how many statistics are available for the given start_cpu. This number may be
+        // different for start_cpu of -1 than for any non-negative value, but will be the same for
+        // all non-negative start_cpu. Likewise, if params is NULL and nparams is 0 and ncpus is 0,
+        // the number of cpus available to query is returned. From the host perspective, this would
+        // typically match the cpus member of virNodeGetInfo(), but might be less due to host cpu hotplug.
+        let nparams = unsafe {
+            sys::virDomainGetCPUStats(self.as_ptr(), ptr::null_mut(), 0, start_cpu, 1, flags)
+        };
+
+        // For example, in the case of a non-running domain.
+        if nparams < 0 {
+            return Err(Error::last_error());
+        }
+
+        let total_params = (nparams as usize) * (ncpus as usize);
+        let mut params: Vec<sys::virTypedParameter> =
+            unsafe { vec![std::mem::zeroed(); total_params] };
+
+        let result = unsafe {
+            sys::virDomainGetCPUStats(
+                self.as_ptr(),
+                params.as_mut_ptr(),
+                params.len() as u32,
+                start_cpu,
+                ncpus,
+                flags,
+            )
+        };
+
+        // On systems using cgroup v2, virDomainGetJobStats will return an error in the case
+        // the user has provided start_cpu other than -1 and ncpus other than 1, as cgroups v2
+        // removed cpuacct.usage_percpu
+        // ref: https://lore.kernel.org/lkml/1438641689-14655-4-git-send-email-tj@kernel.org/
+        if result < 0 {
+            return Err(Error::last_error());
+        }
+
+        let mut cpu_stats = Vec::new();
+
+        for i in 0..ncpus as usize {
+            let start_idx = i * (nparams as usize);
+            let end_idx = start_idx + result as usize;
+
+            let cpu_params = params[start_idx..end_idx].to_vec();
+            cpu_stats.push(CpuStats::from_vec(cpu_params));
+        }
+
+        Ok(cpu_stats)
     }
 
     /// Get progress statistics about a background job running on this domain.

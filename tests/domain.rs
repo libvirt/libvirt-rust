@@ -386,3 +386,11 @@ fn test_metadata() {
     common::clean(d);
     common::close(c);
 }
+
+#[test]
+fn test_get_cpu_stats() {
+    let c = common::conn();
+    let d = Domain::lookup_by_name(&c, "test").unwrap();
+    let stats = d.get_cpu_stats(-1, 1, 0).unwrap();
+    assert!(!stats.is_empty(), "Test driver should return a stat.");
+}
