@@ -903,7 +903,7 @@ impl Domain {
     /// be reused later to relaunch the domain with [`create_xml()`].
     ///
     /// [`create_xml()`]: Domain::create_xml
-    pub fn get_xml_desc(&self, flags: sys::virDomainCreateFlags) -> Result<String, Error> {
+    pub fn get_xml_desc(&self, flags: sys::virDomainXMLFlags) -> Result<String, Error> {
         let xml = unsafe { sys::virDomainGetXMLDesc(self.as_ptr(), flags) };
         if xml.is_null() {
             return Err(Error::last_error());
