@@ -197,7 +197,7 @@ fn test_lookup_domain_by_id() {
         Ok(_) => {}
         Err(e) => panic!("{e}"),
     }
-    common::clean(d);
+    common::clean_dom(d);
     common::close(c);
 }
 
@@ -218,7 +218,7 @@ fn test_create_with_flags() {
     assert_eq!(Ok(0), d.create_with_flags(0));
     assert_eq!(Ok((sys::VIR_DOMAIN_RUNNING, 1)), d.get_state());
     assert_eq!(Ok(String::from("libvirt-rs-test-create")), d.get_name());
-    common::clean(d);
+    common::clean_dom(d);
     common::close(c);
 }
 
@@ -230,7 +230,7 @@ fn test_shutdown() {
     assert_eq!(Ok((sys::VIR_DOMAIN_RUNNING, 1)), d.get_state());
     assert_eq!(Ok(0), d.shutdown());
     assert_eq!(Ok((sys::VIR_DOMAIN_SHUTOFF, 1)), d.get_state());
-    common::clean(d);
+    common::clean_dom(d);
     common::close(c);
 }
 
@@ -244,7 +244,7 @@ fn test_pause_resume() {
     assert_eq!(Ok((sys::VIR_DOMAIN_PAUSED, 1)), d.get_state());
     assert_eq!(Ok(0), d.resume());
     assert_eq!(Ok((sys::VIR_DOMAIN_RUNNING, 5)), d.get_state());
-    common::clean(d);
+    common::clean_dom(d);
     common::close(c);
 }
 
@@ -259,7 +259,7 @@ fn test_screenshot() {
     assert_eq!(Ok(String::from("image/png")), d.screenshot(&s, 0, 0));
     assert_eq!(Ok(()), s.finish());
 
-    common::clean(d);
+    common::clean_dom(d);
     common::close(c);
 }
 
@@ -383,7 +383,7 @@ fn test_metadata() {
             .code()
     );
 
-    common::clean(d);
+    common::clean_dom(d);
     common::close(c);
 }
 

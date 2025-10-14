@@ -40,7 +40,7 @@ pub fn close(conn: Connect) {
     drop(conn);
 }
 
-pub fn clean(dom: Domain) {
+pub fn clean_dom(dom: Domain) {
     let _ = dom.destroy();
     let _ = dom.undefine();
     drop(dom);
@@ -73,7 +73,7 @@ pub fn build_qemu_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
     let name = format!("libvirt-rs-test-{name}");
 
     if let Ok(dom) = Domain::lookup_by_name(conn, &name) {
-        clean(dom);
+        clean_dom(dom);
     }
 
     let xml = format!(
@@ -103,7 +103,7 @@ pub fn build_test_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
     let name = format!("libvirt-rs-test-{name}");
 
     if let Ok(dom) = Domain::lookup_by_name(conn, &name) {
-        clean(dom);
+        clean_dom(dom);
     }
 
     let xml = format!(

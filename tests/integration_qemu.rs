@@ -32,7 +32,7 @@ fn test_create_domain_with_flags() {
     assert_eq!(Ok(0), d.create_with_flags(0));
     assert_eq!(Ok((sys::VIR_DOMAIN_START_PAUSED, 1)), d.get_state());
     assert_eq!(Ok(String::from("libvirt-rs-test-create")), d.get_name());
-    common::clean(d);
+    common::clean_dom(d);
     common::close(c);
 }
 
@@ -152,7 +152,7 @@ fn test_reset() {
     assert_eq!(Ok((sys::VIR_DOMAIN_RUNNING, 1)), d.get_state());
     assert_eq!(Ok(0), d.reset());
     // TODO assert something showing reset has the intended side effect
-    common::clean(d);
+    common::clean_dom(d);
     common::close(c);
 }
 
@@ -174,6 +174,6 @@ fn test_domain_memory_stats() {
             _ => assert!(stat.tag <= sys::VIR_DOMAIN_MEMORY_STAT_NR),
         }
     }
-    common::clean(d);
+    common::clean_dom(d);
     common::close(c);
 }
