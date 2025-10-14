@@ -34,9 +34,7 @@
 //! ```
 //! use virt::connect::Connect;
 //!
-//! if let Ok(mut conn) = Connect::open(Some("test:///default")) {
-//!   assert_eq!(Ok(0), conn.close());
-//! }
+//! let conn = Connect::open(Some("test:///default"));
 //! ```
 //!
 //! While the libvirt C objects rely on explicit reference counting,
@@ -51,10 +49,10 @@
 //! use virt::connect::Connect;
 //! use virt::domain::Domain;
 //!
-//! if let Ok(mut conn) = Connect::open(Some("test:///default")) {
+//! if let Ok(conn) = Connect::open(Some("test:///default")) {
 //!   if let Ok(dom) = Domain::lookup_by_name(&conn, "myguest") {
 //!       drop(dom);   // Explicitly releases Rust reference
-//!       assert_eq!(Ok(0), conn.close());
+//!       drop(conn);  // Explicitly releases Rust reference
 //!   }
 //! }
 //! ```
@@ -75,7 +73,6 @@
 //!       }
 //!     }
 //!   }
-//!   assert_eq!(Ok(0), conn.close());
 //! }
 //! ```
 

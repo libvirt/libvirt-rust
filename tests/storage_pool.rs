@@ -24,7 +24,7 @@ mod common;
 #[test]
 fn exercices() {
     match Connect::open(Some("test:///default")) {
-        Ok(mut conn) => {
+        Ok(conn) => {
             let sp = conn.list_storage_pools().unwrap_or_default();
             assert!(!sp.is_empty(), "At least one storage_pool should exist");
             match StoragePool::lookup_by_name(&conn, &sp[0]) {
@@ -39,7 +39,7 @@ fn exercices() {
                 }
                 Err(e) => panic!("{e}"),
             }
-            assert_eq!(0, conn.close().unwrap_or(-1));
+            common::close(conn);
         }
         Err(e) => panic!("{e}"),
     }

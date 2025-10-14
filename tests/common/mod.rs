@@ -36,8 +36,8 @@ pub fn qemu_conn() -> Connect {
     Connect::open(Some("qemu:///system")).unwrap()
 }
 
-pub fn close(mut conn: Connect) {
-    assert_eq!(Ok(0), conn.close(), "close(), expected 0")
+pub fn close(conn: Connect) {
+    drop(conn);
 }
 
 pub fn clean(dom: Domain) {

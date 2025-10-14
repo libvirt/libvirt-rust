@@ -156,10 +156,8 @@ fn main() {
         panic!("Failed to show domains info: {e}");
     }
 
-    fn disconnect(mut conn: Connect) {
-        if let Err(e) = conn.close() {
-            panic!("Failed to disconnect from hypervisor: {e}");
-        }
+    fn disconnect(conn: Connect) {
+        drop(conn);
         println!("Disconnected from hypervisor");
     }
 }

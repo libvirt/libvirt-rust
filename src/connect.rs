@@ -155,26 +155,34 @@ pub struct Connect {
     ptr: Option<sys::virConnectPtr>,
 }
 
+impl Drop for Connect {
+    fn drop(&mut self) {
+        if let Err(e) = unsafe { self.close() } {
+            panic!("Unable to drop memory for Connect: {e}")
+        }
+    }
+}
+
 impl Clone for Connect {
     /// Creates a copy of connection.
     ///
     /// Increments the internal reference counter on the given
-    /// connection. For each call to this method, there shall be a
-    /// correspodning call to [`close()`].
-    ///
-    /// [`close()`]: Connect::close
+    /// connection. The reference will be released when the
+    /// Rust wrapper is dropped, which happens when the variable
+    /// goes out of scope. Immediate release can be triggered
+    /// with the `std::mem::drop` method
     ///
     /// # Examples
     ///
     /// ````
     /// use virt::connect::Connect;
     ///
-    /// let mut conn1 = Connect::open(Some("test:///default")).unwrap();
-    /// let mut conn2 = conn1.clone();
-    /// let mut conn3 = conn2.clone();
-    /// assert_eq!(Ok(1), conn1.close(), "conn1.close(), expected 1");
-    /// assert_eq!(Ok(1), conn2.close(), "conn2.close(), expected 1");
-    /// assert_eq!(Ok(0), conn3.close(), "conn3.close(), expected 0");
+    /// let conn1 = Connect::open(Some("test:///default")).unwrap();
+    /// let conn2 = conn1.clone();
+    /// let conn3 = conn2.clone();
+    /// drop(conn2); // Immediate release
+    /// drop(conn3); // Immediate release
+    /// // conn1 implicitly dropped when leaving scope
     /// ````
     fn clone(&self) -> Self {
         self.add_ref().unwrap()
@@ -242,9 +250,6 @@ impl Connect {
     ///
     /// URIs are documented at <https://libvirt.org/uri.html>
     ///
-    /// [`close()`] should be used to release the resources after the
-    /// connection is no longer needed.
-    ///
     /// # Examples
     ///
     /// ```
@@ -254,11 +259,7 @@ impl Connect {
     ///     Ok(c) => c,
     ///     Err(e) => panic!("Unable to connect: {e}"),
     /// };
-    ///
-    /// conn.close();
     /// ```
-    ///
-    /// [`close()`]: Connect::close
     pub fn open(uri: Option<&str>) -> Result<Connect, Error> {
         let uri_buf = some_string_to_cstring!(uri);
         let c = unsafe { sys::virConnectOpen(some_cstring_to_c_chars!(uri_buf)) };
@@ -315,11 +316,7 @@ impl Connect {
         Ok(unsafe { Connect::from_ptr(c) })
     }
 
-    /// This function closes the connection to the hypervisor. This
-    /// should not be called if further interaction with the
-    /// hypervisor are needed especially if there is running domain
-    /// which need further monitoring by the application.
-    pub fn close(&mut self) -> Result<i32, Error> {
+    unsafe fn close(&mut self) -> Result<i32, Error> {
         let ret = unsafe { sys::virConnectClose(self.as_ptr()) };
         if ret == -1 {
             return Err(Error::last_error());
@@ -985,9 +982,6 @@ impl Connect {
         Ok(num as u32)
     }
 
-    /// Connect.close should be used to release the resources after the
-    /// connection is no longer needed.
-    ///
     /// # Examples
     ///
     /// ```

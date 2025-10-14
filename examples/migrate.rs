@@ -42,12 +42,12 @@ fn main() {
 
     println!("Attempting to migrate domain '{dname}' from '{src_uri:?}' to '{dst_uri:?}'...");
 
-    let mut conn = match Connect::open(src_uri.as_deref()) {
+    let conn = match Connect::open(src_uri.as_deref()) {
         Ok(c) => c,
         Err(e) => panic!("No connection to source hypervisor: {e}"),
     };
 
-    let mut dconn = match Connect::open(dst_uri.as_deref()) {
+    let dconn = match Connect::open(dst_uri.as_deref()) {
         Ok(c) => c,
         Err(e) => panic!("No connection to destination hypervisor: {e}"),
     };
@@ -70,13 +70,7 @@ fn main() {
             }
         }
     }
-
-    if let Err(e) = conn.close() {
-        panic!("Failed to disconnect from source hypervisor: {e}");
-    }
-
-    if let Err(e) = dconn.close() {
-        panic!("Failed to disconnect from destination hypervisor: {e}");
-    }
+    drop(conn);
+    drop(dconn);
     println!("Disconnected from source and destination hypervisors");
 }

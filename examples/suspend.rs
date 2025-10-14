@@ -65,7 +65,7 @@ fn main() {
     let name = env::args().nth(2).unwrap_or_default();
 
     println!("Attempting to connect to hypervisor: '{uri:?}'");
-    let mut conn = match Connect::open(uri.as_deref()) {
+    let conn = match Connect::open(uri.as_deref()) {
         Ok(c) => c,
         Err(e) => panic!("No connection to hypervisor: {e}"),
     };
@@ -78,7 +78,5 @@ fn main() {
         println!("Failed to suspend/resume: {e}");
     }
 
-    if let Err(e) = conn.close() {
-        panic!("Failed to disconnect from hypervisor: {e}");
-    }
+    drop(conn);
 }
