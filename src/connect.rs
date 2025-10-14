@@ -152,7 +152,7 @@ impl ConnectAuth {
 /// See <https://libvirt.org/html/libvirt-libvirt-host.html>
 #[derive(Debug)]
 pub struct Connect {
-    ptr: Option<sys::virConnectPtr>,
+    ptr: sys::virConnectPtr,
 }
 
 impl Drop for Connect {
@@ -209,7 +209,7 @@ impl Connect {
     /// reference counting. The returned pointer may be
     /// invalidated if this object is dropped.
     pub unsafe fn as_ptr(&self) -> sys::virConnectPtr {
-        self.ptr.unwrap()
+        self.ptr
     }
 
     /// # Safety
@@ -218,7 +218,7 @@ impl Connect {
     /// The rust wrapper will own the reference count
     /// for the C object upon return.
     pub unsafe fn from_ptr(ptr: sys::virConnectPtr) -> Connect {
-        Connect { ptr: Some(ptr) }
+        Connect { ptr }
     }
 
     pub fn get_version() -> Result<u32, Error> {

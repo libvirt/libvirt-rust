@@ -54,7 +54,7 @@ impl StorageVolInfo {
 /// See <https://libvirt.org/html/libvirt-libvirt-storage.html>
 #[derive(Debug)]
 pub struct StorageVol {
-    ptr: Option<sys::virStorageVolPtr>,
+    ptr: sys::virStorageVolPtr,
 }
 
 unsafe impl Send for StorageVol {}
@@ -91,7 +91,7 @@ impl StorageVol {
     ///
     /// The caller must ensure that the pointer is valid.
     pub unsafe fn from_ptr(ptr: sys::virStorageVolPtr) -> StorageVol {
-        StorageVol { ptr: Some(ptr) }
+        StorageVol { ptr }
     }
 
     /// # Safety
@@ -103,7 +103,7 @@ impl StorageVol {
     /// reference counting. The returned pointer may be
     /// invalidated if this object is dropped.
     pub unsafe fn as_ptr(&self) -> sys::virStorageVolPtr {
-        self.ptr.unwrap()
+        self.ptr
     }
 
     pub fn get_connect(&self) -> Result<Connect, Error> {

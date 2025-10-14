@@ -28,7 +28,7 @@ use crate::error::Error;
 /// See <https://libvirt.org/formatsnapshot.html>
 #[derive(Debug)]
 pub struct DomainSnapshot {
-    ptr: Option<sys::virDomainSnapshotPtr>,
+    ptr: sys::virDomainSnapshotPtr,
 }
 
 unsafe impl Send for DomainSnapshot {}
@@ -67,7 +67,7 @@ impl DomainSnapshot {
     /// The rust wrapper will own the reference count
     /// for the C object upon return.
     pub unsafe fn from_ptr(ptr: sys::virDomainSnapshotPtr) -> DomainSnapshot {
-        DomainSnapshot { ptr: Some(ptr) }
+        DomainSnapshot { ptr }
     }
 
     /// # Safety
@@ -79,7 +79,7 @@ impl DomainSnapshot {
     /// reference counting. The returned pointer may be
     /// invalidated if this object is dropped.
     pub unsafe fn as_ptr(&self) -> sys::virDomainSnapshotPtr {
-        self.ptr.unwrap()
+        self.ptr
     }
 
     pub fn get_connect(&self) -> Result<Connect, Error> {

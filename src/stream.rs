@@ -42,7 +42,7 @@ type StreamCallback = dyn FnMut(&Stream, sys::virStreamEventType);
 
 // #[derive(Debug)]
 pub struct Stream {
-    ptr: Option<sys::virStreamPtr>,
+    ptr: sys::virStreamPtr,
     callback: Option<Box<StreamCallback>>,
 }
 
@@ -96,7 +96,7 @@ impl Stream {
     /// for the C object upon return.
     pub unsafe fn from_ptr(ptr: sys::virStreamPtr) -> Stream {
         Stream {
-            ptr: Some(ptr),
+            ptr,
             callback: None,
         }
     }
@@ -110,7 +110,7 @@ impl Stream {
     /// reference counting. The returned pointer may be
     /// invalidated if this object is dropped.
     pub unsafe fn as_ptr(&self) -> sys::virStreamPtr {
-        self.ptr.unwrap()
+        self.ptr
     }
 
     pub fn finish(self) -> Result<(), Error> {

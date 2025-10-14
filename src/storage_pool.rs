@@ -56,7 +56,7 @@ impl StoragePoolInfo {
 /// See <https://libvirt.org/html/libvirt-libvirt-storage.html>
 #[derive(Debug)]
 pub struct StoragePool {
-    ptr: Option<sys::virStoragePoolPtr>,
+    ptr: sys::virStoragePoolPtr,
 }
 
 unsafe impl Send for StoragePool {}
@@ -95,7 +95,7 @@ impl StoragePool {
     /// The rust wrapper will own the reference count
     /// for the C object upon return.
     pub unsafe fn from_ptr(ptr: sys::virStoragePoolPtr) -> StoragePool {
-        StoragePool { ptr: Some(ptr) }
+        StoragePool { ptr }
     }
 
     /// # Safety
@@ -107,7 +107,7 @@ impl StoragePool {
     /// reference counting. The returned pointer may be
     /// invalidated if this object is dropped.
     pub unsafe fn as_ptr(&self) -> sys::virStoragePoolPtr {
-        self.ptr.unwrap()
+        self.ptr
     }
 
     pub fn get_connect(&self) -> Result<Connect, Error> {

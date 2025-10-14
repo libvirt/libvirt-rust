@@ -29,7 +29,7 @@ use crate::error::Error;
 /// See <https://libvirt.org/html/libvirt-libvirt-network.html>
 #[derive(Debug)]
 pub struct Network {
-    ptr: Option<sys::virNetworkPtr>,
+    ptr: sys::virNetworkPtr,
 }
 
 unsafe impl Send for Network {}
@@ -68,7 +68,7 @@ impl Network {
     /// The rust wrapper will own the reference count
     /// for the C object upon return.
     pub unsafe fn from_ptr(ptr: sys::virNetworkPtr) -> Network {
-        Network { ptr: Some(ptr) }
+        Network { ptr }
     }
 
     /// # Safety
@@ -80,7 +80,7 @@ impl Network {
     /// reference counting. The returned pointer may be
     /// invalidated if this object is dropped.
     pub unsafe fn as_ptr(&self) -> sys::virNetworkPtr {
-        self.ptr.unwrap()
+        self.ptr
     }
 
     pub fn get_connect(&self) -> Result<Connect, Error> {

@@ -29,7 +29,7 @@ use crate::error::Error;
 /// See <https://libvirt.org/formatnwfilter.html>
 #[derive(Debug)]
 pub struct NWFilter {
-    ptr: Option<sys::virNWFilterPtr>,
+    ptr: sys::virNWFilterPtr,
 }
 
 unsafe impl Send for NWFilter {}
@@ -68,7 +68,7 @@ impl NWFilter {
     /// The rust wrapper will own the reference count
     /// for the C object upon return.
     pub unsafe fn from_ptr(ptr: sys::virNWFilterPtr) -> NWFilter {
-        NWFilter { ptr: Some(ptr) }
+        NWFilter { ptr }
     }
 
     /// # Safety
@@ -80,7 +80,7 @@ impl NWFilter {
     /// reference counting. The returned pointer may be
     /// invalidated if this object is dropped.
     pub unsafe fn as_ptr(&self) -> sys::virNWFilterPtr {
-        self.ptr.unwrap()
+        self.ptr
     }
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<NWFilter, Error> {

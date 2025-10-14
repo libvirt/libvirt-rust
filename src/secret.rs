@@ -28,7 +28,7 @@ use crate::error::Error;
 /// See <https://libvirt.org/html/libvirt-libvirt-secret.html>
 #[derive(Debug)]
 pub struct Secret {
-    ptr: Option<sys::virSecretPtr>,
+    ptr: sys::virSecretPtr,
 }
 
 unsafe impl Send for Secret {}
@@ -67,7 +67,7 @@ impl Secret {
     /// The rust wrapper will own the reference count
     /// for the C object upon return.
     pub unsafe fn from_ptr(ptr: sys::virSecretPtr) -> Secret {
-        Secret { ptr: Some(ptr) }
+        Secret { ptr }
     }
 
     /// # Safety
@@ -79,7 +79,7 @@ impl Secret {
     /// reference counting. The returned pointer may be
     /// invalidated if this object is dropped.
     pub unsafe fn as_ptr(&self) -> sys::virSecretPtr {
-        self.ptr.unwrap()
+        self.ptr
     }
 
     pub fn get_connect(&self) -> Result<Connect, Error> {

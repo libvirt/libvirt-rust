@@ -769,7 +769,7 @@ impl SchedulerInfo {
 /// See <https://libvirt.org/html/libvirt-libvirt-domain.html>
 #[derive(Debug)]
 pub struct Domain {
-    ptr: Option<sys::virDomainPtr>,
+    ptr: sys::virDomainPtr,
 }
 
 unsafe impl Send for Domain {}
@@ -808,7 +808,7 @@ impl Domain {
     /// The rust wrapper will own the reference count
     /// for the C object upon return.
     pub unsafe fn from_ptr(ptr: sys::virDomainPtr) -> Domain {
-        Domain { ptr: Some(ptr) }
+        Domain { ptr }
     }
 
     /// # Safety
@@ -820,7 +820,7 @@ impl Domain {
     /// reference counting. The returned pointer may be
     /// invalidated if this object is dropped.
     pub unsafe fn as_ptr(&self) -> sys::virDomainPtr {
-        self.ptr.unwrap()
+        self.ptr
     }
 
     pub fn get_connect(&self) -> Result<Connect, Error> {
