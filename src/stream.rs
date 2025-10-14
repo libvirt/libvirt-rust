@@ -56,10 +56,8 @@ impl Drop for Stream {
                 panic!("Unable to remove event callback for Stream: {e}")
             }
         }
-        if self.ptr.is_some() {
-            if let Err(e) = self.free() {
-                panic!("Unable to drop memory for Stream: {e}")
-            }
+        if let Err(e) = unsafe { self.free() } {
+            panic!("Unable to drop memory for Stream: {e}")
         }
     }
 }
@@ -68,10 +66,7 @@ impl Clone for Stream {
     /// Creates a copy of a stream.
     ///
     /// Increments the internal reference counter on the given
-    /// stream. For each call to this method, there shall be a
-    /// corresponding call to [`free()`].
-    ///
-    /// [`free()`]: Stream::free
+    /// stream.
     fn clone(&self) -> Self {
         self.add_ref().unwrap()
     }
@@ -120,7 +115,7 @@ impl Stream {
         self.ptr.unwrap()
     }
 
-    pub fn free(&mut self) -> Result<(), Error> {
+    unsafe fn free(&mut self) -> Result<(), Error> {
         let ret = unsafe { sys::virStreamFree(self.as_ptr()) };
         if ret == -1 {
             return Err(Error::last_error());

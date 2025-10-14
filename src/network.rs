@@ -37,10 +37,8 @@ unsafe impl Sync for Network {}
 
 impl Drop for Network {
     fn drop(&mut self) {
-        if self.ptr.is_some() {
-            if let Err(e) = self.free() {
-                panic!("Unable to drop memory for Network: {e}")
-            }
+        if let Err(e) = unsafe { self.free() } {
+            panic!("Unable to drop memory for Network: {e}")
         }
     }
 }
@@ -49,10 +47,7 @@ impl Clone for Network {
     /// Creates a copy of a network.
     ///
     /// Increments the internal reference counter on the given
-    /// network. For each call to this method, there shall be a
-    /// corresponding call to [`free()`].
-    ///
-    /// [`free()`]: Network::free
+    /// network.
     fn clone(&self) -> Self {
         self.add_ref().unwrap()
     }
@@ -210,7 +205,7 @@ impl Network {
         Ok(())
     }
 
-    pub fn free(&mut self) -> Result<(), Error> {
+    unsafe fn free(&mut self) -> Result<(), Error> {
         let ret = unsafe { sys::virNetworkFree(self.as_ptr()) };
         if ret == -1 {
             return Err(Error::last_error());

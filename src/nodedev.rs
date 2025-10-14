@@ -35,10 +35,8 @@ unsafe impl Sync for NodeDevice {}
 
 impl Drop for NodeDevice {
     fn drop(&mut self) {
-        if self.ptr.is_some() {
-            if let Err(e) = self.free() {
-                panic!("Unable to drop memory for NodeDevice: {e}")
-            }
+        if let Err(e) = unsafe { self.free() } {
+            panic!("Unable to drop memory for NodeDevice: {e}")
         }
     }
 }
@@ -47,10 +45,7 @@ impl Clone for NodeDevice {
     /// Creates a copy of a node device.
     ///
     /// Increments the internal reference counter on the given
-    /// device. For each call to this method, there shall be a
-    /// corresponding call to [`free()`].
-    ///
-    /// [`free()`]: NodeDevice::free
+    /// device.
     fn clone(&self) -> Self {
         self.add_ref().unwrap()
     }
@@ -201,7 +196,7 @@ impl NodeDevice {
         Ok(ret as u32)
     }
 
-    pub fn free(&mut self) -> Result<(), Error> {
+    unsafe fn free(&mut self) -> Result<(), Error> {
         let ret = unsafe { sys::virNodeDeviceFree(self.as_ptr()) };
         if ret == -1 {
             return Err(Error::last_error());

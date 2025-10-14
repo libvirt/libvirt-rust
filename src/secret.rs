@@ -36,10 +36,8 @@ unsafe impl Sync for Secret {}
 
 impl Drop for Secret {
     fn drop(&mut self) {
-        if self.ptr.is_some() {
-            if let Err(e) = self.free() {
-                panic!("Unable to drop memory for Secret: {e}")
-            }
+        if let Err(e) = unsafe { self.free() } {
+            panic!("Unable to drop memory for Secret: {e}")
         }
     }
 }
@@ -48,10 +46,7 @@ impl Clone for Secret {
     /// Creates a copy of a secret.
     ///
     /// Increments the internal reference counter on the given
-    /// secret. For each call to this method, there shall be a
-    /// corresponding call to [`free()`].
-    ///
-    /// [`free()`]: Secret::free
+    /// secret.
     fn clone(&self) -> Self {
         self.add_ref().unwrap()
     }
@@ -215,7 +210,7 @@ impl Secret {
         Ok(())
     }
 
-    pub fn free(&mut self) -> Result<(), Error> {
+    unsafe fn free(&mut self) -> Result<(), Error> {
         let ret = unsafe { sys::virSecretFree(self.as_ptr()) };
         if ret == -1 {
             return Err(Error::last_error());

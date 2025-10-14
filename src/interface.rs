@@ -35,10 +35,8 @@ unsafe impl Sync for Interface {}
 
 impl Drop for Interface {
     fn drop(&mut self) {
-        if self.ptr.is_some() {
-            if let Err(e) = self.free() {
-                panic!("Unable to drop memory for Interface: {e}")
-            }
+        if let Err(e) = unsafe { self.free() } {
+            panic!("Unable to drop memory for Interface: {e}")
         }
     }
 }
@@ -47,10 +45,7 @@ impl Clone for Interface {
     /// Creates a copy of a interface.
     ///
     /// Increments the internal reference counter on the given
-    /// interface. For each call to this method, there shall be a
-    /// corresponding call to [`free()`].
-    ///
-    /// [`free()`]: Interface::free
+    /// interface.
     fn clone(&self) -> Self {
         self.add_ref().unwrap()
     }
@@ -173,7 +168,7 @@ impl Interface {
         Ok(())
     }
 
-    pub fn free(&mut self) -> Result<(), Error> {
+    unsafe fn free(&mut self) -> Result<(), Error> {
         let ret = unsafe { sys::virInterfaceFree(self.as_ptr()) };
         if ret == -1 {
             return Err(Error::last_error());

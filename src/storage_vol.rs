@@ -62,10 +62,8 @@ unsafe impl Sync for StorageVol {}
 
 impl Drop for StorageVol {
     fn drop(&mut self) {
-        if self.ptr.is_some() {
-            if let Err(e) = self.free() {
-                panic!("Unable to drop memory for StorageVol: {e}")
-            }
+        if let Err(e) = unsafe { self.free() } {
+            panic!("Unable to drop memory for StorageVol: {e}")
         }
     }
 }
@@ -74,10 +72,7 @@ impl Clone for StorageVol {
     /// Creates a copy of a storage pool.
     ///
     /// Increments the internal reference counter on the given
-    /// volume. For each call to this method, there shall be a
-    /// corresponding call to [`free()`].
-    ///
-    /// [`free()`]: StorageVol::free
+    /// volume.
     fn clone(&self) -> Self {
         self.add_ref().unwrap()
     }
@@ -250,7 +245,7 @@ impl StorageVol {
         Ok(())
     }
 
-    pub fn free(&mut self) -> Result<(), Error> {
+    unsafe fn free(&mut self) -> Result<(), Error> {
         let ret = unsafe { sys::virStorageVolFree(self.as_ptr()) };
         if ret == -1 {
             return Err(Error::last_error());

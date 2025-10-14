@@ -37,10 +37,8 @@ unsafe impl Sync for NWFilter {}
 
 impl Drop for NWFilter {
     fn drop(&mut self) {
-        if self.ptr.is_some() {
-            if let Err(e) = self.free() {
-                panic!("Unable to drop memory for NWFilter: {e}")
-            }
+        if let Err(e) = unsafe { self.free() } {
+            panic!("Unable to drop memory for NWFilter: {e}")
         }
     }
 }
@@ -49,10 +47,7 @@ impl Clone for NWFilter {
     /// Creates a copy of a network filter.
     ///
     /// Increments the internal reference counter on the given
-    /// filter. For each call to this method, there shall be a
-    /// corresponding call to [`free()`].
-    ///
-    /// [`free()`]: NWFilter::free
+    /// filter.
     fn clone(&self) -> Self {
         self.add_ref().unwrap()
     }
@@ -169,7 +164,7 @@ impl NWFilter {
         Ok(())
     }
 
-    pub fn free(&mut self) -> Result<(), Error> {
+    unsafe fn free(&mut self) -> Result<(), Error> {
         let ret = unsafe { sys::virNWFilterFree(self.as_ptr()) };
         if ret == -1 {
             return Err(Error::last_error());

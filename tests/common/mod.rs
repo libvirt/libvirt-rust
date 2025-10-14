@@ -40,33 +40,33 @@ pub fn close(mut conn: Connect) {
     assert_eq!(Ok(0), conn.close(), "close(), expected 0")
 }
 
-pub fn clean(mut dom: Domain) {
+pub fn clean(dom: Domain) {
     let _ = dom.destroy();
     let _ = dom.undefine();
-    assert_eq!(Ok(()), dom.free())
+    drop(dom);
 }
 
-pub fn clean_iface(mut iface: Interface) {
+pub fn clean_iface(iface: Interface) {
     let _ = iface.destroy(0);
     let _ = iface.undefine();
-    assert_eq!(Ok(()), iface.free())
+    drop(iface);
 }
 
-pub fn clean_pool(mut pool: StoragePool) {
+pub fn clean_pool(pool: StoragePool) {
     let _ = pool.destroy();
     let _ = pool.undefine();
-    assert_eq!(Ok(()), pool.free())
+    drop(pool);
 }
 
-pub fn clean_net(mut net: Network) {
+pub fn clean_net(net: Network) {
     let _ = net.destroy();
     let _ = net.undefine();
-    assert_eq!(Ok(()), net.free())
+    drop(net);
 }
 
-pub fn clean_vol(mut vol: StorageVol) {
+pub fn clean_vol(vol: StorageVol) {
     let _ = vol.delete(0);
-    assert_eq!(Ok(()), vol.free())
+    drop(vol);
 }
 
 pub fn build_qemu_domain(conn: &Connect, name: &str, transient: bool) -> Domain {

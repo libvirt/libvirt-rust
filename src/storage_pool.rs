@@ -64,10 +64,8 @@ unsafe impl Sync for StoragePool {}
 
 impl Drop for StoragePool {
     fn drop(&mut self) {
-        if self.ptr.is_some() {
-            if let Err(e) = self.free() {
-                panic!("Unable to drop memory for StoragePool: {e}")
-            }
+        if let Err(e) = unsafe { self.free() } {
+            panic!("Unable to drop memory for StoragePool: {e}")
         }
     }
 }
@@ -76,10 +74,7 @@ impl Clone for StoragePool {
     /// Creates a copy of a storage pool.
     ///
     /// Increments the internal reference counter on the given
-    /// pool. For each call to this method, there shall be a
-    /// corresponding call to [`free()`].
-    ///
-    /// [`free()`]: StoragePool::free
+    /// pool.
     fn clone(&self) -> Self {
         self.add_ref().unwrap()
     }
@@ -315,7 +310,7 @@ impl StoragePool {
         Ok(())
     }
 
-    pub fn free(&mut self) -> Result<(), Error> {
+    unsafe fn free(&mut self) -> Result<(), Error> {
         let ret = unsafe { sys::virStoragePoolFree(self.as_ptr()) };
         if ret == -1 {
             return Err(Error::last_error());

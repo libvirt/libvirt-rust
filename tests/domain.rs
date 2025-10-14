@@ -194,7 +194,7 @@ fn test_lookup_domain_by_id() {
     let d = common::build_test_domain(&c, "by_id", true);
     let id = d.get_id().unwrap_or(0);
     match Domain::lookup_by_id(&c, id) {
-        Ok(mut r) => r.free().unwrap_or(()),
+        Ok(_) => {}
         Err(e) => panic!("{e}"),
     }
     common::clean(d);
@@ -205,7 +205,7 @@ fn test_lookup_domain_by_id() {
 fn test_lookup_domain_by_name() {
     let c = common::conn();
     match Domain::lookup_by_name(&c, "test") {
-        Ok(mut r) => r.free().unwrap_or(()),
+        Ok(_) => {}
         Err(e) => panic!("{e}"),
     }
     common::close(c);

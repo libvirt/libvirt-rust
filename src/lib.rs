@@ -39,20 +39,21 @@
 //! }
 //! ```
 //!
-//! Most of the structs are automatically release their references by
-//! implemementing `Drop` trait but for structs which are reference
-//! counted at C level, it is still possible to explicitly release the
-//! reference at Rust level. For instance if a Rust method returns a
-//! *Domain, it is possible to call `free` on it when no longer
-//! required.
+//! While the libvirt C objects rely on explicit reference counting,
+//! this is handled implicitly by the Rust wrapper structs, with
+//! the `Clone` and `Drop` traits acquiring & releasing references.
+//! Ordinarily a object will be dropped when it goes out of scope,
+//! however, to force immediate release of the Rust wrapper's
+//! reference on the C object, it is possible to invoke `drop`
+//! directly.
 //!
 //! ```
 //! use virt::connect::Connect;
 //! use virt::domain::Domain;
 //!
 //! if let Ok(mut conn) = Connect::open(Some("test:///default")) {
-//!   if let Ok(mut dom) = Domain::lookup_by_name(&conn, "myguest") {
-//!       assert_eq!(Ok(()), dom.free());   // Explicitly releases memory at Rust level.
+//!   if let Ok(dom) = Domain::lookup_by_name(&conn, "myguest") {
+//!       drop(dom);   // Explicitly releases Rust reference
 //!       assert_eq!(Ok(0), conn.close());
 //!   }
 //! }

@@ -51,7 +51,7 @@ fn test_lookup_storage_pool_by_name() {
     let v = c.list_storage_pools().unwrap_or_default();
     assert!(!v.is_empty(), "At least one storage_pool should exist");
     match StoragePool::lookup_by_name(&c, &v[0]) {
-        Ok(mut s) => s.free().unwrap_or(()),
+        Ok(_) => {}
         Err(e) => panic!("{e}"),
     }
     common::close(c);

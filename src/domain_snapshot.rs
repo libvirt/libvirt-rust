@@ -36,10 +36,8 @@ unsafe impl Sync for DomainSnapshot {}
 
 impl Drop for DomainSnapshot {
     fn drop(&mut self) {
-        if self.ptr.is_some() {
-            if let Err(e) = self.free() {
-                panic!("Unable to drop memory for DomainSnapshot: {e}")
-            }
+        if let Err(e) = unsafe { self.free() } {
+            panic!("Unable to drop memory for DomainSnapshot: {e}")
         }
     }
 }
@@ -48,10 +46,7 @@ impl Clone for DomainSnapshot {
     /// Creates a copy of a domain snapshot.
     ///
     /// Increments the internal reference counter on the given
-    /// snapshot. For each call to this method, there shall be a
-    /// corresponding call to [`free()`].
-    ///
-    /// [`free()`]: DomainSnapshot::free
+    /// snapshot.
     fn clone(&self) -> Self {
         self.add_ref().unwrap()
     }
@@ -243,7 +238,7 @@ impl DomainSnapshot {
         Ok(array)
     }
 
-    pub fn free(&mut self) -> Result<(), Error> {
+    unsafe fn free(&mut self) -> Result<(), Error> {
         let ret = unsafe { sys::virDomainSnapshotFree(self.as_ptr()) };
         if ret == -1 {
             return Err(Error::last_error());
