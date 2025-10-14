@@ -816,7 +816,15 @@ impl Domain {
         Ok(unsafe { Domain::from_ptr(self.as_ptr()) })
     }
 
-    pub fn as_ptr(&self) -> sys::virDomainPtr {
+    /// # Safety
+    ///
+    /// The pointer returned by this method is a copy of
+    /// a pointer that is normally tracked by reference
+    /// counting in the underlying implementation. Creating
+    /// a copy of the pointer explicitly circumvents that
+    /// reference counting. The returned pointer may be
+    /// invalidated if this object is dropped.
+    pub unsafe fn as_ptr(&self) -> sys::virDomainPtr {
         self.ptr.unwrap()
     }
 

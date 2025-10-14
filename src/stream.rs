@@ -103,7 +103,15 @@ impl Stream {
         }
     }
 
-    pub fn as_ptr(&self) -> sys::virStreamPtr {
+    /// # Safety
+    ///
+    /// The pointer returned by this method is a copy of
+    /// a pointer that is normally tracked by reference
+    /// counting in the underlying implementation. Creating
+    /// a copy of the pointer explicitly circumvents that
+    /// reference counting. The returned pointer may be
+    /// invalidated if this object is dropped.
+    pub unsafe fn as_ptr(&self) -> sys::virStreamPtr {
         self.ptr.unwrap()
     }
 
