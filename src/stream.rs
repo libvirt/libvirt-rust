@@ -96,7 +96,12 @@ impl Stream {
         Ok(unsafe { Stream::from_ptr(self.as_ptr()) })
     }
 
-    unsafe fn from_ptr(ptr: sys::virStreamPtr) -> Stream {
+    /// # Safety
+    ///
+    /// The caller must ensure that the pointer is valid.
+    /// The rust wrapper will own the reference count
+    /// for the C object upon return.
+    pub unsafe fn from_ptr(ptr: sys::virStreamPtr) -> Stream {
         Stream {
             ptr: Some(ptr),
             callback: None,
