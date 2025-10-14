@@ -35,8 +35,10 @@ unsafe impl Sync for Interface {}
 
 impl Drop for Interface {
     fn drop(&mut self) {
-        if let Err(e) = unsafe { self.free() } {
-            panic!("Unable to drop memory for Interface: {e}")
+        let ret = unsafe { sys::virInterfaceFree(self.as_ptr()) };
+        if ret == -1 {
+            let e = Error::last_error();
+            panic!("Unable to drop reference on interface: {e}")
         }
     }
 }
@@ -47,7 +49,13 @@ impl Clone for Interface {
     /// Increments the internal reference counter on the given
     /// interface.
     fn clone(&self) -> Self {
-        self.add_ref().unwrap()
+        let ret = unsafe { sys::virInterfaceRef(self.as_ptr()) };
+        if ret == -1 {
+            let e = Error::last_error();
+            panic!("Unable to add reference on interface: {e}")
+        }
+
+        unsafe { Interface::from_ptr(self.as_ptr()) }
     }
 }
 
@@ -59,16 +67,6 @@ impl Interface {
     /// for the C object upon return.
     pub unsafe fn from_ptr(ptr: sys::virInterfacePtr) -> Interface {
         Interface { ptr: Some(ptr) }
-    }
-
-    fn add_ref(&self) -> Result<Interface, Error> {
-        unsafe {
-            if sys::virInterfaceRef(self.as_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-        }
-
-        Ok(unsafe { Interface::from_ptr(self.as_ptr()) })
     }
 
     /// # Safety
@@ -165,15 +163,6 @@ impl Interface {
         if ret == -1 {
             return Err(Error::last_error());
         }
-        Ok(())
-    }
-
-    unsafe fn free(&mut self) -> Result<(), Error> {
-        let ret = unsafe { sys::virInterfaceFree(self.as_ptr()) };
-        if ret == -1 {
-            return Err(Error::last_error());
-        }
-        self.ptr = None;
         Ok(())
     }
 

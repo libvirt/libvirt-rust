@@ -64,8 +64,10 @@ unsafe impl Sync for StoragePool {}
 
 impl Drop for StoragePool {
     fn drop(&mut self) {
-        if let Err(e) = unsafe { self.free() } {
-            panic!("Unable to drop memory for StoragePool: {e}")
+        let ret = unsafe { sys::virStoragePoolFree(self.as_ptr()) };
+        if ret == -1 {
+            let e = Error::last_error();
+            panic!("Unable to drop reference on storage pool: {e}")
         }
     }
 }
@@ -76,7 +78,13 @@ impl Clone for StoragePool {
     /// Increments the internal reference counter on the given
     /// pool.
     fn clone(&self) -> Self {
-        self.add_ref().unwrap()
+        let ret = unsafe { sys::virStoragePoolRef(self.as_ptr()) };
+        if ret == -1 {
+            let e = Error::last_error();
+            panic!("Unable to add reference on storage pool: {e}")
+        }
+
+        unsafe { StoragePool::from_ptr(self.as_ptr()) }
     }
 }
 
@@ -88,16 +96,6 @@ impl StoragePool {
     /// for the C object upon return.
     pub unsafe fn from_ptr(ptr: sys::virStoragePoolPtr) -> StoragePool {
         StoragePool { ptr: Some(ptr) }
-    }
-
-    fn add_ref(&self) -> Result<StoragePool, Error> {
-        unsafe {
-            if sys::virStoragePoolRef(self.as_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-        }
-
-        Ok(unsafe { StoragePool::from_ptr(self.as_ptr()) })
     }
 
     /// # Safety
@@ -307,15 +305,6 @@ impl StoragePool {
         if ret == -1 {
             return Err(Error::last_error());
         }
-        Ok(())
-    }
-
-    unsafe fn free(&mut self) -> Result<(), Error> {
-        let ret = unsafe { sys::virStoragePoolFree(self.as_ptr()) };
-        if ret == -1 {
-            return Err(Error::last_error());
-        }
-        self.ptr = None;
         Ok(())
     }
 

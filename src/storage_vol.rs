@@ -62,8 +62,10 @@ unsafe impl Sync for StorageVol {}
 
 impl Drop for StorageVol {
     fn drop(&mut self) {
-        if let Err(e) = unsafe { self.free() } {
-            panic!("Unable to drop memory for StorageVol: {e}")
+        let ret = unsafe { sys::virStorageVolFree(self.as_ptr()) };
+        if ret == -1 {
+            let e = Error::last_error();
+            panic!("Unable to drop reference on storage volume: {e}")
         }
     }
 }
@@ -74,7 +76,13 @@ impl Clone for StorageVol {
     /// Increments the internal reference counter on the given
     /// volume.
     fn clone(&self) -> Self {
-        self.add_ref().unwrap()
+        let ret = unsafe { sys::virStorageVolRef(self.as_ptr()) };
+        if ret == -1 {
+            let e = Error::last_error();
+            panic!("Unable to add reference on storage volume: {e}")
+        }
+
+        unsafe { StorageVol::from_ptr(self.as_ptr()) }
     }
 }
 
@@ -84,16 +92,6 @@ impl StorageVol {
     /// The caller must ensure that the pointer is valid.
     pub unsafe fn from_ptr(ptr: sys::virStorageVolPtr) -> StorageVol {
         StorageVol { ptr: Some(ptr) }
-    }
-
-    fn add_ref(&self) -> Result<StorageVol, Error> {
-        unsafe {
-            if sys::virStorageVolRef(self.as_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-        }
-
-        Ok(unsafe { StorageVol::from_ptr(self.as_ptr()) })
     }
 
     /// # Safety
@@ -242,15 +240,6 @@ impl StorageVol {
         if ret == -1 {
             return Err(Error::last_error());
         }
-        Ok(())
-    }
-
-    unsafe fn free(&mut self) -> Result<(), Error> {
-        let ret = unsafe { sys::virStorageVolFree(self.as_ptr()) };
-        if ret == -1 {
-            return Err(Error::last_error());
-        }
-        self.ptr = None;
         Ok(())
     }
 

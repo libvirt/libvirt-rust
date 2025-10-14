@@ -37,8 +37,10 @@ unsafe impl Sync for Network {}
 
 impl Drop for Network {
     fn drop(&mut self) {
-        if let Err(e) = unsafe { self.free() } {
-            panic!("Unable to drop memory for Network: {e}")
+        let ret = unsafe { sys::virNetworkFree(self.as_ptr()) };
+        if ret == -1 {
+            let e = Error::last_error();
+            panic!("Unable to drop reference on network: {e}")
         }
     }
 }
@@ -49,7 +51,13 @@ impl Clone for Network {
     /// Increments the internal reference counter on the given
     /// network.
     fn clone(&self) -> Self {
-        self.add_ref().unwrap()
+        let ret = unsafe { sys::virNetworkRef(self.as_ptr()) };
+        if ret == -1 {
+            let e = Error::last_error();
+            panic!("Unable to add reference on network: {e}")
+        }
+
+        unsafe { Network::from_ptr(self.as_ptr()) }
     }
 }
 
@@ -61,16 +69,6 @@ impl Network {
     /// for the C object upon return.
     pub unsafe fn from_ptr(ptr: sys::virNetworkPtr) -> Network {
         Network { ptr: Some(ptr) }
-    }
-
-    fn add_ref(&self) -> Result<Network, Error> {
-        unsafe {
-            if sys::virNetworkRef(self.as_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-        }
-
-        Ok(unsafe { Network::from_ptr(self.as_ptr()) })
     }
 
     /// # Safety
@@ -202,15 +200,6 @@ impl Network {
         if ret == -1 {
             return Err(Error::last_error());
         }
-        Ok(())
-    }
-
-    unsafe fn free(&mut self) -> Result<(), Error> {
-        let ret = unsafe { sys::virNetworkFree(self.as_ptr()) };
-        if ret == -1 {
-            return Err(Error::last_error());
-        }
-        self.ptr = None;
         Ok(())
     }
 

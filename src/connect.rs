@@ -157,8 +157,10 @@ pub struct Connect {
 
 impl Drop for Connect {
     fn drop(&mut self) {
-        if let Err(e) = unsafe { self.close() } {
-            panic!("Unable to drop memory for Connect: {e}")
+        let ret = unsafe { sys::virConnectClose(self.as_ptr()) };
+        if ret == -1 {
+            let e = Error::last_error();
+            panic!("Unable to drop reference on connection: {e}")
         }
     }
 }
@@ -185,7 +187,12 @@ impl Clone for Connect {
     /// // conn1 implicitly dropped when leaving scope
     /// ````
     fn clone(&self) -> Self {
-        self.add_ref().unwrap()
+        let ret = unsafe { sys::virConnectRef(self.as_ptr()) };
+        if ret == -1 {
+            let e = Error::last_error();
+            panic!("Unable to add reference on connection: {e}")
+        }
+        unsafe { Connect::from_ptr(self.as_ptr()) }
     }
 }
 
@@ -212,15 +219,6 @@ impl Connect {
     /// for the C object upon return.
     pub unsafe fn from_ptr(ptr: sys::virConnectPtr) -> Connect {
         Connect { ptr: Some(ptr) }
-    }
-    fn add_ref(&self) -> Result<Connect, Error> {
-        unsafe {
-            if sys::virConnectRef(self.as_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-        }
-
-        Ok(unsafe { Connect::from_ptr(self.as_ptr()) })
     }
 
     pub fn get_version() -> Result<u32, Error> {
@@ -314,17 +312,6 @@ impl Connect {
             return Err(Error::last_error());
         }
         Ok(unsafe { Connect::from_ptr(c) })
-    }
-
-    unsafe fn close(&mut self) -> Result<i32, Error> {
-        let ret = unsafe { sys::virConnectClose(self.as_ptr()) };
-        if ret == -1 {
-            return Err(Error::last_error());
-        }
-        // Because of add_ref() we must refrain from using the
-        // connection further.
-        self.ptr = None;
-        Ok(ret)
     }
 
     /// This returns a system hostname on which the hypervisor is

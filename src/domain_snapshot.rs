@@ -36,8 +36,10 @@ unsafe impl Sync for DomainSnapshot {}
 
 impl Drop for DomainSnapshot {
     fn drop(&mut self) {
-        if let Err(e) = unsafe { self.free() } {
-            panic!("Unable to drop memory for DomainSnapshot: {e}")
+        let ret = unsafe { sys::virDomainSnapshotFree(self.as_ptr()) };
+        if ret == -1 {
+            let e = Error::last_error();
+            panic!("Unable to drop reference on domain snapshot: {e}")
         }
     }
 }
@@ -48,7 +50,13 @@ impl Clone for DomainSnapshot {
     /// Increments the internal reference counter on the given
     /// snapshot.
     fn clone(&self) -> Self {
-        self.add_ref().unwrap()
+        let ret = unsafe { sys::virDomainSnapshotRef(self.as_ptr()) };
+        if ret == -1 {
+            let e = Error::last_error();
+            panic!("Unable to add reference on domain snapshot: {e}")
+        }
+
+        unsafe { DomainSnapshot::from_ptr(self.as_ptr()) }
     }
 }
 
@@ -60,16 +68,6 @@ impl DomainSnapshot {
     /// for the C object upon return.
     pub unsafe fn from_ptr(ptr: sys::virDomainSnapshotPtr) -> DomainSnapshot {
         DomainSnapshot { ptr: Some(ptr) }
-    }
-
-    fn add_ref(&self) -> Result<DomainSnapshot, Error> {
-        unsafe {
-            if sys::virDomainSnapshotRef(self.as_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-        }
-
-        Ok(unsafe { DomainSnapshot::from_ptr(self.as_ptr()) })
     }
 
     /// # Safety
@@ -236,14 +234,5 @@ impl DomainSnapshot {
         unsafe { libc::free(snaps as *mut libc::c_void) };
 
         Ok(array)
-    }
-
-    unsafe fn free(&mut self) -> Result<(), Error> {
-        let ret = unsafe { sys::virDomainSnapshotFree(self.as_ptr()) };
-        if ret == -1 {
-            return Err(Error::last_error());
-        }
-        self.ptr = None;
-        Ok(())
     }
 }

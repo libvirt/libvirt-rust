@@ -56,8 +56,10 @@ impl Drop for Stream {
                 panic!("Unable to remove event callback for Stream: {e}")
             }
         }
-        if let Err(e) = unsafe { self.free() } {
-            panic!("Unable to drop memory for Stream: {e}")
+        let ret = unsafe { sys::virStreamFree(self.as_ptr()) };
+        if ret == -1 {
+            let e = Error::last_error();
+            panic!("Unable to drop reference on stream: {e}")
         }
     }
 }
@@ -68,7 +70,13 @@ impl Clone for Stream {
     /// Increments the internal reference counter on the given
     /// stream.
     fn clone(&self) -> Self {
-        self.add_ref().unwrap()
+        let ret = unsafe { sys::virStreamRef(self.as_ptr()) };
+        if ret == -1 {
+            let e = Error::last_error();
+            panic!("Unable to add reference on stream: {e}");
+        }
+
+        unsafe { Stream::from_ptr(self.as_ptr()) }
     }
 }
 
@@ -79,16 +87,6 @@ impl Stream {
             return Err(Error::last_error());
         }
         Ok(unsafe { Stream::from_ptr(ptr) })
-    }
-
-    fn add_ref(&self) -> Result<Stream, Error> {
-        unsafe {
-            if sys::virStreamRef(self.as_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-        }
-
-        Ok(unsafe { Stream::from_ptr(self.as_ptr()) })
     }
 
     /// # Safety
@@ -113,15 +111,6 @@ impl Stream {
     /// invalidated if this object is dropped.
     pub unsafe fn as_ptr(&self) -> sys::virStreamPtr {
         self.ptr.unwrap()
-    }
-
-    unsafe fn free(&mut self) -> Result<(), Error> {
-        let ret = unsafe { sys::virStreamFree(self.as_ptr()) };
-        if ret == -1 {
-            return Err(Error::last_error());
-        }
-        self.ptr = None;
-        Ok(())
     }
 
     pub fn finish(self) -> Result<(), Error> {

@@ -777,8 +777,10 @@ unsafe impl Sync for Domain {}
 
 impl Drop for Domain {
     fn drop(&mut self) {
-        if let Err(e) = unsafe { self.free() } {
-            panic!("Unable to drop memory for Domain: {e}")
+        let ret = unsafe { sys::virDomainFree(self.as_ptr()) };
+        if ret == -1 {
+            let e = Error::last_error();
+            panic!("Unable to drop reference on domain: {e}")
         }
     }
 }
@@ -789,7 +791,13 @@ impl Clone for Domain {
     /// Increments the internal reference counter on the given
     /// domain.
     fn clone(&self) -> Self {
-        self.add_ref().unwrap()
+        let ret = unsafe { sys::virDomainRef(self.as_ptr()) };
+        if ret == -1 {
+            let e = Error::last_error();
+            panic!("Unable to add reference on domain: {e}")
+        }
+
+        unsafe { Domain::from_ptr(self.as_ptr()) }
     }
 }
 
@@ -801,16 +809,6 @@ impl Domain {
     /// for the C object upon return.
     pub unsafe fn from_ptr(ptr: sys::virDomainPtr) -> Domain {
         Domain { ptr: Some(ptr) }
-    }
-
-    fn add_ref(&self) -> Result<Domain, Error> {
-        unsafe {
-            if sys::virDomainRef(self.as_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-        }
-
-        Ok(unsafe { Domain::from_ptr(self.as_ptr()) })
     }
 
     /// # Safety
@@ -1253,15 +1251,6 @@ impl Domain {
         if ret == -1 {
             return Err(Error::last_error());
         }
-        Ok(())
-    }
-
-    unsafe fn free(&mut self) -> Result<(), Error> {
-        let ret = unsafe { sys::virDomainFree(self.as_ptr()) };
-        if ret == -1 {
-            return Err(Error::last_error());
-        }
-        self.ptr = None;
         Ok(())
     }
 

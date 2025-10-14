@@ -35,8 +35,10 @@ unsafe impl Sync for NodeDevice {}
 
 impl Drop for NodeDevice {
     fn drop(&mut self) {
-        if let Err(e) = unsafe { self.free() } {
-            panic!("Unable to drop memory for NodeDevice: {e}")
+        let ret = unsafe { sys::virNodeDeviceFree(self.as_ptr()) };
+        if ret == -1 {
+            let e = Error::last_error();
+            panic!("Unable to drop reference on node device: {e}")
         }
     }
 }
@@ -47,7 +49,13 @@ impl Clone for NodeDevice {
     /// Increments the internal reference counter on the given
     /// device.
     fn clone(&self) -> Self {
-        self.add_ref().unwrap()
+        let ret = unsafe { sys::virNodeDeviceRef(self.as_ptr()) };
+        if ret == -1 {
+            let e = Error::last_error();
+            panic!("Unable to add reference on node device: {e}")
+        }
+
+        unsafe { NodeDevice::from_ptr(self.as_ptr()) }
     }
 }
 
@@ -59,16 +67,6 @@ impl NodeDevice {
     /// for the C object upon return.
     pub unsafe fn from_ptr(ptr: sys::virNodeDevicePtr) -> NodeDevice {
         NodeDevice { ptr: Some(ptr) }
-    }
-
-    fn add_ref(&self) -> Result<NodeDevice, Error> {
-        unsafe {
-            if sys::virNodeDeviceRef(self.as_ptr()) == -1 {
-                return Err(Error::last_error());
-            }
-        }
-
-        Ok(unsafe { NodeDevice::from_ptr(self.as_ptr()) })
     }
 
     /// # Safety
@@ -194,15 +192,6 @@ impl NodeDevice {
             return Err(Error::last_error());
         }
         Ok(ret as u32)
-    }
-
-    unsafe fn free(&mut self) -> Result<(), Error> {
-        let ret = unsafe { sys::virNodeDeviceFree(self.as_ptr()) };
-        if ret == -1 {
-            return Err(Error::last_error());
-        }
-        self.ptr = None;
-        Ok(())
     }
 
     pub fn num_of_devices(conn: &Connect, cap: Option<&str>, flags: u32) -> Result<u32, Error> {
