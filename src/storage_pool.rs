@@ -89,6 +89,8 @@ impl StoragePool {
     /// # Safety
     ///
     /// The caller must ensure that the pointer is valid.
+    /// The rust wrapper will own the reference count
+    /// for the C object upon return.
     pub unsafe fn from_ptr(ptr: sys::virStoragePoolPtr) -> StoragePool {
         StoragePool { ptr: Some(ptr) }
     }

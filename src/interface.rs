@@ -60,6 +60,8 @@ impl Interface {
     /// # Safety
     ///
     /// The caller must ensure that the pointer is valid.
+    /// The rust wrapper will own the reference count
+    /// for the C object upon return.
     pub unsafe fn from_ptr(ptr: sys::virInterfacePtr) -> Interface {
         Interface { ptr: Some(ptr) }
     }
