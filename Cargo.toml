@@ -24,6 +24,9 @@ serde-xml-rs = { version = "0.6.0" }
 pkg-config = { version = "0.3.0" }
 regex = { version = "~1.9.0" }
 termios = "0.3.3"
+# Pin for compat with Rust 1.63.0 / Debian 12
+syn = { version = "=2.0.106" }
+xml-rs = { version = "=0.8.27" }
 
 [features]
 qemu = ["virt-sys/qemu"]
