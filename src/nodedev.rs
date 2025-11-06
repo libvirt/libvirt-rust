@@ -82,7 +82,7 @@ impl NodeDevice {
     }
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<NodeDevice, Error> {
-        let id_buf = CString::new(id).unwrap();
+        let id_buf = CString::new(id)?;
         let ptr = unsafe { sys::virNodeDeviceLookupByName(conn.as_ptr(), id_buf.as_ptr()) };
         if ptr.is_null() {
             return Err(Error::last_error());
@@ -96,8 +96,8 @@ impl NodeDevice {
         wwpn: &str,
         flags: u32,
     ) -> Result<NodeDevice, Error> {
-        let wwnn_buf = CString::new(wwnn).unwrap();
-        let wwpn_buf = CString::new(wwpn).unwrap();
+        let wwnn_buf = CString::new(wwnn)?;
+        let wwpn_buf = CString::new(wwpn)?;
         let ptr = unsafe {
             sys::virNodeDeviceLookupSCSIHostByWWN(
                 conn.as_ptr(),
@@ -113,7 +113,7 @@ impl NodeDevice {
     }
 
     pub fn create_xml(conn: &Connect, xml: &str, flags: u32) -> Result<NodeDevice, Error> {
-        let xml_buf = CString::new(xml).unwrap();
+        let xml_buf = CString::new(xml)?;
         let ptr = unsafe {
             sys::virNodeDeviceCreateXML(conn.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
         };

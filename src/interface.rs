@@ -90,7 +90,7 @@ impl Interface {
     }
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<Interface, Error> {
-        let id_buf = CString::new(id).unwrap();
+        let id_buf = CString::new(id)?;
         let ptr = unsafe { sys::virInterfaceLookupByName(conn.as_ptr(), id_buf.as_ptr()) };
         if ptr.is_null() {
             return Err(Error::last_error());
@@ -99,7 +99,7 @@ impl Interface {
     }
 
     pub fn define_xml(conn: &Connect, xml: &str, flags: u32) -> Result<Interface, Error> {
-        let xml_buf = CString::new(xml).unwrap();
+        let xml_buf = CString::new(xml)?;
         let ptr = unsafe {
             sys::virInterfaceDefineXML(conn.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
         };
@@ -110,7 +110,7 @@ impl Interface {
     }
 
     pub fn lookup_by_mac_string(conn: &Connect, id: &str) -> Result<Interface, Error> {
-        let id_buf = CString::new(id).unwrap();
+        let id_buf = CString::new(id)?;
         let ptr = unsafe { sys::virInterfaceLookupByMACString(conn.as_ptr(), id_buf.as_ptr()) };
         if ptr.is_null() {
             return Err(Error::last_error());

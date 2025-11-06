@@ -708,6 +708,29 @@ impl Error {
 
 impl StdError for Error {}
 
+// Clippy is confused:
+//  warning: current MSRV (Minimum Supported Rust Version) is `1.63.0` but this item is stable since `1.64.0`
+//
+// but rust docs say
+//
+//  https://blog.rust-lang.org/2022/09/22/Rust-1.64.0/
+//
+// "These types were previously stable in std::ffi, but are now also available in core and alloc:
+//      alloc::ffi::NulError"
+//
+// IOW, std::ffi::NulError was already stable before 1.63.0
+#[allow(clippy::incompatible_msrv)]
+impl From<std::ffi::NulError> for Error {
+    fn from(nulerr: std::ffi::NulError) -> Self {
+        Error {
+            code: ErrorNumber::InvalidArg as u32,
+            domain: ErrorDomain::None as u32,
+            message: format!("Null byte passed to CString: {nulerr}"),
+            level: ErrorLevel::Error as u32,
+        }
+    }
+}
+
 impl Display for Error {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         match self.level() {

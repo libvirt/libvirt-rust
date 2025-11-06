@@ -92,7 +92,7 @@ impl Network {
     }
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<Network, Error> {
-        let id_buf = CString::new(id).unwrap();
+        let id_buf = CString::new(id)?;
         let ptr = unsafe { sys::virNetworkLookupByName(conn.as_ptr(), id_buf.as_ptr()) };
         if ptr.is_null() {
             return Err(Error::last_error());
@@ -109,7 +109,7 @@ impl Network {
     }
 
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Network, Error> {
-        let uuid_buf = CString::new(uuid).unwrap();
+        let uuid_buf = CString::new(uuid)?;
         let ptr = unsafe { sys::virNetworkLookupByUUIDString(conn.as_ptr(), uuid_buf.as_ptr()) };
         if ptr.is_null() {
             return Err(Error::last_error());
@@ -170,7 +170,7 @@ impl Network {
     }
 
     pub fn define_xml(conn: &Connect, xml: &str) -> Result<Network, Error> {
-        let xml_buf = CString::new(xml).unwrap();
+        let xml_buf = CString::new(xml)?;
         let ptr = unsafe { sys::virNetworkDefineXML(conn.as_ptr(), xml_buf.as_ptr()) };
         if ptr.is_null() {
             return Err(Error::last_error());
@@ -179,7 +179,7 @@ impl Network {
     }
 
     pub fn create_xml(conn: &Connect, xml: &str) -> Result<Network, Error> {
-        let xml_buf = CString::new(xml).unwrap();
+        let xml_buf = CString::new(xml)?;
         let ptr = unsafe { sys::virNetworkCreateXML(conn.as_ptr(), xml_buf.as_ptr()) };
         if ptr.is_null() {
             return Err(Error::last_error());
@@ -244,7 +244,7 @@ impl Network {
         xml: &str,
         flags: sys::virNetworkUpdateFlags,
     ) -> Result<(), Error> {
-        let xml_buf = CString::new(xml).unwrap();
+        let xml_buf = CString::new(xml)?;
         let ret = unsafe {
             sys::virNetworkUpdate(
                 self.as_ptr(),

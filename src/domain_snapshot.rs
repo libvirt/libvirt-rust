@@ -108,7 +108,7 @@ impl DomainSnapshot {
 
     /// Get a handle to a named snapshot.
     pub fn lookup_by_name(dom: &Domain, name: &str, flags: u32) -> Result<DomainSnapshot, Error> {
-        let name_buf = CString::new(name).unwrap();
+        let name_buf = CString::new(name)?;
         let ptr = unsafe {
             sys::virDomainSnapshotLookupByName(
                 dom.as_ptr(),
@@ -132,7 +132,7 @@ impl DomainSnapshot {
     }
 
     pub fn create_xml(dom: &Domain, xml: &str, flags: u32) -> Result<DomainSnapshot, Error> {
-        let xml_buf = CString::new(xml).unwrap();
+        let xml_buf = CString::new(xml)?;
         let ptr = unsafe {
             sys::virDomainSnapshotCreateXML(dom.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
         };

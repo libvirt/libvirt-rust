@@ -119,7 +119,7 @@ impl StoragePool {
     }
 
     pub fn define_xml(conn: &Connect, xml: &str, flags: u32) -> Result<StoragePool, Error> {
-        let xml_buf = CString::new(xml).unwrap();
+        let xml_buf = CString::new(xml)?;
         let ptr = unsafe {
             sys::virStoragePoolDefineXML(conn.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
         };
@@ -134,7 +134,7 @@ impl StoragePool {
         xml: &str,
         flags: sys::virStoragePoolCreateFlags,
     ) -> Result<StoragePool, Error> {
-        let xml_buf = CString::new(xml).unwrap();
+        let xml_buf = CString::new(xml)?;
         let ptr = unsafe {
             sys::virStoragePoolCreateXML(conn.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
         };
@@ -145,7 +145,7 @@ impl StoragePool {
     }
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<StoragePool, Error> {
-        let id_buf = CString::new(id).unwrap();
+        let id_buf = CString::new(id)?;
         let ptr = unsafe { sys::virStoragePoolLookupByName(conn.as_ptr(), id_buf.as_ptr()) };
         if ptr.is_null() {
             return Err(Error::last_error());
@@ -154,7 +154,7 @@ impl StoragePool {
     }
 
     pub fn lookup_by_target_path(conn: &Connect, path: &str) -> Result<StoragePool, Error> {
-        let path_buf = CString::new(path).unwrap();
+        let path_buf = CString::new(path)?;
         let ptr =
             unsafe { sys::virStoragePoolLookupByTargetPath(conn.as_ptr(), path_buf.as_ptr()) };
         if ptr.is_null() {
@@ -181,7 +181,7 @@ impl StoragePool {
     }
 
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<StoragePool, Error> {
-        let uuid_buf = CString::new(uuid).unwrap();
+        let uuid_buf = CString::new(uuid)?;
         let ptr =
             unsafe { sys::virStoragePoolLookupByUUIDString(conn.as_ptr(), uuid_buf.as_ptr()) };
         if ptr.is_null() {

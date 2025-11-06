@@ -119,7 +119,7 @@ impl StorageVol {
         xml: &str,
         flags: sys::virStorageVolCreateFlags,
     ) -> Result<StorageVol, Error> {
-        let xml_buf = CString::new(xml).unwrap();
+        let xml_buf = CString::new(xml)?;
         let ptr = unsafe {
             sys::virStorageVolCreateXML(pool.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
         };
@@ -135,7 +135,7 @@ impl StorageVol {
         vol: &StorageVol,
         flags: sys::virStorageVolCreateFlags,
     ) -> Result<StorageVol, Error> {
-        let xml_buf = CString::new(xml).unwrap();
+        let xml_buf = CString::new(xml)?;
         let ptr = unsafe {
             sys::virStorageVolCreateXMLFrom(
                 pool.as_ptr(),
@@ -151,7 +151,7 @@ impl StorageVol {
     }
 
     pub fn lookup_by_name(pool: &StoragePool, name: &str) -> Result<StorageVol, Error> {
-        let name_buf = CString::new(name).unwrap();
+        let name_buf = CString::new(name)?;
         let ptr = unsafe { sys::virStorageVolLookupByName(pool.as_ptr(), name_buf.as_ptr()) };
         if ptr.is_null() {
             return Err(Error::last_error());
@@ -160,7 +160,7 @@ impl StorageVol {
     }
 
     pub fn lookup_by_key(conn: &Connect, key: &str) -> Result<StorageVol, Error> {
-        let key_buf = CString::new(key).unwrap();
+        let key_buf = CString::new(key)?;
         let ptr = unsafe { sys::virStorageVolLookupByKey(conn.as_ptr(), key_buf.as_ptr()) };
         if ptr.is_null() {
             return Err(Error::last_error());
@@ -169,7 +169,7 @@ impl StorageVol {
     }
 
     pub fn lookup_by_path(conn: &Connect, path: &str) -> Result<StorageVol, Error> {
-        let path_buf = CString::new(path).unwrap();
+        let path_buf = CString::new(path)?;
         let ptr = unsafe { sys::virStorageVolLookupByPath(conn.as_ptr(), path_buf.as_ptr()) };
         if ptr.is_null() {
             return Err(Error::last_error());

@@ -91,7 +91,7 @@ impl Secret {
     }
 
     pub fn define_xml(conn: &Connect, xml: &str, flags: u32) -> Result<Secret, Error> {
-        let xml_buf = CString::new(xml).unwrap();
+        let xml_buf = CString::new(xml)?;
         let ptr = unsafe {
             sys::virSecretDefineXML(conn.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
         };
@@ -110,7 +110,7 @@ impl Secret {
     }
 
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Secret, Error> {
-        let uuid_buf = CString::new(uuid).unwrap();
+        let uuid_buf = CString::new(uuid)?;
         let ptr = unsafe { sys::virSecretLookupByUUIDString(conn.as_ptr(), uuid_buf.as_ptr()) };
         if ptr.is_null() {
             return Err(Error::last_error());
@@ -119,7 +119,7 @@ impl Secret {
     }
 
     pub fn lookup_by_usage(conn: &Connect, usagetype: i32, usageid: &str) -> Result<Secret, Error> {
-        let usageid_buf = CString::new(usageid).unwrap();
+        let usageid_buf = CString::new(usageid)?;
         let ptr = unsafe {
             sys::virSecretLookupByUsage(
                 conn.as_ptr(),

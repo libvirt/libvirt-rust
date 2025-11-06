@@ -381,7 +381,7 @@ impl Connect {
 
     pub fn get_cpu_models_names(&self, arch: &str, flags: u32) -> Result<Vec<String>, Error> {
         let mut names: *mut *mut libc::c_char = ptr::null_mut();
-        let arch_buf = CString::new(arch).unwrap();
+        let arch_buf = CString::new(arch)?;
         let size = unsafe {
             sys::virConnectGetCPUModelNames(
                 self.as_ptr(),
@@ -992,7 +992,7 @@ impl Connect {
         xml: &str,
         flags: sys::virConnectCompareCPUFlags,
     ) -> Result<sys::virCPUCompareResult, Error> {
-        let xml_buf = CString::new(xml).unwrap();
+        let xml_buf = CString::new(xml)?;
         let res = unsafe {
             sys::virConnectCompareCPU(self.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
         };
@@ -1049,8 +1049,8 @@ impl Connect {
         nconfig: &str,
         flags: u32,
     ) -> Result<String, Error> {
-        let nformat_buf = CString::new(nformat).unwrap();
-        let nconfig_buf = CString::new(nconfig).unwrap();
+        let nformat_buf = CString::new(nformat)?;
+        let nconfig_buf = CString::new(nconfig)?;
         let ret = unsafe {
             sys::virConnectDomainXMLFromNative(
                 self.as_ptr(),
@@ -1071,8 +1071,8 @@ impl Connect {
         dxml: &str,
         flags: u32,
     ) -> Result<String, Error> {
-        let nformat_buf = CString::new(nformat).unwrap();
-        let dxml_buf = CString::new(dxml).unwrap();
+        let nformat_buf = CString::new(nformat)?;
+        let dxml_buf = CString::new(dxml)?;
         let ret = unsafe {
             sys::virConnectDomainXMLToNative(
                 self.as_ptr(),
@@ -1152,7 +1152,7 @@ impl Connect {
         let mut xcpus: Vec<CString> = Vec::with_capacity(xmlcpus.len());
         let mut xcpus_buf: Vec<*const libc::c_char> = Vec::with_capacity(xmlcpus.len());
         for xml_cpu in xmlcpus {
-            let cstring = CString::new(*xml_cpu).unwrap();
+            let cstring = CString::new(*xml_cpu)?;
             xcpus_buf.push(cstring.as_ptr());
             xcpus.push(cstring);
         }
@@ -1176,7 +1176,7 @@ impl Connect {
         spec: Option<&str>,
         flags: u32,
     ) -> Result<String, Error> {
-        let kind_buf = CString::new(kind).unwrap();
+        let kind_buf = CString::new(kind)?;
         let spec_buf = some_string_to_cstring!(spec);
         let n = unsafe {
             sys::virConnectFindStoragePoolSources(

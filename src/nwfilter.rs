@@ -84,7 +84,7 @@ impl NWFilter {
     }
 
     pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<NWFilter, Error> {
-        let id_buf = CString::new(id).unwrap();
+        let id_buf = CString::new(id)?;
         let ptr = unsafe { sys::virNWFilterLookupByName(conn.as_ptr(), id_buf.as_ptr()) };
         if ptr.is_null() {
             return Err(Error::last_error());
@@ -101,7 +101,7 @@ impl NWFilter {
     }
 
     pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<NWFilter, Error> {
-        let uuid_buf = CString::new(uuid).unwrap();
+        let uuid_buf = CString::new(uuid)?;
         let ptr = unsafe { sys::virNWFilterLookupByUUIDString(conn.as_ptr(), uuid_buf.as_ptr()) };
         if ptr.is_null() {
             return Err(Error::last_error());
@@ -146,7 +146,7 @@ impl NWFilter {
     }
 
     pub fn define_xml(conn: &Connect, xml: &str) -> Result<NWFilter, Error> {
-        let xml_buf = CString::new(xml).unwrap();
+        let xml_buf = CString::new(xml)?;
         let ptr = unsafe { sys::virNWFilterDefineXML(conn.as_ptr(), xml_buf.as_ptr()) };
         if ptr.is_null() {
             return Err(Error::last_error());
