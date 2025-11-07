@@ -27,6 +27,7 @@ termios = "0.3.3"
 # Pin for compat with Rust 1.63.0 / Debian 12
 syn = { version = "=2.0.106" }
 xml-rs = { version = "=0.8.27" }
+quote = { version = "=1.0.41" }
 
 [features]
 qemu = ["virt-sys/qemu"]
