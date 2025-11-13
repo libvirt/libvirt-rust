@@ -85,6 +85,11 @@ impl Secret {
         if ptr.is_null() {
             return Err(Error::last_error());
         }
+        let ret = unsafe { sys::virConnectRef(ptr) };
+        if ret == -1 {
+            let e = Error::last_error();
+            panic!("Unable to add reference on connection: {e}")
+        }
         Ok(unsafe { Connect::from_ptr(ptr) })
     }
 

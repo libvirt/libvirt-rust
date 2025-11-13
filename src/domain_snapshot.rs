@@ -86,6 +86,11 @@ impl DomainSnapshot {
         if ptr.is_null() {
             return Err(Error::last_error());
         }
+        let ret = unsafe { sys::virConnectRef(ptr) };
+        if ret == -1 {
+            let e = Error::last_error();
+            panic!("Unable to add reference on connection: {e}")
+        }
         Ok(unsafe { Connect::from_ptr(ptr) })
     }
 
@@ -93,6 +98,11 @@ impl DomainSnapshot {
         let ptr = unsafe { sys::virDomainSnapshotGetDomain(self.as_ptr()) };
         if ptr.is_null() {
             return Err(Error::last_error());
+        }
+        let ret = unsafe { sys::virDomainRef(ptr) };
+        if ret == -1 {
+            let e = Error::last_error();
+            panic!("Unable to add reference on domain: {e}")
         }
         Ok(unsafe { Domain::from_ptr(ptr) })
     }
