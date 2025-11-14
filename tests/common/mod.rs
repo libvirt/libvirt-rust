@@ -132,7 +132,7 @@ pub fn build_test_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
 pub fn build_storage_pool(conn: &Connect, name: &str, transient: bool) -> StoragePool {
     let name = format!("libvirt-rs-test-{name}");
 
-    if let Ok(pool) = StoragePool::lookup_by_name(conn, &name) {
+    if let Ok(pool) = conn.lookup_storage_pool_by_name(&name) {
         clean_pool(pool);
     }
 
@@ -146,9 +146,9 @@ pub fn build_storage_pool(conn: &Connect, name: &str, transient: bool) -> Storag
     );
 
     let result: Result<StoragePool, Error> = if transient {
-        StoragePool::create_xml(conn, &xml, 0)
+        conn.create_storage_pool_xml(&xml, 0)
     } else {
-        StoragePool::define_xml(conn, &xml, 0)
+        conn.define_storage_pool_xml(&xml, 0)
     };
 
     result.unwrap()

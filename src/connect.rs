@@ -1649,4 +1649,68 @@ impl Connect {
         }
         Ok(unsafe { Secret::from_ptr(ptr) })
     }
+
+    pub fn define_storage_pool_xml(&self, xml: &str, flags: u32) -> Result<StoragePool, Error> {
+        let xml_buf = CString::new(xml)?;
+        let ptr = unsafe {
+            sys::virStoragePoolDefineXML(self.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { StoragePool::from_ptr(ptr) })
+    }
+
+    pub fn create_storage_pool_xml(
+        &self,
+        xml: &str,
+        flags: sys::virStoragePoolCreateFlags,
+    ) -> Result<StoragePool, Error> {
+        let xml_buf = CString::new(xml)?;
+        let ptr = unsafe {
+            sys::virStoragePoolCreateXML(self.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { StoragePool::from_ptr(ptr) })
+    }
+
+    pub fn lookup_storage_pool_by_name(&self, id: &str) -> Result<StoragePool, Error> {
+        let id_buf = CString::new(id)?;
+        let ptr = unsafe { sys::virStoragePoolLookupByName(self.as_ptr(), id_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { StoragePool::from_ptr(ptr) })
+    }
+
+    pub fn lookup_storage_pool_by_target_path(&self, path: &str) -> Result<StoragePool, Error> {
+        let path_buf = CString::new(path)?;
+        let ptr =
+            unsafe { sys::virStoragePoolLookupByTargetPath(self.as_ptr(), path_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { StoragePool::from_ptr(ptr) })
+    }
+
+    pub fn lookup_storage_pool_by_uuid(&self, uuid: Uuid) -> Result<StoragePool, Error> {
+        let ptr =
+            unsafe { sys::virStoragePoolLookupByUUID(self.as_ptr(), uuid.as_bytes().as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { StoragePool::from_ptr(ptr) })
+    }
+
+    pub fn lookup_storage_pool_by_uuid_string(&self, uuid: &str) -> Result<StoragePool, Error> {
+        let uuid_buf = CString::new(uuid)?;
+        let ptr =
+            unsafe { sys::virStoragePoolLookupByUUIDString(self.as_ptr(), uuid_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { StoragePool::from_ptr(ptr) })
+    }
 }

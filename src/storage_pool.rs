@@ -16,8 +16,7 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-use std::ffi::CString;
-use std::{mem, ptr, str};
+use std::{mem, ptr};
 
 use uuid::Uuid;
 
@@ -118,72 +117,8 @@ impl StoragePool {
         Ok(unsafe { Connect::from_ptr(ptr) })
     }
 
-    pub fn define_xml(conn: &Connect, xml: &str, flags: u32) -> Result<StoragePool, Error> {
-        let xml_buf = CString::new(xml)?;
-        let ptr = unsafe {
-            sys::virStoragePoolDefineXML(conn.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
-        };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { StoragePool::from_ptr(ptr) })
-    }
-
-    pub fn create_xml(
-        conn: &Connect,
-        xml: &str,
-        flags: sys::virStoragePoolCreateFlags,
-    ) -> Result<StoragePool, Error> {
-        let xml_buf = CString::new(xml)?;
-        let ptr = unsafe {
-            sys::virStoragePoolCreateXML(conn.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
-        };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { StoragePool::from_ptr(ptr) })
-    }
-
-    pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<StoragePool, Error> {
-        let id_buf = CString::new(id)?;
-        let ptr = unsafe { sys::virStoragePoolLookupByName(conn.as_ptr(), id_buf.as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { StoragePool::from_ptr(ptr) })
-    }
-
-    pub fn lookup_by_target_path(conn: &Connect, path: &str) -> Result<StoragePool, Error> {
-        let path_buf = CString::new(path)?;
-        let ptr =
-            unsafe { sys::virStoragePoolLookupByTargetPath(conn.as_ptr(), path_buf.as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { StoragePool::from_ptr(ptr) })
-    }
-
     pub fn lookup_by_volume(vol: &StorageVol) -> Result<StoragePool, Error> {
         let ptr = unsafe { sys::virStoragePoolLookupByVolume(vol.as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { StoragePool::from_ptr(ptr) })
-    }
-
-    pub fn lookup_by_uuid(conn: &Connect, uuid: Uuid) -> Result<StoragePool, Error> {
-        let ptr =
-            unsafe { sys::virStoragePoolLookupByUUID(conn.as_ptr(), uuid.as_bytes().as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { StoragePool::from_ptr(ptr) })
-    }
-
-    pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<StoragePool, Error> {
-        let uuid_buf = CString::new(uuid)?;
-        let ptr =
-            unsafe { sys::virStoragePoolLookupByUUIDString(conn.as_ptr(), uuid_buf.as_ptr()) };
         if ptr.is_null() {
             return Err(Error::last_error());
         }
