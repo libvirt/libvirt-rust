@@ -150,15 +150,6 @@ impl StorageVol {
         Ok(unsafe { StorageVol::from_ptr(ptr) })
     }
 
-    pub fn lookup_by_name(pool: &StoragePool, name: &str) -> Result<StorageVol, Error> {
-        let name_buf = CString::new(name)?;
-        let ptr = unsafe { sys::virStorageVolLookupByName(pool.as_ptr(), name_buf.as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { StorageVol::from_ptr(ptr) })
-    }
-
     pub fn lookup_storage_pool(&self) -> Result<StoragePool, Error> {
         let ptr = unsafe { sys::virStoragePoolLookupByVolume(self.as_ptr()) };
         if ptr.is_null() {

@@ -16,6 +16,7 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
+use std::ffi::CString;
 use std::{mem, ptr};
 
 use uuid::Uuid;
@@ -115,6 +116,15 @@ impl StoragePool {
             return Err(Error::last_error());
         }
         Ok(unsafe { Connect::from_ptr(ptr) })
+    }
+
+    pub fn lookup_storage_vol_by_name(&self, name: &str) -> Result<StorageVol, Error> {
+        let name_buf = CString::new(name)?;
+        let ptr = unsafe { sys::virStorageVolLookupByName(self.as_ptr(), name_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { StorageVol::from_ptr(ptr) })
     }
 
     pub fn get_name(&self) -> Result<String, Error> {

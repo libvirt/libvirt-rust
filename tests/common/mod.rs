@@ -155,7 +155,7 @@ pub fn build_storage_pool(conn: &Connect, name: &str, transient: bool) -> Storag
 }
 
 pub fn build_storage_vol(pool: &StoragePool, name: &str, size: u64) -> StorageVol {
-    if let Ok(vol) = StorageVol::lookup_by_name(pool, name) {
+    if let Ok(vol) = pool.lookup_storage_vol_by_name(name) {
         return vol;
     }
 
