@@ -30,6 +30,7 @@ use crate::nodedev::NodeDevice;
 use crate::nwfilter::NWFilter;
 use crate::secret::Secret;
 use crate::storage_pool::StoragePool;
+use crate::storage_vol::StorageVol;
 use crate::util::c_ulong_to_u64;
 
 extern "C" fn connect_callback(
@@ -1712,5 +1713,23 @@ impl Connect {
             return Err(Error::last_error());
         }
         Ok(unsafe { StoragePool::from_ptr(ptr) })
+    }
+
+    pub fn lookup_storage_vol_by_key(&self, key: &str) -> Result<StorageVol, Error> {
+        let key_buf = CString::new(key)?;
+        let ptr = unsafe { sys::virStorageVolLookupByKey(self.as_ptr(), key_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { StorageVol::from_ptr(ptr) })
+    }
+
+    pub fn lookup_storage_vol_by_path(&self, path: &str) -> Result<StorageVol, Error> {
+        let path_buf = CString::new(path)?;
+        let ptr = unsafe { sys::virStorageVolLookupByPath(self.as_ptr(), path_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { StorageVol::from_ptr(ptr) })
     }
 }

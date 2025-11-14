@@ -159,24 +159,6 @@ impl StorageVol {
         Ok(unsafe { StorageVol::from_ptr(ptr) })
     }
 
-    pub fn lookup_by_key(conn: &Connect, key: &str) -> Result<StorageVol, Error> {
-        let key_buf = CString::new(key)?;
-        let ptr = unsafe { sys::virStorageVolLookupByKey(conn.as_ptr(), key_buf.as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { StorageVol::from_ptr(ptr) })
-    }
-
-    pub fn lookup_by_path(conn: &Connect, path: &str) -> Result<StorageVol, Error> {
-        let path_buf = CString::new(path)?;
-        let ptr = unsafe { sys::virStorageVolLookupByPath(conn.as_ptr(), path_buf.as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { StorageVol::from_ptr(ptr) })
-    }
-
     pub fn get_name(&self) -> Result<String, Error> {
         let n = unsafe { sys::virStorageVolGetName(self.as_ptr()) };
         if n.is_null() {
