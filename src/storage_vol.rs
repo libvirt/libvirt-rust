@@ -159,6 +159,14 @@ impl StorageVol {
         Ok(unsafe { StorageVol::from_ptr(ptr) })
     }
 
+    pub fn lookup_storage_pool(&self) -> Result<StoragePool, Error> {
+        let ptr = unsafe { sys::virStoragePoolLookupByVolume(self.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { StoragePool::from_ptr(ptr) })
+    }
+
     pub fn get_name(&self) -> Result<String, Error> {
         let n = unsafe { sys::virStorageVolGetName(self.as_ptr()) };
         if n.is_null() {

@@ -117,14 +117,6 @@ impl StoragePool {
         Ok(unsafe { Connect::from_ptr(ptr) })
     }
 
-    pub fn lookup_by_volume(vol: &StorageVol) -> Result<StoragePool, Error> {
-        let ptr = unsafe { sys::virStoragePoolLookupByVolume(vol.as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { StoragePool::from_ptr(ptr) })
-    }
-
     pub fn get_name(&self) -> Result<String, Error> {
         let n = unsafe { sys::virStoragePoolGetName(self.as_ptr()) };
         if n.is_null() {
