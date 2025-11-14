@@ -1571,4 +1571,39 @@ impl Connect {
         }
         Ok(num as u32)
     }
+
+    pub fn lookup_nwfilter_by_name(&self, id: &str) -> Result<NWFilter, Error> {
+        let id_buf = CString::new(id)?;
+        let ptr = unsafe { sys::virNWFilterLookupByName(self.as_ptr(), id_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { NWFilter::from_ptr(ptr) })
+    }
+
+    pub fn lookup_nwfilter_by_uuid(&self, uuid: Uuid) -> Result<NWFilter, Error> {
+        let ptr = unsafe { sys::virNWFilterLookupByUUID(self.as_ptr(), uuid.as_bytes().as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { NWFilter::from_ptr(ptr) })
+    }
+
+    pub fn lookup_nwfilter_by_uuid_string(&self, uuid: &str) -> Result<NWFilter, Error> {
+        let uuid_buf = CString::new(uuid)?;
+        let ptr = unsafe { sys::virNWFilterLookupByUUIDString(self.as_ptr(), uuid_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { NWFilter::from_ptr(ptr) })
+    }
+
+    pub fn define_nwfilter_xml(&self, xml: &str) -> Result<NWFilter, Error> {
+        let xml_buf = CString::new(xml)?;
+        let ptr = unsafe { sys::virNWFilterDefineXML(self.as_ptr(), xml_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { NWFilter::from_ptr(ptr) })
+    }
 }

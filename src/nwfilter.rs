@@ -16,12 +16,8 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-use std::ffi::CString;
-use std::str;
-
 use uuid::Uuid;
 
-use crate::connect::Connect;
 use crate::error::Error;
 
 /// Provides APIs for the management for network filters.
@@ -83,32 +79,6 @@ impl NWFilter {
         self.ptr
     }
 
-    pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<NWFilter, Error> {
-        let id_buf = CString::new(id)?;
-        let ptr = unsafe { sys::virNWFilterLookupByName(conn.as_ptr(), id_buf.as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { NWFilter::from_ptr(ptr) })
-    }
-
-    pub fn lookup_by_uuid(conn: &Connect, uuid: Uuid) -> Result<NWFilter, Error> {
-        let ptr = unsafe { sys::virNWFilterLookupByUUID(conn.as_ptr(), uuid.as_bytes().as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { NWFilter::from_ptr(ptr) })
-    }
-
-    pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<NWFilter, Error> {
-        let uuid_buf = CString::new(uuid)?;
-        let ptr = unsafe { sys::virNWFilterLookupByUUIDString(conn.as_ptr(), uuid_buf.as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { NWFilter::from_ptr(ptr) })
-    }
-
     pub fn get_name(&self) -> Result<String, Error> {
         let n = unsafe { sys::virNWFilterGetName(self.as_ptr()) };
         if n.is_null() {
@@ -143,15 +113,6 @@ impl NWFilter {
             return Err(Error::last_error());
         }
         Ok(unsafe { c_chars_to_string!(xml) })
-    }
-
-    pub fn define_xml(conn: &Connect, xml: &str) -> Result<NWFilter, Error> {
-        let xml_buf = CString::new(xml)?;
-        let ptr = unsafe { sys::virNWFilterDefineXML(conn.as_ptr(), xml_buf.as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { NWFilter::from_ptr(ptr) })
     }
 
     pub fn undefine(&self) -> Result<(), Error> {
