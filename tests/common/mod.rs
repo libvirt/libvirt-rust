@@ -172,7 +172,7 @@ pub fn build_storage_vol(pool: &StoragePool, name: &str, size: u64) -> StorageVo
 pub fn build_network(conn: &Connect, name: &str, transient: bool) -> Network {
     let name = format!("libvirt-rs-test-{name}");
 
-    if let Ok(net) = Network::lookup_by_name(conn, &name) {
+    if let Ok(net) = conn.lookup_network_by_name(&name) {
         clean_net(net);
     }
 
@@ -186,9 +186,9 @@ pub fn build_network(conn: &Connect, name: &str, transient: bool) -> Network {
     );
 
     let result: Result<Network, Error> = if transient {
-        Network::create_xml(conn, &xml)
+        conn.create_network_xml(&xml)
     } else {
-        Network::define_xml(conn, &xml)
+        conn.define_network_xml(&xml)
     };
 
     result.unwrap()

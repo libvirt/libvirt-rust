@@ -1470,4 +1470,48 @@ impl Connect {
         }
         Ok(ret as u32)
     }
+
+    pub fn lookup_network_by_name(&self, id: &str) -> Result<Network, Error> {
+        let id_buf = CString::new(id)?;
+        let ptr = unsafe { sys::virNetworkLookupByName(self.as_ptr(), id_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { Network::from_ptr(ptr) })
+    }
+
+    pub fn lookup_network_by_uuid(&self, uuid: Uuid) -> Result<Network, Error> {
+        let ptr = unsafe { sys::virNetworkLookupByUUID(self.as_ptr(), uuid.as_bytes().as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { Network::from_ptr(ptr) })
+    }
+
+    pub fn lookup_network_by_uuid_string(&self, uuid: &str) -> Result<Network, Error> {
+        let uuid_buf = CString::new(uuid)?;
+        let ptr = unsafe { sys::virNetworkLookupByUUIDString(self.as_ptr(), uuid_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { Network::from_ptr(ptr) })
+    }
+
+    pub fn define_network_xml(&self, xml: &str) -> Result<Network, Error> {
+        let xml_buf = CString::new(xml)?;
+        let ptr = unsafe { sys::virNetworkDefineXML(self.as_ptr(), xml_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { Network::from_ptr(ptr) })
+    }
+
+    pub fn create_network_xml(&self, xml: &str) -> Result<Network, Error> {
+        let xml_buf = CString::new(xml)?;
+        let ptr = unsafe { sys::virNetworkCreateXML(self.as_ptr(), xml_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { Network::from_ptr(ptr) })
+    }
 }

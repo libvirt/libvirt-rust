@@ -91,32 +91,6 @@ impl Network {
         Ok(unsafe { Connect::from_ptr(ptr) })
     }
 
-    pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<Network, Error> {
-        let id_buf = CString::new(id)?;
-        let ptr = unsafe { sys::virNetworkLookupByName(conn.as_ptr(), id_buf.as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { Network::from_ptr(ptr) })
-    }
-
-    pub fn lookup_by_uuid(conn: &Connect, uuid: Uuid) -> Result<Network, Error> {
-        let ptr = unsafe { sys::virNetworkLookupByUUID(conn.as_ptr(), uuid.as_bytes().as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { Network::from_ptr(ptr) })
-    }
-
-    pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Network, Error> {
-        let uuid_buf = CString::new(uuid)?;
-        let ptr = unsafe { sys::virNetworkLookupByUUIDString(conn.as_ptr(), uuid_buf.as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { Network::from_ptr(ptr) })
-    }
-
     pub fn get_name(&self) -> Result<String, Error> {
         let n = unsafe { sys::virNetworkGetName(self.as_ptr()) };
         if n.is_null() {
@@ -167,24 +141,6 @@ impl Network {
             return Err(Error::last_error());
         }
         Ok(ret as u32)
-    }
-
-    pub fn define_xml(conn: &Connect, xml: &str) -> Result<Network, Error> {
-        let xml_buf = CString::new(xml)?;
-        let ptr = unsafe { sys::virNetworkDefineXML(conn.as_ptr(), xml_buf.as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { Network::from_ptr(ptr) })
-    }
-
-    pub fn create_xml(conn: &Connect, xml: &str) -> Result<Network, Error> {
-        let xml_buf = CString::new(xml)?;
-        let ptr = unsafe { sys::virNetworkCreateXML(conn.as_ptr(), xml_buf.as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { Network::from_ptr(ptr) })
     }
 
     pub fn destroy(&self) -> Result<(), Error> {
