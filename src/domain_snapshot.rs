@@ -16,8 +16,7 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-use std::ffi::CString;
-use std::{ptr, str};
+use std::ptr;
 
 use crate::connect::Connect;
 use crate::domain::Domain;
@@ -106,22 +105,6 @@ impl DomainSnapshot {
         Ok(unsafe { c_chars_to_string!(n, nofree) })
     }
 
-    /// Get a handle to a named snapshot.
-    pub fn lookup_by_name(dom: &Domain, name: &str, flags: u32) -> Result<DomainSnapshot, Error> {
-        let name_buf = CString::new(name)?;
-        let ptr = unsafe {
-            sys::virDomainSnapshotLookupByName(
-                dom.as_ptr(),
-                name_buf.as_ptr(),
-                flags as libc::c_uint,
-            )
-        };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { DomainSnapshot::from_ptr(ptr) })
-    }
-
     /// Dump the XML of a snapshot.
     pub fn get_xml_desc(&self, flags: u32) -> Result<String, Error> {
         let xml = unsafe { sys::virDomainSnapshotGetXMLDesc(self.as_ptr(), flags as libc::c_uint) };
@@ -129,26 +112,6 @@ impl DomainSnapshot {
             return Err(Error::last_error());
         }
         Ok(unsafe { c_chars_to_string!(xml) })
-    }
-
-    pub fn create_xml(dom: &Domain, xml: &str, flags: u32) -> Result<DomainSnapshot, Error> {
-        let xml_buf = CString::new(xml)?;
-        let ptr = unsafe {
-            sys::virDomainSnapshotCreateXML(dom.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
-        };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { DomainSnapshot::from_ptr(ptr) })
-    }
-
-    /// Get a handle to the current snapshot
-    pub fn current(dom: &Domain, flags: u32) -> Result<DomainSnapshot, Error> {
-        let ptr = unsafe { sys::virDomainSnapshotCurrent(dom.as_ptr(), flags as libc::c_uint) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { DomainSnapshot::from_ptr(ptr) })
     }
 
     /// Get a handle to the parent snapshot, if one exists.
@@ -176,15 +139,6 @@ impl DomainSnapshot {
             return Err(Error::last_error());
         }
         Ok(())
-    }
-
-    /// Return the number of snapshots for this domain.
-    pub fn num(dom: &Domain, flags: u32) -> Result<u32, Error> {
-        let ret = unsafe { sys::virDomainSnapshotNum(dom.as_ptr(), flags as libc::c_uint) };
-        if ret == -1 {
-            return Err(Error::last_error());
-        }
-        Ok(ret as u32)
     }
 
     /// Return the number of child snapshots for this snapshot.

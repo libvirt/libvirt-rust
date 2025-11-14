@@ -2398,4 +2398,53 @@ impl Domain {
         }
         Ok(unsafe { c_chars_to_string!(ret) })
     }
+
+    /// Get a handle to a named snapshot.
+    pub fn lookup_snapshot_by_name(
+        dom: &Domain,
+        name: &str,
+        flags: u32,
+    ) -> Result<DomainSnapshot, Error> {
+        let name_buf = CString::new(name)?;
+        let ptr = unsafe {
+            sys::virDomainSnapshotLookupByName(
+                dom.as_ptr(),
+                name_buf.as_ptr(),
+                flags as libc::c_uint,
+            )
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { DomainSnapshot::from_ptr(ptr) })
+    }
+
+    pub fn create_snapshot_xml(&self, xml: &str, flags: u32) -> Result<DomainSnapshot, Error> {
+        let xml_buf = CString::new(xml)?;
+        let ptr = unsafe {
+            sys::virDomainSnapshotCreateXML(self.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { DomainSnapshot::from_ptr(ptr) })
+    }
+
+    /// Get a handle to the current snapshot
+    pub fn current_snapshot(&self, flags: u32) -> Result<DomainSnapshot, Error> {
+        let ptr = unsafe { sys::virDomainSnapshotCurrent(self.as_ptr(), flags as libc::c_uint) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { DomainSnapshot::from_ptr(ptr) })
+    }
+
+    /// Return the number of snapshots for this domain.
+    pub fn num_snapshots(&self, flags: u32) -> Result<u32, Error> {
+        let ret = unsafe { sys::virDomainSnapshotNum(self.as_ptr(), flags as libc::c_uint) };
+        if ret == -1 {
+            return Err(Error::last_error());
+        }
+        Ok(ret as u32)
+    }
 }
