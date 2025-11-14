@@ -1514,4 +1514,61 @@ impl Connect {
         }
         Ok(unsafe { Network::from_ptr(ptr) })
     }
+
+    pub fn lookup_node_device_by_name(&self, id: &str) -> Result<NodeDevice, Error> {
+        let id_buf = CString::new(id)?;
+        let ptr = unsafe { sys::virNodeDeviceLookupByName(self.as_ptr(), id_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { NodeDevice::from_ptr(ptr) })
+    }
+
+    pub fn lookup_node_device_scsi_host_by_www(
+        &self,
+        wwnn: &str,
+        wwpn: &str,
+        flags: u32,
+    ) -> Result<NodeDevice, Error> {
+        let wwnn_buf = CString::new(wwnn)?;
+        let wwpn_buf = CString::new(wwpn)?;
+        let ptr = unsafe {
+            sys::virNodeDeviceLookupSCSIHostByWWN(
+                self.as_ptr(),
+                wwnn_buf.as_ptr(),
+                wwpn_buf.as_ptr(),
+                flags as libc::c_uint,
+            )
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { NodeDevice::from_ptr(ptr) })
+    }
+
+    pub fn create_node_device_xml(&self, xml: &str, flags: u32) -> Result<NodeDevice, Error> {
+        let xml_buf = CString::new(xml)?;
+        let ptr = unsafe {
+            sys::virNodeDeviceCreateXML(self.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { NodeDevice::from_ptr(ptr) })
+    }
+
+    pub fn num_of_node_devices(&self, cap: Option<&str>, flags: u32) -> Result<u32, Error> {
+        let cap_buf = some_string_to_cstring!(cap);
+        let num = unsafe {
+            sys::virNodeNumOfDevices(
+                self.as_ptr(),
+                some_cstring_to_c_chars!(cap_buf),
+                flags as libc::c_uint,
+            )
+        };
+        if num == -1 {
+            return Err(Error::last_error());
+        }
+        Ok(num as u32)
+    }
 }
