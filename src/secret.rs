@@ -16,8 +16,6 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-use std::ffi::CString;
-
 use uuid::Uuid;
 
 use crate::connect::Connect;
@@ -88,49 +86,6 @@ impl Secret {
             return Err(Error::last_error());
         }
         Ok(unsafe { Connect::from_ptr(ptr) })
-    }
-
-    pub fn define_xml(conn: &Connect, xml: &str, flags: u32) -> Result<Secret, Error> {
-        let xml_buf = CString::new(xml)?;
-        let ptr = unsafe {
-            sys::virSecretDefineXML(conn.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
-        };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { Secret::from_ptr(ptr) })
-    }
-
-    pub fn lookup_by_uuid(conn: &Connect, uuid: Uuid) -> Result<Secret, Error> {
-        let ptr = unsafe { sys::virSecretLookupByUUID(conn.as_ptr(), uuid.as_bytes().as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { Secret::from_ptr(ptr) })
-    }
-
-    pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Secret, Error> {
-        let uuid_buf = CString::new(uuid)?;
-        let ptr = unsafe { sys::virSecretLookupByUUIDString(conn.as_ptr(), uuid_buf.as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { Secret::from_ptr(ptr) })
-    }
-
-    pub fn lookup_by_usage(conn: &Connect, usagetype: i32, usageid: &str) -> Result<Secret, Error> {
-        let usageid_buf = CString::new(usageid)?;
-        let ptr = unsafe {
-            sys::virSecretLookupByUsage(
-                conn.as_ptr(),
-                usagetype as libc::c_int,
-                usageid_buf.as_ptr(),
-            )
-        };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { Secret::from_ptr(ptr) })
     }
 
     pub fn get_usage_id(&self) -> Result<String, Error> {

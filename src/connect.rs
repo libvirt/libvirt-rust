@@ -1606,4 +1606,47 @@ impl Connect {
         }
         Ok(unsafe { NWFilter::from_ptr(ptr) })
     }
+
+    pub fn define_secret_xml(&self, xml: &str, flags: u32) -> Result<Secret, Error> {
+        let xml_buf = CString::new(xml)?;
+        let ptr = unsafe {
+            sys::virSecretDefineXML(self.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { Secret::from_ptr(ptr) })
+    }
+
+    pub fn lookup_secret_by_uuid(&self, uuid: Uuid) -> Result<Secret, Error> {
+        let ptr = unsafe { sys::virSecretLookupByUUID(self.as_ptr(), uuid.as_bytes().as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { Secret::from_ptr(ptr) })
+    }
+
+    pub fn lookup_secret_by_uuid_string(&self, uuid: &str) -> Result<Secret, Error> {
+        let uuid_buf = CString::new(uuid)?;
+        let ptr = unsafe { sys::virSecretLookupByUUIDString(self.as_ptr(), uuid_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { Secret::from_ptr(ptr) })
+    }
+
+    pub fn lookup_secret_by_usage(&self, usagetype: i32, usageid: &str) -> Result<Secret, Error> {
+        let usageid_buf = CString::new(usageid)?;
+        let ptr = unsafe {
+            sys::virSecretLookupByUsage(
+                self.as_ptr(),
+                usagetype as libc::c_int,
+                usageid_buf.as_ptr(),
+            )
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { Secret::from_ptr(ptr) })
+    }
 }
