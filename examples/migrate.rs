@@ -21,7 +21,6 @@
 use std::env;
 
 use virt::connect::Connect;
-use virt::domain::Domain;
 use virt::domain::MigrateParameters;
 use virt::error::clear_error_callback;
 use virt::sys;
@@ -52,7 +51,7 @@ fn main() {
         Err(e) => panic!("No connection to destination hypervisor: {e}"),
     };
 
-    if let Ok(dom) = Domain::lookup_by_name(&conn, &dname) {
+    if let Ok(dom) = conn.lookup_domain_by_name(&dname) {
         let flags = sys::VIR_MIGRATE_LIVE;
         let migrate_parameters = MigrateParameters {
             dest_name: Some(dname.clone()),

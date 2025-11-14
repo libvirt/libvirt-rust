@@ -26,7 +26,7 @@ use virt::sys;
 
 fn tdom(exec_test: fn(dom: Domain)) {
     let c = common::conn();
-    match Domain::lookup_by_name(&c, "test") {
+    match c.lookup_domain_by_name("test") {
         Ok(dom) => {
             exec_test(dom);
             common::close(c);
@@ -58,7 +58,7 @@ fn test_uuid_string() {
 fn test_uuid() {
     let uuid = Uuid::parse_str("6695eb01-f6a4-8304-79aa-97f2502e193f").unwrap_or_default();
     let c = common::conn();
-    match Domain::lookup_by_uuid(&c, uuid) {
+    match c.lookup_domain_by_uuid(uuid) {
         Ok(dom) => {
             assert_eq!(uuid, dom.get_uuid().unwrap_or_default());
         }
@@ -193,7 +193,7 @@ fn test_lookup_domain_by_id() {
     let c = common::conn();
     let d = common::build_test_domain(&c, "by_id", true);
     let id = d.get_id().unwrap_or(0);
-    match Domain::lookup_by_id(&c, id) {
+    match c.lookup_domain_by_id(id) {
         Ok(_) => {}
         Err(e) => panic!("{e}"),
     }
@@ -204,7 +204,7 @@ fn test_lookup_domain_by_id() {
 #[test]
 fn test_lookup_domain_by_name() {
     let c = common::conn();
-    match Domain::lookup_by_name(&c, "test") {
+    match c.lookup_domain_by_name("test") {
         Ok(_) => {}
         Err(e) => panic!("{e}"),
     }
@@ -390,7 +390,7 @@ fn test_metadata() {
 #[test]
 fn test_get_cpu_stats() {
     let c = common::conn();
-    let d = Domain::lookup_by_name(&c, "test").unwrap();
+    let d = c.lookup_domain_by_name("test").unwrap();
     let stats = d.get_cpu_stats(-1, 1, 0).unwrap();
     assert!(!stats.is_empty(), "Test driver should return a stat.");
 }

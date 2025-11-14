@@ -831,40 +831,6 @@ impl Domain {
         Ok(unsafe { Connect::from_ptr(ptr) })
     }
 
-    pub fn lookup_by_id(conn: &Connect, id: u32) -> Result<Domain, Error> {
-        let ptr = unsafe { sys::virDomainLookupByID(conn.as_ptr(), id as libc::c_int) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { Domain::from_ptr(ptr) })
-    }
-
-    pub fn lookup_by_name(conn: &Connect, id: &str) -> Result<Domain, Error> {
-        let id_buf = CString::new(id)?;
-        let ptr = unsafe { sys::virDomainLookupByName(conn.as_ptr(), id_buf.as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { Domain::from_ptr(ptr) })
-    }
-
-    pub fn lookup_by_uuid(conn: &Connect, uuid: Uuid) -> Result<Domain, Error> {
-        let ptr = unsafe { sys::virDomainLookupByUUID(conn.as_ptr(), uuid.as_bytes().as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { Domain::from_ptr(ptr) })
-    }
-
-    pub fn lookup_by_uuid_string(conn: &Connect, uuid: &str) -> Result<Domain, Error> {
-        let uuid_buf = CString::new(uuid)?;
-        let ptr = unsafe { sys::virDomainLookupByUUIDString(conn.as_ptr(), uuid_buf.as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { Domain::from_ptr(ptr) })
-    }
-
     /// Extracts domain state.
     ///
     /// Each state can be accompanied with a reason (if known) which
@@ -939,9 +905,9 @@ impl Domain {
     }
 
     /// Provide an XML description of the domain. The description may
-    /// be reused later to relaunch the domain with [`create_xml()`].
+    /// be reused later to relaunch the domain with [`create_domain_xml()`].
     ///
-    /// [`create_xml()`]: Domain::create_xml
+    /// [`create_domain_xml()`]: Connect::create_domain_xml
     pub fn get_xml_desc(&self, flags: sys::virDomainXMLFlags) -> Result<String, Error> {
         let xml = unsafe { sys::virDomainGetXMLDesc(self.as_ptr(), flags) };
         if xml.is_null() {
@@ -984,82 +950,6 @@ impl Domain {
             return Err(Error::last_error());
         }
         Ok(unsafe { DomainInfo::from_ptr(&mut pinfo.assume_init()) })
-    }
-
-    /// Launch a new guest domain, based on an XML description similar
-    /// to the one returned by [`get_xml_desc()`].
-    ///
-    /// This function may require privileged access to the hypervisor.
-    ///
-    /// The domain is not persistent, so its definition will disappear
-    /// when it is destroyed, or if the host is restarted (see
-    /// [`define_xml()`] to define persistent domains).
-    ///
-    /// [`get_xml_desc()`]: Domain::get_xml_desc
-    /// [`define_xml()`]: Domain::define_xml
-    pub fn create_xml(
-        conn: &Connect,
-        xml: &str,
-        flags: sys::virDomainCreateFlags,
-    ) -> Result<Domain, Error> {
-        let xml_buf = CString::new(xml)?;
-        let ptr = unsafe {
-            sys::virDomainCreateXML(conn.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
-        };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { Domain::from_ptr(ptr) })
-    }
-
-    /// Define a domain, but does not start it.
-    ///
-    /// This definition is persistent, until explicitly undefined with
-    /// [`undefine()`]. A previous definition for this domain would be
-    /// overridden if it already exists.
-    ///
-    /// # Note:
-    ///
-    /// Some hypervisors may prevent this operation if there is a
-    /// current block copy operation on a transient domain with the
-    /// same id as the domain being defined.
-    ///
-    /// [`undefine()`]: Domain::undefine
-    pub fn define_xml(conn: &Connect, xml: &str) -> Result<Domain, Error> {
-        let xml_buf = CString::new(xml)?;
-        let ptr = unsafe { sys::virDomainDefineXML(conn.as_ptr(), xml_buf.as_ptr()) };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { Domain::from_ptr(ptr) })
-    }
-
-    /// Define a domain, but does not start it.
-    ///
-    /// This definition is persistent, until explicitly undefined with
-    /// [`undefine()`]. A previous definition for this domain would be
-    /// overridden if it already exists.
-    ///
-    /// # Note:
-    ///
-    /// Some hypervisors may prevent this operation if there is a
-    /// current block copy operation on a transient domain with the
-    /// same id as the domain being defined.
-    ///
-    /// [`undefine()`]: Domain::undefine
-    pub fn define_xml_flags(
-        conn: &Connect,
-        xml: &str,
-        flags: sys::virDomainDefineFlags,
-    ) -> Result<Domain, Error> {
-        let xml_buf = CString::new(xml)?;
-        let ptr = unsafe {
-            sys::virDomainDefineXMLFlags(conn.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
-        };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { Domain::from_ptr(ptr) })
     }
 
     /// Destroy the domain. The running instance is shutdown if not
@@ -1367,37 +1257,6 @@ impl Domain {
             return Err(Error::last_error());
         }
         Ok(ret == 1)
-    }
-
-    pub fn domain_restore(conn: &Connect, path: &str) -> Result<(), Error> {
-        let path_buf = CString::new(path)?;
-        let ret = unsafe { sys::virDomainRestore(conn.as_ptr(), path_buf.as_ptr()) };
-        if ret == -1 {
-            return Err(Error::last_error());
-        }
-        Ok(())
-    }
-
-    pub fn domain_restore_flags(
-        conn: &Connect,
-        path: &str,
-        dxml: Option<&str>,
-        flags: sys::virDomainSaveRestoreFlags,
-    ) -> Result<(), Error> {
-        let path_buf = CString::new(path)?;
-        let dxml_buf = some_string_to_cstring!(dxml);
-        let ret = unsafe {
-            sys::virDomainRestoreFlags(
-                conn.as_ptr(),
-                path_buf.as_ptr(),
-                some_cstring_to_c_chars!(dxml_buf),
-                flags,
-            )
-        };
-        if ret == -1 {
-            return Err(Error::last_error());
-        }
-        Ok(())
     }
 
     pub fn get_vcpus_flags(&self, flags: sys::virDomainVcpuFlags) -> Result<u32, Error> {
@@ -1897,47 +1756,6 @@ impl Domain {
                 ..Default::default()
             })
         }
-    }
-
-    pub fn save_image_get_xml_desc(
-        conn: &Connect,
-        file: &str,
-        flags: u32,
-    ) -> Result<String, Error> {
-        let file_buf = CString::new(file)?;
-        let ptr = unsafe {
-            sys::virDomainSaveImageGetXMLDesc(
-                conn.as_ptr(),
-                file_buf.as_ptr(),
-                flags as libc::c_uint,
-            )
-        };
-        if ptr.is_null() {
-            return Err(Error::last_error());
-        }
-        Ok(unsafe { c_chars_to_string!(ptr) })
-    }
-
-    pub fn save_image_define_xml(
-        conn: &Connect,
-        file: &str,
-        dxml: &str,
-        flags: u32,
-    ) -> Result<u32, Error> {
-        let file_buf = CString::new(file)?;
-        let dxml_buf = CString::new(dxml)?;
-        let ret = unsafe {
-            sys::virDomainSaveImageDefineXML(
-                conn.as_ptr(),
-                file_buf.as_ptr(),
-                dxml_buf.as_ptr(),
-                flags as libc::c_uint,
-            )
-        };
-        if ret == -1 {
-            return Err(Error::last_error());
-        }
-        Ok(ret as u32)
     }
 
     pub fn attach_device(&self, xml: &str) -> Result<u32, Error> {

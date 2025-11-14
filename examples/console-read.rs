@@ -31,7 +31,6 @@
 use std::env;
 use virt::{
     connect::Connect,
-    domain::Domain,
     error::clear_error_callback,
     stream::Stream,
     sys::{
@@ -75,7 +74,7 @@ fn main() {
     let dev_name = env::args().nth(3);
 
     let conn = Connect::open(uri.as_deref()).unwrap();
-    let dom = Domain::lookup_by_name(&conn, &name).unwrap();
+    let dom = conn.lookup_domain_by_name(&name).unwrap();
     let mut st = Stream::new(&conn, VIR_STREAM_NONBLOCK).unwrap();
     dom.open_console(dev_name.as_deref(), &st, VIR_DOMAIN_CONSOLE_FORCE)
         .unwrap();

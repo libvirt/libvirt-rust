@@ -72,7 +72,7 @@ pub fn clean_vol(vol: StorageVol) {
 pub fn build_qemu_domain(conn: &Connect, name: &str, transient: bool) -> Domain {
     let name = format!("libvirt-rs-test-{name}");
 
-    if let Ok(dom) = Domain::lookup_by_name(conn, &name) {
+    if let Ok(dom) = conn.lookup_domain_by_name(&name) {
         clean_dom(dom);
     }
 
@@ -91,9 +91,9 @@ pub fn build_qemu_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
     );
 
     let result: Result<Domain, Error> = if transient {
-        Domain::create_xml(conn, &xml, 0)
+        conn.create_domain_xml(&xml, 0)
     } else {
-        Domain::define_xml(conn, &xml)
+        conn.define_domain_xml(&xml)
     };
 
     result.unwrap()
@@ -102,7 +102,7 @@ pub fn build_qemu_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
 pub fn build_test_domain(conn: &Connect, name: &str, transient: bool) -> Domain {
     let name = format!("libvirt-rs-test-{name}");
 
-    if let Ok(dom) = Domain::lookup_by_name(conn, &name) {
+    if let Ok(dom) = conn.lookup_domain_by_name(&name) {
         clean_dom(dom);
     }
 
@@ -121,9 +121,9 @@ pub fn build_test_domain(conn: &Connect, name: &str, transient: bool) -> Domain 
     );
 
     let result: Result<Domain, Error> = if transient {
-        Domain::create_xml(conn, &xml, 0)
+        conn.create_domain_xml(&xml, 0)
     } else {
-        Domain::define_xml(conn, &xml)
+        conn.define_domain_xml(&xml)
     };
 
     result.unwrap()

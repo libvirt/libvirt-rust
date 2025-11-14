@@ -20,6 +20,8 @@ use std::convert::TryInto;
 use std::ffi::CString;
 use std::{mem, ptr, str};
 
+use uuid::Uuid;
+
 use crate::domain::{Domain, DomainStatsRecord};
 use crate::error::Error;
 use crate::interface::Interface;
@@ -1294,5 +1296,178 @@ impl Connect {
             return Err(Error::last_error());
         }
         Ok(unsafe { Interface::from_ptr(ptr) })
+    }
+
+    pub fn lookup_domain_by_id(&self, id: u32) -> Result<Domain, Error> {
+        let ptr = unsafe { sys::virDomainLookupByID(self.as_ptr(), id as libc::c_int) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { Domain::from_ptr(ptr) })
+    }
+
+    pub fn lookup_domain_by_name(&self, id: &str) -> Result<Domain, Error> {
+        let id_buf = CString::new(id)?;
+        let ptr = unsafe { sys::virDomainLookupByName(self.as_ptr(), id_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { Domain::from_ptr(ptr) })
+    }
+
+    pub fn lookup_domain_by_uuid(&self, uuid: Uuid) -> Result<Domain, Error> {
+        let ptr = unsafe { sys::virDomainLookupByUUID(self.as_ptr(), uuid.as_bytes().as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { Domain::from_ptr(ptr) })
+    }
+
+    pub fn lookup_domain_by_uuid_string(&self, uuid: &str) -> Result<Domain, Error> {
+        let uuid_buf = CString::new(uuid)?;
+        let ptr = unsafe { sys::virDomainLookupByUUIDString(self.as_ptr(), uuid_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { Domain::from_ptr(ptr) })
+    }
+
+    /// Launch a new guest domain, based on an XML description similar
+    /// to the one returned by [`get_xml_desc()`].
+    ///
+    /// This function may require privileged access to the hypervisor.
+    ///
+    /// The domain is not persistent, so its definition will disappear
+    /// when it is destroyed, or if the host is restarted (see
+    /// [`define_domain_xml()`] to define persistent domains).
+    ///
+    /// [`get_xml_desc()`]: Domain::get_xml_desc
+    /// [`define_domain_xml()`]: Connect::define_domain_xml
+    pub fn create_domain_xml(
+        &self,
+        xml: &str,
+        flags: sys::virDomainCreateFlags,
+    ) -> Result<Domain, Error> {
+        let xml_buf = CString::new(xml)?;
+        let ptr = unsafe {
+            sys::virDomainCreateXML(self.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { Domain::from_ptr(ptr) })
+    }
+
+    /// Define a domain, but does not start it.
+    ///
+    /// This definition is persistent, until explicitly undefined with
+    /// [`undefine()`]. A previous definition for this domain would be
+    /// overridden if it already exists.
+    ///
+    /// # Note:
+    ///
+    /// Some hypervisors may prevent this operation if there is a
+    /// current block copy operation on a transient domain with the
+    /// same id as the domain being defined.
+    ///
+    /// [`undefine()`]: Domain::undefine
+    pub fn define_domain_xml(&self, xml: &str) -> Result<Domain, Error> {
+        let xml_buf = CString::new(xml)?;
+        let ptr = unsafe { sys::virDomainDefineXML(self.as_ptr(), xml_buf.as_ptr()) };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { Domain::from_ptr(ptr) })
+    }
+
+    /// Define a domain, but does not start it.
+    ///
+    /// This definition is persistent, until explicitly undefined with
+    /// [`undefine()`]. A previous definition for this domain would be
+    /// overridden if it already exists.
+    ///
+    /// # Note:
+    ///
+    /// Some hypervisors may prevent this operation if there is a
+    /// current block copy operation on a transient domain with the
+    /// same id as the domain being defined.
+    ///
+    /// [`undefine()`]: Domain::undefine
+    pub fn define_domain_xml_flags(
+        &self,
+        xml: &str,
+        flags: sys::virDomainDefineFlags,
+    ) -> Result<Domain, Error> {
+        let xml_buf = CString::new(xml)?;
+        let ptr = unsafe {
+            sys::virDomainDefineXMLFlags(self.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { Domain::from_ptr(ptr) })
+    }
+
+    pub fn restore_domain(&self, path: &str) -> Result<(), Error> {
+        let path_buf = CString::new(path)?;
+        let ret = unsafe { sys::virDomainRestore(self.as_ptr(), path_buf.as_ptr()) };
+        if ret == -1 {
+            return Err(Error::last_error());
+        }
+        Ok(())
+    }
+
+    pub fn restore_domain_flags(
+        &self,
+        path: &str,
+        dxml: Option<&str>,
+        flags: sys::virDomainSaveRestoreFlags,
+    ) -> Result<(), Error> {
+        let path_buf = CString::new(path)?;
+        let dxml_buf = some_string_to_cstring!(dxml);
+        let ret = unsafe {
+            sys::virDomainRestoreFlags(
+                self.as_ptr(),
+                path_buf.as_ptr(),
+                some_cstring_to_c_chars!(dxml_buf),
+                flags,
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
+        }
+        Ok(())
+    }
+
+    pub fn save_image_get_xml_desc(&self, file: &str, flags: u32) -> Result<String, Error> {
+        let file_buf = CString::new(file)?;
+        let ptr = unsafe {
+            sys::virDomainSaveImageGetXMLDesc(
+                self.as_ptr(),
+                file_buf.as_ptr(),
+                flags as libc::c_uint,
+            )
+        };
+        if ptr.is_null() {
+            return Err(Error::last_error());
+        }
+        Ok(unsafe { c_chars_to_string!(ptr) })
+    }
+
+    pub fn save_image_define_xml(&self, file: &str, dxml: &str, flags: u32) -> Result<u32, Error> {
+        let file_buf = CString::new(file)?;
+        let dxml_buf = CString::new(dxml)?;
+        let ret = unsafe {
+            sys::virDomainSaveImageDefineXML(
+                self.as_ptr(),
+                file_buf.as_ptr(),
+                dxml_buf.as_ptr(),
+                flags as libc::c_uint,
+            )
+        };
+        if ret == -1 {
+            return Err(Error::last_error());
+        }
+        Ok(ret as u32)
     }
 }

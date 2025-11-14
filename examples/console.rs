@@ -37,7 +37,6 @@ use std::{
 use termios::{Termios, ECHO, ICANON, ISIG, TCSANOW};
 use virt::{
     connect::Connect,
-    domain::Domain,
     event::{event_add_handle, event_register_default_impl, event_run_default_impl},
     stream::Stream,
     sys::{
@@ -132,7 +131,7 @@ fn main() {
 
     let _ = event_register_default_impl();
     let conn = Connect::open(uri.as_deref()).unwrap();
-    let dom = Domain::lookup_by_name(&conn, &name).unwrap();
+    let dom = conn.lookup_domain_by_name(&name).unwrap();
     let st = Stream::new(&conn, VIR_STREAM_NONBLOCK).unwrap();
     dom.open_console(dev_name.as_deref(), &st, VIR_DOMAIN_CONSOLE_FORCE)
         .unwrap();

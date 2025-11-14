@@ -1,6 +1,5 @@
 use std::env;
 use virt::connect::Connect;
-use virt::domain::Domain;
 use virt::sys;
 
 fn main() {
@@ -9,7 +8,7 @@ fn main() {
 
     let conn = Connect::open(uri.as_deref()).unwrap();
 
-    let domain = Domain::lookup_by_name(&conn, &name).unwrap();
+    let domain = conn.lookup_domain_by_name(&name).unwrap();
     let result = domain.qemu_agent_command(
         "{\"execute\": \"guest-info\"}",
         sys::VIR_DOMAIN_QEMU_AGENT_COMMAND_BLOCK,

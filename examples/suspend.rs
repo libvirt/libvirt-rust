@@ -23,12 +23,11 @@
 use std::{env, thread, time};
 
 use virt::connect::Connect;
-use virt::domain::Domain;
 use virt::error::{clear_error_callback, Error};
 use virt::sys;
 
 fn suspend_and_resume(conn: &Connect, name: &str, sec: u64) -> Result<(), Error> {
-    if let Ok(dom) = Domain::lookup_by_name(conn, name) {
+    if let Ok(dom) = conn.lookup_domain_by_name(name) {
         if dom.suspend().is_ok() {
             println!("Domain '{:?}' suspended, info: {:?}", name, dom.get_info());
             thread::sleep(time::Duration::from_millis(sec * 1000));
