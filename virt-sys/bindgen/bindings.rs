@@ -51,6 +51,10 @@ pub const VIR_NODE_MEMORY_STATS_CACHED: &::std::ffi::CStr = unsafe {
     ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cached\0")
 };
 #[allow(unsafe_code)]
+pub const VIR_NODE_MEMORY_STATS_AVAILABLE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"available\0")
+};
+#[allow(unsafe_code)]
 pub const VIR_NODE_MEMORY_SHARED_PAGES_TO_SCAN: &::std::ffi::CStr = unsafe {
     ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"shm_pages_to_scan\0")
 };
@@ -284,6 +288,10 @@ pub const VIR_MIGRATE_PARAM_MIGRATE_DISKS: &::std::ffi::CStr = unsafe {
 #[allow(unsafe_code)]
 pub const VIR_MIGRATE_PARAM_MIGRATE_DISKS_DETECT_ZEROES: &::std::ffi::CStr = unsafe {
     ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"migrate_disks_detect_zeroes\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_MIGRATE_PARAM_MIGRATE_DISKS_TARGET_ZERO: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"migrate_disks_target_zero\0")
 };
 #[allow(unsafe_code)]
 pub const VIR_MIGRATE_PARAM_DISKS_PORT: &::std::ffi::CStr = unsafe {
@@ -1069,6 +1077,34 @@ pub const VIR_DOMAIN_STATS_MEMORY_BANDWIDTH_MONITOR_SUFFIX_NODE_SUFFIX_BYTES_LOC
 #[allow(unsafe_code)]
 pub const VIR_DOMAIN_STATS_MEMORY_BANDWIDTH_MONITOR_SUFFIX_NODE_SUFFIX_BYTES_TOTAL: &::std::ffi::CStr = unsafe {
     ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".bytes.total\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_CPU_ENERGY_MONITOR_COUNT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cpu.energy.monitor.count\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_CPU_ENERGY_MONITOR_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"cpu.energy.monitor.\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_CPU_ENERGY_MONITOR_SUFFIX_NAME: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".name\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_CPU_ENERGY_MONITOR_SUFFIX_VCPUS: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".vcpus\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_CPU_ENERGY_MONITOR_SUFFIX_PKG_COUNT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".pkg.count\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_CPU_ENERGY_MONITOR_SUFFIX_PKG_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".pkg.\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_CPU_ENERGY_MONITOR_SUFFIX_PKG_SUFFIX_ID: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".id\0")
 };
 #[allow(unsafe_code)]
 pub const VIR_DOMAIN_STATS_DIRTYRATE_CALC_STATUS: &::std::ffi::CStr = unsafe {
@@ -3023,6 +3059,11 @@ pub const VIR_DOMAIN_AFFECT_CURRENT: virDomainModificationImpact = 0;
 pub const VIR_DOMAIN_AFFECT_LIVE: virDomainModificationImpact = 1;
 pub const VIR_DOMAIN_AFFECT_CONFIG: virDomainModificationImpact = 2;
 pub type virDomainModificationImpact = ::std::os::raw::c_uint;
+pub const VIR_DOMAIN_SETVCPU_AFFECT_CURRENT: virDomainSetVcpuFlags = 0;
+pub const VIR_DOMAIN_SETVCPU_AFFECT_LIVE: virDomainSetVcpuFlags = 1;
+pub const VIR_DOMAIN_SETVCPU_AFFECT_CONFIG: virDomainSetVcpuFlags = 2;
+pub const VIR_DOMAIN_SETVCPU_ASYNC_UNPLUG: virDomainSetVcpuFlags = 4;
+pub type virDomainSetVcpuFlags = ::std::os::raw::c_uint;
 pub type virDomainInfo = _virDomainInfo;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -3519,6 +3560,7 @@ extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 pub const VIR_CONNECT_GET_DOMAIN_CAPABILITIES_DISABLE_DEPRECATED_FEATURES: virConnectGetDomainCapabilitiesFlags = 1;
+pub const VIR_CONNECT_GET_DOMAIN_CAPABILITIES_EXPAND_CPU_FEATURES: virConnectGetDomainCapabilitiesFlags = 2;
 pub type virConnectGetDomainCapabilitiesFlags = ::std::os::raw::c_uint;
 extern "C" {
     pub fn virConnectGetDomainCapabilities(
@@ -4050,6 +4092,7 @@ extern "C" {
 }
 pub const VIR_DOMAIN_BLOCK_RESIZE_BYTES: virDomainBlockResizeFlags = 1;
 pub const VIR_DOMAIN_BLOCK_RESIZE_CAPACITY: virDomainBlockResizeFlags = 2;
+pub const VIR_DOMAIN_BLOCK_RESIZE_EXTEND: virDomainBlockResizeFlags = 4;
 pub type virDomainBlockResizeFlags = ::std::os::raw::c_uint;
 extern "C" {
     pub fn virDomainBlockResize(
@@ -4306,6 +4349,7 @@ pub const VIR_DOMAIN_VCPU_CONFIG: virDomainVcpuFlags = 2;
 pub const VIR_DOMAIN_VCPU_MAXIMUM: virDomainVcpuFlags = 4;
 pub const VIR_DOMAIN_VCPU_GUEST: virDomainVcpuFlags = 8;
 pub const VIR_DOMAIN_VCPU_HOTPLUGGABLE: virDomainVcpuFlags = 16;
+pub const VIR_DOMAIN_VCPU_ASYNC_UNPLUG: virDomainVcpuFlags = 32;
 pub type virDomainVcpuFlags = ::std::os::raw::c_uint;
 extern "C" {
     pub fn virDomainSetVcpus(
@@ -4765,6 +4809,7 @@ pub const VIR_DOMAIN_BLOCK_COPY_SHALLOW: virDomainBlockCopyFlags = 1;
 pub const VIR_DOMAIN_BLOCK_COPY_REUSE_EXT: virDomainBlockCopyFlags = 2;
 pub const VIR_DOMAIN_BLOCK_COPY_TRANSIENT_JOB: virDomainBlockCopyFlags = 4;
 pub const VIR_DOMAIN_BLOCK_COPY_SYNCHRONOUS_WRITES: virDomainBlockCopyFlags = 8;
+pub const VIR_DOMAIN_BLOCK_COPY_TARGET_ZEROED: virDomainBlockCopyFlags = 16;
 pub type virDomainBlockCopyFlags = ::std::os::raw::c_uint;
 extern "C" {
     pub fn virDomainBlockCopy(
@@ -5585,6 +5630,14 @@ pub type virConnectDomainEventDeviceRemovalFailedCallback = ::std::option::Optio
         opaque: *mut ::std::os::raw::c_void,
     ),
 >;
+pub type virConnectDomainEventVcpuRemovedCallback = ::std::option::Option<
+    unsafe extern "C" fn(
+        conn: virConnectPtr,
+        dom: virDomainPtr,
+        vcpuid: ::std::os::raw::c_uint,
+        opaque: *mut ::std::os::raw::c_void,
+    ),
+>;
 pub type virConnectDomainEventMetadataChangeCallback = ::std::option::Option<
     unsafe extern "C" fn(
         conn: virConnectPtr,
@@ -5676,6 +5729,23 @@ pub type virConnectDomainEventNICMACChangeCallback = ::std::option::Option<
         opaque: *mut ::std::os::raw::c_void,
     ),
 >;
+pub const VIR_CONNECT_DOMAIN_EVENT_CHANNEL_LIFECYCLE_STATE_CONNECTED: virConnectDomainEventChannelLifecycleState = 1;
+pub const VIR_CONNECT_DOMAIN_EVENT_CHANNEL_LIFECYCLE_STATE_DISCONNECTED: virConnectDomainEventChannelLifecycleState = 2;
+pub type virConnectDomainEventChannelLifecycleState = ::std::os::raw::c_uint;
+pub const VIR_CONNECT_DOMAIN_EVENT_CHANNEL_LIFECYCLE_REASON_UNKNOWN: virConnectDomainEventChannelLifecycleReason = 0;
+pub const VIR_CONNECT_DOMAIN_EVENT_CHANNEL_LIFECYCLE_REASON_DOMAIN_STARTED: virConnectDomainEventChannelLifecycleReason = 1;
+pub const VIR_CONNECT_DOMAIN_EVENT_CHANNEL_LIFECYCLE_REASON_CHANNEL: virConnectDomainEventChannelLifecycleReason = 2;
+pub type virConnectDomainEventChannelLifecycleReason = ::std::os::raw::c_uint;
+pub type virConnectDomainEventChannelLifecycleCallback = ::std::option::Option<
+    unsafe extern "C" fn(
+        conn: virConnectPtr,
+        dom: virDomainPtr,
+        channelName: *const ::std::os::raw::c_char,
+        state: ::std::os::raw::c_int,
+        reason: ::std::os::raw::c_int,
+        opaque: *mut ::std::os::raw::c_void,
+    ),
+>;
 pub const VIR_DOMAIN_EVENT_ID_LIFECYCLE: virDomainEventID = 0;
 pub const VIR_DOMAIN_EVENT_ID_REBOOT: virDomainEventID = 1;
 pub const VIR_DOMAIN_EVENT_ID_RTC_CHANGE: virDomainEventID = 2;
@@ -5704,6 +5774,8 @@ pub const VIR_DOMAIN_EVENT_ID_BLOCK_THRESHOLD: virDomainEventID = 24;
 pub const VIR_DOMAIN_EVENT_ID_MEMORY_FAILURE: virDomainEventID = 25;
 pub const VIR_DOMAIN_EVENT_ID_MEMORY_DEVICE_SIZE_CHANGE: virDomainEventID = 26;
 pub const VIR_DOMAIN_EVENT_ID_NIC_MAC_CHANGE: virDomainEventID = 27;
+pub const VIR_DOMAIN_EVENT_ID_VCPU_REMOVED: virDomainEventID = 28;
+pub const VIR_DOMAIN_EVENT_ID_CHANNEL_LIFECYCLE: virDomainEventID = 29;
 pub type virDomainEventID = ::std::os::raw::c_uint;
 extern "C" {
     pub fn virConnectDomainEventRegisterAny(
