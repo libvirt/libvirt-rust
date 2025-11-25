@@ -26,6 +26,10 @@ pub const VIR_NODE_CPU_STATS_INTR: &::std::ffi::CStr = unsafe {
     ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"intr\0")
 };
 #[allow(unsafe_code)]
+pub const VIR_NODE_CPU_STATS_GUEST: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"guest\0")
+};
+#[allow(unsafe_code)]
 pub const VIR_NODE_CPU_STATS_UTILIZATION: &::std::ffi::CStr = unsafe {
     ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"utilization\0")
 };
@@ -737,6 +741,130 @@ pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_PHYSICAL: &::std::ffi::CStr = unsafe {
 #[allow(unsafe_code)]
 pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_THRESHOLD: &::std::ffi::CStr = unsafe {
     ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".threshold\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_LIMITS_REQUEST_ALIGNMENT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".limits.request_alignment\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_LIMITS_DISCARD_MAX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".limits.discard_max\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_LIMITS_DISCARD_ALIGNMENT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".limits.discard_alignment\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_LIMITS_WRITE_ZEROES_MAX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".limits.write_zeroes_max\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_LIMITS_WRITE_ZEROES_ALIGNMENT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".limits.write_zeroes_alignment\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_LIMITS_TRANSFER_OPTIMAL: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".limits.transfer_optimal\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_LIMITS_TRANSFER_MAX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".limits.transfer_max\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_LIMITS_TRANSFER_HW_MAX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".limits.transfer_hw_max\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_LIMITS_IOV_MAX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".limits.iov_max\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_LIMITS_IOV_HW_MAX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".limits.iov_hw_max\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_LIMITS_MEMORY_ALIGNMENT_MINIMAL: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(
+        b".limits.memory_alignment_minimal\0",
+    )
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_LIMITS_MEMORY_ALIGNMENT_OPTIMAL: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(
+        b".limits.memory_alignment_optimal\0",
+    )
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_TIMED_GROUP_COUNT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".timed_group.count\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_TIMED_GROUP_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".timed_group.\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_INTERVAL: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".interval\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_RD_LATENCY_MIN: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".rd_latency_min\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_RD_LATENCY_MAX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".rd_latency_max\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_RD_LATENCY_AVG: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".rd_latency_avg\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_WR_LATENCY_MIN: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".wr_latency_min\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_WR_LATENCY_MAX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".wr_latency_max\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_WR_LATENCY_AVG: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".wr_latency_avg\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_ZONE_APPEND_LATENCY_MIN: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".zone_append_latency_min\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_ZONE_APPEND_LATENCY_MAX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".zone_append_latency_max\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_ZONE_APPEND_LATENCY_AVG: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".zone_append_latency_avg\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_FLUSH_LATENCY_MIN: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".flush_latency_min\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_FLUSH_LATENCY_MAX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".flush_latency_max\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_FLUSH_LATENCY_AVG: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".flush_latency_avg\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_RD_QUEUE_DEPTH_AVG: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".rd_queue_depth_avg\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_WR_QUEUE_DEPTH_AVG: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".wr_queue_depth_avg\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_ZONE_APPEND_QUEUE_DEPTH_AVG: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".zone_append_queue_depth_avg\0")
 };
 #[allow(unsafe_code)]
 pub const VIR_DOMAIN_STATS_PERF_CMT: &::std::ffi::CStr = unsafe {
@@ -2642,6 +2770,7 @@ extern "C" {
 }
 pub const VIR_CONNECT_BASELINE_CPU_EXPAND_FEATURES: virConnectBaselineCPUFlags = 1;
 pub const VIR_CONNECT_BASELINE_CPU_MIGRATABLE: virConnectBaselineCPUFlags = 2;
+pub const VIR_CONNECT_BASELINE_CPU_IGNORE_HOST: virConnectBaselineCPUFlags = 4;
 pub type virConnectBaselineCPUFlags = ::libc::c_uint;
 extern "C" {
     pub fn virConnectBaselineCPU(
@@ -4783,6 +4912,7 @@ pub const VIR_DOMAIN_EVENT_STARTED_MIGRATED: virDomainEventStartedDetailType = 1
 pub const VIR_DOMAIN_EVENT_STARTED_RESTORED: virDomainEventStartedDetailType = 2;
 pub const VIR_DOMAIN_EVENT_STARTED_FROM_SNAPSHOT: virDomainEventStartedDetailType = 3;
 pub const VIR_DOMAIN_EVENT_STARTED_WAKEUP: virDomainEventStartedDetailType = 4;
+pub const VIR_DOMAIN_EVENT_STARTED_RECREATED: virDomainEventStartedDetailType = 5;
 pub type virDomainEventStartedDetailType = ::libc::c_uint;
 pub const VIR_DOMAIN_EVENT_SUSPENDED_PAUSED: virDomainEventSuspendedDetailType = 0;
 pub const VIR_DOMAIN_EVENT_SUSPENDED_MIGRATED: virDomainEventSuspendedDetailType = 1;
@@ -4793,6 +4923,7 @@ pub const VIR_DOMAIN_EVENT_SUSPENDED_FROM_SNAPSHOT: virDomainEventSuspendedDetai
 pub const VIR_DOMAIN_EVENT_SUSPENDED_API_ERROR: virDomainEventSuspendedDetailType = 6;
 pub const VIR_DOMAIN_EVENT_SUSPENDED_POSTCOPY: virDomainEventSuspendedDetailType = 7;
 pub const VIR_DOMAIN_EVENT_SUSPENDED_POSTCOPY_FAILED: virDomainEventSuspendedDetailType = 8;
+pub const VIR_DOMAIN_EVENT_SUSPENDED_GUEST_SHUTDOWN: virDomainEventSuspendedDetailType = 9;
 pub type virDomainEventSuspendedDetailType = ::libc::c_uint;
 pub const VIR_DOMAIN_EVENT_RESUMED_UNPAUSED: virDomainEventResumedDetailType = 0;
 pub const VIR_DOMAIN_EVENT_RESUMED_MIGRATED: virDomainEventResumedDetailType = 1;
@@ -4807,6 +4938,7 @@ pub const VIR_DOMAIN_EVENT_STOPPED_MIGRATED: virDomainEventStoppedDetailType = 3
 pub const VIR_DOMAIN_EVENT_STOPPED_SAVED: virDomainEventStoppedDetailType = 4;
 pub const VIR_DOMAIN_EVENT_STOPPED_FAILED: virDomainEventStoppedDetailType = 5;
 pub const VIR_DOMAIN_EVENT_STOPPED_FROM_SNAPSHOT: virDomainEventStoppedDetailType = 6;
+pub const VIR_DOMAIN_EVENT_STOPPED_RECREATED: virDomainEventStoppedDetailType = 7;
 pub type virDomainEventStoppedDetailType = ::libc::c_uint;
 pub const VIR_DOMAIN_EVENT_SHUTDOWN_FINISHED: virDomainEventShutdownDetailType = 0;
 pub const VIR_DOMAIN_EVENT_SHUTDOWN_GUEST: virDomainEventShutdownDetailType = 1;
@@ -5958,6 +6090,7 @@ extern "C" {
     ) -> ::libc::c_int;
 }
 pub const VIR_DOMAIN_BACKUP_BEGIN_REUSE_EXTERNAL: virDomainBackupBeginFlags = 1;
+pub const VIR_DOMAIN_BACKUP_BEGIN_PRESERVE_SHUTDOWN_DOMAIN: virDomainBackupBeginFlags = 2;
 pub type virDomainBackupBeginFlags = ::libc::c_uint;
 extern "C" {
     pub fn virDomainBackupBegin(
