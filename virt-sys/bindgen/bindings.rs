@@ -350,6 +350,34 @@ pub const VIR_DOMAIN_SAVE_PARAM_IMAGE_FORMAT: &::std::ffi::CStr = unsafe {
     ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"image_format\0")
 };
 #[allow(unsafe_code)]
+pub const VIR_DOMAIN_SAVE_PARAM_IMAGE_FORMAT_RAW: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"raw\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_SAVE_PARAM_IMAGE_FORMAT_GZIP: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"gzip\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_SAVE_PARAM_IMAGE_FORMAT_BZIP2: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"bzip2\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_SAVE_PARAM_IMAGE_FORMAT_XZ: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"xz\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_SAVE_PARAM_IMAGE_FORMAT_LZOP: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"lzop\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_SAVE_PARAM_IMAGE_FORMAT_ZSTD: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"zstd\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_SAVE_PARAM_IMAGE_FORMAT_SPARSE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"sparse\0")
+};
+#[allow(unsafe_code)]
 pub const VIR_DOMAIN_SAVE_PARAM_PARALLEL_CHANNELS: &::std::ffi::CStr = unsafe {
     ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"parallel.channels\0")
 };
@@ -865,6 +893,38 @@ pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_WR_QUEUE_DEPTH_AVG: &
 #[allow(unsafe_code)]
 pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_TIMED_GROUP_SUFFIX_ZONE_APPEND_QUEUE_DEPTH_AVG: &::std::ffi::CStr = unsafe {
     ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".zone_append_queue_depth_avg\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_READ_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".latency_histogram.read.\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_WRITE_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".latency_histogram.write.\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_ZONE_APPEND_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".latency_histogram.zone_append.\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_FLUSH_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".latency_histogram.flush.\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_SUFFIX_BIN_COUNT: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"bin.count\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_SUFFIX_BIN_PREFIX: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"bin.\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_SUFFIX_BIN_SUFFIX_START: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".start\0")
+};
+#[allow(unsafe_code)]
+pub const VIR_DOMAIN_STATS_BLOCK_SUFFIX_LATENCY_HISTOGRAM_SUFFIX_BIN_SUFFIX_VALUE: &::std::ffi::CStr = unsafe {
+    ::std::ffi::CStr::from_bytes_with_nul_unchecked(b".value\0")
 };
 #[allow(unsafe_code)]
 pub const VIR_DOMAIN_STATS_PERF_CMT: &::std::ffi::CStr = unsafe {
@@ -8635,6 +8695,7 @@ pub const VIR_ERR_MULTIPLE_DOMAINS: virErrorNumber = 110;
 pub const VIR_ERR_NO_NETWORK_METADATA: virErrorNumber = 111;
 pub const VIR_ERR_AGENT_COMMAND_TIMEOUT: virErrorNumber = 112;
 pub const VIR_ERR_AGENT_COMMAND_FAILED: virErrorNumber = 113;
+pub const VIR_ERR_INVALID_ENCR_KEY_SECRET: virErrorNumber = 114;
 pub type virErrorNumber = ::libc::c_uint;
 pub type virErrorFunc = ::std::option::Option<
     unsafe extern "C" fn(userData: *mut ::libc::c_void, error: virErrorPtr),
