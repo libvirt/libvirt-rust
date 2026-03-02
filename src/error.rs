@@ -510,6 +510,8 @@ pub enum ErrorNumber {
     AgentCommandTimeout,
     /// Guest agent responded with failure to a command
     AgentCommandFailed,
+    /// Secret encryption key is invalid
+    InvalidEncrKeySecret,
 }
 
 pub type ErrorNumberEnum = Enum<ErrorNumber, sys::virErrorNumber>;
@@ -632,6 +634,7 @@ impl_enum! {
         sys::VIR_ERR_NO_NETWORK_METADATA => NoNetworkMetadata,
         sys::VIR_ERR_AGENT_COMMAND_TIMEOUT => AgentCommandTimeout,
         sys::VIR_ERR_AGENT_COMMAND_FAILED => AgentCommandFailed,
+        sys::VIR_ERR_INVALID_ENCR_KEY_SECRET => InvalidEncrKeySecret,
     }
 }
 
