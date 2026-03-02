@@ -28,17 +28,45 @@ use serde::{Deserialize, Serialize};
 use serde_xml_rs::from_str;
 
 /* Until we have 100% API coverage, we gradually enforce
- * coverage for certain areas of code, unless the feature
- * flag 'api-coverage' is set
+ * coverage for certain areas of code.
+ *
+ * Setting 'api_coverage' feature is the baseline for CI
+ * so we see if new libvirt invalidates any areas which
+ * are tracking 100% coverage previously.
+ *
+ * Setting 'api_coverage_full' checks all API coverage,
+ * so humans can see how many gaps remain in Rust
  */
-#[cfg(not(feature = "api_coverage"))]
-const ENFORCED_FUNC_PREFIXES: &[&str] = &["virSecret", "virStoragePool", "virStorageVol"];
 
-#[cfg(not(feature = "api_coverage"))]
+/* Default:  no enforcement */
+#[cfg(all(not(feature = "api_coverage"), not(feature = "api_coverage_full")))]
+const ENFORCED_FUNC_PREFIXES: &[&str] = &[];
+
+#[cfg(all(not(feature = "api_coverage"), not(feature = "api_coverage_full")))]
 const ENFORCED_MACRO_PREFIXES: &[&str] = &[];
 
-#[cfg(not(feature = "api_coverage"))]
+#[cfg(all(not(feature = "api_coverage"), not(feature = "api_coverage_full")))]
+const ENFORCED_ENUM_PREFIXES: &[&str] = &[];
+
+/* CI: enforce selected prefixes */
+#[cfg(all(feature = "api_coverage", not(feature = "api_coverage_full")))]
+const ENFORCED_FUNC_PREFIXES: &[&str] = &["virSecret", "virStoragePool", "virStorageVol"];
+
+#[cfg(all(feature = "api_coverage", not(feature = "api_coverage_full")))]
+const ENFORCED_MACRO_PREFIXES: &[&str] = &[];
+
+#[cfg(all(feature = "api_coverage", not(feature = "api_coverage_full")))]
 const ENFORCED_ENUM_PREFIXES: &[&str] = &["VIR_FROM", "VIR_ERR"];
+
+/* Informative: what APIs are still not covered by Rust */
+#[cfg(feature = "api_coverage_full")]
+const ENFORCED_FUNC_PREFIXES: &[&str] = &[""];
+
+#[cfg(feature = "api_coverage_full")]
+const ENFORCED_MACRO_PREFIXES: &[&str] = &[""];
+
+#[cfg(feature = "api_coverage_full")]
+const ENFORCED_ENUM_PREFIXES: &[&str] = &[""];
 
 const IGNORE_FUNCS: &[&str] = &[
     /* Not thread safe, so not to be exposed */
@@ -329,18 +357,11 @@ fn do_test_api(
     assert!(!missing, "no missing symbols")
 }
 
-#[cfg(not(feature = "api_coverage"))]
 #[test]
-fn test_api_partial() {
+fn test_api() {
     do_test_api(
         ENFORCED_FUNC_PREFIXES,
         ENFORCED_MACRO_PREFIXES,
         ENFORCED_ENUM_PREFIXES,
     )
-}
-
-#[cfg(feature = "api_coverage")]
-#[test]
-fn test_api_full() {
-    do_test_api(&[""], &[""], &[""])
 }
