@@ -16,6 +16,8 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
+use libc::{c_char, c_uchar, c_uint};
+
 use uuid::Uuid;
 
 use crate::connect::Connect;
@@ -104,8 +106,7 @@ impl Secret {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-secret.html#virSecretGetUUID>
     pub fn uuid(&self) -> Result<Uuid, Error> {
-        let mut uuid: [libc::c_uchar; sys::VIR_UUID_BUFLEN as usize] =
-            [0; sys::VIR_UUID_BUFLEN as usize];
+        let mut uuid: [c_uchar; sys::VIR_UUID_BUFLEN as usize] = [0; sys::VIR_UUID_BUFLEN as usize];
         let _ = check_neg!(unsafe { sys::virSecretGetUUID(self.as_ptr(), uuid.as_mut_ptr()) })?;
         Ok(Uuid::from_bytes(uuid))
     }
@@ -114,7 +115,7 @@ impl Secret {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-secret.html#virSecretGetUUIDString>
     pub fn uuid_string(&self) -> Result<String, Error> {
-        let mut uuid: [libc::c_char; sys::VIR_UUID_STRING_BUFLEN as usize] =
+        let mut uuid: [c_char; sys::VIR_UUID_STRING_BUFLEN as usize] =
             [0; sys::VIR_UUID_STRING_BUFLEN as usize];
         let _ =
             check_neg!(unsafe { sys::virSecretGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) })?;
@@ -145,7 +146,7 @@ impl Secret {
     pub fn value(&self, flags: u32) -> Result<Vec<u8>, Error> {
         let mut size: usize = 0;
         let n = check_null!(unsafe {
-            sys::virSecretGetValue(self.as_ptr(), &mut size, flags as libc::c_uint)
+            sys::virSecretGetValue(self.as_ptr(), &mut size, flags as c_uint)
         })?;
 
         let mut array: Vec<u8> = Vec::new();

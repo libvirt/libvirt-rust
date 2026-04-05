@@ -16,6 +16,7 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
+use libc::{c_uint, c_ulonglong};
 use std::ffi::CString;
 use std::{mem, str};
 
@@ -120,7 +121,7 @@ impl StorageVol {
     ) -> Result<StorageVol, Error> {
         let xml_buf = CString::new(xml)?;
         let ptr = check_null!(unsafe {
-            sys::virStorageVolCreateXML(pool.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
+            sys::virStorageVolCreateXML(pool.as_ptr(), xml_buf.as_ptr(), flags as c_uint)
         })?;
         Ok(unsafe { StorageVol::from_ptr(ptr) })
     }
@@ -140,7 +141,7 @@ impl StorageVol {
                 pool.as_ptr(),
                 xml_buf.as_ptr(),
                 vol.as_ptr(),
-                flags as libc::c_uint,
+                flags as c_uint,
             )
         })?;
         Ok(unsafe { StorageVol::from_ptr(ptr) })
@@ -190,8 +191,7 @@ impl StorageVol {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolDelete>
     pub fn delete(&self, flags: u32) -> Result<(), Error> {
-        let _ =
-            check_neg!(unsafe { sys::virStorageVolDelete(self.as_ptr(), flags as libc::c_uint) })?;
+        let _ = check_neg!(unsafe { sys::virStorageVolDelete(self.as_ptr(), flags as c_uint) })?;
         Ok(())
     }
 
@@ -199,8 +199,7 @@ impl StorageVol {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolWipe>
     pub fn wipe(&self, flags: u32) -> Result<(), Error> {
-        let _ =
-            check_neg!(unsafe { sys::virStorageVolWipe(self.as_ptr(), flags as libc::c_uint) })?;
+        let _ = check_neg!(unsafe { sys::virStorageVolWipe(self.as_ptr(), flags as c_uint) })?;
         Ok(())
     }
 
@@ -213,11 +212,7 @@ impl StorageVol {
         flags: u32,
     ) -> Result<(), Error> {
         let _ = check_neg!(unsafe {
-            sys::virStorageVolWipePattern(
-                self.as_ptr(),
-                algo as libc::c_uint,
-                flags as libc::c_uint,
-            )
+            sys::virStorageVolWipePattern(self.as_ptr(), algo as c_uint, flags as c_uint)
         })?;
         Ok(())
     }
@@ -227,11 +222,7 @@ impl StorageVol {
     /// See <https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageVolResize>
     pub fn resize(&self, capacity: u64, flags: u32) -> Result<(), Error> {
         let _ = check_neg!(unsafe {
-            sys::virStorageVolResize(
-                self.as_ptr(),
-                capacity as libc::c_ulonglong,
-                flags as libc::c_uint,
-            )
+            sys::virStorageVolResize(self.as_ptr(), capacity as c_ulonglong, flags as c_uint)
         })?;
         Ok(())
     }
@@ -252,7 +243,7 @@ impl StorageVol {
     pub fn info_flags(&self, flags: u32) -> Result<StorageVolInfo, Error> {
         let mut pinfo = mem::MaybeUninit::uninit();
         let _ = check_neg!(unsafe {
-            sys::virStorageVolGetInfoFlags(self.as_ptr(), pinfo.as_mut_ptr(), flags as libc::c_uint)
+            sys::virStorageVolGetInfoFlags(self.as_ptr(), pinfo.as_mut_ptr(), flags as c_uint)
         })?;
         Ok(unsafe { StorageVolInfo::from_ptr(&mut pinfo.assume_init()) })
     }
@@ -271,9 +262,9 @@ impl StorageVol {
             sys::virStorageVolDownload(
                 self.as_ptr(),
                 stream.as_ptr(),
-                offset as libc::c_ulonglong,
-                length as libc::c_ulonglong,
-                flags as libc::c_uint,
+                offset as c_ulonglong,
+                length as c_ulonglong,
+                flags as c_uint,
             )
         })?;
         Ok(())
@@ -293,9 +284,9 @@ impl StorageVol {
             sys::virStorageVolUpload(
                 self.as_ptr(),
                 stream.as_ptr(),
-                offset as libc::c_ulonglong,
-                length as libc::c_ulonglong,
-                flags as libc::c_uint,
+                offset as c_ulonglong,
+                length as c_ulonglong,
+                flags as c_uint,
             )
         })?;
         Ok(())

@@ -16,6 +16,7 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
+use libc::{c_char, c_int, c_longlong, c_uchar, c_uint, c_ulong, c_ulonglong, c_void};
 use std::ffi::CString;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::{mem, ptr, str};
@@ -262,7 +263,7 @@ pub enum DomainStateReason {
     PMSuspended(DomainPMSuspendedReasonEnum),
 }
 
-pub type DomainStateReasonEnum = Enum<DomainStateReason, libc::c_int>;
+pub type DomainStateReasonEnum = Enum<DomainStateReason, c_int>;
 
 impl Display for DomainStateReason {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
@@ -1083,8 +1084,8 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetState>
     pub fn state(&self) -> Result<(DomainStateEnum, DomainStateReasonEnum), Error> {
-        let mut state: libc::c_int = -1;
-        let mut reason: libc::c_int = -1;
+        let mut state: c_int = -1;
+        let mut reason: c_int = -1;
         let _ = check_neg!(unsafe {
             sys::virDomainGetState(self.as_ptr(), &mut state, &mut reason, 0)
         });
@@ -1143,9 +1144,7 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetHostname>
     pub fn hostname(&self, flags: u32) -> Result<String, Error> {
-        let n = check_null!(unsafe {
-            sys::virDomainGetHostname(self.as_ptr(), flags as libc::c_uint)
-        })?;
+        let n = check_null!(unsafe { sys::virDomainGetHostname(self.as_ptr(), flags as c_uint) })?;
         Ok(unsafe { c_chars_to_string!(n) })
     }
 
@@ -1153,8 +1152,7 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetUUID>
     pub fn uuid(&self) -> Result<Uuid, Error> {
-        let mut uuid: [libc::c_uchar; sys::VIR_UUID_BUFLEN as usize] =
-            [0; sys::VIR_UUID_BUFLEN as usize];
+        let mut uuid: [c_uchar; sys::VIR_UUID_BUFLEN as usize] = [0; sys::VIR_UUID_BUFLEN as usize];
         let _ = check_neg!(unsafe { sys::virDomainGetUUID(self.as_ptr(), uuid.as_mut_ptr()) })?;
         Ok(Uuid::from_bytes(uuid))
     }
@@ -1165,7 +1163,7 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetUUIDString>
     pub fn uuid_string(&self) -> Result<String, Error> {
-        let mut uuid: [libc::c_char; sys::VIR_UUID_STRING_BUFLEN as usize] =
+        let mut uuid: [c_char; sys::VIR_UUID_STRING_BUFLEN as usize] =
             [0; sys::VIR_UUID_STRING_BUFLEN as usize];
         let _ =
             check_neg!(unsafe { sys::virDomainGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) })?;
@@ -1212,9 +1210,8 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainCreateWithFlags>
     pub fn create_with_flags(&self, flags: sys::virDomainCreateFlags) -> Result<(), Error> {
-        let _ = check_neg!(unsafe {
-            sys::virDomainCreateWithFlags(self.as_ptr(), flags as libc::c_uint)
-        })?;
+        let _ =
+            check_neg!(unsafe { sys::virDomainCreateWithFlags(self.as_ptr(), flags as c_uint) })?;
         Ok(())
     }
 
@@ -1312,9 +1309,7 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainShutdownFlags>
     pub fn shutdown_flags(&self, flags: sys::virDomainShutdownFlagValues) -> Result<(), Error> {
-        let _ = check_neg!(unsafe {
-            sys::virDomainShutdownFlags(self.as_ptr(), flags as libc::c_uint)
-        })?;
+        let _ = check_neg!(unsafe { sys::virDomainShutdownFlags(self.as_ptr(), flags as c_uint) })?;
         Ok(())
     }
 
@@ -1366,8 +1361,7 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainPMWakeup>
     pub fn pm_wakeup(&self, flags: u32) -> Result<(), Error> {
-        let _ =
-            check_neg!(unsafe { sys::virDomainPMWakeup(self.as_ptr(), flags as libc::c_uint) })?;
+        let _ = check_neg!(unsafe { sys::virDomainPMWakeup(self.as_ptr(), flags as c_uint) })?;
         Ok(())
     }
 
@@ -1424,7 +1418,7 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetAutostart>
     pub fn autostart(&self) -> Result<bool, Error> {
-        let mut autostart: libc::c_int = 0;
+        let mut autostart: c_int = 0;
         let _ = check_neg!(unsafe { sys::virDomainGetAutostart(self.as_ptr(), &mut autostart) })?;
         Ok(autostart == 1)
     }
@@ -1433,9 +1427,8 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetAutostart>
     pub fn set_autostart(&self, autostart: bool) -> Result<(), Error> {
-        let _ = check_neg!(unsafe {
-            sys::virDomainSetAutostart(self.as_ptr(), autostart as libc::c_int)
-        })?;
+        let _ =
+            check_neg!(unsafe { sys::virDomainSetAutostart(self.as_ptr(), autostart as c_int) })?;
         Ok(())
     }
 
@@ -1443,9 +1436,8 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetMaxMemory>
     pub fn set_max_memory(&self, memory: u64) -> Result<(), Error> {
-        let _ = check_neg!(unsafe {
-            sys::virDomainSetMaxMemory(self.as_ptr(), memory as libc::c_ulong)
-        })?;
+        let _ =
+            check_neg!(unsafe { sys::virDomainSetMaxMemory(self.as_ptr(), memory as c_ulong) })?;
         Ok(())
     }
 
@@ -1469,8 +1461,7 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetMemory>
     pub fn set_memory(&self, memory: u64) -> Result<(), Error> {
-        let _ =
-            check_neg!(unsafe { sys::virDomainSetMemory(self.as_ptr(), memory as libc::c_ulong) });
+        let _ = check_neg!(unsafe { sys::virDomainSetMemory(self.as_ptr(), memory as c_ulong) });
         Ok(())
     }
 
@@ -1483,11 +1474,7 @@ impl Domain {
         flags: sys::virDomainMemoryModFlags,
     ) -> Result<(), Error> {
         let _ = check_neg!(unsafe {
-            sys::virDomainSetMemoryFlags(
-                self.as_ptr(),
-                memory as libc::c_ulong,
-                flags as libc::c_uint,
-            )
+            sys::virDomainSetMemoryFlags(self.as_ptr(), memory as c_ulong, flags as c_uint)
         })?;
         Ok(())
     }
@@ -1501,11 +1488,7 @@ impl Domain {
         flags: sys::virDomainMemoryModFlags,
     ) -> Result<(), Error> {
         let _ = check_neg!(unsafe {
-            sys::virDomainSetMemoryStatsPeriod(
-                self.as_ptr(),
-                period as libc::c_int,
-                flags as libc::c_uint,
-            )
+            sys::virDomainSetMemoryStatsPeriod(self.as_ptr(), period as c_int, flags as c_uint)
         })?;
         Ok(())
     }
@@ -1514,8 +1497,7 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetVcpus>
     pub fn set_vcpus(&self, vcpus: u32) -> Result<(), Error> {
-        let _ =
-            check_neg!(unsafe { sys::virDomainSetVcpus(self.as_ptr(), vcpus as libc::c_uint) })?;
+        let _ = check_neg!(unsafe { sys::virDomainSetVcpus(self.as_ptr(), vcpus as c_uint) })?;
         Ok(())
     }
 
@@ -1524,7 +1506,7 @@ impl Domain {
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetVcpusFlags>
     pub fn set_vcpus_flags(&self, vcpus: u32, flags: sys::virDomainVcpuFlags) -> Result<(), Error> {
         let _ = check_neg!(unsafe {
-            sys::virDomainSetVcpusFlags(self.as_ptr(), vcpus as libc::c_uint, flags as libc::c_uint)
+            sys::virDomainSetVcpusFlags(self.as_ptr(), vcpus as c_uint, flags as c_uint)
         })?;
         Ok(())
     }
@@ -1533,9 +1515,8 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetVcpusFlags>
     pub fn vcpus_flags(&self, flags: sys::virDomainVcpuFlags) -> Result<u32, Error> {
-        let ret = check_neg!(unsafe {
-            sys::virDomainGetVcpusFlags(self.as_ptr(), flags as libc::c_uint)
-        })?;
+        let ret =
+            check_neg!(unsafe { sys::virDomainGetVcpusFlags(self.as_ptr(), flags as c_uint) })?;
         Ok(ret as u32)
     }
 
@@ -1544,11 +1525,7 @@ impl Domain {
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrateSetMaxSpeed>
     pub fn migrate_set_max_speed(&self, bandwidth: u64, flags: u32) -> Result<(), Error> {
         let _ = check_neg!(unsafe {
-            sys::virDomainMigrateSetMaxSpeed(
-                self.as_ptr(),
-                bandwidth as libc::c_ulong,
-                flags as libc::c_uint,
-            )
+            sys::virDomainMigrateSetMaxSpeed(self.as_ptr(), bandwidth as c_ulong, flags as c_uint)
         })?;
         Ok(())
     }
@@ -1557,9 +1534,9 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrateGetMaxSpeed>
     pub fn migrate_max_speed(&self, flags: u32) -> Result<u64, Error> {
-        let mut bandwidth: libc::c_ulong = 0;
+        let mut bandwidth: c_ulong = 0;
         let _ = check_neg!(unsafe {
-            sys::virDomainMigrateGetMaxSpeed(self.as_ptr(), &mut bandwidth, flags as libc::c_uint)
+            sys::virDomainMigrateGetMaxSpeed(self.as_ptr(), &mut bandwidth, flags as c_uint)
         })?;
         Ok(c_ulong_to_u64(bandwidth))
     }
@@ -1571,8 +1548,8 @@ impl Domain {
         let _ = check_neg!(unsafe {
             sys::virDomainMigrateSetCompressionCache(
                 self.as_ptr(),
-                size as libc::c_ulonglong,
-                flags as libc::c_uint,
+                size as c_ulonglong,
+                flags as c_uint,
             )
         })?;
         Ok(())
@@ -1582,13 +1559,9 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMigrateGetCompressionCache>
     pub fn migrate_compression_cache(&self, flags: u32) -> Result<u64, Error> {
-        let mut size: libc::c_ulonglong = 0;
+        let mut size: c_ulonglong = 0;
         let _ = check_neg!(unsafe {
-            sys::virDomainMigrateGetCompressionCache(
-                self.as_ptr(),
-                &mut size,
-                flags as libc::c_uint,
-            )
+            sys::virDomainMigrateGetCompressionCache(self.as_ptr(), &mut size, flags as c_uint)
         })?;
         Ok(size)
     }
@@ -1600,8 +1573,8 @@ impl Domain {
         let _ = check_neg!(unsafe {
             sys::virDomainMigrateSetMaxDowntime(
                 self.as_ptr(),
-                downtime as libc::c_ulonglong,
-                flags as libc::c_uint,
+                downtime as c_ulonglong,
+                flags as c_uint,
             )
         })?;
         Ok(())
@@ -1614,9 +1587,9 @@ impl Domain {
         let _ = check_neg!(unsafe {
             sys::virDomainSetTime(
                 self.as_ptr(),
-                seconds as libc::c_longlong,
-                nseconds as libc::c_uint,
-                flags as libc::c_uint,
+                seconds as c_longlong,
+                nseconds as c_uint,
+                flags as c_uint,
             )
         })?;
         Ok(())
@@ -1626,15 +1599,10 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetTime>
     pub fn time(&self, flags: u32) -> Result<(i64, i32), Error> {
-        let mut seconds: libc::c_longlong = 0;
-        let mut nseconds: libc::c_uint = 0;
+        let mut seconds: c_longlong = 0;
+        let mut nseconds: c_uint = 0;
         let _ = check_neg!(unsafe {
-            sys::virDomainGetTime(
-                self.as_ptr(),
-                &mut seconds,
-                &mut nseconds,
-                flags as libc::c_uint,
-            )
+            sys::virDomainGetTime(self.as_ptr(), &mut seconds, &mut nseconds, flags as c_uint)
         })?;
         Ok((seconds, nseconds as i32))
     }
@@ -1650,7 +1618,7 @@ impl Domain {
                 self.as_ptr(),
                 disk_buf.as_ptr(),
                 pinfo.as_mut_ptr(),
-                flags as libc::c_uint,
+                flags as c_uint,
             )
         });
         Ok(unsafe { BlockInfo::from_ptr(&mut pinfo.assume_init()) })
@@ -1680,9 +1648,9 @@ impl Domain {
         let _ = check_neg!(unsafe {
             sys::virDomainPinVcpu(
                 self.as_ptr(),
-                vcpu as libc::c_uint,
+                vcpu as c_uint,
                 cpumap.as_ptr() as *mut _,
-                cpumap.len() as libc::c_int,
+                cpumap.len() as c_int,
             )
         })?;
         Ok(())
@@ -1695,10 +1663,10 @@ impl Domain {
         let _ = check_neg!(unsafe {
             sys::virDomainPinVcpuFlags(
                 self.as_ptr(),
-                vcpu as libc::c_uint,
+                vcpu as c_uint,
                 cpumap.as_ptr() as *mut _,
-                cpumap.len() as libc::c_int,
-                flags as libc::c_uint,
+                cpumap.len() as c_int,
+                flags as c_uint,
             )
         })?;
         Ok(())
@@ -1712,8 +1680,8 @@ impl Domain {
             sys::virDomainPinEmulator(
                 self.as_ptr(),
                 cpumap.as_ptr() as *mut _,
-                cpumap.len() as libc::c_int,
-                flags as libc::c_uint,
+                cpumap.len() as c_int,
+                flags as c_uint,
             )
         })?;
         Ok(())
@@ -1725,7 +1693,7 @@ impl Domain {
     pub fn rename(&self, new_name: &str, flags: u32) -> Result<(), Error> {
         let new_name_buf = CString::new(new_name)?;
         let _ = check_neg!(unsafe {
-            sys::virDomainRename(self.as_ptr(), new_name_buf.as_ptr(), flags as libc::c_uint)
+            sys::virDomainRename(self.as_ptr(), new_name_buf.as_ptr(), flags as c_uint)
         })?;
         Ok(())
     }
@@ -1741,7 +1709,7 @@ impl Domain {
                 self.as_ptr(),
                 user_buf.as_ptr(),
                 password_buf.as_ptr(),
-                flags as libc::c_uint,
+                flags as c_uint,
             )
         })?;
         Ok(())
@@ -1756,8 +1724,8 @@ impl Domain {
             sys::virDomainSetBlockThreshold(
                 self.as_ptr(),
                 dev_buf.as_ptr(),
-                threshold as libc::c_ulonglong,
-                flags as libc::c_uint,
+                threshold as c_ulonglong,
+                flags as c_uint,
             )
         })?;
         Ok(())
@@ -1768,12 +1736,7 @@ impl Domain {
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainOpenGraphics>
     pub fn open_graphics(&self, idx: u32, fd: i32, flags: u32) -> Result<(), Error> {
         let _ = check_neg!(unsafe {
-            sys::virDomainOpenGraphics(
-                self.as_ptr(),
-                idx as libc::c_uint,
-                fd as libc::c_int,
-                flags as libc::c_uint,
-            )
+            sys::virDomainOpenGraphics(self.as_ptr(), idx as c_uint, fd as c_int, flags as c_uint)
         })?;
         Ok(())
     }
@@ -1783,7 +1746,7 @@ impl Domain {
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainOpenGraphicsFD>
     pub fn open_graphics_fd(&self, idx: u32, flags: u32) -> Result<u32, Error> {
         let ret = check_neg!(unsafe {
-            sys::virDomainOpenGraphicsFD(self.as_ptr(), idx as libc::c_uint, flags as libc::c_uint)
+            sys::virDomainOpenGraphicsFD(self.as_ptr(), idx as c_uint, flags as c_uint)
         })?;
         Ok(ret as u32)
     }
@@ -1803,7 +1766,7 @@ impl Domain {
                 self.as_ptr(),
                 some_cstring_to_c_chars!(name_buf),
                 stream.as_ptr(),
-                flags as libc::c_uint,
+                flags as c_uint,
             )
         })?;
         Ok(())
@@ -1824,7 +1787,7 @@ impl Domain {
                 self.as_ptr(),
                 some_cstring_to_c_chars!(name_buf),
                 stream.as_ptr(),
-                flags as libc::c_uint,
+                flags as c_uint,
             )
         })?;
         Ok(())
@@ -1847,7 +1810,7 @@ impl Domain {
         for x in 0..size as isize {
             array.push(unsafe { Interface::from_ptr(*addresses.offset(x)) });
         }
-        unsafe { libc::free(addresses as *mut libc::c_void) };
+        unsafe { libc::free(addresses as *mut c_void) };
 
         Ok(array)
     }
@@ -1880,7 +1843,7 @@ impl Domain {
                 self.as_ptr(),
                 pinfo.as_mut_ptr(),
                 sys::VIR_DOMAIN_MEMORY_STAT_NR,
-                flags as libc::c_uint,
+                flags as c_uint,
             )
         })?;
         // low-level operation that is confirmed by return from
@@ -1962,11 +1925,11 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetJobStats>
     pub fn job_stats(&self, flags: sys::virDomainGetJobStatsFlags) -> Result<JobStats, Error> {
-        let mut r#type: libc::c_int = 0;
+        let mut r#type: c_int = 0;
 
         // We allow libvirt to allocate the params structure for us. libvirt will populate
         // nparams with the number of typed params returned.
-        let mut nparams: libc::c_int = 0;
+        let mut nparams: c_int = 0;
         let mut params: sys::virTypedParameterPtr = ptr::null_mut();
 
         let _ = check_neg!(unsafe {
@@ -1975,7 +1938,7 @@ impl Domain {
                 &mut r#type,
                 &mut params,
                 &mut nparams,
-                flags as libc::c_uint,
+                flags as c_uint,
             )
         })?;
 
@@ -2031,7 +1994,7 @@ impl Domain {
     pub fn attach_device_flags(&self, xml: &str, flags: u32) -> Result<(), Error> {
         let xml_buf = CString::new(xml)?;
         let _ = check_neg!(unsafe {
-            sys::virDomainAttachDeviceFlags(self.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
+            sys::virDomainAttachDeviceFlags(self.as_ptr(), xml_buf.as_ptr(), flags as c_uint)
         })?;
         Ok(())
     }
@@ -2051,7 +2014,7 @@ impl Domain {
     pub fn detach_device_flags(&self, xml: &str, flags: u32) -> Result<(), Error> {
         let xml_buf = CString::new(xml)?;
         let _ = check_neg!(unsafe {
-            sys::virDomainDetachDeviceFlags(self.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
+            sys::virDomainDetachDeviceFlags(self.as_ptr(), xml_buf.as_ptr(), flags as c_uint)
         })?;
         Ok(())
     }
@@ -2062,7 +2025,7 @@ impl Domain {
     pub fn update_device_flags(&self, xml: &str, flags: u32) -> Result<(), Error> {
         let xml_buf = CString::new(xml)?;
         let _ = check_neg!(unsafe {
-            sys::virDomainUpdateDeviceFlags(self.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
+            sys::virDomainUpdateDeviceFlags(self.as_ptr(), xml_buf.as_ptr(), flags as c_uint)
         })?;
         Ok(())
     }
@@ -2071,8 +2034,7 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainManagedSave>
     pub fn managed_save(&self, flags: u32) -> Result<(), Error> {
-        let _ =
-            check_neg!(unsafe { sys::virDomainManagedSave(self.as_ptr(), flags as libc::c_uint) })?;
+        let _ = check_neg!(unsafe { sys::virDomainManagedSave(self.as_ptr(), flags as c_uint) })?;
         Ok(())
     }
 
@@ -2081,7 +2043,7 @@ impl Domain {
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainHasManagedSaveImage>
     pub fn has_managed_save(&self, flags: u32) -> Result<bool, Error> {
         let ret = check_neg!(unsafe {
-            sys::virDomainHasManagedSaveImage(self.as_ptr(), flags as libc::c_uint)
+            sys::virDomainHasManagedSaveImage(self.as_ptr(), flags as c_uint)
         })?;
         Ok(ret == 1)
     }
@@ -2090,9 +2052,8 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainManagedSaveRemove>
     pub fn managed_save_remove(&self, flags: u32) -> Result<(), Error> {
-        let _ = check_neg!(unsafe {
-            sys::virDomainManagedSaveRemove(self.as_ptr(), flags as libc::c_uint)
-        })?;
+        let _ =
+            check_neg!(unsafe { sys::virDomainManagedSaveRemove(self.as_ptr(), flags as c_uint) })?;
         Ok(())
     }
 
@@ -2102,7 +2063,7 @@ impl Domain {
     pub fn core_dump(&self, to: &str, flags: u32) -> Result<(), Error> {
         let to_buf = CString::new(to)?;
         let _ = check_neg!(unsafe {
-            sys::virDomainCoreDump(self.as_ptr(), to_buf.as_ptr(), flags as libc::c_uint)
+            sys::virDomainCoreDump(self.as_ptr(), to_buf.as_ptr(), flags as c_uint)
         })?;
         Ok(())
     }
@@ -2116,8 +2077,8 @@ impl Domain {
             sys::virDomainCoreDumpWithFormat(
                 self.as_ptr(),
                 to_buf.as_ptr(),
-                format as libc::c_uint,
-                flags as libc::c_uint,
+                format as c_uint,
+                flags as c_uint,
             )
         })?;
         Ok(())
@@ -2140,11 +2101,11 @@ impl Domain {
         let _ = check_neg!(unsafe {
             sys::virDomainSetMetadata(
                 self.as_ptr(),
-                kind as libc::c_int,
+                kind as c_int,
                 some_cstring_to_c_chars!(metadata_buf),
                 some_cstring_to_c_chars!(key_buf),
                 some_cstring_to_c_chars!(uri_buf),
-                flags as libc::c_uint,
+                flags as c_uint,
             )
         })?;
         Ok(())
@@ -2158,9 +2119,9 @@ impl Domain {
         let n = check_null!(unsafe {
             sys::virDomainGetMetadata(
                 self.as_ptr(),
-                kind as libc::c_int,
+                kind as c_int,
                 some_cstring_to_c_chars!(uri_buf),
-                flags as libc::c_uint,
+                flags as c_uint,
             )
         })?;
         Ok(unsafe { c_chars_to_string!(n) })
@@ -2175,8 +2136,8 @@ impl Domain {
             sys::virDomainBlockResize(
                 self.as_ptr(),
                 disk_buf.as_ptr(),
-                size as libc::c_ulonglong,
-                flags as libc::c_uint,
+                size as c_ulonglong,
+                flags as c_uint,
             )
         })?;
         Ok(())
@@ -2186,13 +2147,13 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetMemoryParameters>
     pub fn memory_parameters(&self, flags: u32) -> Result<MemoryParameters, Error> {
-        let mut nparams: libc::c_int = 0;
+        let mut nparams: c_int = 0;
         let _ = check_neg!(unsafe {
             sys::virDomainGetMemoryParameters(
                 self.as_ptr(),
                 ptr::null_mut(),
                 &mut nparams,
-                flags as libc::c_uint,
+                flags as c_uint,
             )
         })?;
         let mut params: Vec<sys::virTypedParameter> = Vec::with_capacity(nparams as usize);
@@ -2201,7 +2162,7 @@ impl Domain {
                 self.as_ptr(),
                 params.as_mut_ptr(),
                 &mut nparams,
-                flags as libc::c_uint,
+                flags as c_uint,
             )
         })?;
         unsafe { params.set_len(nparams as usize) };
@@ -2217,8 +2178,8 @@ impl Domain {
             sys::virDomainSetMemoryParameters(
                 self.as_ptr(),
                 cparams.as_mut_ptr(),
-                cparams.len() as libc::c_int,
-                flags as libc::c_uint,
+                cparams.len() as c_int,
+                flags as c_uint,
             )
         })?;
         Ok(())
@@ -2241,10 +2202,10 @@ impl Domain {
             sys::virDomainMigrate(
                 self.as_ptr(),
                 dconn.as_ptr(),
-                flags as libc::c_ulong,
+                flags as c_ulong,
                 some_cstring_to_c_chars!(dname_buf),
                 some_cstring_to_c_chars!(uri_buf),
-                bandwidth as libc::c_ulong,
+                bandwidth as c_ulong,
             )
         })?;
         Ok(unsafe { Domain::from_ptr(ptr) })
@@ -2270,10 +2231,10 @@ impl Domain {
                 self.as_ptr(),
                 dconn.as_ptr(),
                 some_cstring_to_c_chars!(dxml_buf),
-                flags as libc::c_ulong,
+                flags as c_ulong,
                 some_cstring_to_c_chars!(dname_buf),
                 some_cstring_to_c_chars!(uri_buf),
-                bandwidth as libc::c_ulong,
+                bandwidth as c_ulong,
             )
         })?;
         Ok(unsafe { Domain::from_ptr(ptr) })
@@ -2294,8 +2255,8 @@ impl Domain {
                 self.as_ptr(),
                 dconn.as_ptr(),
                 params.clone().as_mut_ptr(),
-                params.len() as libc::c_uint,
-                flags as libc::c_uint,
+                params.len() as c_uint,
+                flags as c_uint,
             )
         })?;
         Ok(unsafe { Domain::from_ptr(ptr) })
@@ -2317,9 +2278,9 @@ impl Domain {
             sys::virDomainMigrateToURI(
                 self.as_ptr(),
                 duri_buf.as_ptr(),
-                flags as libc::c_ulong,
+                flags as c_ulong,
                 some_cstring_to_c_chars!(dname_buf),
-                bandwidth as libc::c_ulong,
+                bandwidth as c_ulong,
             )
         })?;
         Ok(())
@@ -2347,9 +2308,9 @@ impl Domain {
                 some_cstring_to_c_chars!(dconn_uri_buf),
                 some_cstring_to_c_chars!(mig_uri_buf),
                 some_cstring_to_c_chars!(dxml_buf),
-                flags as libc::c_ulong,
+                flags as c_ulong,
                 some_cstring_to_c_chars!(dname_buf),
-                bandwidth as libc::c_ulong,
+                bandwidth as c_ulong,
             )
         })?;
         Ok(())
@@ -2371,8 +2332,8 @@ impl Domain {
                 self.as_ptr(),
                 some_cstring_to_c_chars!(dconn_uri_buf),
                 params.clone().as_mut_ptr(),
-                params.len() as libc::c_uint,
-                flags as libc::c_uint,
+                params.len() as c_uint,
+                flags as c_uint,
             )
         })?;
         Ok(())
@@ -2382,13 +2343,13 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetNumaParameters>
     pub fn numa_parameters(&self, flags: u32) -> Result<NUMAParameters, Error> {
-        let mut nparams: libc::c_int = 0;
+        let mut nparams: c_int = 0;
         let _ = check_neg!(unsafe {
             sys::virDomainGetNumaParameters(
                 self.as_ptr(),
                 ptr::null_mut(),
                 &mut nparams,
-                flags as libc::c_uint,
+                flags as c_uint,
             )
         })?;
         let mut params: Vec<sys::virTypedParameter> = Vec::with_capacity(nparams as usize);
@@ -2397,7 +2358,7 @@ impl Domain {
                 self.as_ptr(),
                 params.as_mut_ptr(),
                 &mut nparams,
-                flags as libc::c_uint,
+                flags as c_uint,
             )
         })?;
         unsafe { params.set_len(nparams as usize) };
@@ -2416,8 +2377,8 @@ impl Domain {
             sys::virDomainSetNumaParameters(
                 self.as_ptr(),
                 cparams.as_mut_ptr(),
-                cparams.len() as libc::c_int,
-                flags as libc::c_uint,
+                cparams.len() as c_int,
+                flags as c_uint,
             )
         })?;
         unsafe { typed_params_release_c_chars!(cparams) };
@@ -2430,14 +2391,14 @@ impl Domain {
     pub fn list_all_snapshots(&self, flags: u32) -> Result<Vec<DomainSnapshot>, Error> {
         let mut snaps: *mut sys::virDomainSnapshotPtr = ptr::null_mut();
         let size = check_neg!(unsafe {
-            sys::virDomainListAllSnapshots(self.as_ptr(), &mut snaps, flags as libc::c_uint)
+            sys::virDomainListAllSnapshots(self.as_ptr(), &mut snaps, flags as c_uint)
         })?;
 
         let mut array: Vec<DomainSnapshot> = Vec::new();
         for x in 0..size as isize {
             array.push(unsafe { DomainSnapshot::from_ptr(*snaps.offset(x)) });
         }
-        unsafe { libc::free(snaps as *mut libc::c_void) };
+        unsafe { libc::free(snaps as *mut c_void) };
 
         Ok(array)
     }
@@ -2446,7 +2407,7 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainGetSchedulerType>
     pub fn scheduler_type(&self) -> Result<(String, i32), Error> {
-        let mut nparams: libc::c_int = -1;
+        let mut nparams: c_int = -1;
         let sched_type =
             check_null!(unsafe { sys::virDomainGetSchedulerType(self.as_ptr(), &mut nparams) })?;
         Ok((unsafe { c_chars_to_string!(sched_type) }, nparams))
@@ -2489,7 +2450,7 @@ impl Domain {
                 self.as_ptr(),
                 params.as_mut_ptr(),
                 &mut nparams,
-                flags as libc::c_uint,
+                flags as c_uint,
             )
         })?;
         unsafe { params.set_len(nparams as usize) };
@@ -2505,7 +2466,7 @@ impl Domain {
             sys::virDomainSetSchedulerParameters(
                 self.as_ptr(),
                 params.as_mut_ptr(),
-                params.len() as libc::c_int,
+                params.len() as c_int,
             )
         })?;
         Ok(())
@@ -2534,8 +2495,8 @@ impl Domain {
             sys::virDomainSetSchedulerParametersFlags(
                 self.as_ptr(),
                 params.as_mut_ptr(),
-                params.len() as libc::c_int,
-                flags as libc::c_uint,
+                params.len() as c_int,
+                flags as c_uint,
             )
         })?;
         Ok(())
@@ -2562,11 +2523,11 @@ impl Domain {
         let _ = check_neg!(unsafe {
             sys::virDomainSendKey(
                 self.as_ptr(),
-                codeset as libc::c_uint,
-                holdtime as libc::c_uint,
-                keycodes as *mut libc::c_uint,
-                nkeycodes as libc::c_int,
-                flags as libc::c_uint,
+                codeset as c_uint,
+                holdtime as c_uint,
+                keycodes as *mut c_uint,
+                nkeycodes as c_int,
+                flags as c_uint,
             )
         })?;
         Ok(())
@@ -2587,8 +2548,8 @@ impl Domain {
             sys::virDomainScreenshot(
                 self.as_ptr(),
                 stream.as_ptr(),
-                screen as libc::c_uint,
-                flags as libc::c_uint,
+                screen as c_uint,
+                flags as c_uint,
             )
         })?;
         Ok(unsafe { c_chars_to_string!(n) })
@@ -2604,14 +2565,14 @@ impl Domain {
     /// See <https://libvirt.org/html/libvirt-libvirt-qemu.html#virDomainQemuMonitorCommand>
     #[cfg(feature = "qemu")]
     pub fn qemu_monitor_command(&self, cmd: &str, flags: u32) -> Result<String, Error> {
-        let mut result: *mut libc::c_char = std::ptr::null_mut();
+        let mut result: *mut c_char = std::ptr::null_mut();
         let cmd_buf = CString::new(cmd)?;
         let _ = check_neg!(unsafe {
             sys::virDomainQemuMonitorCommand(
                 self.as_ptr(),
                 cmd_buf.as_ptr(),
                 &mut result,
-                flags as libc::c_uint,
+                flags as c_uint,
             )
         })?;
         Ok(unsafe { c_chars_to_string!(result) })
@@ -2633,8 +2594,8 @@ impl Domain {
             sys::virDomainQemuAgentCommand(
                 self.as_ptr(),
                 cmd_buf.as_ptr(),
-                timeout as libc::c_int,
-                flags as libc::c_uint,
+                timeout as c_int,
+                flags as c_uint,
             )
         })?;
         Ok(unsafe { c_chars_to_string!(ret) })
@@ -2650,11 +2611,7 @@ impl Domain {
     ) -> Result<DomainSnapshot, Error> {
         let name_buf = CString::new(name)?;
         let ptr = check_null!(unsafe {
-            sys::virDomainSnapshotLookupByName(
-                dom.as_ptr(),
-                name_buf.as_ptr(),
-                flags as libc::c_uint,
-            )
+            sys::virDomainSnapshotLookupByName(dom.as_ptr(), name_buf.as_ptr(), flags as c_uint)
         })?;
         Ok(unsafe { DomainSnapshot::from_ptr(ptr) })
     }
@@ -2665,7 +2622,7 @@ impl Domain {
     pub fn create_snapshot_xml(&self, xml: &str, flags: u32) -> Result<DomainSnapshot, Error> {
         let xml_buf = CString::new(xml)?;
         let ptr = check_null!(unsafe {
-            sys::virDomainSnapshotCreateXML(self.as_ptr(), xml_buf.as_ptr(), flags as libc::c_uint)
+            sys::virDomainSnapshotCreateXML(self.as_ptr(), xml_buf.as_ptr(), flags as c_uint)
         })?;
         Ok(unsafe { DomainSnapshot::from_ptr(ptr) })
     }
@@ -2674,9 +2631,8 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotCurrent>
     pub fn current_snapshot(&self, flags: u32) -> Result<DomainSnapshot, Error> {
-        let ptr = check_null!(unsafe {
-            sys::virDomainSnapshotCurrent(self.as_ptr(), flags as libc::c_uint)
-        })?;
+        let ptr =
+            check_null!(unsafe { sys::virDomainSnapshotCurrent(self.as_ptr(), flags as c_uint) })?;
         Ok(unsafe { DomainSnapshot::from_ptr(ptr) })
     }
 
@@ -2684,8 +2640,7 @@ impl Domain {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotNum>
     pub fn num_snapshots(&self, flags: u32) -> Result<u32, Error> {
-        let ret =
-            check_neg!(unsafe { sys::virDomainSnapshotNum(self.as_ptr(), flags as libc::c_uint) })?;
+        let ret = check_neg!(unsafe { sys::virDomainSnapshotNum(self.as_ptr(), flags as c_uint) })?;
         Ok(ret as u32)
     }
 }

@@ -16,6 +16,7 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
+use libc::{c_uint, c_void};
 use std::ptr;
 
 use crate::connect::Connect;
@@ -106,7 +107,7 @@ impl DomainSnapshot {
     /// See <https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotGetXMLDesc>
     pub fn xml_desc(&self, flags: u32) -> Result<String, Error> {
         let xml = check_null!(unsafe {
-            sys::virDomainSnapshotGetXMLDesc(self.as_ptr(), flags as libc::c_uint)
+            sys::virDomainSnapshotGetXMLDesc(self.as_ptr(), flags as c_uint)
         })?;
         Ok(unsafe { c_chars_to_string!(xml) })
     }
@@ -116,7 +117,7 @@ impl DomainSnapshot {
     /// See <https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotGetParent>
     pub fn parent(&self, flags: u32) -> Result<DomainSnapshot, Error> {
         let ptr = check_null!(unsafe {
-            sys::virDomainSnapshotGetParent(self.as_ptr(), flags as libc::c_uint)
+            sys::virDomainSnapshotGetParent(self.as_ptr(), flags as c_uint)
         })?;
         Ok(unsafe { DomainSnapshot::from_ptr(ptr) })
     }
@@ -125,9 +126,8 @@ impl DomainSnapshot {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainRevertToSnapshot>
     pub fn revert(&self, flags: u32) -> Result<(), Error> {
-        let _ = check_neg!(unsafe {
-            sys::virDomainRevertToSnapshot(self.as_ptr(), flags as libc::c_uint)
-        })?;
+        let _ =
+            check_neg!(unsafe { sys::virDomainRevertToSnapshot(self.as_ptr(), flags as c_uint) })?;
         Ok(())
     }
 
@@ -135,9 +135,8 @@ impl DomainSnapshot {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotDelete>
     pub fn delete(&self, flags: u32) -> Result<(), Error> {
-        let _ = check_neg!(unsafe {
-            sys::virDomainSnapshotDelete(self.as_ptr(), flags as libc::c_uint)
-        })?;
+        let _ =
+            check_neg!(unsafe { sys::virDomainSnapshotDelete(self.as_ptr(), flags as c_uint) })?;
         Ok(())
     }
 
@@ -146,7 +145,7 @@ impl DomainSnapshot {
     /// See <https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotNumChildren>
     pub fn num_children(&self, flags: u32) -> Result<u32, Error> {
         let ret = check_neg!(unsafe {
-            sys::virDomainSnapshotNumChildren(self.as_ptr(), flags as libc::c_uint)
+            sys::virDomainSnapshotNumChildren(self.as_ptr(), flags as c_uint)
         })?;
         Ok(ret as u32)
     }
@@ -155,9 +154,8 @@ impl DomainSnapshot {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotIsCurrent>
     pub fn is_current(&self, flags: u32) -> Result<bool, Error> {
-        let ret = check_neg!(unsafe {
-            sys::virDomainSnapshotIsCurrent(self.as_ptr(), flags as libc::c_uint)
-        })?;
+        let ret =
+            check_neg!(unsafe { sys::virDomainSnapshotIsCurrent(self.as_ptr(), flags as c_uint) })?;
         Ok(ret == 1)
     }
 
@@ -167,7 +165,7 @@ impl DomainSnapshot {
     /// See <https://libvirt.org/html/libvirt-libvirt-domain-snapshot.html#virDomainSnapshotHasMetadata>
     pub fn has_metadata(&self, flags: u32) -> Result<bool, Error> {
         let ret = check_neg!(unsafe {
-            sys::virDomainSnapshotHasMetadata(self.as_ptr(), flags as libc::c_uint)
+            sys::virDomainSnapshotHasMetadata(self.as_ptr(), flags as c_uint)
         })?;
         Ok(ret == 1)
     }
@@ -178,14 +176,14 @@ impl DomainSnapshot {
     pub fn list_all_children(&self, flags: u32) -> Result<Vec<DomainSnapshot>, Error> {
         let mut snaps: *mut sys::virDomainSnapshotPtr = ptr::null_mut();
         let size = check_neg!(unsafe {
-            sys::virDomainSnapshotListAllChildren(self.as_ptr(), &mut snaps, flags as libc::c_uint)
+            sys::virDomainSnapshotListAllChildren(self.as_ptr(), &mut snaps, flags as c_uint)
         })?;
 
         let mut array: Vec<DomainSnapshot> = Vec::new();
         for x in 0..size as isize {
             array.push(unsafe { DomainSnapshot::from_ptr(*snaps.offset(x)) });
         }
-        unsafe { libc::free(snaps as *mut libc::c_void) };
+        unsafe { libc::free(snaps as *mut c_void) };
 
         Ok(array)
     }

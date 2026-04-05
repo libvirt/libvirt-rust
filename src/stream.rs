@@ -16,12 +16,14 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
+use libc::{c_char, c_int, c_uint, c_void};
+
 use crate::connect::Connect;
 use crate::error::Error;
 use crate::util::{check_neg, check_null};
 
 // wrapper for callbacks
-extern "C" fn event_callback(c: sys::virStreamPtr, flags: libc::c_int, opaque: *mut libc::c_void) {
+extern "C" fn event_callback(c: sys::virStreamPtr, flags: c_int, opaque: *mut c_void) {
     let flags = flags as sys::virStreamFlags;
     let shadow_self = unsafe { &mut *(opaque as *mut Stream) };
     if let Some(callback) = &mut shadow_self.callback {
@@ -35,7 +37,7 @@ extern "C" fn event_callback(c: sys::virStreamPtr, flags: libc::c_int, opaque: *
     }
 }
 
-extern "C" fn event_free(_opaque: *mut libc::c_void) {}
+extern "C" fn event_free(_opaque: *mut c_void) {}
 
 type StreamCallback = dyn FnMut(&Stream, sys::virStreamEventType);
 
@@ -79,7 +81,7 @@ impl Stream {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-stream.html#virStreamNew>
     pub fn new(conn: &Connect, flags: sys::virStreamFlags) -> Result<Stream, Error> {
-        let ptr = check_null!(unsafe { sys::virStreamNew(conn.as_ptr(), flags as libc::c_uint) })?;
+        let ptr = check_null!(unsafe { sys::virStreamNew(conn.as_ptr(), flags as c_uint) })?;
         Ok(unsafe { Stream::from_ptr(ptr) })
     }
 
@@ -128,11 +130,7 @@ impl Stream {
     /// See <https://libvirt.org/html/libvirt-libvirt-stream.html#virStreamSend>
     pub fn send(&self, data: &[u8]) -> Result<isize, Error> {
         let ret = check_neg!(unsafe {
-            sys::virStreamSend(
-                self.as_ptr(),
-                data.as_ptr() as *mut libc::c_char,
-                data.len(),
-            )
+            sys::virStreamSend(self.as_ptr(), data.as_ptr() as *mut c_char, data.len())
         })?;
         Ok(ret as isize)
     }
@@ -142,11 +140,7 @@ impl Stream {
     /// See <https://libvirt.org/html/libvirt-libvirt-stream.html#virStreamRecv>
     pub fn recv(&self, buf: &mut [u8]) -> Result<isize, Error> {
         let ret = check_neg!(unsafe {
-            sys::virStreamRecv(
-                self.as_ptr(),
-                buf.as_mut_ptr() as *mut libc::c_char,
-                buf.len(),
-            )
+            sys::virStreamRecv(self.as_ptr(), buf.as_mut_ptr() as *mut c_char, buf.len())
         })?;
         Ok(ret as isize)
     }
@@ -163,7 +157,7 @@ impl Stream {
             let ptr = self as *mut _ as *mut _;
             sys::virStreamEventAddCallback(
                 self.as_ptr(),
-                events as libc::c_int,
+                events as c_int,
                 Some(event_callback),
                 ptr,
                 Some(event_free),
@@ -178,7 +172,7 @@ impl Stream {
     /// See <https://libvirt.org/html/libvirt-libvirt-stream.html#virStreamEventUpdateCallback>
     pub fn event_update_callback(&self, events: sys::virStreamEventType) -> Result<(), Error> {
         let _ = check_neg!(unsafe {
-            sys::virStreamEventUpdateCallback(self.as_ptr(), events as libc::c_int)
+            sys::virStreamEventUpdateCallback(self.as_ptr(), events as c_int)
         })?;
         Ok(())
     }

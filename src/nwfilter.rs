@@ -16,6 +16,8 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
+use libc::{c_char, c_uchar, c_uint};
+
 use uuid::Uuid;
 
 use crate::error::Error;
@@ -87,8 +89,7 @@ impl NWFilter {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-nwfilter.html#virNWFilterGetUUID>
     pub fn uuid(&self) -> Result<Uuid, Error> {
-        let mut uuid: [libc::c_uchar; sys::VIR_UUID_BUFLEN as usize] =
-            [0; sys::VIR_UUID_BUFLEN as usize];
+        let mut uuid: [c_uchar; sys::VIR_UUID_BUFLEN as usize] = [0; sys::VIR_UUID_BUFLEN as usize];
         let _ = check_neg!(unsafe { sys::virNWFilterGetUUID(self.as_ptr(), uuid.as_mut_ptr()) })?;
         Ok(Uuid::from_bytes(uuid))
     }
@@ -97,7 +98,7 @@ impl NWFilter {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-nwfilter.html#virNWFilterGetUUIDString>
     pub fn uuid_string(&self) -> Result<String, Error> {
-        let mut uuid: [libc::c_char; sys::VIR_UUID_STRING_BUFLEN as usize] =
+        let mut uuid: [c_char; sys::VIR_UUID_STRING_BUFLEN as usize] =
             [0; sys::VIR_UUID_STRING_BUFLEN as usize];
         let _ =
             check_neg!(unsafe { sys::virNWFilterGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) })?;
@@ -108,9 +109,8 @@ impl NWFilter {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-nwfilter.html#virNWFilterGetXMLDesc>
     pub fn xml_desc(&self, flags: u32) -> Result<String, Error> {
-        let xml = check_null!(unsafe {
-            sys::virNWFilterGetXMLDesc(self.as_ptr(), flags as libc::c_uint)
-        })?;
+        let xml =
+            check_null!(unsafe { sys::virNWFilterGetXMLDesc(self.as_ptr(), flags as c_uint) })?;
         Ok(unsafe { c_chars_to_string!(xml) })
     }
 

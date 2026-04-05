@@ -16,6 +16,7 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
+use libc::c_void;
 use std::error::Error as StdError;
 use std::ffi::CStr;
 use std::fmt::{Display, Formatter, Result as FmtResult};
@@ -649,7 +650,7 @@ pub struct Error {
     level: ErrorLevel,
 }
 
-extern "C" fn noop(_data: *mut libc::c_void, _error: sys::virErrorPtr) {}
+extern "C" fn noop(_data: *mut c_void, _error: sys::virErrorPtr) {}
 
 impl Error {
     /// Returns the last error that occurred.

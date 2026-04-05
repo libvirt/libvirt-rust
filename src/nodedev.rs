@@ -16,6 +16,7 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
+use libc::{c_char, c_uint};
 use std::ffi::CString;
 use std::{ptr, str};
 
@@ -96,9 +97,8 @@ impl NodeDevice {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeDeviceGetXMLDesc>
     pub fn xml_desc(&self, flags: u32) -> Result<String, Error> {
-        let xml = check_null!(unsafe {
-            sys::virNodeDeviceGetXMLDesc(self.as_ptr(), flags as libc::c_uint)
-        })?;
+        let xml =
+            check_null!(unsafe { sys::virNodeDeviceGetXMLDesc(self.as_ptr(), flags as c_uint) })?;
         Ok(unsafe { c_chars_to_string!(xml) })
     }
 
@@ -143,7 +143,7 @@ impl NodeDevice {
             sys::virNodeDeviceDetachFlags(
                 self.as_ptr(),
                 some_cstring_to_c_chars!(driver_buf),
-                flags as libc::c_uint,
+                flags as c_uint,
             )
         })?;
         Ok(())
@@ -162,7 +162,7 @@ impl NodeDevice {
     /// See <https://libvirt.org/html/libvirt-libvirt-nodedev.html#virNodeDeviceListCaps>
     #[allow(clippy::needless_range_loop)]
     pub fn list_caps(&self) -> Result<Vec<String>, Error> {
-        let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
+        let mut names: [*mut c_char; 1024] = [ptr::null_mut(); 1024];
         let size = check_neg!(unsafe {
             sys::virNodeDeviceListCaps(self.as_ptr(), names.as_mut_ptr(), 1024)
         })?;

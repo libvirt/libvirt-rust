@@ -1,3 +1,4 @@
+use libc::c_char;
 use std::ffi::CStr;
 use std::str;
 
@@ -167,9 +168,7 @@ pub fn to_params(mut fields: Vec<FieldOut>) -> Vec<sys::virTypedParameter> {
                 let p = sys::virTypedParameter {
                     field: to_arr(&field.name),
                     type_: sys::VIR_TYPED_PARAM_BOOLEAN as i32,
-                    value: sys::_virTypedParameterValue {
-                        b: v as libc::c_char,
-                    },
+                    value: sys::_virTypedParameterValue { b: v as c_char },
                 };
                 params.push(p);
             }),
@@ -198,10 +197,10 @@ pub fn to_params(mut fields: Vec<FieldOut>) -> Vec<sys::virTypedParameter> {
     params
 }
 
-fn to_arr(name: &str) -> [libc::c_char; 80] {
-    let mut field: [libc::c_char; 80] = [0; 80];
+fn to_arr(name: &str) -> [c_char; 80] {
+    let mut field: [c_char; 80] = [0; 80];
     for (a, c) in field.iter_mut().zip(name.as_bytes()) {
-        *a = *c as libc::c_char
+        *a = *c as c_char
     }
     field
 }

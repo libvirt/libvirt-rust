@@ -16,6 +16,7 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
+use libc::{c_char, c_int, c_uchar, c_uint, c_void};
 use std::ffi::CString;
 use std::{mem, ptr};
 
@@ -146,7 +147,7 @@ impl StoragePool {
     /// See <https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolListVolumes>
     #[allow(clippy::needless_range_loop)]
     pub fn list_volumes(&self) -> Result<Vec<String>, Error> {
-        let mut names: [*mut libc::c_char; 1024] = [ptr::null_mut(); 1024];
+        let mut names: [*mut c_char; 1024] = [ptr::null_mut(); 1024];
         let size = check_neg!(unsafe {
             sys::virStoragePoolListVolumes(self.as_ptr(), names.as_mut_ptr(), 1024)
         })?;
@@ -164,14 +165,14 @@ impl StoragePool {
     pub fn list_all_volumes(&self, flags: u32) -> Result<Vec<StorageVol>, Error> {
         let mut volumes: *mut sys::virStorageVolPtr = ptr::null_mut();
         let size = check_neg!(unsafe {
-            sys::virStoragePoolListAllVolumes(self.as_ptr(), &mut volumes, flags as libc::c_uint)
+            sys::virStoragePoolListAllVolumes(self.as_ptr(), &mut volumes, flags as c_uint)
         })?;
 
         let mut array: Vec<StorageVol> = Vec::new();
         for x in 0..size as isize {
             array.push(unsafe { StorageVol::from_ptr(*volumes.offset(x)) });
         }
-        unsafe { libc::free(volumes as *mut libc::c_void) };
+        unsafe { libc::free(volumes as *mut c_void) };
 
         Ok(array)
     }
@@ -180,8 +181,7 @@ impl StoragePool {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolGetUUID>
     pub fn uuid(&self) -> Result<Uuid, Error> {
-        let mut uuid: [libc::c_uchar; sys::VIR_UUID_BUFLEN as usize] =
-            [0; sys::VIR_UUID_BUFLEN as usize];
+        let mut uuid: [c_uchar; sys::VIR_UUID_BUFLEN as usize] = [0; sys::VIR_UUID_BUFLEN as usize];
         let _ =
             check_neg!(unsafe { sys::virStoragePoolGetUUID(self.as_ptr(), uuid.as_mut_ptr()) })?;
         Ok(Uuid::from_bytes(uuid))
@@ -191,7 +191,7 @@ impl StoragePool {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolGetUUIDString>
     pub fn uuid_string(&self) -> Result<String, Error> {
-        let mut uuid: [libc::c_char; sys::VIR_UUID_STRING_BUFLEN as usize] =
+        let mut uuid: [c_char; sys::VIR_UUID_STRING_BUFLEN as usize] =
             [0; sys::VIR_UUID_STRING_BUFLEN as usize];
         let _ = check_neg!(unsafe {
             sys::virStoragePoolGetUUIDString(self.as_ptr(), uuid.as_mut_ptr())
@@ -235,8 +235,7 @@ impl StoragePool {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolDelete>
     pub fn delete(&self, flags: u32) -> Result<(), Error> {
-        let _ =
-            check_neg!(unsafe { sys::virStoragePoolDelete(self.as_ptr(), flags as libc::c_uint) })?;
+        let _ = check_neg!(unsafe { sys::virStoragePoolDelete(self.as_ptr(), flags as c_uint) })?;
         Ok(())
     }
 
@@ -268,9 +267,7 @@ impl StoragePool {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolRefresh>
     pub fn refresh(&self, flags: u32) -> Result<(), Error> {
-        let _ = check_neg!(unsafe {
-            sys::virStoragePoolRefresh(self.as_ptr(), flags as libc::c_uint)
-        })?;
+        let _ = check_neg!(unsafe { sys::virStoragePoolRefresh(self.as_ptr(), flags as c_uint) })?;
         Ok(())
     }
 
@@ -288,7 +285,7 @@ impl StoragePool {
     /// See <https://libvirt.org/html/libvirt-libvirt-storage.html#virStoragePoolSetAutostart>
     pub fn set_autostart(&self, autostart: bool) -> Result<(), Error> {
         let _ = check_neg!(unsafe {
-            sys::virStoragePoolSetAutostart(self.as_ptr(), autostart as libc::c_int)
+            sys::virStoragePoolSetAutostart(self.as_ptr(), autostart as c_int)
         })?;
         Ok(())
     }

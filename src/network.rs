@@ -16,6 +16,7 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
+use libc::{c_char, c_int, c_uchar};
 use std::ffi::CString;
 use std::str;
 
@@ -99,8 +100,7 @@ impl Network {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkGetUUID>
     pub fn uuid(&self) -> Result<Uuid, Error> {
-        let mut uuid: [libc::c_uchar; sys::VIR_UUID_BUFLEN as usize] =
-            [0; sys::VIR_UUID_BUFLEN as usize];
+        let mut uuid: [c_uchar; sys::VIR_UUID_BUFLEN as usize] = [0; sys::VIR_UUID_BUFLEN as usize];
         let _ = check_neg!(unsafe { sys::virNetworkGetUUID(self.as_ptr(), uuid.as_mut_ptr()) })?;
         Ok(Uuid::from_bytes(uuid))
     }
@@ -109,7 +109,7 @@ impl Network {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkGetUUIDString>
     pub fn uuid_string(&self) -> Result<String, Error> {
-        let mut uuid: [libc::c_char; sys::VIR_UUID_STRING_BUFLEN as usize] =
+        let mut uuid: [c_char; sys::VIR_UUID_STRING_BUFLEN as usize] =
             [0; sys::VIR_UUID_STRING_BUFLEN as usize];
         let _ =
             check_neg!(unsafe { sys::virNetworkGetUUIDString(self.as_ptr(), uuid.as_mut_ptr()) })?;
@@ -185,9 +185,8 @@ impl Network {
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkSetAutostart>
     pub fn set_autostart(&self, autostart: bool) -> Result<(), Error> {
-        let _ = check_neg!(unsafe {
-            sys::virNetworkSetAutostart(self.as_ptr(), autostart as libc::c_int)
-        })?;
+        let _ =
+            check_neg!(unsafe { sys::virNetworkSetAutostart(self.as_ptr(), autostart as c_int) })?;
         Ok(())
     }
 
@@ -208,7 +207,7 @@ impl Network {
                 self.as_ptr(),
                 cmd,
                 section,
-                index as libc::c_int,
+                index as c_int,
                 xml_buf.as_ptr(),
                 flags,
             )
