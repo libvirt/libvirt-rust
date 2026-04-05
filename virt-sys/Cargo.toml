@@ -9,6 +9,7 @@ repository = "https://gitlab.com/libvirt/libvirt-rust"
 homepage = "https://libvirt.org/"
 categories = ["external-ffi-bindings",]
 links = "virt"
+rust-version = "1.63"
 
 [dependencies]
 libc = "0.2.122"
