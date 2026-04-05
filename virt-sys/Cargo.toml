@@ -12,7 +12,8 @@ links = "virt"
 rust-version = "1.63"
 
 [dependencies]
-libc = "0.2.122"
+# Pin for compat with Rust 1.63.0 / Debian 12
+libc = { version = "=0.2.183" }
 
 [build-dependencies]
 bindgen = { version = "0.69.2", optional = true }
