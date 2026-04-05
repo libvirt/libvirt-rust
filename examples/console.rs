@@ -28,10 +28,10 @@
 //!
 //! Largely inspired by libvirt-python/examples/consolecallback.py
 
-use libc::{c_int, c_void};
 use std::{
     env,
     io::{self, Read, Write},
+    os::raw::{c_int, c_void},
     os::unix::io::AsRawFd,
     sync::{atomic::AtomicBool, Arc},
 };
