@@ -29,6 +29,17 @@ x86_64-alpine-edge:
     TARGET_BASE_IMAGE: docker.io/library/alpine:edge
 
 
+x86_64-almalinux-9:
+  extends: .native_build_job
+  needs:
+    - job: x86_64-almalinux-9-container
+      optional: true
+  allow_failure: false
+  variables:
+    NAME: almalinux-9
+    TARGET_BASE_IMAGE: docker.io/library/almalinux:9
+
+
 x86_64-almalinux-10:
   extends: .native_build_job
   needs:
@@ -51,6 +62,17 @@ x86_64-almalinux-10-git:
     TARGET_BASE_IMAGE: docker.io/library/almalinux:10
 
 
+x86_64-centos-stream-9:
+  extends: .native_build_job
+  needs:
+    - job: x86_64-centos-stream-9-container
+      optional: true
+  allow_failure: false
+  variables:
+    NAME: centos-stream-9
+    TARGET_BASE_IMAGE: quay.io/centos/centos:stream9
+
+
 x86_64-centos-stream-10:
   extends: .native_build_job
   needs:
@@ -60,6 +82,17 @@ x86_64-centos-stream-10:
   variables:
     NAME: centos-stream-10
     TARGET_BASE_IMAGE: quay.io/centos/centos:stream10
+
+
+x86_64-debian-12:
+  extends: .native_build_job
+  needs:
+    - job: x86_64-debian-12-container
+      optional: true
+  allow_failure: false
+  variables:
+    NAME: debian-12
+    TARGET_BASE_IMAGE: docker.io/library/debian:12-slim
 
 
 x86_64-debian-13:
@@ -240,21 +273,6 @@ s390x-debian-13:
 
 # Native cirrus build jobs
 
-x86_64-freebsd-13:
-  extends: .cirrus_build_job
-  needs: []
-  allow_failure:
-    exit_codes: 3
-  variables:
-    CIRRUS_VM_IMAGE_NAME: freebsd-13-5
-    CIRRUS_VM_IMAGE_SELECTOR: image_family
-    CIRRUS_VM_INSTANCE_TYPE: freebsd_instance
-    INSTALL_COMMAND: pkg install -y
-    NAME: freebsd-13
-    UPDATE_COMMAND: pkg update
-    UPGRADE_COMMAND: pkg upgrade -y
-
-
 x86_64-freebsd-14:
   extends: .cirrus_build_job
   needs: []
@@ -266,6 +284,21 @@ x86_64-freebsd-14:
     CIRRUS_VM_INSTANCE_TYPE: freebsd_instance
     INSTALL_COMMAND: pkg install -y
     NAME: freebsd-14
+    UPDATE_COMMAND: pkg update
+    UPGRADE_COMMAND: pkg upgrade -y
+
+
+x86_64-freebsd-15:
+  extends: .cirrus_build_job
+  needs: []
+  allow_failure:
+    exit_codes: 3
+  variables:
+    CIRRUS_VM_IMAGE_NAME: freebsd-15-0
+    CIRRUS_VM_IMAGE_SELECTOR: image_family
+    CIRRUS_VM_INSTANCE_TYPE: freebsd_instance
+    INSTALL_COMMAND: pkg install -y
+    NAME: freebsd-15
     UPDATE_COMMAND: pkg update
     UPGRADE_COMMAND: pkg upgrade -y
 

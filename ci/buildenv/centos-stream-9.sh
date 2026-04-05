@@ -5,8 +5,11 @@
 # https://gitlab.com/libvirt/libvirt-ci
 
 function install_buildenv() {
-    dnf --quiet update -y --nogpgcheck fedora-gpg-keys
     dnf --quiet distro-sync -y
+    dnf --quiet install 'dnf-command(config-manager)' -y
+    dnf --quiet config-manager --set-enabled -y crb
+    dnf --quiet install -y epel-release
+    dnf --quiet install -y epel-next-release
     dnf --quiet install -y \
                 ca-certificates \
                 cargo \
