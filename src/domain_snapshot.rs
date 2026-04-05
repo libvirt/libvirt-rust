@@ -16,7 +16,7 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-use libc::{c_uint, c_void};
+use std::os::raw::{c_uint, c_void};
 use std::ptr;
 
 use crate::connect::Connect;

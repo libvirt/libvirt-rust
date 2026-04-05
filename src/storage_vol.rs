@@ -16,8 +16,8 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-use libc::{c_uint, c_ulonglong};
 use std::ffi::CString;
+use std::os::raw::{c_uint, c_ulonglong};
 use std::{mem, str};
 
 use crate::connect::Connect;

@@ -16,9 +16,9 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-use libc::{c_char, c_int, c_uint, c_ulong, c_ulonglong, c_void};
 use std::convert::TryInto;
 use std::ffi::CString;
+use std::os::raw::{c_char, c_int, c_uint, c_ulong, c_ulonglong, c_void};
 use std::{mem, ptr, str};
 
 use uuid::Uuid;

@@ -1,5 +1,5 @@
-use libc::c_char;
 use std::ffi::CStr;
+use std::os::raw::c_char;
 use std::str;
 
 pub enum ParamIn<'a> {
@@ -43,8 +43,10 @@ pub struct FieldOut<'a> {
 macro_rules! param_field_in {
     ($name:expr, $type:ident, $field:expr) => {
         $crate::typedparams::FieldIn {
-            name: unsafe { c_chars_to_string!($name.as_ptr() as *const libc::c_char, nofree) }
-                .to_string(),
+            name: unsafe {
+                c_chars_to_string!($name.as_ptr() as *const std::os::raw::c_char, nofree)
+            }
+            .to_string(),
             value: $crate::typedparams::ParamIn::$type(&mut $field),
         }
     };
@@ -54,8 +56,10 @@ macro_rules! param_field_in {
 macro_rules! param_field_out {
     ($name:expr, $type:ident, $field:expr) => {
         $crate::typedparams::FieldOut {
-            name: unsafe { c_chars_to_string!($name.as_ptr() as *const libc::c_char, nofree) }
-                .to_string(),
+            name: unsafe {
+                c_chars_to_string!($name.as_ptr() as *const std::os::raw::c_char, nofree)
+            }
+            .to_string(),
             value: $crate::typedparams::ParamOut::$type(&$field),
         }
     };

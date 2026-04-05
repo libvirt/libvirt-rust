@@ -16,9 +16,9 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-use libc::{c_char, c_int, c_longlong, c_uchar, c_uint, c_ulong, c_ulonglong, c_void};
 use std::ffi::CString;
 use std::fmt::{Display, Formatter, Result as FmtResult};
+use std::os::raw::{c_char, c_int, c_longlong, c_uchar, c_uint, c_ulong, c_ulonglong, c_void};
 use std::{mem, ptr, str};
 use uuid::Uuid;
 

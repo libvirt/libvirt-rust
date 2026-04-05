@@ -16,10 +16,10 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-use libc::c_void;
 use std::error::Error as StdError;
 use std::ffi::CStr;
 use std::fmt::{Display, Formatter, Result as FmtResult};
+use std::os::raw::c_void;
 
 use crate::enumutil::{impl_enum, Enum, RawEnum};
 

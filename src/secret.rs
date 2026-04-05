@@ -16,7 +16,7 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-use libc::{c_char, c_uchar, c_uint};
+use std::os::raw::{c_char, c_uchar, c_uint};
 
 use uuid::Uuid;
 

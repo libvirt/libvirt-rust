@@ -16,7 +16,7 @@
  * Ryosuke Yasuoka <ryasuoka@redhat.com>
  */
 
-use libc::{c_int, c_void};
+use std::os::raw::{c_int, c_void};
 use std::os::unix::io::RawFd;
 
 use crate::error::Error;

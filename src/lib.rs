@@ -83,7 +83,7 @@ macro_rules! c_chars_to_string {
         let ret = ::std::ffi::CStr::from_ptr($x)
             .to_string_lossy()
             .into_owned();
-        libc::free($x as *mut libc::c_void);
+        libc::free($x as *mut std::os::raw::c_void);
         ret
     }};
 
@@ -100,7 +100,7 @@ macro_rules! c_chars_to_string {
 // be released via the CString API.
 macro_rules! string_to_mut_c_chars {
     ($x:expr) => {
-        ::std::ffi::CString::new($x).unwrap().into_raw() as *mut libc::c_char
+        ::std::ffi::CString::new($x).unwrap().into_raw() as *mut std::os::raw::c_char
     };
 }
 
@@ -130,7 +130,7 @@ macro_rules! some_cstring_to_c_chars {
 macro_rules! typed_params_release_c_chars {
     ($x:expr) => {
         for p in $x {
-            if p.type_ == sys::VIR_TYPED_PARAM_STRING as libc::c_int {
+            if p.type_ == sys::VIR_TYPED_PARAM_STRING as std::os::raw::c_int {
                 let _cleanup = CString::from_raw(p.value.s);
             }
         }

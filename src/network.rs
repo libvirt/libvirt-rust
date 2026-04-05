@@ -16,8 +16,8 @@
  * Sahid Orentino Ferdjaoui <sahid.ferdjaoui@redhat.com>
  */
 
-use libc::{c_char, c_int, c_uchar};
 use std::ffi::CString;
+use std::os::raw::{c_char, c_int, c_uchar};
 use std::str;
 
 use uuid::Uuid;
