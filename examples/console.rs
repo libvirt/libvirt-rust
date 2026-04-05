@@ -28,6 +28,7 @@
 //!
 //! Largely inspired by libvirt-python/examples/consolecallback.py
 
+use libc::{c_int, c_void};
 use std::{
     env,
     io::{self, Read, Write},
@@ -75,13 +76,8 @@ fn read_callback(stream: &Stream, event_type: virStreamEventType) {
     }
 }
 
-fn stdin_callback(
-    _watch: libc::c_int,
-    _fd: libc::c_int,
-    events: libc::c_int,
-    console_ptr: *mut libc::c_void,
-) {
-    if events == VIR_EVENT_HANDLE_READABLE as libc::c_int {
+fn stdin_callback(_watch: c_int, _fd: c_int, events: c_int, console_ptr: *mut c_void) {
+    if events == VIR_EVENT_HANDLE_READABLE as c_int {
         let stdin = io::stdin();
         let mut stdin = stdin.lock();
         let con = unsafe { &mut *(console_ptr as *mut Console) };
@@ -98,7 +94,7 @@ fn stdin_callback(
 }
 
 #[allow(dead_code)]
-fn timer_task(_timer: libc::c_int, _opaque: *mut libc::c_void) {
+fn timer_task(_timer: c_int, _opaque: *mut c_void) {
     println!("timer!");
 }
 
@@ -145,12 +141,12 @@ fn main() {
         })
         .unwrap();
 
-    let console_ptr = &mut console as *mut Console as *mut libc::c_void;
+    let console_ptr = &mut console as *mut Console as *mut c_void;
 
     let _ehw = event_add_handle(
         0,
         VIR_EVENT_HANDLE_READABLE,
-        |watch, fd, events, opaque| stdin_callback(watch, fd, events as libc::c_int, opaque),
+        |watch, fd, events, opaque| stdin_callback(watch, fd, events as c_int, opaque),
         console_ptr,
     )
     .unwrap();
