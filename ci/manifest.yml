@@ -12,10 +12,7 @@ targets:
 
   alpine-323: x86_64
 
-  alpine-edge:
-    jobs:
-      - arch: x86_64
-        allow-failure: true
+  alpine-edge: x86_64
 
   almalinux-9: x86_64
 
@@ -47,38 +44,25 @@ targets:
       - arch: ppc64le
       - arch: s390x
 
-  debian-sid:
-    jobs:
-      - arch: x86_64
-        allow-failure: true
+  debian-sid: x86_64
 
-  fedora-42: x86_64
+  fedora-43: x86_64
 
-  fedora-43:
+  fedora-44:
     jobs:
       - arch: x86_64
         variables:
           CLIPPY: enable
           DOC: enable
 
-  fedora-rawhide:
-    jobs:
-      - arch: x86_64
-        allow-failure: true
-
-  freebsd-14: x86_64
-
-  freebsd-15: x86_64
+  fedora-rawhide: x86_64
 
   opensuse-leap-15: x86_64
 
-  opensuse-tumbleweed:
-    jobs:
-      - arch: x86_64
-        allow-failure: true
+  opensuse-leap-16: x86_64
 
-  macos-14: aarch64
-
-  ubuntu-2204: x86_64
+  opensuse-tumbleweed: x86_64
 
   ubuntu-2404: x86_64
+
+  ubuntu-2604: x86_64

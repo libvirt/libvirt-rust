@@ -117,17 +117,6 @@ x86_64-debian-sid:
     TARGET_BASE_IMAGE: docker.io/library/debian:sid-slim
 
 
-x86_64-fedora-42:
-  extends: .native_build_job
-  needs:
-    - job: x86_64-fedora-42-container
-      optional: true
-  allow_failure: false
-  variables:
-    NAME: fedora-42
-    TARGET_BASE_IMAGE: registry.fedoraproject.org/fedora:42
-
-
 x86_64-fedora-43:
   extends: .native_build_job
   needs:
@@ -135,10 +124,21 @@ x86_64-fedora-43:
       optional: true
   allow_failure: false
   variables:
-    CLIPPY: enable
-    DOC: enable
     NAME: fedora-43
     TARGET_BASE_IMAGE: registry.fedoraproject.org/fedora:43
+
+
+x86_64-fedora-44:
+  extends: .native_build_job
+  needs:
+    - job: x86_64-fedora-44-container
+      optional: true
+  allow_failure: false
+  variables:
+    CLIPPY: enable
+    DOC: enable
+    NAME: fedora-44
+    TARGET_BASE_IMAGE: registry.fedoraproject.org/fedora:44
 
 
 x86_64-fedora-rawhide:
@@ -163,6 +163,17 @@ x86_64-opensuse-leap-15:
     TARGET_BASE_IMAGE: registry.opensuse.org/opensuse/leap:15.6
 
 
+x86_64-opensuse-leap-16:
+  extends: .native_build_job
+  needs:
+    - job: x86_64-opensuse-leap-16-container
+      optional: true
+  allow_failure: false
+  variables:
+    NAME: opensuse-leap-16
+    TARGET_BASE_IMAGE: registry.opensuse.org/opensuse/leap:16.0
+
+
 x86_64-opensuse-tumbleweed:
   extends: .native_build_job
   needs:
@@ -174,17 +185,6 @@ x86_64-opensuse-tumbleweed:
     TARGET_BASE_IMAGE: registry.opensuse.org/opensuse/tumbleweed:latest
 
 
-x86_64-ubuntu-2204:
-  extends: .native_build_job
-  needs:
-    - job: x86_64-ubuntu-2204-container
-      optional: true
-  allow_failure: false
-  variables:
-    NAME: ubuntu-2204
-    TARGET_BASE_IMAGE: docker.io/library/ubuntu:22.04
-
-
 x86_64-ubuntu-2404:
   extends: .native_build_job
   needs:
@@ -194,6 +194,17 @@ x86_64-ubuntu-2404:
   variables:
     NAME: ubuntu-2404
     TARGET_BASE_IMAGE: docker.io/library/ubuntu:24.04
+
+
+x86_64-ubuntu-2604:
+  extends: .native_build_job
+  needs:
+    - job: x86_64-ubuntu-2604-container
+      optional: true
+  allow_failure: false
+  variables:
+    NAME: ubuntu-2604
+    TARGET_BASE_IMAGE: docker.io/library/ubuntu:26.04
 
 
 
@@ -269,50 +280,3 @@ s390x-debian-13:
     CROSS: s390x
     NAME: debian-13
     TARGET_BASE_IMAGE: docker.io/library/debian:13-slim
-
-
-# Native cirrus build jobs
-
-x86_64-freebsd-14:
-  extends: .cirrus_build_job
-  needs: []
-  allow_failure:
-    exit_codes: 3
-  variables:
-    CIRRUS_VM_IMAGE_NAME: freebsd-14-3
-    CIRRUS_VM_IMAGE_SELECTOR: image_family
-    CIRRUS_VM_INSTANCE_TYPE: freebsd_instance
-    INSTALL_COMMAND: pkg install -y
-    NAME: freebsd-14
-    UPDATE_COMMAND: pkg update
-    UPGRADE_COMMAND: pkg upgrade -y
-
-
-x86_64-freebsd-15:
-  extends: .cirrus_build_job
-  needs: []
-  allow_failure:
-    exit_codes: 3
-  variables:
-    CIRRUS_VM_IMAGE_NAME: freebsd-15-0
-    CIRRUS_VM_IMAGE_SELECTOR: image_family
-    CIRRUS_VM_INSTANCE_TYPE: freebsd_instance
-    INSTALL_COMMAND: pkg install -y
-    NAME: freebsd-15
-    UPDATE_COMMAND: pkg update
-    UPGRADE_COMMAND: pkg upgrade -y
-
-
-aarch64-macos-14:
-  extends: .cirrus_build_job
-  needs: []
-  allow_failure:
-    exit_codes: 3
-  variables:
-    CIRRUS_VM_IMAGE_NAME: ghcr.io/cirruslabs/macos-runner:sonoma
-    CIRRUS_VM_IMAGE_SELECTOR: image
-    CIRRUS_VM_INSTANCE_TYPE: macos_instance
-    INSTALL_COMMAND: brew install
-    NAME: macos-14
-    UPDATE_COMMAND: brew update
-    UPGRADE_COMMAND: brew upgrade
