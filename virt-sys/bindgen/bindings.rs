@@ -1983,86 +1983,6 @@ pub union _virTypedParameter__bindgen_ty_1 {
     pub b: ::std::os::raw::c_char,
     pub s: *mut ::std::os::raw::c_char,
 }
-#[test]
-fn bindgen_test_layout__virTypedParameter__bindgen_ty_1() {
-    const UNINIT: ::std::mem::MaybeUninit<_virTypedParameter__bindgen_ty_1> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virTypedParameter__bindgen_ty_1>(),
-        8usize,
-        "Size of _virTypedParameter__bindgen_ty_1",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virTypedParameter__bindgen_ty_1>(),
-        8usize,
-        "Alignment of _virTypedParameter__bindgen_ty_1",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).i) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virTypedParameter__bindgen_ty_1::i",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).ui) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virTypedParameter__bindgen_ty_1::ui",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).l) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virTypedParameter__bindgen_ty_1::l",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).ul) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virTypedParameter__bindgen_ty_1::ul",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).d) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virTypedParameter__bindgen_ty_1::d",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).b) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virTypedParameter__bindgen_ty_1::b",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).s) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virTypedParameter__bindgen_ty_1::s",
-    );
-}
-#[test]
-fn bindgen_test_layout__virTypedParameter() {
-    const UNINIT: ::std::mem::MaybeUninit<_virTypedParameter> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virTypedParameter>(),
-        96usize,
-        "Size of _virTypedParameter",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virTypedParameter>(),
-        8usize,
-        "Alignment of _virTypedParameter",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).field) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virTypedParameter::field",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
-        80usize,
-        "Offset of field: _virTypedParameter::type_",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).value) as usize - ptr as usize },
-        88usize,
-        "Offset of field: _virTypedParameter::value",
-    );
-}
 pub type virTypedParameterPtr = *mut virTypedParameter;
 extern "C" {
     pub fn virTypedParamsGet(
@@ -2246,31 +2166,6 @@ pub struct _virSecurityLabel {
     pub label: [::std::os::raw::c_char; 4097usize],
     pub enforcing: ::std::os::raw::c_int,
 }
-#[test]
-fn bindgen_test_layout__virSecurityLabel() {
-    const UNINIT: ::std::mem::MaybeUninit<_virSecurityLabel> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virSecurityLabel>(),
-        4104usize,
-        "Size of _virSecurityLabel",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virSecurityLabel>(),
-        4usize,
-        "Alignment of _virSecurityLabel",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).label) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virSecurityLabel::label",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).enforcing) as usize - ptr as usize },
-        4100usize,
-        "Offset of field: _virSecurityLabel::enforcing",
-    );
-}
 pub type virSecurityLabelPtr = *mut virSecurityLabel;
 pub type virSecurityModel = _virSecurityModel;
 #[repr(C)]
@@ -2278,31 +2173,6 @@ pub type virSecurityModel = _virSecurityModel;
 pub struct _virSecurityModel {
     pub model: [::std::os::raw::c_char; 257usize],
     pub doi: [::std::os::raw::c_char; 257usize],
-}
-#[test]
-fn bindgen_test_layout__virSecurityModel() {
-    const UNINIT: ::std::mem::MaybeUninit<_virSecurityModel> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virSecurityModel>(),
-        514usize,
-        "Size of _virSecurityModel",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virSecurityModel>(),
-        1usize,
-        "Alignment of _virSecurityModel",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).model) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virSecurityModel::model",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).doi) as usize - ptr as usize },
-        257usize,
-        "Offset of field: _virSecurityModel::doi",
-    );
 }
 pub type virSecurityModelPtr = *mut virSecurityModel;
 pub type virNodeInfo = _virNodeInfo;
@@ -2318,57 +2188,6 @@ pub struct _virNodeInfo {
     pub cores: ::std::os::raw::c_uint,
     pub threads: ::std::os::raw::c_uint,
 }
-#[test]
-fn bindgen_test_layout__virNodeInfo() {
-    const UNINIT: ::std::mem::MaybeUninit<_virNodeInfo> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(::std::mem::size_of::<_virNodeInfo>(), 64usize, "Size of _virNodeInfo");
-    assert_eq!(
-        ::std::mem::align_of::<_virNodeInfo>(),
-        8usize,
-        "Alignment of _virNodeInfo",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).model) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virNodeInfo::model",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).memory) as usize - ptr as usize },
-        32usize,
-        "Offset of field: _virNodeInfo::memory",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).cpus) as usize - ptr as usize },
-        40usize,
-        "Offset of field: _virNodeInfo::cpus",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).mhz) as usize - ptr as usize },
-        44usize,
-        "Offset of field: _virNodeInfo::mhz",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).nodes) as usize - ptr as usize },
-        48usize,
-        "Offset of field: _virNodeInfo::nodes",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).sockets) as usize - ptr as usize },
-        52usize,
-        "Offset of field: _virNodeInfo::sockets",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).cores) as usize - ptr as usize },
-        56usize,
-        "Offset of field: _virNodeInfo::cores",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).threads) as usize - ptr as usize },
-        60usize,
-        "Offset of field: _virNodeInfo::threads",
-    );
-}
 pub const VIR_NODE_CPU_STATS_ALL_CPUS: virNodeGetCPUStatsAllCPUs = -1;
 pub type virNodeGetCPUStatsAllCPUs = ::std::os::raw::c_int;
 pub type virNodeCPUStats = _virNodeCPUStats;
@@ -2378,31 +2197,6 @@ pub struct _virNodeCPUStats {
     pub field: [::std::os::raw::c_char; 80usize],
     pub value: ::std::os::raw::c_ulonglong,
 }
-#[test]
-fn bindgen_test_layout__virNodeCPUStats() {
-    const UNINIT: ::std::mem::MaybeUninit<_virNodeCPUStats> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virNodeCPUStats>(),
-        88usize,
-        "Size of _virNodeCPUStats",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virNodeCPUStats>(),
-        8usize,
-        "Alignment of _virNodeCPUStats",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).field) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virNodeCPUStats::field",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).value) as usize - ptr as usize },
-        80usize,
-        "Offset of field: _virNodeCPUStats::value",
-    );
-}
 pub const VIR_NODE_MEMORY_STATS_ALL_CELLS: virNodeGetMemoryStatsAllCells = -1;
 pub type virNodeGetMemoryStatsAllCells = ::std::os::raw::c_int;
 pub type virNodeMemoryStats = _virNodeMemoryStats;
@@ -2411,31 +2205,6 @@ pub type virNodeMemoryStats = _virNodeMemoryStats;
 pub struct _virNodeMemoryStats {
     pub field: [::std::os::raw::c_char; 80usize],
     pub value: ::std::os::raw::c_ulonglong,
-}
-#[test]
-fn bindgen_test_layout__virNodeMemoryStats() {
-    const UNINIT: ::std::mem::MaybeUninit<_virNodeMemoryStats> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virNodeMemoryStats>(),
-        88usize,
-        "Size of _virNodeMemoryStats",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virNodeMemoryStats>(),
-        8usize,
-        "Alignment of _virNodeMemoryStats",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).field) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virNodeMemoryStats::field",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).value) as usize - ptr as usize },
-        80usize,
-        "Offset of field: _virNodeMemoryStats::value",
-    );
 }
 extern "C" {
     pub fn virNodeGetMemoryParameters(
@@ -2495,51 +2264,6 @@ pub struct _virConnectCredential {
     pub result: *mut ::std::os::raw::c_char,
     pub resultlen: ::std::os::raw::c_uint,
 }
-#[test]
-fn bindgen_test_layout__virConnectCredential() {
-    const UNINIT: ::std::mem::MaybeUninit<_virConnectCredential> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virConnectCredential>(),
-        48usize,
-        "Size of _virConnectCredential",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virConnectCredential>(),
-        8usize,
-        "Alignment of _virConnectCredential",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virConnectCredential::type_",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).prompt) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virConnectCredential::prompt",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).challenge) as usize - ptr as usize },
-        16usize,
-        "Offset of field: _virConnectCredential::challenge",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).defresult) as usize - ptr as usize },
-        24usize,
-        "Offset of field: _virConnectCredential::defresult",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).result) as usize - ptr as usize },
-        32usize,
-        "Offset of field: _virConnectCredential::result",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).resultlen) as usize - ptr as usize },
-        40usize,
-        "Offset of field: _virConnectCredential::resultlen",
-    );
-}
 pub type virConnectCredential = _virConnectCredential;
 pub type virConnectCredentialPtr = *mut virConnectCredential;
 pub type virConnectAuthCallbackPtr = ::std::option::Option<
@@ -2556,41 +2280,6 @@ pub struct _virConnectAuth {
     pub ncredtype: ::std::os::raw::c_uint,
     pub cb: virConnectAuthCallbackPtr,
     pub cbdata: *mut ::std::os::raw::c_void,
-}
-#[test]
-fn bindgen_test_layout__virConnectAuth() {
-    const UNINIT: ::std::mem::MaybeUninit<_virConnectAuth> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virConnectAuth>(),
-        32usize,
-        "Size of _virConnectAuth",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virConnectAuth>(),
-        8usize,
-        "Alignment of _virConnectAuth",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).credtype) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virConnectAuth::credtype",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).ncredtype) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virConnectAuth::ncredtype",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).cb) as usize - ptr as usize },
-        16usize,
-        "Offset of field: _virConnectAuth::cb",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).cbdata) as usize - ptr as usize },
-        24usize,
-        "Offset of field: _virConnectAuth::cbdata",
-    );
 }
 pub type virConnectAuth = _virConnectAuth;
 pub type virConnectAuthPtr = *mut virConnectAuth;
@@ -2926,36 +2615,6 @@ pub struct _virDomainControlInfo {
     pub details: ::std::os::raw::c_uint,
     pub stateTime: ::std::os::raw::c_ulonglong,
 }
-#[test]
-fn bindgen_test_layout__virDomainControlInfo() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainControlInfo> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virDomainControlInfo>(),
-        16usize,
-        "Size of _virDomainControlInfo",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virDomainControlInfo>(),
-        8usize,
-        "Alignment of _virDomainControlInfo",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).state) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virDomainControlInfo::state",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).details) as usize - ptr as usize },
-        4usize,
-        "Offset of field: _virDomainControlInfo::details",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).stateTime) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virDomainControlInfo::stateTime",
-    );
-}
 pub type virDomainControlInfoPtr = *mut virDomainControlInfo;
 pub const VIR_DOMAIN_AFFECT_CURRENT: virDomainModificationImpact = 0;
 pub const VIR_DOMAIN_AFFECT_LIVE: virDomainModificationImpact = 1;
@@ -2975,46 +2634,6 @@ pub struct _virDomainInfo {
     pub memory: ::std::os::raw::c_ulong,
     pub nrVirtCpu: ::std::os::raw::c_ushort,
     pub cpuTime: ::std::os::raw::c_ulonglong,
-}
-#[test]
-fn bindgen_test_layout__virDomainInfo() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainInfo> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virDomainInfo>(),
-        40usize,
-        "Size of _virDomainInfo",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virDomainInfo>(),
-        8usize,
-        "Alignment of _virDomainInfo",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).state) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virDomainInfo::state",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxMem) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virDomainInfo::maxMem",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).memory) as usize - ptr as usize },
-        16usize,
-        "Offset of field: _virDomainInfo::memory",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).nrVirtCpu) as usize - ptr as usize },
-        24usize,
-        "Offset of field: _virDomainInfo::nrVirtCpu",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).cpuTime) as usize - ptr as usize },
-        32usize,
-        "Offset of field: _virDomainInfo::cpuTime",
-    );
 }
 pub type virDomainInfoPtr = *mut virDomainInfo;
 pub const VIR_DOMAIN_NONE: virDomainCreateFlags = 0;
@@ -3065,46 +2684,6 @@ pub struct _virDomainBlockStats {
     pub wr_bytes: ::std::os::raw::c_longlong,
     pub errs: ::std::os::raw::c_longlong,
 }
-#[test]
-fn bindgen_test_layout__virDomainBlockStats() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainBlockStats> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virDomainBlockStats>(),
-        40usize,
-        "Size of _virDomainBlockStats",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virDomainBlockStats>(),
-        8usize,
-        "Alignment of _virDomainBlockStats",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).rd_req) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virDomainBlockStats::rd_req",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).rd_bytes) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virDomainBlockStats::rd_bytes",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).wr_req) as usize - ptr as usize },
-        16usize,
-        "Offset of field: _virDomainBlockStats::wr_req",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).wr_bytes) as usize - ptr as usize },
-        24usize,
-        "Offset of field: _virDomainBlockStats::wr_bytes",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).errs) as usize - ptr as usize },
-        32usize,
-        "Offset of field: _virDomainBlockStats::errs",
-    );
-}
 pub type virDomainBlockStatsPtr = *mut virDomainBlockStatsStruct;
 pub type virDomainInterfaceStatsStruct = _virDomainInterfaceStats;
 #[repr(C)]
@@ -3118,61 +2697,6 @@ pub struct _virDomainInterfaceStats {
     pub tx_packets: ::std::os::raw::c_longlong,
     pub tx_errs: ::std::os::raw::c_longlong,
     pub tx_drop: ::std::os::raw::c_longlong,
-}
-#[test]
-fn bindgen_test_layout__virDomainInterfaceStats() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainInterfaceStats> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virDomainInterfaceStats>(),
-        64usize,
-        "Size of _virDomainInterfaceStats",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virDomainInterfaceStats>(),
-        8usize,
-        "Alignment of _virDomainInterfaceStats",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).rx_bytes) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virDomainInterfaceStats::rx_bytes",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).rx_packets) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virDomainInterfaceStats::rx_packets",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).rx_errs) as usize - ptr as usize },
-        16usize,
-        "Offset of field: _virDomainInterfaceStats::rx_errs",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).rx_drop) as usize - ptr as usize },
-        24usize,
-        "Offset of field: _virDomainInterfaceStats::rx_drop",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).tx_bytes) as usize - ptr as usize },
-        32usize,
-        "Offset of field: _virDomainInterfaceStats::tx_bytes",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).tx_packets) as usize - ptr as usize },
-        40usize,
-        "Offset of field: _virDomainInterfaceStats::tx_packets",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).tx_errs) as usize - ptr as usize },
-        48usize,
-        "Offset of field: _virDomainInterfaceStats::tx_errs",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).tx_drop) as usize - ptr as usize },
-        56usize,
-        "Offset of field: _virDomainInterfaceStats::tx_drop",
-    );
 }
 pub type virDomainInterfaceStatsPtr = *mut virDomainInterfaceStatsStruct;
 pub const VIR_DOMAIN_MEMORY_STAT_SWAP_IN: virDomainMemoryStatTags = 0;
@@ -3196,31 +2720,6 @@ pub type virDomainMemoryStatStruct = _virDomainMemoryStat;
 pub struct _virDomainMemoryStat {
     pub tag: ::std::os::raw::c_int,
     pub val: ::std::os::raw::c_ulonglong,
-}
-#[test]
-fn bindgen_test_layout__virDomainMemoryStat() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainMemoryStat> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virDomainMemoryStat>(),
-        16usize,
-        "Size of _virDomainMemoryStat",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virDomainMemoryStat>(),
-        8usize,
-        "Alignment of _virDomainMemoryStat",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).tag) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virDomainMemoryStat::tag",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).val) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virDomainMemoryStat::val",
-    );
 }
 pub type virDomainMemoryStatPtr = *mut virDomainMemoryStatStruct;
 pub const VIR_DUMP_CRASH: virDomainCoreDumpFlags = 1;
@@ -3919,36 +3418,6 @@ pub struct _virDomainBlockInfo {
     pub allocation: ::std::os::raw::c_ulonglong,
     pub physical: ::std::os::raw::c_ulonglong,
 }
-#[test]
-fn bindgen_test_layout__virDomainBlockInfo() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainBlockInfo> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virDomainBlockInfo>(),
-        24usize,
-        "Size of _virDomainBlockInfo",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virDomainBlockInfo>(),
-        8usize,
-        "Alignment of _virDomainBlockInfo",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).capacity) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virDomainBlockInfo::capacity",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).allocation) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virDomainBlockInfo::allocation",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).physical) as usize - ptr as usize },
-        16usize,
-        "Offset of field: _virDomainBlockInfo::physical",
-    );
-}
 extern "C" {
     pub fn virDomainGetBlockInfo(
         dom: virDomainPtr,
@@ -4100,37 +3569,6 @@ pub struct _virVcpuInfo {
     pub cpuTime: ::std::os::raw::c_ulonglong,
     pub cpu: ::std::os::raw::c_int,
 }
-#[test]
-fn bindgen_test_layout__virVcpuInfo() {
-    const UNINIT: ::std::mem::MaybeUninit<_virVcpuInfo> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(::std::mem::size_of::<_virVcpuInfo>(), 24usize, "Size of _virVcpuInfo");
-    assert_eq!(
-        ::std::mem::align_of::<_virVcpuInfo>(),
-        8usize,
-        "Alignment of _virVcpuInfo",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).number) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virVcpuInfo::number",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).state) as usize - ptr as usize },
-        4usize,
-        "Offset of field: _virVcpuInfo::state",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).cpuTime) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virVcpuInfo::cpuTime",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).cpu) as usize - ptr as usize },
-        16usize,
-        "Offset of field: _virVcpuInfo::cpu",
-    );
-}
 pub type virVcpuInfoPtr = *mut virVcpuInfo;
 pub const VIR_DOMAIN_VCPU_CURRENT: virDomainVcpuFlags = 0;
 pub const VIR_DOMAIN_VCPU_LIVE: virDomainVcpuFlags = 1;
@@ -4209,36 +3647,6 @@ pub struct _virDomainIOThreadInfo {
     pub iothread_id: ::std::os::raw::c_uint,
     pub cpumap: *mut ::std::os::raw::c_uchar,
     pub cpumaplen: ::std::os::raw::c_int,
-}
-#[test]
-fn bindgen_test_layout__virDomainIOThreadInfo() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainIOThreadInfo> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virDomainIOThreadInfo>(),
-        24usize,
-        "Size of _virDomainIOThreadInfo",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virDomainIOThreadInfo>(),
-        8usize,
-        "Alignment of _virDomainIOThreadInfo",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).iothread_id) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virDomainIOThreadInfo::iothread_id",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).cpumap) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virDomainIOThreadInfo::cpumap",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).cpumaplen) as usize - ptr as usize },
-        16usize,
-        "Offset of field: _virDomainIOThreadInfo::cpumaplen",
-    );
 }
 extern "C" {
     pub fn virDomainIOThreadInfoFree(info: virDomainIOThreadInfoPtr);
@@ -4345,36 +3753,6 @@ pub struct _virDomainStatsRecord {
     pub params: virTypedParameterPtr,
     pub nparams: ::std::os::raw::c_int,
 }
-#[test]
-fn bindgen_test_layout__virDomainStatsRecord() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainStatsRecord> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virDomainStatsRecord>(),
-        24usize,
-        "Size of _virDomainStatsRecord",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virDomainStatsRecord>(),
-        8usize,
-        "Alignment of _virDomainStatsRecord",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).dom) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virDomainStatsRecord::dom",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).params) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virDomainStatsRecord::params",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).nparams) as usize - ptr as usize },
-        16usize,
-        "Offset of field: _virDomainStatsRecord::nparams",
-    );
-}
 pub const VIR_DOMAIN_STATS_STATE: virDomainStatsTypes = 1;
 pub const VIR_DOMAIN_STATS_CPU_TOTAL: virDomainStatsTypes = 2;
 pub const VIR_DOMAIN_STATS_BALLOON: virDomainStatsTypes = 4;
@@ -4462,41 +3840,6 @@ pub struct _virDomainBlockJobInfo {
     pub bandwidth: ::std::os::raw::c_ulong,
     pub cur: virDomainBlockJobCursor,
     pub end: virDomainBlockJobCursor,
-}
-#[test]
-fn bindgen_test_layout__virDomainBlockJobInfo() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainBlockJobInfo> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virDomainBlockJobInfo>(),
-        32usize,
-        "Size of _virDomainBlockJobInfo",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virDomainBlockJobInfo>(),
-        8usize,
-        "Alignment of _virDomainBlockJobInfo",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virDomainBlockJobInfo::type_",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).bandwidth) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virDomainBlockJobInfo::bandwidth",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).cur) as usize - ptr as usize },
-        16usize,
-        "Offset of field: _virDomainBlockJobInfo::cur",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).end) as usize - ptr as usize },
-        24usize,
-        "Offset of field: _virDomainBlockJobInfo::end",
-    );
 }
 pub type virDomainBlockJobInfoPtr = *mut virDomainBlockJobInfo;
 extern "C" {
@@ -4605,31 +3948,6 @@ pub type virDomainDiskErrorPtr = *mut virDomainDiskError;
 pub struct _virDomainDiskError {
     pub disk: *mut ::std::os::raw::c_char,
     pub error: ::std::os::raw::c_int,
-}
-#[test]
-fn bindgen_test_layout__virDomainDiskError() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainDiskError> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virDomainDiskError>(),
-        16usize,
-        "Size of _virDomainDiskError",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virDomainDiskError>(),
-        8usize,
-        "Alignment of _virDomainDiskError",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).disk) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virDomainDiskError::disk",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).error) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virDomainDiskError::error",
-    );
 }
 extern "C" {
     pub fn virDomainGetDiskErrors(
@@ -4870,81 +4188,6 @@ pub struct _virDomainJobInfo {
     pub fileProcessed: ::std::os::raw::c_ulonglong,
     pub fileRemaining: ::std::os::raw::c_ulonglong,
 }
-#[test]
-fn bindgen_test_layout__virDomainJobInfo() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainJobInfo> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virDomainJobInfo>(),
-        96usize,
-        "Size of _virDomainJobInfo",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virDomainJobInfo>(),
-        8usize,
-        "Alignment of _virDomainJobInfo",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virDomainJobInfo::type_",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).timeElapsed) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virDomainJobInfo::timeElapsed",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).timeRemaining) as usize - ptr as usize },
-        16usize,
-        "Offset of field: _virDomainJobInfo::timeRemaining",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).dataTotal) as usize - ptr as usize },
-        24usize,
-        "Offset of field: _virDomainJobInfo::dataTotal",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).dataProcessed) as usize - ptr as usize },
-        32usize,
-        "Offset of field: _virDomainJobInfo::dataProcessed",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).dataRemaining) as usize - ptr as usize },
-        40usize,
-        "Offset of field: _virDomainJobInfo::dataRemaining",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).memTotal) as usize - ptr as usize },
-        48usize,
-        "Offset of field: _virDomainJobInfo::memTotal",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).memProcessed) as usize - ptr as usize },
-        56usize,
-        "Offset of field: _virDomainJobInfo::memProcessed",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).memRemaining) as usize - ptr as usize },
-        64usize,
-        "Offset of field: _virDomainJobInfo::memRemaining",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).fileTotal) as usize - ptr as usize },
-        72usize,
-        "Offset of field: _virDomainJobInfo::fileTotal",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).fileProcessed) as usize - ptr as usize },
-        80usize,
-        "Offset of field: _virDomainJobInfo::fileProcessed",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).fileRemaining) as usize - ptr as usize },
-        88usize,
-        "Offset of field: _virDomainJobInfo::fileRemaining",
-    );
-}
 pub const VIR_DOMAIN_JOB_STATS_COMPLETED: virDomainGetJobStatsFlags = 1;
 pub const VIR_DOMAIN_JOB_STATS_KEEP_COMPLETED: virDomainGetJobStatsFlags = 2;
 pub type virDomainGetJobStatsFlags = ::std::os::raw::c_uint;
@@ -5057,36 +4300,6 @@ pub struct _virDomainEventGraphicsAddress {
     pub node: *mut ::std::os::raw::c_char,
     pub service: *mut ::std::os::raw::c_char,
 }
-#[test]
-fn bindgen_test_layout__virDomainEventGraphicsAddress() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainEventGraphicsAddress> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virDomainEventGraphicsAddress>(),
-        24usize,
-        "Size of _virDomainEventGraphicsAddress",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virDomainEventGraphicsAddress>(),
-        8usize,
-        "Alignment of _virDomainEventGraphicsAddress",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).family) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virDomainEventGraphicsAddress::family",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).node) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virDomainEventGraphicsAddress::node",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).service) as usize - ptr as usize },
-        16usize,
-        "Offset of field: _virDomainEventGraphicsAddress::service",
-    );
-}
 pub type virDomainEventGraphicsAddress = _virDomainEventGraphicsAddress;
 pub type virDomainEventGraphicsAddressPtr = *mut virDomainEventGraphicsAddress;
 #[repr(C)]
@@ -5095,31 +4308,6 @@ pub struct _virDomainEventGraphicsSubjectIdentity {
     pub type_: *mut ::std::os::raw::c_char,
     pub name: *mut ::std::os::raw::c_char,
 }
-#[test]
-fn bindgen_test_layout__virDomainEventGraphicsSubjectIdentity() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainEventGraphicsSubjectIdentity> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virDomainEventGraphicsSubjectIdentity>(),
-        16usize,
-        "Size of _virDomainEventGraphicsSubjectIdentity",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virDomainEventGraphicsSubjectIdentity>(),
-        8usize,
-        "Alignment of _virDomainEventGraphicsSubjectIdentity",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virDomainEventGraphicsSubjectIdentity::type_",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).name) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virDomainEventGraphicsSubjectIdentity::name",
-    );
-}
 pub type virDomainEventGraphicsSubjectIdentity = _virDomainEventGraphicsSubjectIdentity;
 pub type virDomainEventGraphicsSubjectIdentityPtr = *mut virDomainEventGraphicsSubjectIdentity;
 #[repr(C)]
@@ -5127,31 +4315,6 @@ pub type virDomainEventGraphicsSubjectIdentityPtr = *mut virDomainEventGraphicsS
 pub struct _virDomainEventGraphicsSubject {
     pub nidentity: ::std::os::raw::c_int,
     pub identities: virDomainEventGraphicsSubjectIdentityPtr,
-}
-#[test]
-fn bindgen_test_layout__virDomainEventGraphicsSubject() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainEventGraphicsSubject> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virDomainEventGraphicsSubject>(),
-        16usize,
-        "Size of _virDomainEventGraphicsSubject",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virDomainEventGraphicsSubject>(),
-        8usize,
-        "Alignment of _virDomainEventGraphicsSubject",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).nidentity) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virDomainEventGraphicsSubject::nidentity",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).identities) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virDomainEventGraphicsSubject::identities",
-    );
 }
 pub type virDomainEventGraphicsSubject = _virDomainEventGraphicsSubject;
 pub type virDomainEventGraphicsSubjectPtr = *mut virDomainEventGraphicsSubject;
@@ -5506,46 +4669,6 @@ pub struct _virDomainFSInfo {
     pub ndevAlias: usize,
     pub devAlias: *mut *mut ::std::os::raw::c_char,
 }
-#[test]
-fn bindgen_test_layout__virDomainFSInfo() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainFSInfo> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virDomainFSInfo>(),
-        40usize,
-        "Size of _virDomainFSInfo",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virDomainFSInfo>(),
-        8usize,
-        "Alignment of _virDomainFSInfo",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).mountpoint) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virDomainFSInfo::mountpoint",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).name) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virDomainFSInfo::name",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).fstype) as usize - ptr as usize },
-        16usize,
-        "Offset of field: _virDomainFSInfo::fstype",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).ndevAlias) as usize - ptr as usize },
-        24usize,
-        "Offset of field: _virDomainFSInfo::ndevAlias",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).devAlias) as usize - ptr as usize },
-        32usize,
-        "Offset of field: _virDomainFSInfo::devAlias",
-    );
-}
 extern "C" {
     pub fn virDomainFSInfoFree(info: virDomainFSInfoPtr);
 }
@@ -5614,36 +4737,6 @@ pub struct _virDomainInterfaceIPAddress {
     pub addr: *mut ::std::os::raw::c_char,
     pub prefix: ::std::os::raw::c_uint,
 }
-#[test]
-fn bindgen_test_layout__virDomainInterfaceIPAddress() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainInterfaceIPAddress> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virDomainInterfaceIPAddress>(),
-        24usize,
-        "Size of _virDomainInterfaceIPAddress",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virDomainInterfaceIPAddress>(),
-        8usize,
-        "Alignment of _virDomainInterfaceIPAddress",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virDomainInterfaceIPAddress::type_",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).addr) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virDomainInterfaceIPAddress::addr",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).prefix) as usize - ptr as usize },
-        16usize,
-        "Offset of field: _virDomainInterfaceIPAddress::prefix",
-    );
-}
 pub type virDomainInterface = _virDomainInterface;
 pub type virDomainInterfacePtr = *mut virDomainInterface;
 #[repr(C)]
@@ -5653,41 +4746,6 @@ pub struct _virDomainInterface {
     pub hwaddr: *mut ::std::os::raw::c_char,
     pub naddrs: ::std::os::raw::c_uint,
     pub addrs: virDomainIPAddressPtr,
-}
-#[test]
-fn bindgen_test_layout__virDomainInterface() {
-    const UNINIT: ::std::mem::MaybeUninit<_virDomainInterface> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virDomainInterface>(),
-        32usize,
-        "Size of _virDomainInterface",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virDomainInterface>(),
-        8usize,
-        "Alignment of _virDomainInterface",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).name) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virDomainInterface::name",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).hwaddr) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virDomainInterface::hwaddr",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).naddrs) as usize - ptr as usize },
-        16usize,
-        "Offset of field: _virDomainInterface::naddrs",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).addrs) as usize - ptr as usize },
-        24usize,
-        "Offset of field: _virDomainInterface::addrs",
-    );
 }
 extern "C" {
     pub fn virDomainInterfaceAddresses(
@@ -6635,66 +5693,6 @@ pub struct _virNetworkDHCPLease {
     pub hostname: *mut ::std::os::raw::c_char,
     pub clientid: *mut ::std::os::raw::c_char,
 }
-#[test]
-fn bindgen_test_layout__virNetworkDHCPLease() {
-    const UNINIT: ::std::mem::MaybeUninit<_virNetworkDHCPLease> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virNetworkDHCPLease>(),
-        72usize,
-        "Size of _virNetworkDHCPLease",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virNetworkDHCPLease>(),
-        8usize,
-        "Alignment of _virNetworkDHCPLease",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).iface) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virNetworkDHCPLease::iface",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).expirytime) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virNetworkDHCPLease::expirytime",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
-        16usize,
-        "Offset of field: _virNetworkDHCPLease::type_",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).mac) as usize - ptr as usize },
-        24usize,
-        "Offset of field: _virNetworkDHCPLease::mac",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).iaid) as usize - ptr as usize },
-        32usize,
-        "Offset of field: _virNetworkDHCPLease::iaid",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).ipaddr) as usize - ptr as usize },
-        40usize,
-        "Offset of field: _virNetworkDHCPLease::ipaddr",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).prefix) as usize - ptr as usize },
-        48usize,
-        "Offset of field: _virNetworkDHCPLease::prefix",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).hostname) as usize - ptr as usize },
-        56usize,
-        "Offset of field: _virNetworkDHCPLease::hostname",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).clientid) as usize - ptr as usize },
-        64usize,
-        "Offset of field: _virNetworkDHCPLease::clientid",
-    );
-}
 extern "C" {
     pub fn virNetworkDHCPLeaseFree(lease: virNetworkDHCPLeasePtr);
 }
@@ -7397,41 +6395,6 @@ pub struct _virStoragePoolInfo {
     pub allocation: ::std::os::raw::c_ulonglong,
     pub available: ::std::os::raw::c_ulonglong,
 }
-#[test]
-fn bindgen_test_layout__virStoragePoolInfo() {
-    const UNINIT: ::std::mem::MaybeUninit<_virStoragePoolInfo> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virStoragePoolInfo>(),
-        32usize,
-        "Size of _virStoragePoolInfo",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virStoragePoolInfo>(),
-        8usize,
-        "Alignment of _virStoragePoolInfo",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).state) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virStoragePoolInfo::state",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).capacity) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virStoragePoolInfo::capacity",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).allocation) as usize - ptr as usize },
-        16usize,
-        "Offset of field: _virStoragePoolInfo::allocation",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).available) as usize - ptr as usize },
-        24usize,
-        "Offset of field: _virStoragePoolInfo::available",
-    );
-}
 pub type virStoragePoolInfoPtr = *mut virStoragePoolInfo;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -7472,36 +6435,6 @@ pub struct _virStorageVolInfo {
     pub type_: ::std::os::raw::c_int,
     pub capacity: ::std::os::raw::c_ulonglong,
     pub allocation: ::std::os::raw::c_ulonglong,
-}
-#[test]
-fn bindgen_test_layout__virStorageVolInfo() {
-    const UNINIT: ::std::mem::MaybeUninit<_virStorageVolInfo> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<_virStorageVolInfo>(),
-        24usize,
-        "Size of _virStorageVolInfo",
-    );
-    assert_eq!(
-        ::std::mem::align_of::<_virStorageVolInfo>(),
-        8usize,
-        "Alignment of _virStorageVolInfo",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virStorageVolInfo::type_",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).capacity) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virStorageVolInfo::capacity",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).allocation) as usize - ptr as usize },
-        16usize,
-        "Offset of field: _virStorageVolInfo::allocation",
-    );
 }
 pub type virStorageVolInfoPtr = *mut virStorageVolInfo;
 pub const VIR_STORAGE_XML_INACTIVE: virStorageXMLFlags = 1;
@@ -8136,73 +7069,6 @@ pub struct _virError {
     pub int1: ::std::os::raw::c_int,
     pub int2: ::std::os::raw::c_int,
     pub net: virNetworkPtr,
-}
-#[test]
-fn bindgen_test_layout__virError() {
-    const UNINIT: ::std::mem::MaybeUninit<_virError> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(::std::mem::size_of::<_virError>(), 80usize, "Size of _virError");
-    assert_eq!(::std::mem::align_of::<_virError>(), 8usize, "Alignment of _virError");
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).code) as usize - ptr as usize },
-        0usize,
-        "Offset of field: _virError::code",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).domain) as usize - ptr as usize },
-        4usize,
-        "Offset of field: _virError::domain",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).message) as usize - ptr as usize },
-        8usize,
-        "Offset of field: _virError::message",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).level) as usize - ptr as usize },
-        16usize,
-        "Offset of field: _virError::level",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).conn) as usize - ptr as usize },
-        24usize,
-        "Offset of field: _virError::conn",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).dom) as usize - ptr as usize },
-        32usize,
-        "Offset of field: _virError::dom",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).str1) as usize - ptr as usize },
-        40usize,
-        "Offset of field: _virError::str1",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).str2) as usize - ptr as usize },
-        48usize,
-        "Offset of field: _virError::str2",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).str3) as usize - ptr as usize },
-        56usize,
-        "Offset of field: _virError::str3",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).int1) as usize - ptr as usize },
-        64usize,
-        "Offset of field: _virError::int1",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).int2) as usize - ptr as usize },
-        68usize,
-        "Offset of field: _virError::int2",
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).net) as usize - ptr as usize },
-        72usize,
-        "Offset of field: _virError::net",
-    );
 }
 pub const VIR_ERR_OK: virErrorNumber = 0;
 pub const VIR_ERR_INTERNAL_ERROR: virErrorNumber = 1;

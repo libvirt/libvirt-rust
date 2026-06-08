@@ -35,6 +35,8 @@ fn bindgen_regenerate(bindgen_out_file: &PathBuf) -> Result<(), Box<dyn Error>> 
         .generate_cstr(true)
         // Put the oldest supported rust version here
         .rust_target(bindgen::RustTarget::stable(75, 0).expect("Uknown rust target version"))
+        // Our public structs are not constant in size, layout changes between archs
+        .layout_tests(false)
         .formatter(bindgen::Formatter::Prettyplease);
 
     bindings
