@@ -1479,6 +1479,30 @@ impl Domain {
         Ok(())
     }
 
+    /// Changes the actions of lifecycle events for domain represented as
+    /// <on_$type>$action</on_$type> in the domain XML.
+    ///
+    /// `kind` is one of the `VIR_DOMAIN_LIFECYCLE_*` constants and `action`
+    /// one of the `VIR_DOMAIN_LIFECYCLE_ACTION_*` constants.
+    ///
+    /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetLifecycleAction>
+    pub fn set_lifecycle_action(
+        &self,
+        kind: sys::virDomainLifecycle,
+        action: sys::virDomainLifecycleAction,
+        flags: sys::virDomainModificationImpact,
+    ) -> Result<(), Error> {
+        check_neg!(unsafe {
+            sys::virDomainSetLifecycleAction(
+                self.as_ptr(),
+                kind as c_uint,
+                action as c_uint,
+                flags as c_uint,
+            )
+        })?;
+        Ok(())
+    }
+
     /// Updates the memory stats polling interval
     ///
     /// See <https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainSetMemoryStatsPeriod>

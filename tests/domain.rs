@@ -138,6 +138,25 @@ fn test_schedinfo() {
 }
 
 #[test]
+fn test_set_lifecycle_action() {
+    fn t(dom: Domain) {
+        let xml = dom.xml_desc(sys::VIR_DOMAIN_XML_INACTIVE).unwrap();
+        assert!(xml.contains("<on_poweroff>destroy</on_poweroff>"));
+
+        dom.set_lifecycle_action(
+            sys::VIR_DOMAIN_LIFECYCLE_POWEROFF,
+            sys::VIR_DOMAIN_LIFECYCLE_ACTION_RESTART,
+            sys::VIR_DOMAIN_AFFECT_CONFIG,
+        )
+        .unwrap();
+
+        let xml = dom.xml_desc(sys::VIR_DOMAIN_XML_INACTIVE).unwrap();
+        assert!(xml.contains("<on_poweroff>restart</on_poweroff>"));
+    }
+    tdom(t);
+}
+
+#[test]
 fn test_memory_params() {
     fn t(dom: Domain) {
         let info = dom.memory_parameters(0).unwrap();
