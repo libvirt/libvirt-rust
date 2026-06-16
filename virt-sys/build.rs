@@ -17,11 +17,10 @@ fn main() {
 
 #[cfg(feature = "bindgen_regenerate")]
 fn bindgen_regenerate(bindgen_out_file: &PathBuf) -> Result<(), Box<dyn Error>> {
-
     // We want to make sure that the generated bindings.rs file includes all libvirt APIs,
     // including the ones that are QEMU-specific
     if !cfg!(feature = "qemu") {
-        return Err("qemu must be enabled along with bindgen_regenerate".into())
+        return Err("qemu must be enabled along with bindgen_regenerate".into());
     }
 
     let bindings = bindgen::builder()
@@ -46,29 +45,36 @@ fn bindgen_regenerate(bindgen_out_file: &PathBuf) -> Result<(), Box<dyn Error>> 
 
 #[cfg(not(feature = "bindgen_regenerate"))]
 fn bindgen_regenerate(_: &PathBuf) -> Result<(), Box<dyn Error>> {
-
     // We haven't been asked to regenerate bindings.rs, so nothing to do here
     Ok(())
 }
 
 fn run() -> Result<(), Box<dyn Error>> {
     println!("cargo:rerun-if-changed=wrapper.h");
+    println!("cargo:rerun-if-env-changed=DOCS_RS");
 
     let mut config = pkg_config::Config::new();
 
-    // Normally we would make the calls to probe() fatal by not ignoring their return value, but we
-    // want to be able to build the documentation for the library even when the libvirt header
-    // files are not present. This is necessary so that docs.rs can build and publish the API
-    // documentation for libvirt-rust. If any of these calls fail, then we'll still get an error
-    // when attempting to link against libvirt (e.g. when building the test suite).
-    let _ = config
-        .atleast_version(LIBVIRT_VERSION)
-        .probe("libvirt");
+    // On regular builds, we want to abort at compile-time if we do not find libvirt, since refusing
+    // to do so moves the errors to link-time and breaks cargo's assumption that the crate compiled
+    // successfully (so you have to remember to `cargo clean` yourself after installing libvirt).
+    //
+    // For docs.rs documentation builds we can ignore those errors. docs.rs sets DOCS_RS and
+    // recommends using it for this purpose: https://docs.rs/about/builds
+    let docs = env::var_os("DOCS_RS").is_some();
+
+    let found = config.atleast_version(LIBVIRT_VERSION).probe("libvirt");
+    if !docs {
+        found?;
+    }
 
     if cfg!(feature = "qemu") {
-        let _ = config
+        let found = config
             .atleast_version(LIBVIRT_VERSION)
             .probe("libvirt-qemu");
+        if !docs {
+            found?;
+        }
     }
 
     let bindgen_in_dir = PathBuf::from("bindgen");
