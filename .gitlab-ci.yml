@@ -69,6 +69,8 @@ stages:
   script:
     - export RUSTFLAGS="-D warnings"
     - export RUSTDOCFLAGS="-D warnings"
+    - export PKG_CONFIG="pkg-config"
+    - export PKG_CONFIG_LIBDIR="/usr/lib/$(${ABI}-gcc -print-multiarch)/pkgconfig"
     - cargo build --verbose --target $RUST_TARGET
 
 include: '/ci/gitlab.yml'
