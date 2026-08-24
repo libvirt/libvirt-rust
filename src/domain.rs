@@ -634,7 +634,7 @@ impl IPAddress {
 #[derive(Clone, Debug)]
 pub struct Interface {
     pub name: String,
-    pub hwaddr: String,
+    pub hwaddr: Option<String>,
     pub naddrs: u64,
     pub addrs: Vec<IPAddress>,
 }
@@ -651,7 +651,11 @@ impl Interface {
         }
         Interface {
             name: c_chars_to_string!((*ptr).name),
-            hwaddr: c_chars_to_string!((*ptr).hwaddr),
+            hwaddr: if (*ptr).hwaddr.is_null() {
+                None
+            } else {
+                Some(c_chars_to_string!((*ptr).hwaddr))
+            },
             naddrs: naddrs as u64,
             addrs,
         }
