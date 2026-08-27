@@ -16,7 +16,7 @@ rust-version = "1.63"
 libc = { version = "=0.2.183" }
 
 [build-dependencies]
-bindgen = { version = "0.69.2", optional = true }
+bindgen = { version = "0.72.1", optional = true }
 pkg-config = "0.3.25"
 
 [features]
