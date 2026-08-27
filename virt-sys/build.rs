@@ -33,6 +33,8 @@ fn bindgen_regenerate(bindgen_out_file: &PathBuf) -> Result<(), Box<dyn Error>> 
         .generate_comments(false)
         .prepend_enum_name(false)
         .generate_cstr(true)
+        // Put the oldest supported rust version here
+        .rust_target(bindgen::RustTarget::stable(75, 0).expect("Uknown rust target version"))
         .formatter(bindgen::Formatter::Prettyplease);
 
     bindings
